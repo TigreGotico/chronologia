@@ -8,7 +8,7 @@ verify: .venv/bin/python -c 'exec("import ast,io,re,sys,contextlib as c\np=sys.a
 see: docs/adding-a-language.md, docs/rulings.md, docs/languages/index.md
 -->
 
-This module has one job: **turn "the 15th of Ramadan 1446" into a span**. A person writes a date as a phrase. The phrase has an ordinal, a month name from whichever calendar the writer thinks in, and a year. `extract_timespan` turns it into the exact stretch of time it names.
+This module has one job: **turn "the 15th of Ramadan 1446" into a span**. A person writes a date as a phrase. The phrase has an ordinal, a month name from whichever calendar the writer thinks in, and a year. The function `extract_timespan` turns it into the exact stretch of time it names.
 
 ```python
 from chronologia import extract_timespan
@@ -172,7 +172,7 @@ assert extract_timespan("this winter", "en", january).span.start.year == 2017
 assert extract_timespan("next winter", "en", january).span.start.year == 2018
 ```
 
-A range framed with "from A to B" or "between A and B" runs from the start of the left endpoint to the end of the right endpoint:
+A range framed with "from A to B" or "between A and B" has two endpoints. It runs from the start of the left endpoint to the end of the right endpoint:
 
 ```python
 from chronologia import extract_timespan
@@ -189,13 +189,13 @@ Both endpoints resolve in the **same** frame: the future preference is applied t
 
 A cross-year span like "from december 28 to january 3" simply rolls the *end* into the following year so it never inverts. Any endpoint that resolves to a date works. Bare dates, dates with years and holidays ("from christmas to new year's day") all compose, in dash form too ("july 20 - july 25").
 
-**The month may be named once for the pair**. These all read as 5-12 June: "del 5 al 12 de junio" (es), "du 5 au 12 juin" (fr), "dal 5 al 12 giugno" (it), "с 5 по 12 июня" (ru) and the English "June 5 to 12". The endpoint that carries only a bare day is read through the words of its partner, so the day is never dropped. This is one rule over the token stream.
+**The month may be named once for the pair**. These all read as 5-12 June: "del 5 al 12 de junio" (es), "du 5 au 12 juin" (fr), "dal 5 al 12 giugno" (it) and "с 5 по 12 июня" (ru). So does the English "June 5 to 12". The endpoint that carries only a bare day is read through the words of its partner, so the day is never dropped. This is one rule over the token stream.
 
 The partner's slice is rebuilt with its numeral replaced. So the language's own glue ("de", "di") and word order come along without a per-locale spelling. Two bare numbers lend each other nothing. This is why "from 9 to 5" is still a working day and "quarter to five" is still a clock.
 
 **The "until" word of a language closes a range and also opens one**. English "until" is the open marker ("until friday"). It is also a `to` connector ("from june 5 until june 12"). Every language's `marker_until` surface does the same job. So Persian "از ۵ ژوئن تا ۱۲ ژوئن", Indonesian "5 Juni sampai 12 Juni" and Malay "12 Jun hingga 20 Jun" are closed ranges.
 
-They are not open ranges that run to the anchor. The named limit is included. This matches the open-range convention below. These sources state it for those languages: Ожегов s.v. «по» II.1 ("Отпуск по воскресенье"), KBBI s.v. *sampai* sense 6 ("perjanjian itu berlaku sampai tahun depan") and Kamus Dewan s.v. *hingga*.
+They are not open ranges that run to the anchor. The named limit is included. This matches the open-range convention below. Three sources state it for those languages. They are Ожегов s.v. «по» II.1 ("Отпуск по воскресенье"), KBBI s.v. *sampai* sense 6 ("perjanjian itu berlaku sampai tahun depan") and Kamus Dewan s.v. *hingga*.
 
 **Open-ended ranges** name a single endpoint and pin the other edge to the anchor. The named endpoint keeps the closed-range convention. The *until* endpoint contributes its end, and the span includes it in full, like the right endpoint of "from A to B". The *since* endpoint contributes its start:
 
@@ -222,13 +222,13 @@ Basque `arte` is genuinely ambiguous: it means both "until" and "art". So it onl
 
 ## A lone spoken hour
 
-An hour from 1 to 12 with no am/pm word and no part of the day takes the next of its two twelve-hour readings at or after the anchor. "at 8" said at 13:04 is 20:00 the same day, not 08:00 tomorrow. A digit clock `h:mm` with an hour from 1 to 11 and no leading zero reads the same way. Speech recognition writes a spoken "eight thirty" as "8:30": "at 8:30" is 20:30.
+An hour from 1 to 12 takes the next of its two twelve-hour readings at or after the anchor. This holds when the hour has no am/pm word and no part of the day. "at 8" said at 13:04 is 20:00 the same day, not 08:00 tomorrow. A digit clock `h:mm` with an hour from 1 to 11 and no leading zero reads the same way. Speech recognition writes a spoken "eight thirty" as "8:30": "at 8:30" is 20:30.
 
-"Today" names no part of the day, so "at 3:30 today" said at 15:00 is 15:30. An hour keeps its written value when a day word or a part of the day goes with it. It also keeps its value with a meridiem, a leading zero ("08:30"), the hour 12, the letter "h" or an hour from 13 to 23. A morning or evening word that the language lists for a half of the day decides the half when it stands beside the clock. This holds also when the reader does not join the word to the clock:
+"Today" names no part of the day, so "at 3:30 today" said at 15:00 is 15:30. An hour keeps its written value when a day word or a part of the day goes with it. It also keeps its value with a meridiem or a leading zero ("08:30"). The hour 12, the letter "h" and an hour from 13 to 23 keep it too. A morning or evening word that the language lists for a half of the day decides the half when it stands beside the clock. This holds also when the reader does not join the word to the clock:
 
 Dutch "om 8:00 's ochtends" is 08:00 and "om 8:00 's avonds" is 20:00. Only a clock word ("uur"), the word that opens the clock ("om") or an article may stand between them. So Spanish "a las 6:30 que no quiero llegar tarde" ("late") said at 23:00 is 06:30. Spanish, Portuguese and Galician "tarde" is also the adverb "late", so before the clock and after another word of its clause it decides nothing: "llego tarde a las 6:30" is 06:30, while "tarde a las 4:30" is 16:30.
 
-A part of the day after a digit clock joins the clock as it joins a spoken hour: Spanish "a las 6:30 de la tarde" said at 13:04 is 18:30. "a las 6:30 de la mañana" is 06:30 the next day. This holds in every language, for `extract_timespan`, `extract_timespans` and the top `extract_candidates` reading. A recurrence pin names an hour of the day, so `extract_recurrence("daily at 7")` stays `BYHOUR=7`.
+A part of the day after a digit clock joins the clock as it joins a spoken hour: Spanish "a las 6:30 de la tarde" said at 13:04 is 18:30. "a las 6:30 de la mañana" is 06:30 the next day. This holds for `extract_timespan`, `extract_timespans` and the top `extract_candidates` reading, in every language whose vocabulary has meridiem words (`clock_meridiem_*.voc`). The locales `eo`, `fy`, `ka`, `lv`, `mwl`, `sw`, `ta` and `th` ship none. A recurrence pin names an hour of the day, so `extract_recurrence("daily at 7")` stays `BYHOUR=7`.
 
 ```python
 from datetime import datetime
@@ -338,7 +338,9 @@ extract_timespan(text, "en", anchor)                         # None  (off by def
 extract_timespan(text, "en", anchor, enable=("classical",))  # 30 March span
 ```
 
-**The doctrine**. A construction carrying a `"group": <name>` tag in `lang.json` is off unless `<name>` appears in the `enable=(...)` tuple passed to `extract_timespan`. A construction with no group tag is always on. Use this rule of thumb to decide *which* group holds a surface. **Default-on surfaces are the ones that a modern writer produces without ambiguity**. Examples are Roman-numeral centuries, AUC, Olympiads, archonships and the everyday "ides of march". **The `classical` group holds the raw, inflected Latin formulas** that a classicist opts into. The flag threads through exactly like `jurisdiction`, one keyword argument, no change to the returned `(span, remainder)` shape.
+**The doctrine**. A construction carrying a `"group": <name>` tag in `lang.json` is off unless `<name>` appears in the `enable=(...)` tuple passed to `extract_timespan`. A construction with no group tag is always on. Use this rule of thumb to decide *which* group holds a surface. **Default-on surfaces are the ones that a modern writer produces without ambiguity**.
+
+Examples are Roman-numeral centuries, AUC, Olympiads, archonships and the everyday "ides of march". The `classical` group holds the raw, inflected Latin formulas that a classicist opts into. The flag threads through exactly like `jurisdiction`, one keyword argument, no change to the returned `(span, remainder)` shape.
 
 ### Kalends, Nones, Ides -- in the reader's own language
 
@@ -374,7 +376,7 @@ extract_timespan("de Nonen van juli", "nl", anchor)[0].start_datetime
 
 **The honest detail: Ides and Nones move**. They are not always "the 15th" and "the 7th". The Roman calendar puts the Ides on the 15th only in March, May, July and October.
 
-Every other month it falls on the 13th. The Nones is always the 8th day before the Ides (inclusive Roman counting). So it lands on the 7th in those four months and on the 5th elsewhere. `los idus de abril` resolves to April 13th, not the 15th, because April is not one of the four long months:
+Every other month it falls on the 13th. The Nones is always the 8th day before the Ides (inclusive Roman counting). So it lands on the 7th in those four months and on the 5th elsewhere. The phrase `los idus de abril` resolves to April 13th, not the 15th. April is not one of the four long months:
 
 ```python
 extract_timespan("los idus de abril", "es", anchor)[0].start_datetime   # 2017-04-13
@@ -383,7 +385,9 @@ extract_timespan("los idus de marzo", "es", anchor)[0].start_datetime   # 2017-0
 
 The library computes this per month (`chronologia.roman._ides_day` / `_nones_day`) rather than hard-coding a single day-of-month. So the composition above is correct for every month, not just the famous March case.
 
-**Inclusive counting belongs to the Latin idiom, not to the "N days before" offset. The surface you write picks the convention**. Classical Latin counted *inclusively*, with the anchor day itself as day 1. That convention fires **only** when you write the raw Latin ante-diem formula (opt in with `enable=("classical",)`, see above). `ante diem III kalendas apriles` is the *3rd* day, counted inclusively from the Kalends of April, and lands on March 30th. `pridie kalendas apriles` ("the day before the Kalends") lands on March 31st. The vernacular "N days before/after `<anchor>`" phrasing is different.
+**Inclusive counting belongs to the Latin idiom, not to the "N days before" offset. The surface you write picks the convention**. Classical Latin counted *inclusively*, with the anchor day itself as day 1. That convention fires **only** when you write the raw Latin ante-diem formula (opt in with `enable=("classical",)`, see above).
+
+The phrase `ante diem III kalendas apriles` is the *3rd* day, counted inclusively from the Kalends of April. It lands on March 30th. The phrase `pridie kalendas apriles` ("the day before the Kalends") lands on March 31st. The vernacular "N days before/after `<anchor>`" phrasing is different.
 
 In every language it is **plain, non-inclusive arithmetic**, like "3 days before christmas". It is *not* the Roman count: "3 days before the kalends of april" and "the third day before the kalends of april" both land on March 29th. That is one day earlier than the "3rd day" of the Latin idiom:
 
@@ -495,7 +499,7 @@ trace = explain("the 3rd week of june 1969", load_lang_spec("en"),
 print(len(trace.tokens), "tokens,", len(trace.winners), "winning construction")  # 6 tokens, 1 winning construction
 ```
 
-`trace.report()` returns the whole trace as readable text. Use it when a phrase parses to something you did not expect. `explain` runs the **identical** pre-match pipeline as `extract_timespan`, with the same spelled-number fold and multiword merge. So its trace of a phrase reflects the real parse token-for-token, written-out numbers and all.
+`trace.report()` returns the whole trace as readable text. Use it when a phrase parses to something you did not expect. The function `explain` runs the **identical** pre-match pipeline as `extract_timespan`, with the same spelled-number fold and multiword merge. So its trace of a phrase reflects the real parse token-for-token, written-out numbers and all.
 
 ## How sure is it? Confidence and ranked candidates
 
@@ -535,7 +539,7 @@ Ruling 31 ranks the readings of pt "às 9 uma hora antes do natal". The phrase h
 
 Last comes the other twelve-hour reading of the clock. The engine gives another answer. Said at 2026-11-18 10:00, `extract_timespan` returns 24 December 09:00. The next candidates are 21:00 on the anchor day (18 November) and the holiday itself (25 December). The 21:00 and 23:00 readings of 24 December are not in the list.
 
-Ruling 34 rules that a lone numeral (da "20", nl "2", en "20") is a candidate, not a reading. `extract_candidates` lists the hour, the day of the month and the year that it could be, ranked low. The engine returns nothing for these numerals. `extract_timespan` returns `None` and `extract_candidates` returns an empty list. The issues [#1032](https://github.com/TigreGotico/chronologia/issues/1032) and [#1035](https://github.com/TigreGotico/chronologia/issues/1035) track the ruling, and this paragraph changes when the ruling lands.
+Ruling 34 rules that a lone numeral (da "20", nl "2", en "20") is a candidate, not a reading. The function `extract_candidates` lists the hour, the day of the month and the year that it could be, ranked low. The engine returns nothing for these numerals. `extract_timespan` returns `None` and `extract_candidates` returns an empty list. The issues [#1032](https://github.com/TigreGotico/chronologia/issues/1032) and [#1035](https://github.com/TigreGotico/chronologia/issues/1035) track the ruling, and this paragraph changes when the ruling lands.
 
 ### Where a reading sits in the text
 
@@ -553,7 +557,7 @@ print(repr(top.remainder))
 # 'call me please'
 ```
 
-The span runs from the first character the candidate consumed to the last one. When the consumed words are not next to each other, the words between them are inside the span and also in `remainder`. A range includes its lead word and its connector ("from june 5th to june 12th" is `(0, 26)`). A word that the engine leaves unconsumed stays out of the span at either end. `char_span` is `None` only when no consumed word has a position in the text.
+The span runs from the first character the candidate consumed to the last one. When the consumed words are not next to each other, the words between them are inside the span and also in `remainder`. A range includes its lead word and its connector ("from june 5th to june 12th" is `(0, 26)`). A word that the engine leaves unconsumed stays out of the span at either end. The value `char_span` is `None` only when no consumed word has a position in the text.
 
 `extract_timespan` returns `(span, remainder)` and no position. Its answer can differ from `extract_candidates(...)[0]`. A length after a clock extends the answer, so the span in `char_span` of the first candidate covers less than the answer does:
 
@@ -777,7 +781,7 @@ In deep time the count before the scale word is the mention value in units of th
 
 When another date word cuts a mention, numtag reads each side again on its own words.
 
-Some regional tags read their own lexicons. `pt-BR` uses the Brazilian lexicon of numtag, where "bilhão" is 10^9. `pt` uses the European lexicon, where it is 10^12. `fr-BE` and `fr-CH` read "septante" and "nonante" (and `fr-CH` "huitante") with the Belgian and Swiss lexicons. `fr` reads the lexicon of France.
+Some regional tags read their own lexicons. The tag `pt-BR` uses the Brazilian lexicon of numtag, where "bilhão" is 10^9. The tag `pt` uses the European lexicon, where it is 10^12. The tags `fr-BE` and `fr-CH` read "septante" and "nonante" (and `fr-CH` "huitante") with the Belgian and Swiss lexicons. The tag `fr` reads the lexicon of France.
 
 The other 21 locales read through their own `numfold_*` modules, for example `numfold_be.py`, `numfold_macedonian.py` and `numfold_slavic.py` for `be`, `mk` and `sr`.
 
@@ -952,7 +956,7 @@ The 3rd century BC is the BC years 300..201, astronomically `[-299, -199)`, a ce
 
 ### The assembly passes: ranges and composition
 
-Two behaviours live in `chronologia/extract/timespan.py`, **above** the token grammar, because they compose *whole sub-parses* rather than bind tokens:
+The function `read` in `chronologia/extract/reading.py` tokenizes a text once and lists its readings. The range, open range, "now" or "new year" reading comes first. The point readings follow in scoring order. Both `extract_timespan` and `extract_candidates` select from that list. Two behaviours live in `chronologia/extract/timespan.py`, **above** the token grammar, because they compose *whole sub-parses* rather than bind tokens:
 
 - **Ranges** (`_extract_range`). "from A to B" / "between A and B" a surface regex detects it, then **each endpoint is parsed independently** by a full recursive `extract_timespan`. The engine stitches the two spans: the left edge of A to the right edge of B. If B wraps past A, the engine rolls B forward a day or a week. This fires only when both sides parse on their own. That keeps "quarter to five" (a clock, not a range) from reading as "quarter" → "five". Suppose B rolled past A only because the future preference of A leaped it a whole year ahead (a range that straddles the anchor). Then the engine pulls A back one year instead. So both endpoints stay in one frame.
 - **Open-ended ranges** (`_extract_open_range`). A leading `until` or `through` (open start) or `since` (open end) marker with a single parseable endpoint. The open edge is the anchor instant. The endpoint keeps its closed-range edge: `.end` for an *until* endpoint, `.start` for a *since* endpoint.
@@ -989,7 +993,9 @@ It holds for a weekend that does not occur a sixth time in a short month. It hol
 
 Chronologia treats a stranded ordinal or unit word next to a resolved date as proof that the parse is *incomplete*. It refuses the whole reading. It does not present the truncated remainder as the answer.
 
-**The rationale is trust**. A caller that acts on a date span cannot tell "the library computed this on purpose" from "the library dropped a piece it could not place." A human who says "February 30" has made an error or tests the boundary. They do not mean March 2, and a scheduler that quietly proceeds as if they did will act on a date nobody asked for. Returning `None` costs an unhandled case. Returning a plausible-looking wrong date costs a silent, undetectable one. Between an honest "this does not resolve" and a fabricated answer that happens to parse without complaint, the library always chooses the former.
+**The rationale is trust**. A caller that acts on a date span cannot tell two cases apart. One is "the library computed this on purpose". The other is "the library dropped a piece it could not place."
+
+A human who says "February 30" has made an error or tests the boundary. They do not mean March 2, and a scheduler that quietly proceeds as if they did will act on a date nobody asked for. Returning `None` costs an unhandled case. Returning a plausible-looking wrong date costs a silent, undetectable one. Between an honest "this does not resolve" and a fabricated answer that happens to parse without complaint, the library always chooses the former.
 
 **Telling an impossible date from a phrase that is no date**. By default both give `None`. A caller that must tell them apart passes `impossible="raise"` to `extract_timespan`, `extract_candidates`, `extract_event` or `extract_recurrence`. A call that would return `None` (or, for `extract_candidates`, an empty list) then raises `ImpossibleDateError`. This `ValueError` is exported from `chronologia`.
 
@@ -1023,7 +1029,7 @@ The classes, from safest to most confusable:
 - **Month homographs as common words**. English *may* (modal), *march* (verb), *august* (adjective). Czech *květen*/*srp*. Hungarian *hét* (also "week"/"seven"). Bound as the month.
 - **Month and season homographs as names.** *April*, *June*, *August* as people or pets. Portuguese *abril*, Dutch *juni*, Basque *apirila*, Arabic *مارس* ("he practiced" / March) and *ربيع* (a name / spring) likewise. A **place name that carries a season word** is the same class: Hebrew *תל אביב* ("Tel Aviv") contains *אביב* ("spring"). Bound as the month or season -- an adjacent-token guard for one proper noun would not generalise, so disambiguation stays downstream.
 - **Morning vs. tomorrow**. German *Morgen* ("morning") vs. *morgen* ("tomorrow"), West Frisian *moarn*, Spanish/Galician *mañana*/*mañá* carry both senses. Lowercased, the temporal-adverb reading wins.
-- **Figurative and idiomatic time**. The parser binds these literally. They are season words in metaphor ("the autumn of life", "spring into action"), a unit in a figure of speech ("a lost decade") and a time word inside a frozen idiom ("burn the midnight oil").
+- **Figurative and idiomatic time**. The parser binds these literally. They are season words in metaphor ("the autumn of life", "spring into action"). They are also a unit in a figure of speech ("a lost decade") or a time word inside a frozen idiom ("burn the midnight oil").
 - **Bare ordinals as a day-of-month**. An ordinal with no month ("the 15th", "the first") is ambiguous: "the first time", "the third option", "the 100th customer", "he came in first" are ordinals, not dates. The parser resolves a bare ordinal to a day of the month **only behind a leading date preposition**: `on the Nth` or `by the Nth`. It does so only for the digit form ("on the 3rd", "by the 15th"). A spelled ordinal ("on the first try", "on the third floor") and a preposition-less ordinal ("the 15th") stay unbound. The semantics mirror the "the Nth of the month" of `month_day_ref`. It is the Nth of the current month of the anchor, day-wide. `prefer_future` rolls a day that has passed into next month. At Wednesday 2024-03-06, "on the 25th" → 2024-03-25 (still ahead) and "on the 3rd" → 2024-04-03 (passed, rolls forward). "by the Nth" carries the same prefer-future reckoning as "by monday". A day the current month cannot hold (an impossible date) simply does not bind.
 
 ## Beyond a single span: durations, multiple mentions, recurrence
@@ -1086,6 +1092,18 @@ assert extract_duration("media hora", "es")[0] == timedelta(minutes=30)
 assert extract_duration("uma hora e meia", "pt")[0] == timedelta(hours=1, minutes=30)
 assert extract_duration("eine viertel stunde", "de")[0] == timedelta(minutes=15)
 assert extract_duration("deux heures et demie", "fr")[0] == timedelta(hours=2, minutes=30)
+```
+
+A count of hours that a clock reading covers, with its preposition in front, is a clock and no length. Dutch `om 8 uur`, French `à 8 heures` and Portuguese `às 8 horas` give `None`. A preposition that does not mark a clock keeps the length: Dutch `voor 8 uur` and `over 8 uur` and Spanish `a 8 horas` are eight hours.
+
+```python
+from chronologia import extract_duration
+from datetime import timedelta
+
+assert extract_duration("om 8 uur", "nl") is None
+assert extract_duration("à 8 heures", "fr") is None
+assert extract_duration("over 8 uur", "nl")[0] == timedelta(hours=8)
+assert extract_duration("a 8 horas", "es")[0] == timedelta(hours=8)
 ```
 
 ### How *many*?, `extract_timespans`
@@ -1220,7 +1238,7 @@ assert extract_recurrence("toutes les deux semaines", "fr")[0].to_string() == (
 Every language is **data only**. There is no per-language code: the engine core (tokenizer, normaliser, compiler, matcher, resolver) is shared, and a language is a directory under `chronologia/locale/<code>/`:
 
 - **`*.voc` vocabulary files**: one *slot* per file, one surface form per line. The filename is the slot. `month_6.voc` lists the words for the sixth Gregorian month (`june`, `jun`). `weekday_0.voc` the words for Monday. `unit_day.voc` the words meaning "day". `marker_next.voc` the words meaning "next". Non-Gregorian months use `month_<calendar>_<n>.voc` (e.g. `month_islamic_civil_9.voc` is Ramadan), where `<calendar>` must be a calendar the core knows. In Hebrew, a Hebrew-calendar year in traditional *gematria* letter-numerals reads like the digit form. `15 אדר תשפ״ה` resolves the same as `15 אדר 5785`. The *small count* drops the implied 5000, and the full count `ה׳תשפ״ה` reads too. So a Hebrew month followed by a gematria year lands on the same Gregorian span as its numeric equivalent.
-- **`lang.json`** holds one stanza per language: tokenizer options, the constructions that the language enables, and calendar conventions. The conventions are day and month order, hemisphere, week start and `weekend_start`. `weekend_start` is the first day of the two-day weekend, as a weekday index with Monday=0. The default is Saturday. Israel and much of the Arab world set `4` for a Friday-Saturday weekend), and an optional `hook`. The tokenizer is script-agnostic, so right-to-left locales (Arabic, Hebrew) and mixed-direction strings, Western or Arabic-Indic digits embedded in RTL text, need no special handling.
+- **`lang.json`** holds one stanza per language: tokenizer options, the constructions that the language enables, and calendar conventions. The conventions are day and month order, hemisphere, week start and `weekend_start`. The setting `weekend_start` is the first day of the two-day weekend, as a weekday index with Monday=0. The default is Saturday. Israel and much of the Arab world set `4` for a Friday-Saturday weekend), and an optional `hook`. The tokenizer is script-agnostic, so right-to-left locales (Arabic, Hebrew) and mixed-direction strings, Western or Arabic-Indic digits embedded in RTL text, need no special handling.
 
 The vocabulary files are loaded through **ovos-spec-tools**, the shared `/locale` convention. Spelled-out numbers ("twenty fifth", "three") are folded to digits before matching. So a slot binds the same whether the writer typed `5` or `five`. **numtag** reads the numbers of 40 languages ([the table](languages/index.md) lists them).
 
@@ -1425,7 +1443,9 @@ A test never pins the engine's own output as the expected answer (that would onl
 
 ## The corpus convention (and the cross-language parity contract)
 
-A language opts into span-native extraction by shipping a **corpus package** at `test/nl_corpus_<code>/`. It is a directory of parametrised `test_nl_*.py` modules. Each case is a real sentence that asserts the exact span, with the expected value derived by hand. `test/test_language_parity.py` is the structural guard over that convention. It is **discovery-based**: it finds corpus packages by directory name, with no hardcoded language list. So a language lands its package and is validated automatically. Parallel branches never collide on that file. It enforces three things per discovered corpus:
+A language opts into span-native extraction by shipping a **corpus package** at `test/nl_corpus_<code>/`. It is a directory of parametrised `test_nl_*.py` modules. Each case is a real sentence that asserts the exact span, with the expected value derived by hand. `test/test_language_parity.py` is the structural guard over that convention.
+
+It is **discovery-based**: it finds corpus packages by directory name, with no hardcoded language list. So a language lands its package and is validated automatically. Parallel branches never collide on that file. It enforces three things per discovered corpus:
 
 - the corpus backs a real `locale/<code>/lang.json`.
 - the corpus collects **at least 100 cases**.

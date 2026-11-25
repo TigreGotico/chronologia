@@ -33,7 +33,7 @@ This pulls every gold case from the corpora that use the `text,expected` convent
 
 ## How scoring works
 
-Every gold case is `(language, sentence, expected_date, anchor_datetime)`. `anchor_datetime` is the fixed anchor of the corpus (`ANCHOR`, a specific Tuesday at 13:04) that relative phrases like "in three weeks" resolve against. So results are 100% reproducible, no wall-clock dependency.
+Every gold case is `(language, sentence, expected_date, anchor_datetime)`. `anchor_datetime` is the fixed anchor of the corpus (`ANCHOR`, a specific Tuesday at 13:04). Relative phrases like "in three weeks" resolve against it. So results are 100% reproducible, no wall-clock dependency.
 
 For each case, each engine gets exactly one of three outcomes:
 
@@ -41,7 +41,7 @@ For each case, each engine gets exactly one of three outcomes:
 - **no-parse**: the engine returned nothing at all.
 - **wrong**: the engine returned some date, but it isn't the gold date.
 
-`dateparser` and `dateutil` both return a plain `datetime`, a single instant. chronologia's `extract_timespan` returns a `DateSpan`: the whole width of time a phrase names. `"june 2027"` is a month wide, not a single second. Per the project's house rule, chronologia is graded on `span.start.date()` so the three engines are compared on the same axis. This *understates* what chronologia gives you beyond that: the span's end, its resolution tag and non-Gregorian calendar metadata. The competitors have no equivalent to credit.
+The tools `dateparser` and `dateutil` both return a plain `datetime`, a single instant. The function `extract_timespan` of chronologia returns a `DateSpan`: the whole width of time a phrase names. The phrase `"june 2027"` is a month wide, not a single second. Per the project's house rule, chronologia is graded on `span.start.date()` so the three engines are compared on the same axis. This *understates* what chronologia gives you beyond that: the span's end, its resolution tag and non-Gregorian calendar metadata. The competitors have no equivalent to credit.
 
 ## Running it yourself
 
@@ -63,7 +63,7 @@ python benchmark/run.py --sample 50 --seed 0
 
 The cross-view harness answers a different question: did my change move any answer? It runs every phrase-like string of every `test/nl_corpus_<lang>/` package through `extract_timespan`, `extract_candidates`, `extract_recurrence` and `extract_event`. It also runs generated grids of ordinal, impossible-date and bound phrases. Each phrase runs in default mode and in `impossible="raise"` mode, at two fixed anchors. One TSV row per call holds the normalised result and the call time in microseconds.
 
-Run it once on the base tree and once on your branch, then compare the two files. `--chunk i/n` splits the work, and `--lang en,pt` limits it to some languages:
+Run it once on the base tree and once on your branch, then compare the two files. The flag `--chunk i/n` splits the work, and the flag `--lang en,pt` limits it to some languages:
 
 ```bash
 for i in 0 1 2 3; do python -m benchmark.crossview run base.$i.tsv --chunk $i/4; done
@@ -71,7 +71,9 @@ python -m benchmark.crossview diff --base base.?.tsv --head head.?.tsv
 python -m benchmark.crossview disagree head.?.tsv
 ```
 
-`run` prints the number of phrases and rows it wrote. `diff` prints the row counts, the changed rows grouped by view, mode and kind of change, and the median and p95 time per call of each side. It exits with 1 when a row changed, is missing or appears twice. `disagree` lists the phrases for which two views of one tree give contradictory readings. For example, `extract_candidates` reads a phrase that `extract_timespan` returns as `None`.
+The command `run` prints the number of phrases and rows it wrote. The command `diff` prints the row counts and the changed rows. It groups the changed rows by view, mode and kind of change. It also prints the median and p95 time per call of each side.
+
+The command `diff` exits with 1 when a row changed, is missing or appears twice. The command `disagree` lists the phrases for which two views of one tree give contradictory readings. For example, `extract_candidates` reads a phrase that `extract_timespan` returns as `None`.
 
 ## Caveats
 

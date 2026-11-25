@@ -42,7 +42,11 @@ That matters most in range endpoints, where `do dia 3 de março até ao dia 5 de
 
 `até ao` and `até à` are registered as two-word surfaces of their own, tried before the bare `até`. Without them the scanner found the bare `até` first (it comes first in the sentence) and left the trailing `ao` an unclaimed token stranded in the remainder. A bare `até o dia` with no contraction is untouched, and `até` alone still matches when no contraction follows.
 
-**The clock** has the same two toward-the-hour shapes as Spanish and keeps them apart for the same reason. The phrase `quatro menos um quarto` subtracts from the hour already named. The phrase `um quarto para as quatro` states the fraction first. Then it names the hour it heads for. Forward is `e`: `oito e meia`, `oito e um quarto`. The article vocabulary holds the indefinite articles `um` and `uma` so that the `um quarto` fraction reads. The vocabulary cites Ciberdúvidas' page on telling the time. `meio-dia` and `meia-noite` are points.
+**The clock** has the same two toward-the-hour shapes as Spanish and keeps them apart for the same reason. The phrase `quatro menos um quarto` subtracts from the hour already named. The phrase `um quarto para as quatro` states the fraction first. Then it names the hour it heads for.
+
+Forward is `e`: `oito e meia`, `oito e um quarto`. The article vocabulary holds the indefinite articles `um` and `uma` so that the `um quarto` fraction reads. The vocabulary cites Ciberdúvidas' page on telling the time. `meio-dia` and `meia-noite` are points.
+
+**Three quarters after an hour.** `três quartos` after `e` is 45 minutes: `duas horas e três quartos` and `duas e três quartos` both read 14:45 at 10:00 on 30 January 2026. Priberam, `quarto` sense 3, glosses `quarto` as "quinze minutos" with the example "são três e um quarto". The phrase `três quartos de hora` is no clock. The function `extract_duration` reads it as a length of 45 minutes.
 
 **Day parts** take their boundaries from the Unicode CLDR 47 day-period chart for `pt`, transcribed in `chronologia/dayparts.py`: `madrugada` `[00:00, 06:00)`, `manhã` `[06:00, 12:00)`, `tarde` `[12:00, 19:00)`, `noite` `[19:00, 24:00)`. The surfaces are cited to Priberam, which glosses `manhã` as the period between daybreak and midday. The vocabulary records that the entry marks no European/Brazilian split for these four words and that none is made here: both varieties say `manhã`, `tarde`, `noite` and `madrugada` alike. The frame is `pela`/`pelo` and their plurals, the contractions of `por` with the definite article, cited to Priberam.
 
@@ -126,9 +130,9 @@ Each line is an open issue with a strict `xfail` test for this language. The lin
 
 - A digit clock written with a space reads only the hour. Example (reader `extract_timespan`, lang `pt`, anchor 2017-06-27 13:04): `às 10 30` gives 2017-06-27 22:00 to 2017-06-27 22:01 and `30` left over. [#1012](https://github.com/TigreGotico/chronologia/issues/1012)
 
-- An event with a noun before an evening clock reads a length of nine and a half hours. Example (reader `extract_event`, lang `pt`, anchor 2026-01-30 10:00): `jantar nove horas e meia de noite amanhã` gives start 2026-01-31 19:00, length 570 min, summary `jantar`. [#1026](https://github.com/TigreGotico/chronologia/issues/1026)
+- A clock with minutes in words loses the minutes. Example (reader `extract_timespan`, lang `pt`, anchor 2017-06-27 13:04): `às 8 horas e 30 minutos` gives 2017-06-27 20:00 to 2017-06-27 20:01 and `e 30 minutos` left over. [#1380](https://github.com/TigreGotico/chronologia/issues/1380)
 
-- A spelled clock reads as 14:03 and leaves the word for quarters. Example (reader `extract_timespan`, lang `pt`, anchor 2026-01-30 10:00): `duas horas e três quartos` gives 2026-01-30 14:03 to 2026-01-30 14:04 and `quartos` left over. [#1027](https://github.com/TigreGotico/chronologia/issues/1027)
+- An event with a noun before an evening clock reads a length of nine and a half hours. Example (reader `extract_event`, lang `pt`, anchor 2026-01-30 10:00): `jantar nove horas e meia de noite amanhã` gives start 2026-01-31 19:00, length 570 min, summary `jantar`. [#1026](https://github.com/TigreGotico/chronologia/issues/1026)
 
 - A clock with a dot between hour and minute gives no time. Example (reader `extract_timespan`, lang `pt`, anchor 2026-09-25 12:00): `às 8.30` gives no reading. [#1047](https://github.com/TigreGotico/chronologia/issues/1047)
 

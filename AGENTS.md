@@ -40,7 +40,7 @@ A wrong span is worse than no span. Where sources conflict or say nothing, a loc
 
 Cite every linguistic and calendrical fact. A word list entry says where the surface came from: a dictionary, a grammar, a standards body, or your own native knowledge stated as such. Where no source exists, the library refuses rather than guesses ([CONTRIBUTING.md](CONTRIBUTING.md)).
 
-Write the test first and check that it fails before the fix. Derive every expected value without this library, by hand or from another source ([CONTRIBUTING.md](CONTRIBUTING.md)). Each language needs a corpus of at least 100 cases and a block that asserts the same spans as English. `test/test_language_parity.py` enforces both ([docs/adding-a-language.md](docs/adding-a-language.md)).
+Write the test first and check that it fails before the fix. Derive every expected value without this library, by hand or from another source ([CONTRIBUTING.md](CONTRIBUTING.md)). Each language needs a corpus of at least 100 cases. It also needs a block that asserts the same spans as English. `test/test_language_parity.py` enforces both ([docs/adding-a-language.md](docs/adding-a-language.md)).
 
 Every holiday rule needs a frozen gold value in `test/holiday_golds/`. A tier floor stops the provenance counts from shrinking ([docs/transparency.md](docs/transparency.md)).
 

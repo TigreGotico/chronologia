@@ -149,7 +149,7 @@ for junk in ("", "1985-13", "1985-4", "not-a-date"):
 # rejected: not-a-date
 ```
 
-A few *valid* EDTF strings denote a non-contiguous set of instants that no single span can hold. `156X-12-25` means "December 25th of some year in the 1560s", which is ten separate days. The set forms `[1667,1668]` / `{1960,1961}` select or collect scattered dates. These raise `NotImplementedError` rather than pretend a single span could represent them.
+A few *valid* EDTF strings denote a non-contiguous set of instants that no single span can hold. The string `156X-12-25` means "December 25th of some year in the 1560s", which is ten separate days. The set forms `[1667,1668]` / `{1960,1961}` select or collect scattered dates. These raise `NotImplementedError` rather than pretend a single span could represent them.
 
 ## Coverage at a glance
 

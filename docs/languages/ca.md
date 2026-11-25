@@ -36,7 +36,9 @@ To read a phrase, call `extract_timespan` with the phrase, the locale code and a
 
 **The relative determiners** follow the noun (`el dilluns passat`, `la setmana que ve`, `el dilluns vinent`) which is why the locale sets `marker_position: post`.
 
-**Ranges** carry the fullest citation record in the locale. The `from` lead is `de`, `des de`, `del` or `a partir de` and the `to` boundary is `a`, `fins a`, `fins` or `al`. The vocabulary attributes each one to a specific IEC work. DIEC2 gives `de` and `a` as correlative point-of-departure and point-of-arrival prepositions. DIEC2 and the *Gramàtica essencial de la llengua catalana* (GEIEC) give `fins` as a limit of time. Optimot covers `a partir de`. The IEC *Gramàtica de la llengua catalana*, section 16.3, covers the obligatory contractions `del` and `al`. The from-lead matters structurally: `a` is a hyper-common preposition. A bare `A a B` is only trusted as a range when a from-lead is present. `entre … i …` is the other frame, cited to DIEC2 under *entre*.
+**Ranges** carry the fullest citation record in the locale. The `from` lead is `de`, `des de`, `del` or `a partir de` and the `to` boundary is `a`, `fins a`, `fins` or `al`. The vocabulary attributes each one to a specific IEC work. DIEC2 gives `de` and `a` as correlative point-of-departure and point-of-arrival prepositions. DIEC2 and the *Gramàtica essencial de la llengua catalana* (GEIEC) give `fins` as a limit of time.
+
+Optimot covers `a partir de`. The IEC *Gramàtica de la llengua catalana*, section 16.3, covers the obligatory contractions `del` and `al`. The from-lead matters structurally: `a` is a hyper-common preposition. A bare `A a B` is only trusted as a range when a from-lead is present. `entre … i …` is the other frame, cited to DIEC2 under *entre*.
 
 **The clock** subtracts with `menys` (`les quatre menys quart` is 03:45) and adds with `i`: `les vuit i mitja`, `les vuit i quart`. `migdia` and `mitjanit` are points.
 
@@ -51,6 +53,8 @@ The `migdia` band ships no day-part vocabulary of its own, so `al migdia` reache
 **Quarters, ISO weeks, decades and eras.** `el primer trimestre de 2020`, `setmana 12`, `els anys 80`, `els anys vuitanta`, `44 aC` and `1990 dC` all resolve. A before-present marker ships. `la primera meitat de 2020` reads as the first half-year, with `meitat` cited to DIEC2. The plural year noun `anys` has its own file, apart from the singular `any`, because the *Gran diccionari* glosses `els anys vint` as the decade, while `l'any 1931` names a single year. With two files, the wrong reading cannot bind.
 
 **Holidays** resolve: `Nadal` comes back as 25 December, by way of the Andorran civil-holiday table, Catalan being Andorra's official language.
+
+**The ordinal last** is `últim`, `última`, `ultim`, `ultima`, `darrer`, `darrera`, `darrers` and `darreres`. `el darrer dilluns d'octubre` is 30 October and `l'últim dia de març` is 31 March, both read at 13:04 on 27 June 2017. The `darrer` forms in `marker_ordlast.voc` record no source.
 
 **The Roman calendar anchors** ship in their Catalan vernacular forms `calendes`, `nones` and `ides`, cited to the Catalan Wikipedia article *Calendari romà*.
 
@@ -81,8 +85,6 @@ It glosses *entre* as "en el temps que separa dos moments, dos esdeveniments". I
 ## Known defects
 
 These are wrong answers, not refusals, and each is reproduced with `extract_timespan(text, "ca", anchor=datetime(2017, 6, 27, 13, 4))`.
-
-`el darrer dilluns d'octubre` comes back as the whole of October with `el darrer d` stranded, instead of 30 October. `marker_ordlast` holds only `últim`, `última`, `ultim` and `ultima`. `darrer` is missing from it. The parse degrades to the bare month rather than failing. `l'últim dia de març` resolves correctly. The Occitan locale gets the same sentence right.
 
 `idus de març` comes back as the whole of March with `idus de` stranded. The Catalan Wikipedia article that the anchors cite gives the day as "Idus o Ides". Only `ides` ships. `ides de març` is correct at 15 March while its equally attested twin silently widens to the month.
 
@@ -149,8 +151,6 @@ Each line is an open issue with a strict `xfail` test for this language. The lin
 - A clock with a fraction before a dated day reads only the hour. Example (reader `extract_timespan`, lang `ca`, anchor 2026-11-22 09:00): `a les deu i quart del dia 14 de març` gives 2026-11-22 10:00 to 2026-11-22 10:01 and `i quart del dia 14 de març` left over. [#1300](https://github.com/TigreGotico/chronologia/issues/1300)
 
 **Dates, ranges and weeks**
-
-- The last weekday of a month gives the whole month, or the weekday alone. Example (reader `extract_timespan`, lang `ca`, anchor 2017-06-27 13:04): `el darrer dilluns de març` gives 2018-03-01 00:00 to 2018-04-01 00:00 and `el darrer de` left over. [#1005](https://github.com/TigreGotico/chronologia/issues/1005)
 
 - A date built from two parts loses one of them. Example (reader `extract_timespan`, lang `ca`, anchor 2017-06-27 00:00): `Toca satanic black metal 2 dies per a aquest divendres` gives 2017-06-30 00:00 to 2017-07-01 00:00 and `Toca satanic black metal 2 dies per a` left over. [#1034](https://github.com/TigreGotico/chronologia/issues/1034)
 

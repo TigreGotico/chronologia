@@ -38,9 +38,11 @@ To read a phrase, call `extract_timespan` with the phrase, the locale code and a
 
 **Half and quarter quantifiers** ship as general-purpose fractions (`نیم` for one half, `ربع` for one quarter) and resolve `نیم ساعت` to a thirty-minute duration and `ربع ساعت` to a fifteen-minute one. Wiktionary's entry for `ربع` glosses it "quarter, one-fourth" and gives `دو و ربع` ("two and a quarter") as its own worked example for quarter-past-two on a clock, confirming the fraction is the same word Persian speakers use for a spoken clock time, not only a duration word.
 
-**The clock**, despite that, ships only two shapes: a bare digit clock (`۱۵:۳۰`, `15:30`) and the marked hour `ساعت N` / `راس ساعت N`, plus the two landmarks `ظهر` (noon) and `نیمه‌شب` (midnight). There is no `دو و ربع`-style spelled fractional clock construction wired into `clock_time`: see Weaker provenance.
+**The clock**, despite that, ships three shapes: a bare digit clock (`۱۵:۳۰`, `15:30`), the marked hour `ساعت N` / `راس ساعت N`, and an hour followed by a part of the day, where `ساعت` is optional. The phrase `هفت صبح` reads 07:00. The phrase `هشت شب` reads 20:00. The phrase `ساعت سه شب` reads 03:00. The word `شب` is a night word.
 
-**Day parts** take their boundaries from the Unicode CLDR 47 day-period chart for `fa`: `night2` `[00:00, 01:00)`, `morning1` `[01:00, 04:00)`, `morning2` `[04:00, 12:00)`, `afternoon1` `[12:00, 13:00)`, `afternoon2` `[13:00, 19:00)`, `night1` `[19:00, 24:00)`. Three surfaces ship, each merging adjacent CLDR bands into the single vocabulary a Persian speaker actually reaches for: `صبح` (morning) for `morning2`, cited to CLDR `fa` `morning2` and to the Persian Wiktionary entry for `صبح`, `بعدازظهر`/`عصر` (afternoon) for the combined `afternoon1`+`afternoon2` span, cited to CLDR `fa` `afternoon1`/`afternoon2`, and `شب` (night) for `night1`, cited to CLDR `fa` `night1` and Wiktionary's entry for `شب`. The CLDR `morning1` (01:00-04:00) and `night2` (00:00-01:00) bands have no shipped surface at all. No Persian word in this vocabulary names the small hours between midnight and four as their own band.
+The file `clock_meridiem_night.voc` cites the Wiktionary entry `شب`, which gives "night" and "evening" as its senses. The resolver splits the night band at midnight. The clock also has the two landmarks `ظهر` (noon) and `نیمه‌شب` (midnight). There is no `دو و ربع`-style spelled fractional clock construction wired into `clock_time`: see Weaker provenance.
+
+**Day parts** take their boundaries from the Unicode CLDR 47 day-period chart for `fa`: `night2` `[00:00, 01:00)`, `morning1` `[01:00, 04:00)`, `morning2` `[04:00, 12:00)`, `afternoon1` `[12:00, 13:00)`, `afternoon2` `[13:00, 19:00)`, `night1` `[19:00, 24:00)`. Three surfaces ship, each merging adjacent CLDR bands into the single vocabulary a Persian speaker actually reaches for: `صبح` (morning) for `morning2`, cited to CLDR `fa` `morning2` and to the Persian Wiktionary entry for `صبح`, `بعدازظهر`/`عصر` (afternoon) for the combined `afternoon1`+`afternoon2` span, cited to CLDR `fa` `afternoon1`/`afternoon2`, and `شب` (night) for `night1`, cited to CLDR `fa` `night1` and Wiktionary's entry for `شب`. The adjectival length `ده دقیقه‌ای` reads as ten minutes, through the lemma map in `lang.json`. The CLDR `morning1` (01:00-04:00) and `night2` (00:00-01:00) bands have no shipped surface at all. No Persian word in this vocabulary names the small hours between midnight and four as their own band.
 
 **Fuzzy period parts** are `اوایل`/`ابتدای`/`ابتدا` (early), `اواسط`/`وسط`/ `میانه` (mid), and `اواخر`/`آخر`/`پایان` (late).
 
@@ -97,8 +99,6 @@ Each line is an open issue with a strict `xfail` test for this language. The lin
 
 - A digit clock written with a space reads only the hour. Example (reader `extract_timespan`, lang `fa`, anchor 2017-06-27 13:04): `در ساعت 10 30` gives 2017-06-27 22:00 to 2017-06-27 22:01 and `در 30` left over. [#1012](https://github.com/TigreGotico/chronologia/issues/1012)
 
-- Compound numbers lose the tens, and a clock loses the hour or the night. Example (reader `extract_timespan`, lang `fa`, anchor 2017-06-27 13:04): `یک زنگ ساعت برای هفت صبح بگذار` gives 2017-06-27 01:00 to 2017-06-27 12:00 and `یک زنگ ساعت برای هفت بگذار` left over. [#1018](https://github.com/TigreGotico/chronologia/issues/1018)
-
 - A clock with minutes after a joining word reads only the hour. Example (reader `extract_timespan`, lang `fa`, anchor 2017-06-27 13:04): `ساعت ۲۲ و ۴۵ دقیقه` gives 2017-06-27 22:00 to 2017-06-27 22:01 and `و ۴۵ دقیقه` left over. [#1345](https://github.com/TigreGotico/chronologia/issues/1345)
 
 - A verb prefix reads as a month name, or a weekday reads as another day. Example (reader `extract_timespan`, lang `fa`, anchor 2017-06-27 13:04): `می خوام برم` gives 2018-05-01 00:00 to 2018-06-01 00:00 and `خوام برم` left over. [#989](https://github.com/TigreGotico/chronologia/issues/989)
@@ -110,6 +110,8 @@ Each line is an open issue with a strict `xfail` test for this language. The lin
 - Text that is no date reads as a date, or the wrong reading wins. Example (reader `extract_timespan`, lang `fa`, anchor 2026-03-11 10:00): `یک ساعت و پنجاه و هفت و نیم دقیقه طول می` gives 2026-05-01 00:00 to 2026-06-01 00:00 and `یک ساعت و پنجاه و هفت و نیم دقیقه طول` left over. [#1035](https://github.com/TigreGotico/chronologia/issues/1035)
 
 - A decimal count is dropped from the length. Example (reader `extract_duration`, lang `fa`, anchor 2017-06-27 13:04): `7.5 ثانیه` gives no length. [#1204](https://github.com/TigreGotico/chronologia/issues/1204)
+
+- A count of nights reads as a clock. Example (reader `extract_timespan`, lang `fa`, anchor 2017-06-27 13:04): `دو شب پیش` gives 2017-06-28 02:00 to 2017-06-28 02:01 and `پیش` left over. [#1382](https://github.com/TigreGotico/chronologia/issues/1382)
 
 ---
 [← Occitan](oc.md) · [Home](../index.md) · [Polish →](pl.md)

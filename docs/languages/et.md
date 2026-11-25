@@ -24,7 +24,9 @@ To read a phrase, call `extract_timespan` with the phrase, the locale code and a
 
 ## What ships
 
-**The date line** is little-endian. `lang.json` lists `calendar_date` in `base_grammar.disable` and defines its own in its place. It uses the orders `DAY MONTH YEAR?` and `MONTH DAY? YEAR?` (day-led first, month-led as the fallback). They match the CLDR 47 `ca-gregorian` chart for `et` at every level. The formats are full `EEEE, d. MMMM y`, long `d. MMMM y`, medium `d. MMM y` and short `dd.MM.yy`. Estonian spells the day of month with an ordinal (`viieteistkümnes aprill`, "the fifteenth of April"). numtag reads the ordinal words. It reads one word for the days 1-20 and 30. It reads two words for the compound tens 21-29/31 (`kahekümne esimene`). chronologia folds both to the day: `kahekümne esimene aprill` is 21 April.
+**The date line** is little-endian. `lang.json` lists `calendar_date` in `base_grammar.disable` and defines its own in its place. It uses the orders `DAY MONTH YEAR?` and `MONTH DAY? YEAR?` (day-led first, month-led as the fallback). They match the CLDR 47 `ca-gregorian` chart for `et` at every level. The formats are full `EEEE, d. MMMM y`, long `d. MMMM y`, medium `d. MMM y` and short `dd.MM.yy`.
+
+Estonian spells the day of month with an ordinal (`viieteistkümnes aprill`, "the fifteenth of April"). numtag reads the ordinal words. It reads one word for the days 1-20 and 30. It reads two words for the compound tens 21-29/31 (`kahekümne esimene`). chronologia folds both to the day: `kahekümne esimene aprill` is 21 April.
 
 **Weekdays and months** ship in the nominative plus the adessive case that "on Monday" / "in May" phrases use (`esmaspäev`/`esmaspäeval`, `jaanuar`/`jaanuari`/`jaanuaris`/`jaanuaril`, `mai`/`maikuu`/`mais`/`mail`) with no recorded citation for the case choice. The project's own date-sweep test corpus attests the surfaces (`test_et_full_date_sweep.py`, `test_et_month_year_sweep.py`).
 

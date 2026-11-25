@@ -65,7 +65,7 @@ See [timezones.md](timezones.md), where `resolve_wall_clock` returns the pair of
 
 ### INSERT, a day no calendar would generate
 
-Sweden spent twelve years bungling its switch to the Gregorian calendar. It began a gradual transition and abandoned it. To climb back onto the Julian calendar it needed a one-off extra day in 1712: a **February 30th**, a date that has existed once in human history.
+Sweden spent twelve years bungling its switch to the Gregorian calendar. It began a gradual transition and abandoned it. To climb back onto the Julian calendar it needed a one-off extra day in 1712. That day was a **February 30th**, a date that has existed once in human history.
 
 ```python
 sweden = TIMELINES["sweden_1700_1712"]

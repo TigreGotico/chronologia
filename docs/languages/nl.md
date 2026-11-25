@@ -42,7 +42,9 @@ To read a phrase, call `extract_timespan` with the phrase, the locale code and a
 
 **Day parts** take their boundaries from the Unicode CLDR 47 day-period chart for `nl`, transcribed in `chronologia/dayparts.py`: `nacht` `[00:00, 06:00)`, `ochtend` `[06:00, 12:00)`, `middag` `[12:00, 18:00)`, `avond` `[18:00, 24:00)`. The surfaces are cited to the Algemeen Nederlands Woordenboek at the Instituut voor de Nederlandse Taal. The `avond` runs to midnight and the `nacht` takes over after it.
 
-Dutch has a fused today-plus-band word for each band. `vanavond`, `vanochtend`, `vannacht` and `vanmorgen` ship as their own surfaces. They already name today's band, so they do not compose with the clock's future-roll rule. `vanmorgen` is the one worth explaining. It is a synonym of `vanochtend` that the ANW carries as its own entry. The `morgen` inside it is the older Dutch word for the morning itself, as in `goedemorgen`: not the `morgen` that means tomorrow everywhere else in this locale. The two never compete, because `vanmorgen` is a single fused token and not a split `van` plus `morgen`.
+**`vanmiddag`** is the afternoon of today, `[12:00, 18:00)`. `daypart_middag_nl.voc` cites Wiktionary, `vanmiddag`: "this afternoon, the afternoon of the current day". At 13:04 on 27 June 2017, `laat me vanmiddag weten dat ik de loodgieter moet bellen` reads 12:00 to 18:00 and leaves `laat me weten dat ik de loodgieter moet bellen`.
+
+Dutch has a fused today-plus-band word for each band. `vanavond`, `vanochtend`, `vannacht`, `vanmorgen` and `vanmiddag` ship as their own surfaces. They already name today's band, so they do not compose with the clock's future-roll rule. `vanmorgen` is the one worth explaining. It is a synonym of `vanochtend` that the ANW carries as its own entry. The `morgen` inside it is the older Dutch word for the morning itself, as in `goedemorgen`: not the `morgen` that means tomorrow everywhere else in this locale. The two never compete, because `vanmorgen` is a single fused token and not a split `van` plus `morgen`.
 
 **Ranges** are `van … tot …` and `tussen … en …`, with `sinds` opening one that runs to the anchor and `tot` closing one that starts there.
 
@@ -60,7 +62,7 @@ The seasons and the holiday vocabulary carry no recorded source.
 
 ## What refuses
 
-**The `middag` band as a day part.** `vanmiddag` returns nothing. `deze middag` resolves the noon point rather than the afternoon band, leaving `deze` in the remainder. The word `middag` is bound as the noon landmark, so the band it also names has no vocabulary of its own. German has the same collision between `Mittag` the hour and `Mittag` the point.
+**The `middag` band as a day part.** `deze middag` resolves the noon point rather than the afternoon band, leaving `deze` in the remainder. `'s middags` returns nothing on its own. The word `middag` is bound as the noon landmark, so the band it also names has no vocabulary of its own, apart from the fused word `vanmiddag`. German has the same collision between `Mittag` the hour and `Mittag` the point.
 
 **A bare duration.** `twee weken` and `een kwartier` return nothing on their own. A quantity with no direction marker is still only a quantity. With one, `over een kwartier` reads.
 
@@ -68,7 +70,7 @@ The seasons and the holiday vocabulary carry no recorded source.
 
 ## Open questions for a native speaker
 
-1. How should the afternoon band be reachable at all, given that `middag` is also the noon point? `vanmiddag` and `'s middags` are ordinary Dutch and neither of them reads.
+1. How should the afternoon band be reachable other than as `vanmiddag`, given that `middag` is also the noon point? `'s middags` is ordinary Dutch and does not read.
 2. Is `half juni` the ordinary way to say mid-June? It resolves the whole month with `half` unread, because the mid-month part words are `midden` and `medio`.
 3. Should the uninflected `komend` join `komende` as a "next" determiner? `komend weekend` leaves `komend` unread.
 4. Are `kalenden`, `nonen` and `iden` the forms Dutch historical writing uses?
@@ -92,7 +94,7 @@ Each example below runs as a doctest with a fixed anchor, so the output does not
     >>> span.start_datetime.isoformat(), rest
     ('2017-06-27T07:30:00', '')
     >>> anchor = datetime(2017, 6, 27, 13, 4)
-    >>> extract_timespan('vanmiddag', "nl", anchor) is None
+    >>> extract_timespan("'s middags", "nl", anchor) is None
     True
     >>> extract_timespan('twee weken', "nl", anchor) is None
     True
@@ -107,7 +109,9 @@ Each line is an open issue with a strict `xfail` test for this language. The lin
 
 **Clocks and parts of the day**
 
-- Some day-part words are not read, and a clock gives an eight-hour length. Example (reader `extract_timespan`, lang `nl`, anchor 2017-06-27 13:04): `laat me vanmiddag weten dat ik de loodgieter moet bellen` gives no reading. [#1022](https://github.com/TigreGotico/chronologia/issues/1022)
+- The words for the morning of weekdays and of the weekend are not read. Example (reader `extract_timespan`, lang `nl`, anchor 2017-06-27 13:04): `zeg me iedere werkdagochtend dat ik mijn vitamines moet nemen` gives no reading. [#1022](https://github.com/TigreGotico/chronologia/issues/1022)
+
+- A clock with minutes in words loses the minutes. Example (reader `extract_timespan`, lang `nl`, anchor 2017-06-27 13:04): `om 8 uur en 30 minuten` gives 2017-06-27 20:00 to 2017-06-27 20:01 and `en 30 minuten` left over. [#1380](https://github.com/TigreGotico/chronologia/issues/1380)
 
 - A clock with a dot between hour and minute gives no time. Example (reader `extract_timespan`, lang `nl`, anchor 2026-09-25 12:00): `om 8.30` gives no reading. [#1047](https://github.com/TigreGotico/chronologia/issues/1047)
 
