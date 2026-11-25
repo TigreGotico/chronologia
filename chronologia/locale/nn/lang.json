@@ -167,20 +167,17 @@
     "bare_year_min_digits": 4
   },
   "number_fold": {
-    "word_numbers": {
-      "fyrste": [
-        1,
-        true
-      ],
-      "tjuefyrste": [
-        21,
-        true
-      ],
-      "trettifyrste": [
-        31,
-        true
-      ]
-    }
+    "word_numbers": [
+      {
+        "words": {
+          "fyrste": 1,
+          "tjuefyrste": 21,
+          "trettifyrste": 31
+        },
+        "ordinal": true,
+        "source": "numtag reads no number in \"fyrste\" and its compounds (numtag#141)"
+      }
+    ]
   },
   "base_grammar": {
     "disable": [

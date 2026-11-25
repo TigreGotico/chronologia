@@ -188,40 +188,26 @@
     "bare_year_min_digits": 4
   },
   "number_fold": {
-    "word_numbers": {
-      "fuenf": [
-        5,
-        false
-      ],
-      "fuenfzehn": [
-        15,
-        false
-      ],
-      "fuenfzig": [
-        50,
-        false
-      ],
-      "fuenfte": [
-        5,
-        true
-      ],
-      "fuenften": [
-        5,
-        true
-      ],
-      "zwoelf": [
-        12,
-        false
-      ],
-      "zwoelfte": [
-        12,
-        true
-      ],
-      "zwoelften": [
-        12,
-        true
-      ]
-    }
+    "word_numbers": [
+      {
+        "words": {
+          "fuenf": 5,
+          "fuenfzehn": 15,
+          "fuenfzig": 50,
+          "zwoelf": 12
+        },
+        "ordinal": false
+      },
+      {
+        "words": {
+          "fuenfte": 5,
+          "fuenften": 5,
+          "zwoelfte": 12,
+          "zwoelften": 12
+        },
+        "ordinal": true
+      }
+    ]
   },
   "base_grammar": {
     "extend": {

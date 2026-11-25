@@ -172,13 +172,15 @@
         "tails": [
           "timme",
           "timmen"
-        ]
+        ],
+        "source": "Swedish counts a fraction of an hour as a length with the article and the bare fraction word, or with the compound noun: \"om en halv timme\" / \"om en halvtimme\" (in half an hour), \"om en kvart\" (in a quarter of an hour). Wiktionary: halvtimme \"half an hour, a half-hour\"; kvart \"a quarter of an hour, 15 minutes\"."
       }
     ],
     "fraction_counts": [
       {
         "word": "halv",
-        "value": 0.5
+        "value": 0.5,
+        "source": "\"halv\" and \"kvart\" are kept out of the cardinal fold because the clock reads them as FRACTION (\"halv tre\" = 02:30, \"kvart över tre\" = 03:15), so the length reading is rewritten here instead, and only where a unit noun follows or the phrase is the bare \"en kvart\" with no clock direction after it: the count 1 and the fraction word become one 0.5 / 0.25 count, and the compound splits into its two words first."
       },
       {
         "word": "kvart",

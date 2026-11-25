@@ -385,12 +385,14 @@ The safest approach is to copy the `constructions` block from the language close
 
 The object lists what the `.voc` files cannot say. Every key is optional:
 
-- `word_numbers`: words numtag does not read. Each word maps to `[value, is_ordinal]`, as in `"annen": [2, true]`.
+- `word_numbers`: rows `{"words": {word: value}, "ordinal": bool}` for words numtag does not read, as in `{"words": {"annen": 2, "annet": 2}, "ordinal": true}`.
 - `ordinal_suffixes`: the lone suffixes of a digit ordinal. The tokenizer reads "21e" as "21" and "e", and a suffix in this list merges back into an ordinal.
-- `phrase_numbers`: two words that name one number: `"een paar": 2`.
-- `compounds`: rows of `{"heads": {head: reading}, "tails": [...]}`. A word that is exactly a head and a tail splits into two tokens before range detection, so "morgenochtend" reads as "morgen" and "ochtend".
+- `phrase_numbers`: rows `{"words": "een paar", "value": 2}` for two words that name one number.
+- `compounds`: rows `{"heads": {head: reading}, "tails": [...]}`. A word that is exactly a head and a tail splits into two tokens before range detection, so "morgenochtend" reads as "morgen" and "ochtend".
 - `fraction_counts`: rows that fold the count 1 and a fraction word into the fraction. A row names `word` and `value`. A row with `unit` makes the fraction word name that unit ("en kvart" is a quarter of an hour), unless the next word is in `not_before`.
 - `h_clock_markers`: the words before which "21h30" is a clock time. Without a marker "21h30" is a duration.
+
+Every row may carry a `source`, a string that cites where its data comes from: a dictionary entry, a corpus sentence, a numtag issue. The schema refuses any other key in a row, so a misspelt key is an error and not a silent default.
 
 The fold also reads the `clock_fraction_*.voc`, `scale_*.voc`, `marker_since.voc`, `marker_until.voc`, `unit_*.voc`, `month_*.voc` and `currency*.voc` files of the locale. They tell a count from a year and keep the half of a clock hour a word.
 

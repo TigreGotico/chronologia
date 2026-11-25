@@ -1019,6 +1019,15 @@ NUMBER_FOLD_KEYS = frozenset({
     "word_numbers", "ordinal_suffixes", "phrase_numbers", "compounds",
     "fraction_counts", "h_clock_markers"})
 
+#: The keys of a row of each knob that holds rows: the required keys, then the
+#: optional ones.  Every row may carry a ``source``, the citation of its data.
+NUMBER_FOLD_ROWS = {
+    "word_numbers": (("words", "ordinal"), ("source",)),
+    "phrase_numbers": (("words", "value"), ("source",)),
+    "compounds": (("heads", "tails"), ("source",)),
+    "fraction_counts": (("word", "value"), ("unit", "not_before", "source")),
+}
+
 Fold = Callable[[Tuple[Token, ...]], Tuple[Token, ...]]
 
 
@@ -1110,11 +1119,13 @@ def number_fold(lang: str, cfg: Mapping) -> Tuple[Fold, Optional[Fold]]:
     (:func:`date_words`).  The object adds what the files cannot say:
 
     ``word_numbers``
-        Words numtag does not read: the word maps to ``[value, is_ordinal]``.
+        Rows ``{"words": {word: value}, "ordinal": bool}``: words numtag
+        does not read, with their value and whether they are ordinals.
     ``ordinal_suffixes``
         The lone suffixes of a digit ordinal: "21e" is written "21" and "e".
     ``phrase_numbers``
-        Two words that name one number: ``{"een paar": 2}``.
+        Rows ``{"words": "een paar", "value": 2}``: two words that name one
+        number.
     ``compounds``
         Rows ``{"heads": {head: reading}, "tails": [...]}``.  A word that is
         a head and a tail splits in two before the grammar reads the stream
@@ -1124,15 +1135,18 @@ def number_fold(lang: str, cfg: Mapping) -> Tuple[Fold, Optional[Fold]]:
     ``h_clock_markers``
         The words before which "21h30" is a clock time
         (:func:`collapse_marked_h_clock`).
+
+    Every row may carry a ``source`` string, the citation of its data.
     """
     words = DateWords(lang=lang,
                       fractions=locale_words(lang, "clock_fraction_"),
                       counts=count_words(lang))
-    table = {word: (value, ordinal)
-             for word, (value, ordinal) in cfg.get("word_numbers", {}).items()}
+    table = {word: (value, row["ordinal"])
+             for row in cfg.get("word_numbers", ())
+             for word, value in row["words"].items()}
     suffixes = frozenset(cfg.get("ordinal_suffixes", ()))
-    phrases = {tuple(key.split()): value
-               for key, value in cfg.get("phrase_numbers", {}).items()}
+    phrases = {tuple(row["words"].split()): row["value"]
+               for row in cfg.get("phrase_numbers", ())}
     fractions = tuple(cfg.get("fraction_counts", ()))
     markers = frozenset(cfg.get("h_clock_markers", ()))
     heads = tuple(sorted(

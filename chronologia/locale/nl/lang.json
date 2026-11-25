@@ -169,21 +169,28 @@
     "bare_year_min_digits": 4
   },
   "number_fold": {
-    "word_numbers": {
-      "anderhalve": [
-        1.5,
-        false
-      ]
-    },
+    "word_numbers": [
+      {
+        "words": {
+          "anderhalve": 1.5
+        },
+        "ordinal": false,
+        "source": "\"anderhalve\" is the form of \"anderhalf\" before a de-word (\"anderhalve week\"); numtag reads only \"anderhalf\".  Van Dale: both are 1,5."
+      }
+    ],
     "ordinal_suffixes": [
       "de",
       "e",
       "ste",
       "te"
     ],
-    "phrase_numbers": {
-      "een paar": 2
-    },
+    "phrase_numbers": [
+      {
+        "words": "een paar",
+        "value": 2,
+        "source": "\"een paar\" is \"a couple\": two.  Van Dale, \"paar\": \"een paar: twee, enkele\"."
+      }
+    ],
     "compounds": [
       {
         "heads": {

@@ -47,7 +47,7 @@ from chronologia.extract.base_grammar import (BASE_GRAMMAR,
                                               MARKER_POSTFIX_ORDERS,
                                               SEASON_YEAR_FIRST_ORDERS)
 from chronologia.extract.compiler import PRECEDENCE, UNIMPLEMENTED
-from chronologia.extract.numlayer import NUMBER_FOLD_KEYS
+from chronologia.extract.numlayer import NUMBER_FOLD_KEYS, NUMBER_FOLD_ROWS
 
 #: bump when the checker's accepted shape changes.
 SCHEMA_VERSION = 1
@@ -262,9 +262,15 @@ def validate_config(cfg: dict, lang: str) -> List[str]:
     for key in cfg.get("guards", {}):
         if key not in GUARD_KEYS:
             errors.append(f"{ctx} unknown guards key {key!r}")
-    for key in cfg.get("number_fold", {}):
+    for key, value in cfg.get("number_fold", {}).items():
         if key not in NUMBER_FOLD_KEYS:
             errors.append(f"{ctx} unknown number_fold key {key!r}")
+        for row in value if key in NUMBER_FOLD_ROWS else ():
+            required, optional = NUMBER_FOLD_ROWS[key]
+            errors.extend(f"{ctx} number_fold {key} row has unknown key {k!r}"
+                          for k in row if k not in required + optional)
+            errors.extend(f"{ctx} number_fold {key} row lacks {k!r}"
+                          for k in required if k not in row)
     if "number_fold" in cfg and ("hook" in cfg or "pre_hook" in cfg):
         errors.append(f"{ctx} 'number_fold' replaces 'hook' and 'pre_hook'")
 

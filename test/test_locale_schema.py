@@ -83,6 +83,22 @@ def test_unknown_number_fold_key_is_flagged():
     assert errs == ["[xx] unknown number_fold key 'word_numbres'"]
 
 
+def test_misspelt_number_fold_row_key_is_flagged():
+    cfg = {"number_fold": {
+        "compounds": [{"heads": {"a": "a"}, "tail": ["b"]}],
+        "fraction_counts": [{"word": "halv", "value": 0.5, "uint": "timme"}]}}
+    assert validate_config(cfg, "xx") == [
+        "[xx] number_fold compounds row has unknown key 'tail'",
+        "[xx] number_fold compounds row lacks 'tails'",
+        "[xx] number_fold fraction_counts row has unknown key 'uint'"]
+
+
+def test_number_fold_row_takes_a_source():
+    cfg = {"number_fold": {"phrase_numbers": [
+        {"words": "een paar", "value": 2, "source": "Van Dale"}]}}
+    assert validate_config(cfg, "xx") == []
+
+
 def test_number_fold_with_hook_is_flagged():
     cfg = {"number_fold": {}, "hook": "a.b:c"}
     assert any("replaces 'hook'" in e for e in validate_config(cfg, "xx"))

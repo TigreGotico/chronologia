@@ -167,16 +167,16 @@
     "bare_year_min_digits": 4
   },
   "number_fold": {
-    "word_numbers": {
-      "annen": [
-        2,
-        true
-      ],
-      "annet": [
-        2,
-        true
-      ]
-    }
+    "word_numbers": [
+      {
+        "words": {
+          "annen": 2,
+          "annet": 2
+        },
+        "ordinal": true,
+        "source": "numtag reads no number in \"annen\" (numtag#140) or \"annet\" (numtag#246)"
+      }
+    ]
   },
   "base_grammar": {
     "disable": [
