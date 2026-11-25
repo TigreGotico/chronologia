@@ -80,6 +80,11 @@ UNTIL_MONTH = {"en": "december", "pt": "dezembro", "es": "diciembre", "de": "Dez
                "fr": "décembre", "it": "dicembre", "nl": "december", "ca": "desembre",
                "gl": "decembro"}
 
+# A duration bound after a range: "every day from june until august for 5 weeks".
+FOR_WEEKS = {"en": "for 5 weeks", "pt": "durante 5 semanas", "es": "durante 5 semanas",
+             "de": "für 5 Wochen", "fr": "pendant 5 semaines", "it": "per 5 settimane",
+             "nl": "gedurende 5 weken", "ca": "durant 5 setmanes", "gl": "durante 5 semanas"}
+
 # "every day" and a weekday pair written with the locale's abbreviations.
 ABBREVIATED_WEEKDAYS = {
     "en": ("every day", ("mon", "fri")),
@@ -96,6 +101,18 @@ ABBREVIATED_WEEKDAYS = {
 # A date range with an inner "de": "from 3 de junho until 5 de agosto".
 INNER_DE_RANGES = {"pt": "de 3 de junho até 5 de agosto",
                    "es": "del 3 de junio hasta el 5 de agosto"}
+
+# A rule, a left bound, an until word with an article and a day number:
+# ca "cada dia de dilluns fins al 5 de desembre", pt "todo dia de junho até o
+# dia 5 de agosto".
+DAY_NUMBER_RANGES = {
+    "ca": ("cada dia", "cada divendres", "de", ("dilluns", "juny", "3 de juny"),
+           ("fins al", "fins a", "fins al dia"),
+           ("5 de desembre", "24 de desembre", "1 de gener", "5 d'agost")),
+    "pt": ("todo dia", "toda sexta", "de", ("segunda", "junho", "3 de junho"),
+           ("até o dia", "até dia", "até ao dia", "até"),
+           ("5 de agosto", "15 de junho", "5 de dezembro", "dia 5 de agosto")),
+}
 
 MONTHS = ("january", "february", "march", "april", "may", "june", "july",
           "august", "september", "october", "november", "december")
@@ -172,6 +189,15 @@ def grid_inputs() -> Set[Tuple[str, str]]:
                 found.add((lang, f"{every} {weekday} {bound}"))
 
         every_day, (first_day, last_day) = ABBREVIATED_WEEKDAYS[lang]
+        month_range = f"{frm} {months[0]} {until} {months[1]}"
+        for bound in (f"{month_range} {FOR_WEEKS[lang]}",
+                      f"{FOR_WEEKS[lang]} {month_range}",
+                      f"{between} {months[0]} {and_} {months[1]} {until} {UNTIL_MONTH[lang]}",
+                      f"{between} {weekdays[0]} {and_} {weekdays[1]} {until} {UNTIL_MONTH[lang]}"):
+            found.add((lang, bound))
+            found.add((lang, f"{every_day} {bound}"))
+            for weekday in weekdays:
+                found.add((lang, f"{every} {weekday} {bound}"))
         for connector in (to, until):
             bound = f"{frm} {first_day} {connector} {last_day}"
             found.add((lang, bound))
@@ -182,6 +208,12 @@ def grid_inputs() -> Set[Tuple[str, str]]:
             found.add((lang, INNER_DE_RANGES[lang]))
             for weekday in weekdays:
                 found.add((lang, f"{every} {weekday} {INNER_DE_RANGES[lang]}"))
+    for lang, (daily, weekly, frm, lefts, untils, rights) in DAY_NUMBER_RANGES.items():
+        for rule in (daily, weekly):
+            for left in lefts:
+                for until in untils:
+                    for right in rights:
+                        found.add((lang, f"{rule} {frm} {left} {until} {right}"))
     return found
 
 
