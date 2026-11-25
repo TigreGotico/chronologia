@@ -532,8 +532,10 @@ def _unambiguous_lead(spec, surfaces):
 
 class RangeBound(NamedTuple):
     """One bound of a range as its own slice reads it, before the range rolls
-    it into the other bound's cycle.  ``pieces`` holds the ``[start, end)``
-    offsets of each word the bound claims.
+    it into the other bound's cycle.  A slice keeps the month or year it
+    borrows from its partner, and the right bound of a since-until range is
+    read from the range start.  ``pieces`` holds the ``[start, end)`` offsets
+    of each word the bound claims.
 
     A range helper returns ``(span, remainder, extent, left, right)``; an open
     range has one bound, and the other is ``None``.
@@ -2262,7 +2264,6 @@ def _extract_directional_range(text, tokens, engine, anchor, scale_mode="short")
     right_ep = endpoint(right_tok, anchor if reads_day_word else start_dt)
     if right_ep is None:
         return None
-    bound_ep = right_ep if reads_day_word else endpoint(right_tok, anchor)
     end = right_ep[0].end
     start, end = _in_zone_of(start, end), _in_zone_of(end, start)
     if start >= end:
@@ -2273,7 +2274,7 @@ def _extract_directional_range(text, tokens, engine, anchor, scale_mode="short")
     return (DateSpan(start, end), remainder,
             join_extents(consumed_extent(tokens[lead:k]), right_ep[2]),
             RangeBound(left_ep[0], left_rem, left_pieces),
-            RangeBound(bound_ep[0], right_ep[1], right_ep[3]))
+            RangeBound(right_ep[0], right_ep[1], right_ep[3]))
 
 
 def _extract_open_range(text, tokens, engine, anchor, scale_mode="short"):

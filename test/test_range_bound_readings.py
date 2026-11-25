@@ -106,13 +106,17 @@ def alone(text, lang, anchor=ANCHOR):
     return extract_timespan(text, lang, anchor).span
 
 
-@pytest.mark.parametrize("lang, text, left, right", [
+def test_a_bound_span_is_the_endpoint_read_alone():
     # "dia 3" rolls back to 3 November in the range; alone it is 3 December
-    ("pt", "do dia 3 até hoje", "dia 3", "hoje"),
-    # the range starts last Monday; alone, the bounds read forward
-    ("en", "since monday until friday", "monday", "friday"),
+    span = read("do dia 3 até hoje", "pt", ANCHOR, first=True)[0]
+    assert span.left.span == alone("dia 3", "pt")
+    assert span.right.span == alone("hoje", "pt")
+
+
+@pytest.mark.parametrize("text", [
+    "since monday until friday",
+    "since noon until today saturday",
 ])
-def test_a_bound_span_is_the_endpoint_read_alone(lang, text, left, right):
-    span = read(text, lang, ANCHOR, first=True)[0]
-    assert span.left.span == alone(left, lang)
-    assert span.right.span == alone(right, lang)
+def test_a_since_until_right_bound_ends_the_range(text):
+    span = read(text, "en", ANCHOR, first=True)[0]
+    assert span.right.span.end == span.span.end

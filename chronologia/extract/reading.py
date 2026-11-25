@@ -45,7 +45,7 @@ class Reading:
     A range carries its bounds in ``left`` and ``right``; an open range has
     one of them.  A bound reads the stream before the number fold and claims
     exactly the tokens its endpoint reads.  Its ``span`` is the endpoint as
-    its own words read it, before the range rolls it.
+    its own slice reads it, before the range rolls it (see ``RangeBound``).
     """
 
     kind: str
