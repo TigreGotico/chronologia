@@ -3042,6 +3042,12 @@ class Resolver:
                       and meridiem.text in self.spec.daypart_today_words)
         if prefer_future and dt < anchor and not today_word:
             dt = dt + timedelta(days=1)
+        # "a las 2 esta noche" said by day: tonight's small hours fall on the
+        # next calendar day.  Said at 01:00, the night is already running.
+        if (match.construction == "clock_this_daypart"
+                and meridiem.text in self.spec.night_meridiems
+                and hour < 6 <= anchor.hour):
+            dt = dt + timedelta(days=1)
         start = AstroDate.from_datetime(dt)
         tz = self._zone_tzinfo(match.slots.get("ZONE"))
         if tz is not None:
@@ -3403,7 +3409,9 @@ class Resolver:
                 # noon); "am" demotes a spoken 12 (midnight) by 12 hours.
                 if off == 12 and spoken_hour < 12:
                     hour = (hour + 12) % 24
-                elif off == 0 and spoken_hour == 12:
+                # "12 this morning" is noon, as "this morning at 12" is.
+                elif (off == 0 and spoken_hour == 12
+                      and match.construction != "clock_this_daypart"):
                     hour = (hour - 12) % 24
         return hour, minute, second
 

@@ -619,6 +619,25 @@ def _alarm_hour_goes_on(tokens: Tuple[Token, ...], end: int,
                 and second[1].text in spec.units))
 
 
+def _meridiem_binds(tokens: Tuple[Token, ...], ti: int,
+                    spec: LangSpec) -> bool:
+    """Whether the part-of-day word at ``ti`` can set a clock's meridiem.
+
+    A part of day in the next sentence ("um 7 Uhr. Nachmittag habe ich
+    frei") does not.  A part-of-day noun ("Abend", "Nachmittag") does only
+    right after a today word ("um 8 Uhr heute Abend"); after a bare number
+    it is a count or an ordinal ("am 3. Abend", "Kapitel 5 Nachmittag").
+    The noun list is a locale fact (``marker_meridiem_after_deixis.voc``).
+    """
+    if tokens[ti].sentence_break_before:
+        return False
+    if tokens[ti].text not in spec.connectors.get("meridiem_after_deixis",
+                                                  frozenset()):
+        return True
+    return ti > 0 and tokens[ti - 1].text in spec.connectors.get(
+        "thisdeixis", frozenset())
+
+
 def _walk(elements: Tuple[SlotElement, ...], tokens: Tuple[Token, ...],
           ei: int, ti: int, spec: LangSpec,
           slots: Dict[str, Token]) -> Optional[Tuple[int, Dict[str, Token]]]:
@@ -648,7 +667,9 @@ def _walk(elements: Tuple[SlotElement, ...], tokens: Tuple[Token, ...],
         era_follows = (el.name == "YEAR" and ti + 1 < len(tokens)
                        and _is_era_marker(tokens[ti + 1], spec)
                        and any(e.name == "ERA" for e in elements[ei + 1:]))
-        if ti < len(tokens) and _bind(el, tokens[ti], spec, era_follows):
+        if (ti < len(tokens) and _bind(el, tokens[ti], spec, era_follows)
+                and (el.name != "MERIDIEM"
+                     or _meridiem_binds(tokens, ti, spec))):
             bound = dict(slots)
             bound["CLOCKDIR" if el.name == "CLOCKTO" else el.name] = tokens[ti]
             consider(_walk(elements, tokens, ei + 1, ti + 1, spec, bound))
@@ -669,7 +690,10 @@ def _walk(elements: Tuple[SlotElement, ...], tokens: Tuple[Token, ...],
                 consider(_walk(elements, tokens, ei + 1, ti + 2, spec, bound))
     else:
         consumed = _connector_span(el.name, tokens, ti, spec)
-        if consumed:
+        # "Wake me at 7. This evening I go out": a today word in the next
+        # sentence does not join the clock before it.
+        if consumed and not (el.name == "thisdeixis"
+                             and tokens[ti].sentence_break_before):
             consider(_walk(elements, tokens, ei + 1, ti + consumed, spec,
                            slots))
     if el.optional:

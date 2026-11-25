@@ -63,6 +63,12 @@
       ],
       "prefer_future": true
     },
+    "clock_this_daypart": {
+      "orders": [
+        "at? at? CLOCK thisdeixis MERIDIEM ZONE?",
+        "at? at? HOUR thisdeixis MERIDIEM ZONE?"
+      ]
+    },
     "era_bc": {
       "orders": [
         "NUM bc"

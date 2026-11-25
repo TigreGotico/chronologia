@@ -337,6 +337,10 @@ def _gap_breaks_clause(gap: str) -> bool:
     return (any(_is_clause_break(c) for c in gap)
             or ("-" in gap and gap != "-"))
 
+#: punctuation that ends a sentence between two tokens
+_SENTENCE_END = frozenset(".!?;\u2026\u037e\u061f\u06d4\u3002\uff01\uff1f\uff1b")
+
+
 class Tokenizer:
     """Configured once from a language's :class:`TokenizerModes`."""
 
@@ -662,6 +666,13 @@ class Tokenizer:
                                and t.char_start is not None
                                and _gap_breaks_clause(
                                    low[tokens[i - 1].char_end:t.char_start])),
+                           sentence_break_before=(
+                               i > 0 and tokens[i - 1].char_end is not None
+                               and t.char_start is not None
+                               and (not _SENTENCE_END.isdisjoint(
+                                   low[tokens[i - 1].char_end:t.char_start])
+                                    or (tokens[i - 1].is_number
+                                        and tokens[i - 1].raw.endswith(".")))),
                            trailing_dot=(t.char_end is not None
                                          and low[t.char_end:t.char_end + 1] == "."),
                            trailing_hyphen=(t.char_end is not None

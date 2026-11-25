@@ -120,6 +120,11 @@ class Token:
     # sat in different clauses; constructions that join neighbouring words
     # ("friday, next week ...") read it to refuse a join across the break.
     break_before: bool = False
+    # Whether a sentence end (. ! ? ; or an ellipsis) stood between the
+    # previous token and this one.  A comma sets ``break_before`` only.  A dot
+    # after digits ("a las 7. Esta noche") counts too, as the number token
+    # keeps that dot; a German ordinal dot ("am 3. Abend") also sets it.
+    sentence_break_before: bool = False
     # Whether this number token was folded from an ORDINAL ("second", "2nd",
     # Danish "2.", "terceira").  The value alone cannot tell "the second
     # week" (which week) from "two weeks" (how long), so the duration reader

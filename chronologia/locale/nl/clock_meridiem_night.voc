@@ -6,3 +6,5 @@
 # _clock_hms).  The AM ceiling follows the CLDR nl nacht band [00:00, 06:00)
 # transcribed for nl in chronologia/dayparts.py.
 nachts
+# "vannacht" names the night that starts on the anchor day.
+vannacht
