@@ -18,6 +18,8 @@ PAST_RANGE = [
     ("da", "billionte arbejdsdage"),
     ("nb", "1999 trillioner arbeidsdag"),
     ("en", "in 30000000 business days"),
+    # fewer days than the range holds, more business days than it holds
+    ("en", "in 2900000 business days"),
     ("en", "30000000 business days ago"),
     ("en", "30000000 business days after christmas"),
     ("en", "the 30000000th business day of july"),
