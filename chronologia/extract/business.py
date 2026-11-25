@@ -51,7 +51,7 @@ from typing import List, Optional, Set, Tuple
 
 from chronologia.civil_holidays import is_civil_holiday
 from chronologia.extract.anchored import _gap_words, _offset_base
-from chronologia.extract.impossible import decline, ordinal_cap
+from chronologia.extract.impossible import decline, ordinal, ordinal_cap
 from chronologia.extract.model import LangSpec, Match, Resolution, Token
 from chronologia.extract.resolver import (DATE_CONSTRUCTIONS, _add_months,
                                               _day_span, _midnight,
@@ -74,17 +74,35 @@ def _is_business_day(day: datetime, weekend_start: int,
 
 
 def _nth_business_day(base: datetime, n: int, sign: int, weekend_start: int,
-                      jurisdiction: Optional[str]) -> datetime:
+                      jurisdiction: Optional[str]) -> Optional[datetime]:
     """The ``n``-th business day strictly after (``sign>0``) or before
-    (``sign<0``) the midnight of ``base``."""
+    (``sign<0``) the midnight of ``base``, or ``None`` when it lies outside the
+    range ``datetime`` holds.
+
+    Every full week holds five business days, so without a jurisdiction the
+    whole weeks of the count are jumped in one step.  A holiday calendar
+    leaves no such shortcut and the count walks day by day, so a count larger
+    than the days left in the range is refused before the walk.
+    """
     day = _midnight(base)
+    if n > ((datetime.max if sign > 0 else datetime.min) - day).days * sign:
+        return None
     step = timedelta(days=1 if sign > 0 else -1)
-    seen = 0
-    while seen < n:
-        day = day + step
-        if _is_business_day(day, weekend_start, jurisdiction):
-            seen += 1
+    weeks = 0 if jurisdiction or n < 1 else (n - 1) // 5
+    try:
+        day += weeks * 7 * step
+        seen = weeks * 5
+        while seen < n:
+            day += step
+            if _is_business_day(day, weekend_start, jurisdiction):
+                seen += 1
+    except OverflowError:
+        return None
     return day
+
+
+def _out_of_range(n: int) -> str:
+    return f"the {ordinal(n)} business day is outside the dates a calendar holds"
 
 
 def _is_day_unit(tok: Token, spec: LangSpec) -> bool:
@@ -343,6 +361,9 @@ def apply_business_days(tokens, resolved: List[Pair], spec: LangSpec,
             claimed = set(range(s0, hi)) | scope_ids
             kept = [(m, r) for m, r in resolved
                     if not (set(range(*m.span)) & claimed)]
+            if value is None:
+                decline(_out_of_range(count))
+                return kept
             if mode == "nth" and value >= _add_months(first, 1):
                 # the count runs past the month's last business day: no day of
                 # that month is meant, so the phrase is claimed and refused.
@@ -373,10 +394,12 @@ def apply_business_days(tokens, resolved: List[Pair], spec: LangSpec,
             claimed = set(range(start, hi))
         value = _nth_business_day(base, count, sign, weekend_start,
                                   jurisdiction)
-        pair = (Match("business_days", (start, end), {}),
-                Resolution(_day_span(value), tuple(sorted(claimed))))
         kept = [(m, r) for m, r in resolved
                 if not (set(range(*m.span)) & claimed)]
-        kept.append(pair)
+        if value is None:
+            decline(_out_of_range(count))
+            return kept
+        kept.append((Match("business_days", (start, end), {}),
+                     Resolution(_day_span(value), tuple(sorted(claimed)))))
         return kept
     return resolved
