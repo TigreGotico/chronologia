@@ -97,6 +97,18 @@ ABBREVIATED_WEEKDAYS = {
 INNER_DE_RANGES = {"pt": "de 3 de junho até 5 de agosto",
                    "es": "del 3 de junio hasta el 5 de agosto"}
 
+# A rule, a left bound, an until word with an article and a day number:
+# ca "cada dia de dilluns fins al 5 de desembre", pt "todo dia de junho até o
+# dia 5 de agosto".
+DAY_NUMBER_RANGES = {
+    "ca": ("cada dia", "cada divendres", "de", ("dilluns", "juny", "3 de juny"),
+           ("fins al", "fins a", "fins al dia"),
+           ("5 de desembre", "24 de desembre", "1 de gener", "5 d'agost")),
+    "pt": ("todo dia", "toda sexta", "de", ("segunda", "junho", "3 de junho"),
+           ("até o dia", "até dia", "até ao dia", "até"),
+           ("5 de agosto", "15 de junho", "5 de dezembro", "dia 5 de agosto")),
+}
+
 MONTHS = ("january", "february", "march", "april", "may", "june", "july",
           "august", "september", "october", "november", "december")
 SPELLED = ("first", "second", "third", "fourth", "fifth", "sixth", "seventh",
@@ -182,6 +194,12 @@ def grid_inputs() -> Set[Tuple[str, str]]:
             found.add((lang, INNER_DE_RANGES[lang]))
             for weekday in weekdays:
                 found.add((lang, f"{every} {weekday} {INNER_DE_RANGES[lang]}"))
+    for lang, (daily, weekly, frm, lefts, untils, rights) in DAY_NUMBER_RANGES.items():
+        for rule in (daily, weekly):
+            for left in lefts:
+                for until in untils:
+                    for right in rights:
+                        found.add((lang, f"{rule} {frm} {left} {until} {right}"))
     return found
 
 
