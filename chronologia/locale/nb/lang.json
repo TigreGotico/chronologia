@@ -166,7 +166,18 @@
   "guards": {
     "bare_year_min_digits": 4
   },
-  "hook": "chronologia.extract.numlayer_nb:fold_nb",
+  "number_fold": {
+    "word_numbers": {
+      "annen": [
+        2,
+        true
+      ],
+      "annet": [
+        2,
+        true
+      ]
+    }
+  },
   "base_grammar": {
     "disable": [
       "calendar_date"

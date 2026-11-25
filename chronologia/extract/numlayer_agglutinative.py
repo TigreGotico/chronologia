@@ -4,7 +4,7 @@ layer.
 numtag reads the numbers of these languages, the case forms too: Finnish
 "kahden viikon" and "kolmelta", Estonian "kahe nädala" and "viiendal",
 Hungarian "háromkor" and "kétezer-huszonnégy", Basque "hirugarren".  The
-shared rules of :mod:`chronologia.extract.numlayer_germanic` claim the clock
+shared rules of :mod:`chronologia.extract.numlayer` claim the clock
 fractions, the deep-time scale words and the counts of things.  This module
 adds the passes that the clock and the date of each language need around
 that fold: the bare case-suffixed clock hour, the case suffix written after
@@ -19,9 +19,9 @@ from typing import Callable, Dict, FrozenSet, Optional, Tuple
 from numtag import Kind, tag_numbers
 
 from chronologia.extract.model import Token
+from chronologia.extract.numlayer import (DateWords, count_words, fold,
+                                          locale_words)
 from chronologia.extract.numfold_engine import reindex
-from chronologia.extract.numlayer_germanic import (DateWords, count_words, fold,
-                                                   locale_words)
 
 Fold = Callable[[Tuple[Token, ...]], Tuple[Token, ...]]
 

@@ -22,14 +22,14 @@ from dataclasses import dataclass, field, replace
 from fractions import Fraction
 from functools import lru_cache
 from pathlib import Path
-from typing import (Collection, Dict, FrozenSet, Mapping, Optional, Tuple,
-                    Union)
+from typing import (Callable, Collection, Dict, FrozenSet, Mapping,
+                    Optional, Set, Tuple, Union)
 
 from numtag import Form, Kind, NumberMention, Scale, tag_numbers
 from ovos_spec_tools import expand, read_resource_file
 
 from chronologia.extract.model import Token
-from chronologia.extract.numfold_engine import reindex
+from chronologia.extract.numfold_engine import reindex, run_extent
 
 #: chronologia locale -> numtag language.  chronologia's ``pt`` locale is
 #: European Portuguese and its ``fr`` locale the French of France.  A region
@@ -599,3 +599,555 @@ def fold_mentions(tokens: Tuple[Token, ...], lang: str,
             out.extend(reread(run, lang))
         i = j
     return reindex(out)
+
+
+# -- Date words of the languages numtag reads -------------------------------
+
+#: The claimed words, the words a language keeps as numbers against a shared
+#: claim, and the deep-time scale words with their factors, by token index.
+Claims = Tuple[Set[int], Set[int], Dict[int, int]]
+
+
+@lru_cache(maxsize=None)
+def locale_words(lang: str, *prefixes: str) -> FrozenSet[str]:
+    """The surfaces of every ``locale/<lang>/<prefix>*.voc`` file."""
+    out = set()
+    for path in sorted((_LOCALE_DIR / lang).glob("*.voc")):
+        if path.name.startswith(prefixes):
+            for template in read_resource_file(path):
+                out.update(s.lower() for s in expand(template, {}))
+    return frozenset(out)
+
+
+_scale_factors = lru_cache(maxsize=None)(scale_factors)
+
+
+@dataclass(frozen=True)
+class DateWords:
+    """The words of one language that the date grammar reads in a mention."""
+    #: The chronologia locale.
+    lang: str
+    #: The clock fractions: "halb", "viertel", "dreiviertel".
+    fractions: FrozenSet[str]
+    #: The words that tell a count from a year.
+    counts: CountWords
+
+
+def count_words(lang: str) -> CountWords:
+    """The :class:`CountWords` of a locale from its vocabulary files.
+
+    The cues are the year words, the year prepositions and the since words.
+    A since word makes a year of the number after it, and its until word makes
+    a year of the number that closes the range.
+    """
+    since = locale_words(lang, "marker_since")
+    until = locale_words(lang, "marker_until")
+    return CountWords(
+        scales=locale_words(lang, "scale_"),
+        cues=(locale_words(lang, "marker_year_word", "marker_in.") | since),
+        months=locale_words(lang, "month_"),
+        units=locale_words(lang, "unit_"),
+        currencies=locale_words(lang, "currency"),
+        ranges={word: until for word in since})
+
+
+def ends_mention(tok: Token) -> bool:
+    return tok.mention is not None and tok.mention.char_span[1] == tok.char_end
+
+
+def mention_end(tokens: Tuple[Token, ...], i: int) -> int:
+    """The index after the last token of the mention of ``tokens[i]``."""
+    j = i
+    while j < len(tokens) and tokens[j].mention is tokens[i].mention:
+        j += 1
+    return j
+
+
+def _claim_mention(tokens: Tuple[Token, ...], i: int, claimed: Set[int]):
+    """Claim every word of the mention that ends at ``tokens[i]``."""
+    k = i
+    while k >= 0 and tokens[k].mention is tokens[i].mention:
+        claimed.add(k)
+        k -= 1
+
+
+def date_words(tokens: Tuple[Token, ...], words: DateWords) -> Claims:
+    """The number words the date grammar reads as words, and the deep-time
+    scale words with their factors."""
+    claimed: Set[int] = set()
+    scales: Dict[int, int] = {}
+    factors = _scale_factors(words.lang)
+    year_words = locale_words(words.lang, "marker_year_word")
+    of = locale_words(words.lang, "marker_of")
+    roman = locale_words(words.lang, "roman_anchor_")
+    n = len(tokens)
+    for i, tok in enumerate(tokens):
+        if tok.mention is None or tok.is_number:
+            continue
+        nxt = tokens[i + 1].text if i + 1 < n else None
+        nxt2 = tokens[i + 2].text if i + 2 < n else None
+        end = mention_end(tokens, i)
+        after = tokens[end].text if end < n else None
+        after2 = tokens[end + 1].text if end + 1 < n else None
+        word = tok.text
+        if word in words.fractions:
+            # the half or quarter of a clock hour: "halb acht" is 7:30,
+            # "viertel nach drei" is 3:15.  In a count the fraction is part
+            # of the number and the mention is a cardinal
+            if ends_mention(tok) and tok.mention.kind is not Kind.CARDINAL:
+                claimed.add(i)
+        elif word in roman and nxt in of:
+            # the Roman Nones before the month; the ninth everywhere else
+            claimed.add(i)
+        elif (word in words.counts.scales
+              and tok.mention.kind is not Kind.ORDINAL
+              and tok.char_start != tok.mention.char_span[0]
+              and not any(t.text in words.counts.scales
+                          for t in tokens[i + 1:end])
+              and (after in year_words
+                   or (after in of and after2 in year_words))):
+            # the deep-time SCALE ("vor sechsundsechzig Millionen Jahren"):
+            # the count before it is the mention value in units of this word
+            factor = scale_factor(word, tok.mention, factors)
+            if factor is not None:
+                claimed.add(i)
+                scales[i] = factor
+        elif (ends_mention(tok) and after not in of
+              and counts_things(tokens, end, words.counts)):
+            # a count of things is no date number
+            _claim_mention(tokens, i, claimed)
+        elif (word in words.counts.scales and ends_mention(tok)
+              and nxt in of
+              and nxt2 not in words.counts.units
+              and scale_factor(word, tok.mention, factors) not in (None, 1000)):
+            # a scale noun that counts things after "von" ("eine Million von
+            # Gründen")
+            _claim_mention(tokens, i, claimed)
+    return claimed, set(), scales
+
+
+def merge_digit_ordinal(tokens: Tuple[Token, ...],
+                        suffixes: Collection[str]) -> Tuple[Token, ...]:
+    """Merge a digit and a lone ordinal suffix into one ordinal number token:
+    Dutch "21e" and "5de" are the tokens "21" and "e"."""
+    out = []
+    i = 0
+    n = len(tokens)
+    while i < n:
+        t = tokens[i]
+        nxt = tokens[i + 1] if i + 1 < n else None
+        if (t.is_number and nxt is not None and not nxt.is_number
+                and nxt.text in suffixes):
+            out.append(replace(t, raw=t.raw + nxt.raw, ordinal=True))
+            i += 2
+            continue
+        out.append(t)
+        i += 1
+    return reindex(tuple(out))
+
+
+def word_numbers(tokens: Tuple[Token, ...],
+                 table: Mapping[str, Tuple[Union[int, float], bool]]
+                 ) -> Tuple[Token, ...]:
+    """Turn each word of ``table`` that numtag does not read into a number
+    token: the word maps to its value and whether it is an ordinal."""
+    return reindex(tuple(
+        replace(t, text=str(table[t.text][0]), is_number=True,
+                value=table[t.text][0], ordinal=table[t.text][1])
+        if not t.is_number and t.mention is None and t.text in table else t
+        for t in tokens))
+
+
+def join_phrases(tokens: Tuple[Token, ...],
+                 phrases: Mapping[Tuple[str, str], Union[int, float]]
+                 ) -> Tuple[Token, ...]:
+    """Join a folded number word and the word after it into one number token
+    of the phrase value: Dutch "een paar" is 2."""
+    out = []
+    i = 0
+    n = len(tokens)
+    while i < n:
+        t = tokens[i]
+        nxt = tokens[i + 1] if i + 1 < n else None
+        word = t.mention.text.lower() if t.mention is not None else None
+        value = (phrases.get((word, nxt.text))
+                 if t.is_number and nxt is not None and not nxt.is_number
+                 else None)
+        if value is None:
+            out.append(t)
+            i += 1
+            continue
+        out.append(replace(t, text=str(value), raw=str(value), value=value,
+                           char_end=nxt.char_end, mention=None))
+        i += 2
+    return reindex(tuple(out))
+
+
+def fold(tokens: Tuple[Token, ...], words: DateWords,
+         extra: Optional[Callable[[Tuple[Token, ...]], Claims]] = None,
+         table: Optional[Mapping[str, Tuple[Union[int, float], bool]]] = None,
+         ordinal_suffixes: Collection[str] = (),
+         phrases: Optional[Mapping[Tuple[str, str], Union[int, float]]] = None
+         ) -> Tuple[Token, ...]:
+    """Fold every mention into one number token, except the words the date
+    grammar reads as words.  ``extra`` names the positions of the language's
+    own homographs; its claims join those of :func:`date_words`.  ``table``
+    holds the words numtag does not read, ``ordinal_suffixes`` the lone
+    suffixes of a digit ordinal, and ``phrases`` the two-word phrases that
+    name one number."""
+    if ordinal_suffixes:
+        tokens = merge_digit_ordinal(tokens, ordinal_suffixes)
+    tokens = reindex(withhold_split_counts(tokens, words.counts.units,
+                                           _scale_factors(words.lang)))
+    claimed, kept, scales = date_words(tokens, words)
+    if extra is not None:
+        more, more_kept, more_scales = extra(tokens)
+        claimed |= more
+        kept |= more_kept
+        scales.update(more_scales)
+    folded = fold_mentions(tokens, words.lang, claimed - kept, scales)
+    if table:
+        folded = word_numbers(folded, table)
+    if phrases:
+        folded = join_phrases(folded, phrases)
+    return mark_counts(folded, words.counts)
+
+
+# -- Token passes that prepare a stream for the number fold ----------------
+
+# abbreviations the tokenizer shatters on their dots/hyphens ("a.c." -> a,c;
+# "meio-dia" -> meio,dia).  The fold glues the fragments back into the single
+# token a marker/landmark slot binds.  Keyed by the fragment tuple, longest
+# match first; shared across the Romance locales (surfaces are the same).
+_ABBREVIATION_GLUE = {
+    ("a", "e", "c"): "aec", ("a", "c"): "ac", ("d", "c"): "dc",
+    ("e", "c"): "ec", ("a", "p"): "ap",
+    ("meio", "dia"): "meiodia", ("meia", "noite"): "meianoite",
+    ("migdia",): "migdia",
+}
+
+
+def glue_abbreviations(tokens):
+    seqs = sorted(_ABBREVIATION_GLUE, key=len, reverse=True)
+    out = []
+    i = 0
+    n = len(tokens)
+    while i < n:
+        for seq in seqs:
+            k = len(seq)
+            if tuple(t.text for t in tokens[i:i + k]) == seq:
+                raw = "".join(t.raw for t in tokens[i:i + k])
+                cs, ce = run_extent(tokens[i:i + k])
+                out.append(Token(text=_ABBREVIATION_GLUE[seq], raw=raw, index=0,
+                                 char_start=cs, char_end=ce))
+                i += k
+                break
+        else:
+            out.append(tokens[i])
+            i += 1
+    return tuple(out)
+
+
+def elision_split(tokens, proclitics):
+    """Split a leading elided proclitic ("d'annees" -> "d", "annees").
+
+    Only the closed proclitic set splits, so a lexical apostrophe inside a
+    word ("aujourd'hui") stays whole."""
+    out = []
+    for t in tokens:
+        head, sep, tail = t.text.partition("'")
+        if not sep:
+            head, sep, tail = t.text.partition("’")
+        if sep and head in proclitics and tail:
+            # keep each half's character extent into the original utterance --
+            # the proclitic occupies the head chars, the elided word the tail
+            # chars past the apostrophe -- so a mention built on the split word
+            # ("d'abril") still recovers a char span instead of ``None``.
+            cs, ce = t.char_start, t.char_end
+            if cs is None or ce is None:
+                h_start = h_end = w_start = None
+            else:
+                h_start, h_end, w_start = cs, cs + len(head), ce - len(tail)
+            out.append(Token(text=head, raw=head, index=0,
+                             char_start=h_start, char_end=h_end))
+            out.append(Token(text=tail, raw=tail, index=0,
+                             char_start=w_start, char_end=ce if cs is not None
+                             else None))
+        else:
+            out.append(t)
+    return reindex(out)
+
+
+def collapse_phrase(tokens, words, surface):
+    """Collapse a fixed multiword sequence ("il y a") to one token."""
+    n = len(words)
+    out = []
+    i = 0
+    while i < len(tokens):
+        if [t.text for t in tokens[i:i + n]] == words:
+            raw = " ".join(t.raw for t in tokens[i:i + n])
+            cs, ce = run_extent(tokens[i:i + n])
+            out.append(Token(text=surface, raw=raw, index=0,
+                             char_start=cs, char_end=ce))
+            i += n
+        else:
+            out.append(tokens[i])
+            i += 1
+    return reindex(out)
+
+
+def collapse_h_clock(tokens, governors=frozenset(), followers=frozenset()):
+    """Fold French/Occitan "20h30"/"20h" into one ``HH:MM`` clock literal.
+
+    ``governors`` and ``followers`` keep "h" a word: after a counted-offset
+    preposition ("dans 2 h") it is the unit of a length, and before a clock
+    direction ("9 h et quart") it is the hour word the direction counts from.
+    Both readings come from "h" being the symbol of "heure", so the grammar
+    reads them as it reads "dans 2 heures" and "9 heures et quart".
+    """
+    out = []
+    i = 0
+    n = len(tokens)
+    while i < n:
+        t = tokens[i]
+        nxt = tokens[i + 1] if i + 1 < n else None
+        nn = tokens[i + 2] if i + 2 < n else None
+        spared = ((out and out[-1].text in governors)
+                  or (nn is not None and nn.text in followers))
+        if (not spared
+                and t.is_number and t.value is not None and 0 <= t.value <= 24
+                and float(t.value).is_integer() and nxt is not None
+                and nxt.text == "h"):
+            if (nn is not None and nn.is_number and nn.value is not None
+                    and 0 <= nn.value <= 59 and float(nn.value).is_integer()):
+                lit = "%d:%02d" % (int(t.value), int(nn.value))
+                cs, ce = run_extent(tokens[i:i + 3])
+                out.append(Token(text=lit, raw=lit, index=0,
+                                 char_start=cs, char_end=ce))
+                i += 3
+                continue
+            lit = "%d:00" % int(t.value)
+            cs, ce = run_extent(tokens[i:i + 2])
+            out.append(Token(text=lit, raw=lit, index=0,
+                             char_start=cs, char_end=ce))
+            i += 2
+            continue
+        out.append(t)
+        i += 1
+    return reindex(out)
+
+
+def drop_digit_suffix(tokens, suffixes):
+    """Drop a lone ordinal-suffix word after a digit ("1 er" -> 1)."""
+    out = []
+    i = 0
+    n = len(tokens)
+    while i < n:
+        t = tokens[i]
+        nxt = tokens[i + 1] if i + 1 < n else None
+        if (t.is_number and nxt is not None and not nxt.is_number
+                and nxt.text in suffixes):
+            out.append(replace(t, ordinal=True))
+            i += 2
+            continue
+        out.append(t)
+        i += 1
+    return reindex(out)
+
+
+def collapse_marked_h_clock(tokens, markers) -> Tuple[Token, ...]:
+    """Fold "21h30"/"20h" into an ``HH:MM`` literal behind a clock marker.
+
+    Italian, Romanian, Asturian, Greek and Swedish write the hour-letter
+    notation only where a clock marker already says a clock follows -- "alle
+    21h30", "la ora 21h30", "a les 21h30", "στις 21h30", "kl 21h30".  A bare
+    "21h30" inside a sentence in those languages is a duration, a coordinate
+    or a citation to a French source, so it is not folded there.  Said alone,
+    the whole utterance is the clock and it folds.
+
+    ``markers`` is the closed set of surfaces that may sit immediately before
+    the hour, taken from that locale's own ``marker_at`` and ``marker_oclock``
+    vocabularies, so the fold licenses the notation exactly where the grammar
+    already licenses a clock.
+    """
+    out = []
+    i = 0
+    n = len(tokens)
+    while i < n:
+        t = tokens[i]
+        nxt = tokens[i + 1] if i + 1 < n else None
+        nn = tokens[i + 2] if i + 2 < n else None
+        alone = i == 0 and nxt is not None and nxt.text == "h" and (
+            n == 2 or (n == 3 and nn is not None and nn.is_number))
+        marked = (bool(out) and out[-1].text in markers) or alone
+        if (marked and t.is_number and t.value is not None
+                and 0 <= t.value <= 24 and float(t.value).is_integer()
+                and nxt is not None and nxt.text == "h"):
+            if (nn is not None and nn.is_number and nn.value is not None
+                    and 0 <= nn.value <= 59 and float(nn.value).is_integer()):
+                lit = "%d:%02d" % (int(t.value), int(nn.value))
+                cs, ce = run_extent(tokens[i:i + 3])
+                out.append(Token(text=lit, raw=lit, index=0,
+                                 char_start=cs, char_end=ce))
+                i += 3
+                continue
+            lit = "%d:00" % int(t.value)
+            cs, ce = run_extent(tokens[i:i + 2])
+            out.append(Token(text=lit, raw=lit, index=0,
+                             char_start=cs, char_end=ce))
+            i += 2
+            continue
+        out.append(t)
+        i += 1
+    return reindex(out)
+
+
+def with_marked_h_clock(fold, markers):
+    """Wrap a number fold so the marked hour-letter clock folds ahead of it."""
+    marker_set = frozenset(markers)
+
+    def folded(tokens):
+        return fold(collapse_marked_h_clock(tokens, marker_set))
+
+    return folded
+
+
+# -- The number fold of a locale, read from its ``number_fold`` data ---------
+
+#: The keys of the ``number_fold`` object of a ``lang.json``.
+NUMBER_FOLD_KEYS = frozenset({
+    "word_numbers", "ordinal_suffixes", "phrase_numbers", "compounds",
+    "fraction_counts", "h_clock_markers"})
+
+Fold = Callable[[Tuple[Token, ...]], Tuple[Token, ...]]
+
+
+def split_compounds(tokens: Tuple[Token, ...],
+                    heads: Tuple[Tuple[str, str, FrozenSet[str]], ...]
+                    ) -> Tuple[Token, ...]:
+    """Split a word that is a head and a tail into two tokens.
+
+    ``heads`` holds, longest head first, each head surface, the word the head
+    token reads as, and the tails that may follow it.  Only a whole word that
+    is exactly a head and a tail splits.
+    """
+    out = []
+    changed = False
+    for t in tokens:
+        for stem, canonical, tails in heads:
+            if (not t.is_number and t.text.startswith(stem)
+                    and t.text[len(stem):] in tails):
+                cs, ce = t.char_start, t.char_end
+                mid = cs + len(stem) if cs is not None else None
+                out.append(Token(text=canonical, raw=t.raw[:len(stem)],
+                                 index=t.index, char_start=cs, char_end=mid,
+                                 cap=t.cap))
+                out.append(Token(text=t.text[len(stem):],
+                                 raw=t.raw[len(stem):], index=t.index,
+                                 char_start=mid, char_end=ce))
+                changed = True
+                break
+        else:
+            out.append(t)
+    return reindex(out) if changed else tokens
+
+
+def fraction_counts(tokens: Tuple[Token, ...],
+                    rows: Tuple[Mapping, ...]) -> Tuple[Token, ...]:
+    """Fold the count 1 and a fraction word into the fraction count.
+
+    A row names the fraction ``word`` and its ``value``.  Without ``unit``
+    the word after the fraction must be a word that is no number: "one half
+    hour" counts 0.5 before "hour".  With ``unit`` the fraction word names the
+    unit itself, so the count 0.5 gets that unit word in its place ("one
+    quarter" is a quarter of an hour), unless the word after it is in
+    ``not_before`` (a clock direction) or is a number.
+    """
+    by_word = {row["word"]: row for row in rows}
+    out = []
+    i = 0
+    n = len(tokens)
+    while i < n:
+        t = tokens[i]
+        nxt = tokens[i + 1] if i + 1 < n else None
+        row = (by_word.get(nxt.text) if t.is_number and t.value == 1
+               and nxt is not None and not nxt.is_number else None)
+        if row is not None:
+            after = tokens[i + 2] if i + 2 < n else None
+            unit = row.get("unit")
+            if unit is None and after is not None and not after.is_number:
+                out.append(Token(text=str(row["value"]),
+                                 raw=t.raw + " " + nxt.raw, index=t.index,
+                                 is_number=True, value=row["value"],
+                                 char_start=t.char_start,
+                                 char_end=nxt.char_end))
+                i += 2
+                continue
+            if unit is not None and (after is None or (
+                    not after.is_number
+                    and after.text not in row.get("not_before", ()))):
+                out.append(Token(text=str(row["value"]),
+                                 raw=t.raw + " " + nxt.raw, index=t.index,
+                                 is_number=True, value=row["value"],
+                                 char_start=t.char_start,
+                                 char_end=nxt.char_start))
+                out.append(Token(text=unit, raw=nxt.raw, index=t.index,
+                                 char_start=nxt.char_start,
+                                 char_end=nxt.char_end))
+                i += 2
+                continue
+        out.append(t)
+        i += 1
+    return reindex(out)
+
+
+def number_fold(lang: str, cfg: Mapping) -> Tuple[Fold, Optional[Fold]]:
+    """The number fold of the locale ``lang`` and its ``pre_hook`` from the
+    ``number_fold`` object of its ``lang.json``.
+
+    The fold claims the words that numtag reads as numbers and the date
+    grammar reads as words, from the ``.voc`` files of the locale
+    (:func:`date_words`).  The object adds what the files cannot say:
+
+    ``word_numbers``
+        Words numtag does not read: the word maps to ``[value, is_ordinal]``.
+    ``ordinal_suffixes``
+        The lone suffixes of a digit ordinal: "21e" is written "21" and "e".
+    ``phrase_numbers``
+        Two words that name one number: ``{"een paar": 2}``.
+    ``compounds``
+        Rows ``{"heads": {head: reading}, "tails": [...]}``.  A word that is
+        a head and a tail splits in two before the grammar reads the stream
+        (:func:`split_compounds`).
+    ``fraction_counts``
+        Rows for :func:`fraction_counts`.
+    ``h_clock_markers``
+        The words before which "21h30" is a clock time
+        (:func:`collapse_marked_h_clock`).
+    """
+    words = DateWords(lang=lang,
+                      fractions=locale_words(lang, "clock_fraction_"),
+                      counts=count_words(lang))
+    table = {word: (value, ordinal)
+             for word, (value, ordinal) in cfg.get("word_numbers", {}).items()}
+    suffixes = frozenset(cfg.get("ordinal_suffixes", ()))
+    phrases = {tuple(key.split()): value
+               for key, value in cfg.get("phrase_numbers", {}).items()}
+    fractions = tuple(cfg.get("fraction_counts", ()))
+    markers = frozenset(cfg.get("h_clock_markers", ()))
+    heads = tuple(sorted(
+        ((head, reading, frozenset(row["tails"]))
+         for row in cfg.get("compounds", ())
+         for head, reading in row["heads"].items()),
+        key=lambda h: len(h[0]), reverse=True))
+
+    def run(tokens: Tuple[Token, ...]) -> Tuple[Token, ...]:
+        if markers:
+            tokens = collapse_marked_h_clock(tokens, markers)
+        folded = fold(tokens, words, table=table,
+                      ordinal_suffixes=suffixes, phrases=phrases)
+        return fraction_counts(folded, fractions) if fractions else folded
+
+    if not heads:
+        return run, None
+    return run, lambda tokens: split_compounds(tokens, heads)

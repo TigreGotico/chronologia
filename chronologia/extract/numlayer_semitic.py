@@ -6,7 +6,7 @@ Fixed multi-word surfaces ("بعد غد", "יום ראשון") are merged to one
 space.
 
 numtag reads the spelled numbers, the "و"-glued compounds and the ordinal
-teens.  The shared rules of :mod:`chronologia.extract.numlayer_germanic` claim
+teens.  The shared rules of :mod:`chronologia.extract.numlayer` claim
 clock fractions, scale words and counts of things.  This module claims the
 ordinals and cardinals that are also weekday or month names ("الاثنين",
 "تشرين الأول", "יום שני") and adds the clock, dual-noun and gematria passes
@@ -24,9 +24,9 @@ from pathlib import Path
 from ovos_spec_tools import read_resource_file
 
 from chronologia.extract.model import Token
+from chronologia.extract.numlayer import (DateWords, count_words, fold,
+                                          locale_words)
 from chronologia.extract.numfold_engine import reindex
-from chronologia.extract.numlayer_germanic import (DateWords, count_words, fold,
-                                                   locale_words)
 from chronologia.hebrew_numerals import (gematria_value, hebrew_year_value,
                                           is_gematria_numeral)
 

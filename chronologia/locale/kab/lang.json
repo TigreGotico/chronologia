@@ -68,7 +68,78 @@
   "guards": {
     "bare_year_min_digits": 4
   },
-  "hook": "chronologia.extract.numlayer_kab:fold_kab",
+  "number_fold": {
+    "word_numbers": {
+      "lweḥda": [
+        1,
+        false
+      ],
+      "jjuj": [
+        2,
+        false
+      ],
+      "jjuǧ": [
+        2,
+        false
+      ],
+      "zzuǧ": [
+        2,
+        false
+      ],
+      "ssaɛtin": [
+        2,
+        false
+      ],
+      "ṛṛebɛa": [
+        4,
+        false
+      ],
+      "lxemsa": [
+        5,
+        false
+      ],
+      "ssetta": [
+        6,
+        false
+      ],
+      "ssebɛa": [
+        7,
+        false
+      ],
+      "ssebɛ": [
+        7,
+        false
+      ],
+      "ttmanya": [
+        8,
+        false
+      ],
+      "ttesɛa": [
+        9,
+        false
+      ],
+      "lɛecṛa": [
+        10,
+        false
+      ],
+      "lɛacra": [
+        10,
+        false
+      ],
+      "leḥdac": [
+        11,
+        false
+      ],
+      "leḥḍac": [
+        11,
+        false
+      ],
+      "ttnac": [
+        12,
+        false
+      ]
+    }
+  },
   "quantifiers": {
     "1": [
       "yiwen",

@@ -151,5 +151,61 @@
   "guards": {
     "bare_year_min_digits": 4
   },
-  "hook": "chronologia.extract.numlayer_fy:fold_fy"
+  "number_fold": {
+    "word_numbers": {
+      "ienen": [
+        1,
+        false
+      ],
+      "twaen": [
+        2,
+        false
+      ],
+      "trijen": [
+        3,
+        false
+      ],
+      "fjouweren": [
+        4,
+        false
+      ],
+      "fiven": [
+        5,
+        false
+      ],
+      "seizen": [
+        6,
+        false
+      ],
+      "sânen": [
+        7,
+        false
+      ],
+      "achten": [
+        8,
+        false
+      ],
+      "njoggenen": [
+        9,
+        false
+      ],
+      "tsienen": [
+        10,
+        false
+      ],
+      "alven": [
+        11,
+        false
+      ],
+      "tolven": [
+        12,
+        false
+      ]
+    },
+    "ordinal_suffixes": [
+      "de",
+      "e",
+      "te"
+    ]
+  }
 }

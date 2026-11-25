@@ -166,7 +166,22 @@
   "guards": {
     "bare_year_min_digits": 4
   },
-  "hook": "chronologia.extract.numlayer_nn:fold_nn",
+  "number_fold": {
+    "word_numbers": {
+      "fyrste": [
+        1,
+        true
+      ],
+      "tjuefyrste": [
+        21,
+        true
+      ],
+      "trettifyrste": [
+        31,
+        true
+      ]
+    }
+  },
   "base_grammar": {
     "disable": [
       "calendar_date"

@@ -4,7 +4,7 @@ from __future__ import annotations
 from typing import Tuple
 
 from chronologia.extract.model import Token
-from chronologia.extract.numfold_romance import _glue
+from chronologia.extract.numlayer import (glue_abbreviations)
 from chronologia.extract.numlayer_romance import (DateWords, count_words,
                                                   fold, locale_words)
 
@@ -32,4 +32,4 @@ def _weekdays(tokens: Tuple[Token, ...]):
 
 def fold_mwl(tokens: Tuple[Token, ...]) -> Tuple[Token, ...]:
     """The Mirandese number fold."""
-    return fold(_glue(tokens), _WORDS, extra=_weekdays)
+    return fold(glue_abbreviations(tokens), _WORDS, extra=_weekdays)

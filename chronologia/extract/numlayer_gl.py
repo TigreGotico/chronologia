@@ -4,7 +4,7 @@ from __future__ import annotations
 from typing import Tuple
 
 from chronologia.extract.model import Token
-from chronologia.extract.numfold_romance import _collapse_h_clock, _glue
+from chronologia.extract.numlayer import (collapse_h_clock, glue_abbreviations)
 from chronologia.extract.numlayer_romance import (DateWords, count_words,
                                                   fold, locale_words)
 
@@ -20,4 +20,4 @@ _WORDS = DateWords(
 
 def fold_gl(tokens: Tuple[Token, ...]) -> Tuple[Token, ...]:
     """The Galician number fold."""
-    return fold(_glue(_collapse_h_clock(tokens)), _WORDS)
+    return fold(glue_abbreviations(collapse_h_clock(tokens)), _WORDS)

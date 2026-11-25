@@ -5,7 +5,7 @@ as unconsumed remainder ("às 15h" -> 15:00 span, remainder "h").
 
 French/Occitan already fold "20h30"/"20h" into an ``HH:MM`` CLOCK literal
 before the grammar ever sees it (``_collapse_h_clock`` in
-``chronologia/extract/numfold_romance.py``, called by ``fold_fr`` and
+``chronologia/extract/numlayer.py``, called by ``fold_fr`` and
 ``fold_oc``).  Portuguese's ``fold_pt`` never called that
 collapse, so "15h" tokenized to HOUR="15" + word="h" and no pt ``clock_time``
 order has a slot for a bare "h" -- it fell through the grammar untouched.

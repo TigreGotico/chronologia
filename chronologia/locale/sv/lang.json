@@ -163,8 +163,38 @@
   "guards": {
     "bare_year_min_digits": 4
   },
-  "hook": "chronologia.extract.numlayer_sv:fold_sv",
-  "pre_hook": "chronologia.extract.numlayer_sv:split_sv_half_compound",
+  "number_fold": {
+    "compounds": [
+      {
+        "heads": {
+          "halv": "halv"
+        },
+        "tails": [
+          "timme",
+          "timmen"
+        ]
+      }
+    ],
+    "fraction_counts": [
+      {
+        "word": "halv",
+        "value": 0.5
+      },
+      {
+        "word": "kvart",
+        "value": 0.25,
+        "unit": "timme",
+        "not_before": [
+          "över",
+          "i"
+        ]
+      }
+    ],
+    "h_clock_markers": [
+      "klockan",
+      "kl"
+    ]
+  },
   "base_grammar": {
     "disable": [
       "calendar_date"

@@ -2,7 +2,7 @@
 
 numtag reads the Greek numbers in every gender ("τρεις", "διακόσιες") and the
 spoken forms ("εφτά", "οχτώ").  The shared rules of
-:mod:`chronologia.extract.numlayer_germanic` claim the clock fractions, the
+:mod:`chronologia.extract.numlayer` claim the clock fractions, the
 deep-time scale words and the counts of things.  This module joins the
 ordinal ending a writer glues onto a digit day, and claims the weekday names
 that are also ordinals.
@@ -13,9 +13,9 @@ from dataclasses import replace
 from typing import Tuple
 
 from chronologia.extract.model import Token
-from chronologia.extract.numfold_engine import reindex, with_marked_h_clock
-from chronologia.extract.numlayer_germanic import (DateWords, count_words, fold,
-                                                   locale_words)
+from chronologia.extract.numlayer import (DateWords, count_words, fold,
+                                          locale_words, with_marked_h_clock)
+from chronologia.extract.numfold_engine import reindex
 
 # The written day-of-month is a digit and an ordinal ending:
 # "5η Μαρτίου" (the 5th of March), "της 5ης Μαρτίου" (of the 5th of March).

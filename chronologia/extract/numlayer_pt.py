@@ -16,19 +16,19 @@ from typing import Dict, FrozenSet, Set, Tuple
 from numtag import Kind
 
 from chronologia.extract.model import Token
-from chronologia.extract.numfold_romance import (_LOCALE_ROOT,
-                                                 _collapse_h_clock, _glue)
 from chronologia.extract.numfold_engine import reindex
-from chronologia.extract.numlayer import (CountWords, counts_things,
-                                          fold_mentions, voc_file_words,
+from chronologia.extract.numlayer import (CountWords, _LOCALE_DIR,
+                                          collapse_h_clock, counts_things,
+                                          fold_mentions, glue_abbreviations,
                                           mark_counts, mention_number,
                                           scale_factor, scale_factors,
+                                          voc_file_words,
                                           withhold_split_counts)
 
 
 def _voc(*prefixes: str) -> FrozenSet[str]:
     """The pt surfaces of every ``locale/pt/<prefix>*.voc`` file."""
-    folder = os.path.join(_LOCALE_ROOT, "pt")
+    folder = os.path.join(_LOCALE_DIR, "pt")
     out = set()
     for name in os.listdir(folder):
         if name.startswith(prefixes) and name.endswith(".voc"):
@@ -268,7 +268,7 @@ def fold_pt(tokens: Tuple[Token, ...]) -> Tuple[Token, ...]:
     tokenizer splits ("a.c.", "meio-dia") are glued back into one word.
     """
     tokens = reindex(withhold_split_counts(
-        _glue(_collapse_h_clock(tokens)), _UNITS, _FACTORS))
+        glue_abbreviations(collapse_h_clock(tokens)), _UNITS, _FACTORS))
     claimed, ordinals, scales = _date_words(tokens)
     # a homograph read as an ordinal by its position keeps its written word,
     # so a mention's text shows "o quarto trimestre"

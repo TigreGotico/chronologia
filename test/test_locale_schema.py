@@ -78,6 +78,16 @@ def test_non_numeric_quantifier_key_is_flagged():
     assert any("not a numeric string" in e for e in errs)
 
 
+def test_unknown_number_fold_key_is_flagged():
+    errs = validate_config({"number_fold": {"word_numbres": {}}}, "xx")
+    assert errs == ["[xx] unknown number_fold key 'word_numbres'"]
+
+
+def test_number_fold_with_hook_is_flagged():
+    cfg = {"number_fold": {}, "hook": "a.b:c"}
+    assert any("replaces 'hook'" in e for e in validate_config(cfg, "xx"))
+
+
 def test_unknown_construction_group_is_flagged():
     cfg = {"constructions": {"named_day": {"orders": ["DAY_WORD"],
                                            "group": "made_up"}}}

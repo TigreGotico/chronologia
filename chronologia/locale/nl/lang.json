@@ -168,6 +168,43 @@
   "guards": {
     "bare_year_min_digits": 4
   },
-  "hook": "chronologia.extract.numlayer_nl:fold_nl",
-  "pre_hook": "chronologia.extract.numlayer_nl:split_nl_relday_daypart"
+  "number_fold": {
+    "word_numbers": {
+      "anderhalve": [
+        1.5,
+        false
+      ]
+    },
+    "ordinal_suffixes": [
+      "de",
+      "e",
+      "ste",
+      "te"
+    ],
+    "phrase_numbers": {
+      "een paar": 2
+    },
+    "compounds": [
+      {
+        "heads": {
+          "overmorgen": "overmorgen",
+          "morgen": "morgen",
+          "gister": "gisteren",
+          "maandag": "maandag",
+          "dinsdag": "dinsdag",
+          "woensdag": "woensdag",
+          "donderdag": "donderdag",
+          "vrijdag": "vrijdag",
+          "zaterdag": "zaterdag",
+          "zondag": "zondag"
+        },
+        "tails": [
+          "avond",
+          "middag",
+          "nacht",
+          "ochtend"
+        ]
+      }
+    ]
+  }
 }
