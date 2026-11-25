@@ -52,7 +52,9 @@ Year is the one unit where Macedonian prefers a dedicated word to a periphrasis.
 
 ## What refuses
 
-**Minutes to the hour.** `без пет девет` returns nothing, and no `clock_dir_to.voc` exists. This is an active refusal rather than a gap. Two sources were checked specifically for it: the reper.net.mk style guide, built to teach correct time expression, uses only additive forms including for the half hour. The Macedonian Wikipedia prepositions article has a dedicated §Без covering every attested sense of `без` (lack (`без пари`, `без вода`) and the conjunction `без да`) and names no temporal sense at all. A grammar written to enumerate every sense of the word finding no clock sense is stronger evidence than mere absence. Bulgarian has the construction. Bulgarian is not a safe donor here.
+**Minutes to the hour.** `без пет девет` returns nothing, and no `clock_dir_to.voc` exists. This is an active refusal rather than a gap. Two sources were checked specifically for it: the reper.net.mk style guide, built to teach correct time expression, uses only additive forms including for the half hour.
+
+The Macedonian Wikipedia prepositions article has a dedicated §Без covering every attested sense of `без` (lack (`без пари`, `без вода`) and the conjunction `без да`) and names no temporal sense at all. A grammar written to enumerate every sense of the word finding no clock sense is stronger evidence than mere absence. Bulgarian has the construction. Bulgarian is not a safe donor here.
 
 **"Since" as a standalone marker.** `од понеделник` parses the weekday and leaves `од` in the remainder. No dedicated temporal example for `од` exists in CLDR or in the prepositions article, so the locale does not claim the sense. The `од … до …` range is a different matter and is attested. What is refused is treating a bare `од X` as "since X".
 

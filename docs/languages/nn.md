@@ -40,6 +40,10 @@ To read a phrase, call `extract_timespan` with the phrase, the locale code and a
 
 **The clock** reads `klokka` or `kl` as the "at" marker, with `midnatt` and `middag` as the landmark points. `kl 14` reads as a bare 24-hour hour.
 
+**The meridiem after a clock.** A day-part word after the hour fixes its half of the day. The phrases `klokka åtte om kvelden` and `klokka åtte i kveld` read 20:00. The phrase `klokka seks om morgonen` reads 06:00. The file `clock_meridiem_am.voc` lists `morgonen`, `føremiddagen` and `formiddagen`.
+
+The file `clock_meridiem_pm.voc` lists `ettermiddagen`, `ettermiddag`, `kvelden` and `kveld`. Each comes from a Nynorskordboka example such as "klokka sju om morgonen" or "om kvelden i dag". The bare `morgon` stays out of both lists because it also names tomorrow. The clock orders take `om` or `i` between the hour and the word.
+
 **Day parts** are `natt` `[00:00, 06:00)`, `føremiddag` `[10:00, 12:00)`, `ettermiddag` `[12:00, 18:00)` and `kveld` `[18:00, 24:00)`, transcribed in `chronologia/dayparts.py`, each in the bare and the definite form. The five-part Nordic day is why `føremiddag` exists. It is the late morning that English cannot name in one word. The `morgon` that precedes it is correspondingly short.
 
 The boundaries come from the CLDR 47 supplemental day-period chart. The chart does carry an `nn` row. It gives exactly these boundaries (00:00, 06:00, 10:00, 12:00, 18:00) but every surface name in that row is marked missing. The Bokmål `nb` row is identical in both respects.
@@ -64,11 +68,11 @@ Outside the weekday and month names, the day parts, the named days, `siste`, the
 
 ## The half hour toward one
 
-A bare toward-hour phrase for one o'clock names the half hour before one, 00:30 or 12:30. It resolves to whichever of the two comes next after the anchor (ruling 17 in [the rulings](../rulings.md)): `halv eitt` is 00:30 at 13:04 and 12:30 at 06:05. `toward_hour_12h` only renames hour 0 as 12 on that path. It changes no bare reading. This locale binds no meridiem word, so `halv eitt om ettermiddagen` returns 00:30 and leaves `om ettermiddagen` in the remainder. `kvart på eitt` and `fem på eitt` follow the same rule.
+A bare toward-hour phrase for one o'clock names the half hour before one, 00:30 or 12:30. It resolves to whichever of the two comes next after the anchor (ruling 17 in [the rulings](../rulings.md)): `halv eitt` is 00:30 at 13:04 and 12:30 at 06:05. `toward_hour_12h` only renames hour 0 as 12 on that path. It changes no bare reading. The fraction orders take no meridiem word, so `halv eitt om ettermiddagen` returns 00:30 and leaves `om ettermiddagen` in the remainder. `kvart på eitt` and `fem på eitt` follow the same rule.
 
 ## What refuses
 
-**Any day-part word after a clock time.** `klokka åtte om kvelden` returns 08:00 and leaves `om kvelden`. `halv åtte om kvelden` returns 07:30 and leaves the same. The band words resolve on their own (`kvelden` alone is 18:00 to midnight) but nothing binds one to a preceding hour as a meridiem. Every evening time comes back as its morning twin with the evening word stranded. This is the locale's largest gap.
+**A day-part word after a fraction or a night hour.** `halv åtte om kvelden` returns 07:30 and leaves `om kvelden`. `klokka elleve om natta` returns 11:00 and leaves `om natta`. The band words resolve on their own (`kvelden` alone is 18:00 to midnight). But the fraction orders bind no meridiem, and the night word is on no meridiem list. Such a time comes back as its morning twin with the day-part word stranded.
 
 **The morning band.** `morgonen` returns nothing. `chronologia/dayparts.py` declares a `morgon` band at `[06:00, 10:00)` for this locale. But no vocabulary file supplies its surfaces, so the band is unreachable. The tomorrow vocabulary claims the bare `morgon` instead.
 
@@ -92,7 +96,7 @@ Each returns a wrong or partial answer rather than nothing.
 
 `tolv om natta` → the night band 00:00 to 06:00 of the anchor day, with remainder `tolv om`. The hour is dropped and a six-hour band is returned in place of a point in time.
 
-`klokka åtte om kvelden` → 08:00 with remainder `om kvelden`. The meridiem gap.
+`halv åtte om kvelden` → 07:30 with remainder `om kvelden`. The meridiem gap of the fraction orders.
 
 `i forgårs` → 25 June with remainder `i`. The vocabulary ships `forgårs` and `i førgår` but not `i forgårs`, so the commonest spelling of the phrase parses with its preposition stranded. `i førgår` parses clean.
 
@@ -130,6 +134,9 @@ Each example below runs as a doctest with a fixed anchor, so the output does not
     >>> span, rest = extract_timespan('kvelden', "nn", datetime(2017, 6, 27, 0, 5))
     >>> span.start_datetime.isoformat(), rest
     ('2017-06-27T18:00:00', '')
+    >>> span, rest = extract_timespan('klokka åtte om kvelden', "nn", datetime(2017, 6, 27, 0, 5))
+    >>> span.start_datetime.isoformat(), rest
+    ('2017-06-27T20:00:00', '')
     >>> anchor = datetime(2017, 6, 27, 13, 4)
     >>> extract_timespan('morgonen', "nn", anchor) is None
     True
@@ -157,8 +164,6 @@ Each example below runs as a doctest with a fixed anchor, so the output does not
 Each line is an open issue with a strict `xfail` test for this language. The lines are grouped by topic. An example names the reader that produced it, the language and the anchor date, and shows what that reader gives on the test's own phrase.
 
 - A common word that is no time word reads as a time word. Example (reader `extract_timespan`, lang `nn`, anchor 2017-06-27 13:04): `hei korleis går det` gives 2017-06-26 00:00 to 2017-06-27 00:00 and `hei korleis det` left over. [#990](https://github.com/TigreGotico/chronologia/issues/990)
-
-- A morning or evening word that the reader does not join lets a lone clock take the other half of the day. Example (reader `extract_timespan`, lang `nn`, anchor 2017-06-27 13:04): `klokka 8 i kveld` gives 2017-06-28 08:00 to 2017-06-28 08:01 and `i kveld` left over. [#1071](https://github.com/TigreGotico/chronologia/issues/1071)
 
 ---
 [← Norwegian Bokmål](nb.md) · [Home](../index.md) · [Occitan →](oc.md)

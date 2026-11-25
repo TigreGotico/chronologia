@@ -38,6 +38,8 @@ To read a phrase, call `extract_timespan` with the phrase, the locale code and a
 
 **Day parts** come from the Unicode CLDR 47 Day Period Rules chart, which gives `eu` six bands: `morning1` from 00:00, `morning2` (goiza) from 06:00, `afternoon1` (eguerdia) from 12:00, `afternoon2` (arratsaldea) from 14:00, `evening1` (iluntzea) from 19:00 and `night1` (gaua) from 21:00. The implementation in `chronologia/dayparts.py` collapses the two morning bands into one running 00:00-12:00 and the two afternoon bands into one running 12:00-19:00, keeping evening at 19:00-21:00 and night at 21:00-24:00. Basque night therefore does not wrap past midnight. The morning band absorbs the small hours. The shipped surfaces are the inessive forms a phrase actually uses (`goizean`, `arratsaldean`, `iluntzean`, `gauean`) not the CLDR citation forms.
 
+**The adnominal `-ko` after a length.** A count of units takes `-ko` when it qualifies a noun. The phrase `hamar minutuko tenporizadore bat` is a timer of ten minutes. The phrase `hiru orduko` is a length of three hours. The unit files for hour, minute, second, week, month and year list `orduko`, `minutuko` and the other `-ko` forms, with the Wiktionary entry `-ko` as their source. The remainder keeps the noun: `extract_duration` reads `programatu bost minutuko tenporizadorea` as five minutes and leaves `programatu tenporizadorea`.
+
 **Ordinals** use the `-garren` series (`bigarren`, `hirugarren`) plus `lehen` and `lehenengo` for one. numtag reads all of them as ordinals.
 
 ## Weaker provenance
@@ -106,7 +108,7 @@ Each line is an open issue with a strict `xfail` test for this language. The lin
 
 - A plural, adverbial or recurring part of the day is not read, so the hour reads in the wrong half. Example (reader `extract_timespan`, lang `eu`, anchor 2017-06-27 13:04): `gogorarazi goizetan medikazioa hartzeko 8etan` gives 2017-06-27 20:00 to 2017-06-27 20:01 and `gogorarazi goizetan medikazioa hartzeko` left over. [#1009](https://github.com/TigreGotico/chronologia/issues/1009)
 
-- A length with a suffix and a digit clock with a case suffix are not read. Example (reader `extract_timespan`, lang `eu`, anchor 2017-06-27 13:04): `gogorarazi astegun guztietako arratsaldean amari deitzeko 6etan` gives 2017-06-27 12:00 to 2017-06-27 19:00 and `gogorarazi astegun guztietako amari deitzeko 6etan` left over. [#1017](https://github.com/TigreGotico/chronologia/issues/1017)
+- A digit clock with a case suffix is not read. Example (reader `extract_timespan`, lang `eu`, anchor 2017-06-27 13:04): `gogorarazi astegun guztietako arratsaldean amari deitzeko 6etan` gives 2017-06-27 12:00 to 2017-06-27 19:00 and `gogorarazi astegun guztietako amari deitzeko 6etan` left over. [#1017](https://github.com/TigreGotico/chronologia/issues/1017)
 
 - A part of the day after a clock or a weekday stays in the remainder. Example (reader `extract_timespan`, lang `eu`, anchor 2017-06-27 13:04): `3:00 gauean` gives 2017-06-28 03:00 to 2017-06-28 03:01 and `gauean` left over. [#1200](https://github.com/TigreGotico/chronologia/issues/1200)
 

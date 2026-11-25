@@ -108,7 +108,7 @@ print(86400 * 1000000)  # 86400000000
 
 ## Sunrise, sunset, and the twilights
 
-Local mean time and the equation of time reconstruct the *clock*. The actual rising and setting of the sun need a date, a latitude and a longitude. `sun_events` transcribes the NOAA *General Solar Position Calculations* (NOAA Global Monitoring Division). This closed-form method is accurate to within about a minute for 1901-2099 (`SOLAR_ACCURACY`). All returned instants are UTC `AstroDate`s, and longitude is east-positive, the same convention as `local_mean_time`.
+Local mean time and the equation of time reconstruct the *clock*. The actual rising and setting of the sun need a date, a latitude and a longitude. The function `sun_events` transcribes the NOAA *General Solar Position Calculations* (NOAA Global Monitoring Division). This closed-form method is accurate to within about a minute for 1901-2099 (`SOLAR_ACCURACY`). All returned instants are UTC `AstroDate`s, and longitude is east-positive, the same convention as `local_mean_time`.
 
 ```python
 from chronologia import sun_events, AstroDate
@@ -372,7 +372,7 @@ print(round(december.width.total_seconds() / 60), "min in December")  # 46 min i
 
 `hour_number` runs `1..24` for the Roman 12+12 system: hours 1-12 divide sunrise→sunset, hours 13-24 divide sunset→next sunrise. The daytime hours tile the daylight exactly: the twelfth ends on sunset with no fencepost gap. The width varies with date and latitude, which is the whole point. Ship-in systems are `ROMAN_HOURS`, `ZMANIM_GRA` (Jewish *sha'ot zmaniyot* by the Vilna Gaon, the same sunrise→sunset ÷ 12 geometry), and `EDO_JAPANESE` (six day and six night hours). Every span is `basis="tabulated"`: it inherits the class-B accuracy of the NOAA solar model, not an ephemeris.
 
-The library does **not** ship the Magen Avraham reckoning of the *zmanim*. That reckoning runs dawn to nightfall at solar depressions of 16.1° and 8.5°. `sun_events` exposes only the 6°, 12° and 18° civil, nautical and astronomical twilights. So no honest mapping exists. A missing system is better than a mislabelled one.
+The library does **not** ship the Magen Avraham reckoning of the *zmanim*. That reckoning runs dawn to nightfall at solar depressions of 16.1° and 8.5°. The function `sun_events` exposes only the 6°, 12° and 18° civil, nautical and astronomical twilights. So no honest mapping exists. A missing system is better than a mislabelled one.
 
 ### Counting from sunset: Italian and Babylonian hours
 

@@ -42,6 +42,8 @@ To read a phrase, call `extract_timespan` with the phrase, the locale code and a
 
 **A spoken hour binds to a following day-part phrase as its meridiem.** `åtta på kvällen` reads 20:00. The fractional and relative-minute clock forms carry the same binding: `halv nio på kvällen` reads 20:30, `kvart i nio på kvällen` 20:45, `fem över sju på kvällen` 19:05. `på` is the connector. The five day-part nouns (`morgon`, `förmiddag`, `eftermiddag`, `kväll`, `natt`) double as the meridiem vocabulary, `morgon`/`förmiddag` shifting the AM side and `eftermiddag`/`kväll` the PM side. The shift is a flat twelve-hour move on the spoken 1-11 hour, the same rule the English, Spanish and Portuguese locales apply, not a lookup into the day-part's own CLDR band: the literal hour twelve is the one case where that shows. `tolv på förmiddagen` and `tolv på morgonen` both read as midnight rather than the late-morning noon a native speaker would mean. An hour spoken outside its day-part's own band (`ett på kvällen`, `fem på kvällen`) still takes the flat shift rather than declining. A day-part phrase with no hour in front of it is unaffected and still reads as the whole band.
 
+**Early tomorrow.** `i morgon bitti` is the morning of tomorrow, 05:00 to 10:00. The word `bitti` is "early in the day" (Wiktionary, `bitti`, a contraction of `bittida`). The two-word name `i morgon` is no meridiem. The word `bitti` alone is the morning band of the anchor day. The phrase `till i morgon` is a range from the anchor to the end of tomorrow, and `bitti` is not part of it.
+
 **Ranges** are `från … till …` and `mellan … och …`, with `sedan` opening one that runs to the anchor and `till` closing one that starts there.
 
 **Quarters, ISO weeks, decades and eras.** `första kvartalet 2020`, `vecka 12`, `80-talet`, `44 f.Kr.` and `1990 e.Kr.` all resolve, along with a before-present marker and the full deep-time period vocabulary.
@@ -99,8 +101,6 @@ Each example below runs as a doctest with a fixed anchor, so the output does not
 ## Known limits
 
 Each line is an open issue with a strict `xfail` test for this language. The lines are grouped by topic. An example names the reader that produced it, the language and the anchor date, and shows what that reader gives on the test's own phrase.
-
-- A morning word loses its second word, and a phrase reads as the morning. Example (reader `extract_timespan`, lang `sv`, anchor 2017-06-27 13:04): `väck mig i morgon bitti` gives 2017-06-28 00:00 to 2017-06-29 00:00 and `väck mig bitti` left over. [#1025](https://github.com/TigreGotico/chronologia/issues/1025)
 
 - The unit word after `and a quarter` or `and a half` stays in the remainder. Example (reader `extract_duration`, lang `sv`, anchor 2017-06-27 13:04): `två timmar och en kvart` gives a length of 135 min and `kvart` left over. [#1240](https://github.com/TigreGotico/chronologia/issues/1240)
 
