@@ -66,8 +66,10 @@
         "at? CLOCK at MERIDIEM ZONE?",
         "at? CLOCK dayframe MERIDIEM ZONE?",
         "at? CLOCK MERIDIEM? ZONE?",
-        "FRACTION CLOCKDIR article? HOUR MERIDIEM? ZONE?",
-        "MINUTE CLOCKDIR article? HOUR MERIDIEM? ZONE?"
+        "indef? FRACTION CLOCKDIR article? HOUR MERIDIEM? ZONE?",
+        "indef? FRACTION CLOCKDIR article? HOUR of? article? MERIDIEM ZONE?",
+        "MINUTE CLOCKTO article? HOUR MERIDIEM? ZONE?",
+        "MINUTE CLOCKTO article? HOUR of? article? MERIDIEM ZONE?"
       ],
       "prefer_future": true
     },

@@ -16,31 +16,15 @@ from functools import lru_cache
 from typing import Callable, Collection, Dict, FrozenSet, Optional, Set, Tuple
 
 from numtag import ARTICLE_CONFIDENCE, Kind, Role
-from ovos_spec_tools import expand, read_resource_file
 
 from chronologia.extract.model import Token
 from chronologia.extract.numfold_engine import reindex
-from chronologia.extract.numlayer import (_LOCALE_DIR, CountWords,
-                                          counts_things, fold_mentions,
-                                          mark_counts, scale_factor,
+from chronologia.extract.numlayer import (CountWords, Claims, counts_things,
+                                          ends_mention, fold_mentions,
+                                          locale_words, mark_counts,
+                                          mention_end, scale_factor,
                                           scale_factors,
                                           withhold_split_counts)
-
-#: The claimed words, the words a language keeps as numbers against a shared
-#: claim, and the deep-time scale words with their factors, by token index.
-Claims = Tuple[Set[int], Set[int], Dict[int, int]]
-
-
-@lru_cache(maxsize=None)
-def locale_words(lang: str, *prefixes: str) -> FrozenSet[str]:
-    """The surfaces of every ``locale/<lang>/<prefix>*.voc`` file."""
-    out = set()
-    for path in sorted((_LOCALE_DIR / lang).glob("*.voc")):
-        if path.name.startswith(prefixes):
-            for template in read_resource_file(path):
-                out.update(s.lower() for s in expand(template, {}))
-    return frozenset(out)
-
 
 _scale_factors = lru_cache(maxsize=None)(scale_factors)
 
@@ -89,18 +73,6 @@ def count_words(lang: str, since: Collection[str] = ()) -> CountWords:
         units=locale_words(lang, "unit_"),
         currencies=locale_words(lang, "currency"),
         ranges={word: until for word in since})
-
-
-def ends_mention(tok: Token) -> bool:
-    return tok.mention is not None and tok.mention.char_span[1] == tok.char_end
-
-
-def mention_end(tokens: Tuple[Token, ...], i: int) -> int:
-    """The index after the last token of the mention of ``tokens[i]``."""
-    j = i
-    while j < len(tokens) and tokens[j].mention is tokens[i].mention:
-        j += 1
-    return j
 
 
 def _alone(tok: Token) -> bool:

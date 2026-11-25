@@ -3,7 +3,7 @@
 numtag reads the numbers of Bulgarian, Croatian, Czech, Polish, Russian,
 Slovak, Slovene and Ukrainian in every case form: "двадцать третьего",
 "dwudziestego trzeciego", "pěti", "petimi".  The count, scale and year rules
-are those of :mod:`chronologia.extract.numlayer_germanic`.  This module adds
+are those of :mod:`chronologia.extract.numlayer`.  This module adds
 the date words of the Slavic grammars:
 
 - a clock or period fraction that numtag reads as a fraction stays a word:
@@ -31,11 +31,9 @@ from numtag import Form, Kind, NumberMention, Role
 
 from chronologia.extract.model import Token
 from chronologia.extract.numfold_engine import reindex
-from chronologia.extract.numlayer import reread
-from chronologia.extract.numlayer_germanic import (Claims, DateWords,
-                                                   count_words, ends_mention,
-                                                   fold, locale_words,
-                                                   mention_end)
+from chronologia.extract.numlayer import (Claims, DateWords, count_words,
+                                          ends_mention, fold, locale_words,
+                                          mention_end, reread)
 
 Fold = Callable[[Tuple[Token, ...]], Tuple[Token, ...]]
 

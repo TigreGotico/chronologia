@@ -4,12 +4,12 @@ half-matched -- the digits bound HOUR but the "h" grain letter was stranded
 as unconsumed remainder ("às 15h" -> 15:00 span, remainder "h").
 
 French/Occitan already fold "20h30"/"20h" into an ``HH:MM`` CLOCK literal
-before the grammar ever sees it (``_collapse_h_clock`` in
-``chronologia/extract/numfold_romance.py``, called by ``fold_fr`` and
+before the grammar ever sees it (``collapse_h_clock`` in
+``chronologia/extract/numlayer.py``, called by ``fold_fr`` and
 ``fold_oc``).  Portuguese's ``fold_pt`` never called that
 collapse, so "15h" tokenized to HOUR="15" + word="h" and no pt ``clock_time``
 order has a slot for a bare "h" -- it fell through the grammar untouched.
-The fix calls ``_collapse_h_clock`` at the top of ``fold_pt`` too, exactly
+The fix calls ``collapse_h_clock`` at the top of ``fold_pt`` too, exactly
 mirroring the French pipeline, so the "h" is folded into the CLOCK token
 and never reaches the grammar as an orphan word.
 

@@ -3,7 +3,7 @@
 numtag reads the case forms of the Turkic clock hour: the locative "saat
 üçte" and "saat üçdə" (at three), the accusative "dokuzu beş geçe" (9:05) and
 the dative "yediye çeyrek kala" (6:45).  The shared rules of
-:mod:`chronologia.extract.numlayer_germanic` claim the clock fractions, the
+:mod:`chronologia.extract.numlayer` claim the clock fractions, the
 deep-time scale words and the counts of things.  This module adds the case
 suffix written after a digit hour and the words numtag does not read.
 """
@@ -12,9 +12,9 @@ from __future__ import annotations
 from typing import Tuple
 
 from chronologia.extract.model import Token
+from chronologia.extract.numlayer import (DateWords, count_words, fold,
+                                          locale_words)
 from chronologia.extract.numfold_engine import reindex
-from chronologia.extract.numlayer_germanic import (DateWords, count_words, fold,
-                                                   locale_words)
 
 # Turkic locative case marks "at <hour>" on the clock numeral: Turkish "saat
 # üçte" (at three), Azerbaijani "saat üçdə".  The suffix harmonises for

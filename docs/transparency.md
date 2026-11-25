@@ -25,9 +25,9 @@ Each holiday rule is checked against a frozen gold value in `test/holiday_golds/
 Each gold carries a provenance tier, because not every passing test proves the same thing.
 
 - **primary**: the expected date is restated from a cited primary source, such as a statute, a gazette or an official listing. A wrong engine result fails against the source. This is the strongest tier.
-- **computed**: an independent in-test calculation produces the expected date, for example Easter plus a documented offset, an nth-weekday calculation, or a standalone Julian-day or Hijri conversion. It proves the engine agrees with a second, separately written calculation.
+- **computed**: an independent in-test calculation produces the expected date. Examples are Easter plus a documented offset, an nth-weekday calculation, or a standalone Julian-day or Hijri conversion. It proves the engine agrees with a second, separately written calculation.
 - **witnessed**: the expected date is the output of the independent `holidays` package from vacanza, captured once and frozen with the package version. It proves agreement with an outside witness, not correctness against the statute. If a date or subdivision in a `.tab` file is mistranscribed, the engine output diverges from the frozen value and the test fails.
-- **self-evident**: the expected date is the rule's own argument, such as the month and day of a fixed row or a listed gazette date of a decree row. It guarantees that the rule has a gold. It does not prove the date is correct.
+- **self-evident**: the expected date is the rule's own argument. Examples are the month and day of a fixed row or a listed gazette date of a decree row. It guarantees that the rule has a gold. It does not prove the date is correct.
 
 The suite prints the counts per jurisdiction and tier. `test/holiday_golds/_tier_floor.json` holds a frozen floor, and a test fails when a tier count falls below it.
 

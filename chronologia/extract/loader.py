@@ -26,7 +26,8 @@ filename                meaning
 
 ``lang.json`` states facts only: tokenizer switches, construction orders
 and per-construction flags, conventions, lemma/suffix tables, guards, and
-optional dotted bindings (``numbers``, ``hook``).
+optional dotted bindings (``numbers``, ``hook``) and the ``number_fold``
+knobs of the generic number layer.
 """
 from __future__ import annotations
 
@@ -49,7 +50,7 @@ from chronologia.extract.compiler import parse_order
 from chronologia.extract.model import (Conventions, LangSpec,
                                            TokenizerModes)
 from chronologia.extract.normaliser import TemporalNormaliser
-from chronologia.extract.numlayer import attach
+from chronologia.extract.numlayer import attach, number_fold
 from chronologia.extract.schema import validate as validate_locale
 from chronologia.extract.tokenizer import Tokenizer
 
@@ -383,6 +384,11 @@ def load_lang_spec(lang: str, locale_dir: str = LOCALE_DIR) -> LangSpec:
     vocabulary = _load_vocabulary(lang, _read_surfaces(
         lang, lang_dir, cfg, _locale_resources(locale_dir)))
     orders, flags = _load_constructions(cfg)
+    if "number_fold" in cfg:
+        hook, pre_hook = number_fold(lang, cfg["number_fold"])
+    else:
+        hook = _resolve_dotted(cfg.get("hook"))
+        pre_hook = _resolve_dotted(cfg.get("pre_hook"))
 
     spec = LangSpec(
         lang=lang,
@@ -396,8 +402,8 @@ def load_lang_spec(lang: str, locale_dir: str = LOCALE_DIR) -> LangSpec:
         conventions=_conventions(cfg.get("conventions", {})),
         tokenizer=_tokenizer_modes(cfg.get("tokenizer", {})),
         guards=cfg.get("guards", {}),
-        hook=_resolve_dotted(cfg.get("hook")),
-        pre_hook=_resolve_dotted(cfg.get("pre_hook")),
+        hook=hook,
+        pre_hook=pre_hook,
         post_hook=_resolve_dotted(cfg.get("post_hook")),
         day_subdivision=cfg.get("day_subdivision"),
         quantifiers={s: float(val)

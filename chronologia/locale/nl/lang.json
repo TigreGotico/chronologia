@@ -168,6 +168,50 @@
   "guards": {
     "bare_year_min_digits": 4
   },
-  "hook": "chronologia.extract.numlayer_nl:fold_nl",
-  "pre_hook": "chronologia.extract.numlayer_nl:split_nl_relday_daypart"
+  "number_fold": {
+    "word_numbers": [
+      {
+        "words": {
+          "anderhalve": 1.5
+        },
+        "ordinal": false,
+        "source": "\"anderhalve\" is the form of \"anderhalf\" before a de-word (\"anderhalve week\"); numtag reads only \"anderhalf\".  Van Dale: both are 1,5."
+      }
+    ],
+    "ordinal_suffixes": [
+      "de",
+      "e",
+      "ste",
+      "te"
+    ],
+    "phrase_numbers": [
+      {
+        "words": "een paar",
+        "value": 2,
+        "source": "\"een paar\" is \"a couple\": two.  Van Dale, \"paar\": \"een paar: twee, enkele\"."
+      }
+    ],
+    "compounds": [
+      {
+        "heads": {
+          "overmorgen": "overmorgen",
+          "morgen": "morgen",
+          "gister": "gisteren",
+          "maandag": "maandag",
+          "dinsdag": "dinsdag",
+          "woensdag": "woensdag",
+          "donderdag": "donderdag",
+          "vrijdag": "vrijdag",
+          "zaterdag": "zaterdag",
+          "zondag": "zondag"
+        },
+        "tails": [
+          "avond",
+          "middag",
+          "nacht",
+          "ochtend"
+        ]
+      }
+    ]
+  }
 }

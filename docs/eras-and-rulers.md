@@ -10,7 +10,7 @@ see: docs/calendars.md, docs/timelines.md
 
 The same year has been numbered many different ways. "2024" to you is "5784" in a Jewish calendar and "1445" in an Islamic one. It is "Reiwa 6" in Japan. An ancient Roman says "the consulship of so-and-so".
 
-None of these are wrong. They are different ways of *counting* the same procession of years. This page is about three counting systems: the fixed ones (called **eras**), the ones tied to who was on the throne (**regnal years**), and the way the Romans named the days of a month.
+None of these are wrong. They are different ways of *counting* the same procession of years. This page is about three counting systems. The fixed ones are called **eras**. The ones tied to who was on the throne are **regnal years**. The third is the way the Romans named the days of a month.
 
 ## Eras: different ways of numbering the same years
 

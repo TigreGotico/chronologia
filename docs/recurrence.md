@@ -50,7 +50,9 @@ Every rule round-trips through `to_string()` / `parse_rrule`, so the pythonic fo
 
 ## The Jan-31 lesson: invalid dates are omitted, never clamped
 
-This is the trap that catches every naive "add one month" implementation. Take a monthly recurrence that starts on 31 January. A naive library might return 3 March (31 January + 31 days) or clamp to 28 February. RFC 5545 does neither. **A generated date that does not exist is dropped** (§3.3.10, "Recurrence rules may generate recurrence instances with an invalid date ... Such ... instances MUST be ignored").
+This is the trap that catches every naive "add one month" implementation. Take a monthly recurrence that starts on 31 January. A naive library might return 3 March (31 January + 31 days) or clamp to 28 February.
+
+RFC 5545 does neither. It states that **a generated date that does not exist is dropped**. The text is in §3.3.10: "Recurrence rules may generate recurrence instances with an invalid date ... Such ... instances MUST be ignored".
 
 ```python
 month_end = parse_rrule("FREQ=MONTHLY;COUNT=4")
@@ -161,6 +163,21 @@ try:
 except ValueError as exc:
     print("no RRULE:", "movable feast" in str(exc))
 ```
+
+A movable feast takes an inclusive `until` bound. The method `occurrences` stops there when the call passes no `until`. A bound in the call wins over the bound on the object. The method `to_json` writes the bound as an ISO 8601 string only when it is set.
+
+```python
+bounded = HolidayRecurrence("easter", until=AstroDate(2029, 1, 1))
+dates = list(bounded.occurrences(AstroDate(2026, 1, 1)))
+print([d.start.year for d in dates])   # [2026, 2027, 2028]
+
+later = list(bounded.occurrences(AstroDate(2026, 1, 1), until=AstroDate(2030, 1, 1)))
+print([d.start.year for d in later])   # [2026, 2027, 2028, 2029]
+
+print(bounded.to_json()["until"])   # 2029-01-01T00:00:00
+```
+
+`extract_recurrence("every easter until 2030", "en")` reads into this object with `until` set to 1 January 2030. A length or a count after a movable holiday ("every easter for 3 years") is not read. Without an anchor the length stays in the remainder. With an anchor `extract_recurrence` raises `AttributeError` ([#1373](https://github.com/TigreGotico/chronologia/issues/1373)).
 
 ## Jurisdiction holiday sets: `JurisdictionHolidays`
 

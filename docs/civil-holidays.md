@@ -8,9 +8,11 @@ verify: .venv/bin/python -c 'exec("import ast,io,re,sys,contextlib as c\np=sys.a
 see: docs/recurrence.md, docs/transparency.md
 -->
 
-This module lists the holidays of a year, but its main question is **"is Monday a holiday where *you* live?"** In most of the world the answer depends on your *municipality*, not your country.
+This module lists the holidays of a year, but its main question is whether Monday is a holiday where *you* live. In most of the world the answer depends on your *municipality*, not your country.
 
-A civil holiday is a **rule**, not a date. "New Year's Day" is *1 January every year*. "US Labor Day" is *the first Monday of September*. "Corpo de Deus" is *the 60th day after Easter*. "Eid al-Fitr" is *1 Shawwal on the Umm al-Qura table*. `chronologia` stores the rule and computes the date with the same JDN machinery as the rest of the library. So a holiday for the year 1789 falls out of the same arithmetic as one for 2024.
+A civil holiday is a **rule**, not a date. "New Year's Day" is *1 January every year*. "US Labor Day" is *the first Monday of September*. "Corpo de Deus" is *the 60th day after Easter*. "Eid al-Fitr" is *1 Shawwal on the Umm al-Qura table*.
+
+The library stores the rule. It computes the date with the same JDN machinery as the rest of the library. So a holiday for the year 1789 falls out of the same arithmetic as one for 2024.
 
 ```python
 from chronologia import holidays_for, is_civil_holiday, AstroDate
@@ -27,7 +29,7 @@ assert "Corpo de Deus" in names          # Corpus Christi, Easter + 60
 
 Rules ship for 260 jurisdictions, keyed by ISO 3166-1 alpha-2 code, one `chronologia/holiday_data/<code>.tab` file each, every one carrying the official source it was transcribed from. Thirty-two of them go below the national tier into states, cantons, provinces or municipalities. Asking for a code with no file is a `KeyError` naming the jurisdiction. So an unsupported country is loud rather than an empty list you might mistake for "no holidays this year".
 
-Depth varies more than breadth does. A jurisdiction file may carry only the national public days. It may carry the regional and religious tiers too. `coverage(jurisdiction, year)` reports whether the year you asked about resolves fully or leans on a prediction past a decree table's horizon. See [the horizon detector](#knowing-when-you-are-past-the-horizon) below.
+Depth varies more than breadth does. A jurisdiction file may carry only the national public days. It may carry the regional and religious tiers too. The call `coverage(jurisdiction, year)` reports whether the year you asked about resolves fully or leans on a prediction past a decree table's horizon. See [the horizon detector](#knowing-when-you-are-past-the-horizon) below.
 
 ## The municipal story
 
@@ -203,7 +205,7 @@ assert xmas.names["cy"] == "Dydd Nadolig"             # Welsh, co-official in Wa
 
 ### Official names vs translations
 
-There are two distinct kinds of name. **Official names** are citable facts, because a government published them. **Translations** are renderings *we* wrote to help you display a holiday elsewhere. They are marked `source: translation` and never masquerade as official. `display_name(lang)` walks a documented fallback chain, **official name → translation → the primary native name**:
+There are two distinct kinds of name. The **official names** are citable facts, because a government published them. The **translations** are renderings that the library authors wrote to help you display a holiday elsewhere. They are marked `source: translation` and never masquerade as official. `display_name(lang)` walks a documented fallback chain, **official name → translation → the primary native name**:
 
 ```python
 # The government's own word wins where it exists; a translation fills the gap.
@@ -219,7 +221,7 @@ assert ano_novo.display_name("pt") == "Ano Novo"        # native (the official)
 
 Translations cover the national and regional tiers in English, Portuguese, Spanish, German and French. Only some jurisdictions have them. A jurisdiction gets its full five-language matrix when we write those renderings with confidence. We do not invent a low-confidence gloss for every holiday of a country.
 
-Every jurisdiction, covered or not, gets its official native name and any co-official names (Switzerland's de/fr/it, Belgium's nl/fr/de, Ireland's en/ga). `display_name` always resolves *something* through the fallback chain. Portugal's ~300 municipal saints'-day feasts are deliberately *not* translated: "Santo António" is the same proper noun in every language. So `display_name` falls back to the native name, which is the honest answer, not a gap.
+Every jurisdiction, covered or not, gets its official native name and any co-official names (Switzerland's de/fr/it, Belgium's nl/fr/de, Ireland's en/ga). The function `display_name` always resolves *something* through the fallback chain. Portugal's ~300 municipal saints'-day feasts are deliberately *not* translated: "Santo António" is the same proper noun in every language. So `display_name` falls back to the native name, which is the honest answer, not a gap.
 
 ## Data files
 

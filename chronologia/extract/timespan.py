@@ -1644,7 +1644,10 @@ def _compose_range(left_tok, right_tok, endpoint, borrowed, spec,
     # "from midnight to today"), as a right clock is rolled forward above.  A
     # clock on a weekday, a holiday or a date keeps the year pull below, which
     # would read yesterday's 9am for a daily clock on 31 December.
+    # A right end farther back than a timedelta holds (deep time) is out of
+    # reach of a day roll and keeps the reversed-range reading below.
     daily_clock = (end <= start and left[2] == "clock"
+                   and isinstance(start - end, timedelta)
                    and not right_dated and daily is not None
                    and not _definite_endpoint(left_tok, spec)
                    and daily(left_tok))
