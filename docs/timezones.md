@@ -299,7 +299,7 @@ import arrow                                       # arrow 1.3
 print(arrow.get(2024, 6, 1, 12, 0).to("America/New_York"))
 ```
 
-None of these are wrong. They are *smaller in scope on purpose*. They model the civil clock beautifully. `chronologia` models the civil clock **and** the sun that predates it, the calendars that reformed under it and the deep time around it. It pays for that reach by being less specialised at, say, natural-language duration formatting.
+None of these are wrong. They are *smaller in scope on purpose*. They model the civil clock beautifully. The library `chronologia` models the civil clock **and** the sun that predates it, the calendars that reformed under it and the deep time around it. It pays for that reach by being less specialised at, say, natural-language duration formatting.
 
 ### whenever, closest in spirit
 
@@ -365,7 +365,7 @@ A daylight-saving change is a **`SKIP`** (spring-forward: 2:30 AM never happened
 
 At the end of 2011, **Samoa deleted a day**. To move from the American side of the International Date Line to the Asian side. So its clocks matched Australia and New Zealand, its main trading partners. The country jumped from UTC−11 to UTC+13, and **Friday, 30 December 2011 never happened**. Thursday the 29th was followed directly by Saturday the 31st.
 
-No baby was born that Friday. No wage was paid. The day is a hole in the civil record. That is a `SKIP`. It is the same kind of event as the ten days that Pope Gregory deleted in 1582: a *decree* that removes labels no clock ever bore:
+No baby was born that Friday. No wage was paid. The day is a hole in the civil record. That is a `SKIP`. It is the same kind of event as the ten days that Pope Gregory deleted in 1582. It is a *decree* that removes labels no clock ever bore:
 
 ```python
 from chronologia import TIMELINES, NeverExisted

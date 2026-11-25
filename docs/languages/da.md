@@ -56,6 +56,8 @@ The literal hour twelve reads wrong on the morning side. `klokken tolv om formid
 
 The `morgen` band is transcribed in `chronologia/dayparts.py`. It ships only under its definite surface `morgenen`, and the bare `morgen` that the sibling day parts (`aften`/`aftenen`, `nat`/`natten`) ship is left out. Bare `morgen` stays reserved for the relative-day "tomorrow" reading. `morgenen` never appears in that idiom (`i morgen` is always the bare form). `morgenen` alone reads as the 05:00 to 10:00 band, and `klokken ni om morgenen` is 09:00.
 
+**`en timer` is the device.** The word `timer` is the plural of `time` (hour) and also the loan noun for a timer. So `sæt en timer` is no length of one hour. The function `extract_duration` gives `None` for it. The file `marker_article_noun.voc` lists `timer` with the Wiktionary entry `timer` as its source. The phrase `lav en timer på ti minutter` is a length of ten minutes, with `lav en timer på` left over.
+
 **Ranges** are `fra … til …` and `mellem … og …`, with `siden` opening one that runs to the anchor and `indtil`/`til` closing one that starts there.
 
 **Quarters, ISO weeks and eras.** `første kvartal 2020`, `uge 12`, `44 f.Kr.` and `1990 e.Kr.` resolve, along with a before-present marker and the full deep-time period vocabulary.
@@ -127,7 +129,9 @@ Each line is an open issue with a strict `xfail` test for this language. The lin
 
 - A part of the day with no day word answers the band that has already passed. Example (reader `extract_timespan`, lang `da`, anchor 2017-06-27 13:04): `Hvad tid på morgenen gryr dagen ovre i London?` gives 2017-06-27 05:00 to 2017-06-27 10:00 and `Hvad tid gryr dagen ovre i London` left over. [#997](https://github.com/TigreGotico/chronologia/issues/997)
 
-- A noun that looks like a unit reads as one hour, and a clock preposition phrase is not read. Example (reader `extract_timespan`, lang `da`, anchor 2017-06-27 13:04): `flyt aftalen i morgen til klokken femten` gives 2017-06-28 00:00 to 2017-06-28 15:01 and `flyt aftalen` left over. [#1015](https://github.com/TigreGotico/chronologia/issues/1015)
+- A clock preposition phrase is not read. Example (reader `extract_timespan`, lang `da`, anchor 2017-06-27 13:04): `flyt aftalen i morgen til klokken femten` gives 2017-06-28 00:00 to 2017-06-28 15:01 and `flyt aftalen` left over. [#1015](https://github.com/TigreGotico/chronologia/issues/1015)
+
+- The words `klokken` and `kl.` stay in the remainder before a digit clock. Example (reader `extract_timespan`, lang `da`, anchor 2017-06-27 00:00): `Påmind mig klokken 10:45` gives 2017-06-27 10:45 to 2017-06-27 10:46 and `Påmind mig klokken` left over. [#1375](https://github.com/TigreGotico/chronologia/issues/1375)
 
 - A clock form reads wrong or not at all. Example (reader `extract_timespan`, lang `da`, anchor 2117-09-03 13:30): `20` gives no reading. [#1032](https://github.com/TigreGotico/chronologia/issues/1032)
 

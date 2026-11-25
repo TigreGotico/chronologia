@@ -96,7 +96,7 @@ print(width > timedelta(days=999))  # True
 
 The registry draws a deliberate three-way line, and understanding it explains almost every "why isn't X included?" question.
 
-- **Arithmetic → shipped as `exact`**. If a calendar reduces to a deterministic rule (the Hebrew molad, the Coptic leap cycle), the library computes it exactly in any century, forward or backward.
+- **Arithmetic → shipped as `exact`**. A calendar can reduce to a deterministic rule, such as the Hebrew molad or the Coptic leap cycle. Then the library computes it exactly in any century, forward or backward.
 - **Observational-but-published → shipped as `tabulated`, bounded**. Some calendars need observation to find their month starts (crescent sighting, new moon plus solar term, an equinox). If an authority *publishes* an official table for such a calendar, the library ships that table. It is exact inside its range and raises a `CalendarRangeError` outside it, often naming a `fallback` rule-based calendar to degrade to.
 
 ```python

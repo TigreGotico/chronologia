@@ -38,6 +38,10 @@ To read a phrase, call `extract_timespan` with the phrase, the locale code and a
 
 **The glued clock hour.** Colloquial Hungarian drops the "o'clock" word and glues the temporal suffix straight onto the numeral: `háromkor` is "at three". The cardinal back-end does not read the glued form, and folding it to a bare digit would leave the clock frame no cue at all. The twelve telling-time surfaces are given as a closed table and each is split into a synthetic `at` marker plus the hour, which the universal `at HOUR` order then binds. The marker carries an empty raw text and a zero-width extent. It never reaches the remainder. `-kor` is cited to its own Wiktionary entry as the temporal case suffix, which glosses `1 órakor` as "at 1 o'clock" and `1-kor` as "at 1".
 
+**The sublative of a clock hour and of a length.** The sublative `-ra`/`-re` follows a count of units. The phrase `három órára` reads 15:00 at 13:04. The phrase `öt percre` is a length of five minutes. The surfaces `napra`, `órára`, `percre`, `hónapra`, `hétre`, `másodpercre` and `évre` ship.
+
+Each cites the declension table of its Wiktionary entry. The word `órára` also serves as a clock word. So `tedd át a megbeszélést három órára` reads 15:00 and leaves `tedd át a megbeszélést` in the remainder.
+
 **`hét` never folds.** Hungarian's word for "week" is also its word for "seven". The fold names it explicitly in an exclude set so the unit token survives. `hétkor` ("at seven") is a distinct surface and is unaffected, so both readings stay reachable. The attributive `két` (2) goes the other way and is supplied explicitly, because the pronouncer emits only `kettő`.
 
 **Fused thousands.** Hungarian glues the multiplier onto the scale word and hyphenates the remainder (`kétezer-huszonnégy` is 2024) and neither the run set nor the number back-end composes the two. A wrapper validates the multiplier prefix through the language's own extractor and composes the value itself. `kétezer-huszonnégy` reads as the year rather than as twenty-four.
@@ -107,7 +111,7 @@ Each example below runs as a doctest with a fixed anchor, so the output does not
 
 Each line is an open issue with a strict `xfail` test for this language. The lines are grouped by topic. An example names the reader that produced it, the language and the anchor date, and shows what that reader gives on the test's own phrase.
 
-- The sublative case and the `-kor` clock are not read. Example (reader `extract_timespan`, lang `hu`, anchor 2017-06-27 13:04): `tedd át a megbeszélést három órára` gives no reading. [#1020](https://github.com/TigreGotico/chronologia/issues/1020)
+- A digit clock with the suffix `-kor` after the particle `fel` is not read: `ébressz fel 7-kor` gives no reading, while `ébressz 7-kor` reads 19:00. A part of the day before a sublative hour gives the whole band: `állíts be egy ébresztőt reggel hétre` gives 06:00 to 12:00 and leaves `állíts be egy ébresztőt hétre`. Example (reader `extract_timespan`, lang `hu`, anchor 2017-06-27 13:04): `ébressz fel 7-kor egy hangoskönyvvel` gives no reading. [#1020](https://github.com/TigreGotico/chronologia/issues/1020)
 
 - A word for next or last beside a season, month or week stays in the remainder. Example (reader `extract_timespan`, lang `hu`, anchor 2017-06-27 13:04): `1999 nyara` gives 1999-01-01 00:00 to 2000-01-01 00:00 and `nyara` left over. [#993](https://github.com/TigreGotico/chronologia/issues/993)
 

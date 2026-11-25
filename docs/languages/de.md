@@ -42,6 +42,8 @@ It reads all three components or none. A run like `15.13.2020` or `31.02.2020` n
 
 **Day parts** are where German diverges hardest from English, and the vocabulary spells it out. German splits into `Morgen`, `Vormittag`, `Mittag`, `Nachmittag`, `Abend` and `Nacht`, where `Vormittag` is the half English has no word for at all. Duden glosses it as the "Zeit zwischen Morgen und Mittag". All six band boundaries come from the Unicode CLDR 47 day-period chart for `de` and are transcribed in `chronologia/dayparts.py`: Nacht `[00:00, 05:00)`, Morgen `[05:00, 10:00)`, Vormittag `[10:00, 12:00)`, Mittag `[12:00, 13:00)`, Nachmittag `[13:00, 18:00)` and Abend `[18:00, 24:00)`.
 
+**The morning word after a clock.** The words `früh`, `morgens` and `vormittags` after an hour fix the morning. The phrases `um 6 früh` and `um 6 morgens` both read 06:00. The phrase `um 6:30 früh` reads 06:30. The word `früh` cites DWDS. DWDS glosses its second sense as "am Morgen, morgens" with the example "um fünf Uhr früh fahre ich zurück". Standing alone, `früh` and `morgens` return nothing.
+
 Two consequences of that table are worth naming. The Nachmittag opens at 13:00, after an hour-wide Mittag, and not at noon the way the English afternoon does. And the Nacht is the small hours of the day named, not the evening. The Abend holds the evening through to midnight on its own, so `heute Nacht` is 00:00-05:00 of today.
 
 Only four of the six bands have vocabulary. `Mittag` is the noon clock landmark instead. `heute Mittag` resolves to the point 12:00. It does not resolve to the hour-wide band. `Morgen` has no day-part vocabulary, because `morgen` already means "tomorrow". A locale cannot read the same token both ways without guessing. The four that do ship (Vormittag, Nachmittag, Abend, Nacht) each carry both the noun form and the adverbial `-s` form. `abends` reads as well as `Abend`.
@@ -136,6 +138,8 @@ Each example below runs as a doctest with a fixed anchor, so the output does not
     True
     >>> extract_timespan('morgens', "de", anchor) is None
     True
+    >>> extract_timespan('früh', "de", anchor) is None
+    True
     >>> extract_timespan('nach Ostern', "de", anchor) is None
     True
     >>> extract_timespan('vierzehn Tage', "de", anchor) is None
@@ -186,8 +190,6 @@ Each line is an open issue with a strict `xfail` test for this language. The lin
 - A repeat count is not read. Example (reader `extract_recurrence`, lang `de`, anchor 2026-11-22 09:00): `jeden Montag 10 mal` gives the rule `FREQ=WEEKLY;BYDAY=MO` and `10 mal` left over. [#1322](https://github.com/TigreGotico/chronologia/issues/1322)
 
 **Events, zones, business days and the API**
-
-- A morning or evening word that the reader does not join lets a lone clock take the other half of the day. Example (reader `extract_timespan`, lang `de`, anchor 2017-06-27 13:04): `um 6 früh` gives 2017-06-27 18:00 to 2017-06-27 18:01 and `früh` left over. [#1071](https://github.com/TigreGotico/chronologia/issues/1071)
 
 - The event summary keeps the article and the day word before a day number. Example (reader `extract_event`, lang `de`, anchor 2025-06-18 10:30): `Treffen am Tag 5 Mai` gives start 2026-05-05 00:00, length none, summary `treffen am tag`. [#1218](https://github.com/TigreGotico/chronologia/issues/1218)
 

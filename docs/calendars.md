@@ -131,7 +131,7 @@ The Amazigh agricultural calendar is in modern use across the Berber-speaking wo
 print(CALENDARS["berber"].date(2976, 1, 1))  # 2026-01-14T00:00:00
 ```
 
-**Era note:** the +950 offset (Berber year 2976 = 2026 CE) was fixed in 1968 by the Académie Berbère to commemorate the accession of Shoshenq I, the Berber pharaoh of Egypt's 22nd dynasty (conventionally dated 950 BC), a documented 20th-century symbolic choice, not an ancient reckoning.
+**Era note:** the +950 offset (Berber year 2976 = 2026 CE) was fixed in 1968 by the Académie Berbère. It commemorates the accession of Shoshenq I, the Berber pharaoh of Egypt's 22nd dynasty (conventionally dated 950 BC). It is a documented 20th-century symbolic choice, not an ancient reckoning.
 
 **Caveat: civil holidays are separate from the arithmetic**. A decree fixes Algeria's Yennayer public holiday at 12 January Gregorian (2017). A decree fixes Morocco's at 13 January Gregorian (2023). Both are legislated civil dates. They diverge from this calendar's own 14 January new year and are not derived from it.
 

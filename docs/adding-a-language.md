@@ -346,7 +346,9 @@ With these files in place, chronologia reads these phrases in your language: "ev
 
 It has four parts worth understanding:
 
-**1. `tokenizer`**: three on/off switches for how text is chopped into words. Most languages leave them all `false`. `split_contractions` splits words like French *l'année*. `ordinal_dot` treats "3." as an ordinal, as German does. `dotted_date` reads the continental numeric date "15.06.2020" as one date. It belongs to every language whose everyday written date has that shape: German, Russian, Polish, Czech, Finnish, Turkish, Dutch and their neighbours. It does not belong to a language that writes the numeric date only with slashes.
+**1. `tokenizer`**: three on/off switches for how text is chopped into words. Most languages leave them all `false`. The flag `split_contractions` splits words like French *l'année*. The flag `ordinal_dot` treats "3." as an ordinal, as German does.
+
+The flag `dotted_date` reads the continental numeric date "15.06.2020" as one date. It belongs to every language whose everyday written date has that shape: German, Russian, Polish, Czech, Finnish, Turkish, Dutch and their neighbours. It does not belong to a language that writes the numeric date only with slashes.
 
 **2. `constructions`**: this is the heart of it. A **construction** is a *recipe* for one kind of date phrase, and each recipe lists the **word order** your language uses. An order is a short sequence of **slots** and **connector words**. A slot is an uppercase name for "a thing that goes here".
 
@@ -371,7 +373,7 @@ The safest approach is to copy the `constructions` block from the language close
 
 - `week_start`: `"monday"` or `"sunday"`.
 - `dmy`: `true` if your language writes day-before-month (15/06), `false` for month-before-day (06/15).
-- `weekend_start`: first day of the two-day weekend, as a number with Monday=0. `5` is Saturday, for most of the world. `4` is Friday, for Israel and much of the Arab world.
+- `weekend_start`: first day of the two-day weekend, as a number with Monday=0. The value `5` is Saturday, for most of the world. The value `4` is Friday, for Israel and much of the Arab world.
 - the clock flags from Tier 2 (`bare_half_past`, `bare_half_to`, …).
 - `hemisphere`: `"south"` if seasons should be flipped, else leave it out.
 
@@ -568,7 +570,7 @@ PYTEST_DISABLE_PLUGIN_AUTOLOAD=1 python -m pytest test/nl_corpus_ms/ -q
 
 **Step 5, see green**. No failures means chronologia reads your spelling and still reads everything it read before. You're done: commit and open a pull request.
 
-That five-step loop is the whole rhythm of contributing a language: *find the file, add the word with a source, add a test, run it, see green*. It is the same loop for one spelling and for a whole locale.
+That five-step loop is the whole rhythm of contributing a language. The steps are *find the file, add the word with a source, add a test, run it, see green*. It is the same loop for one spelling and for a whole locale.
 
 ---
 

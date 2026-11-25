@@ -16,7 +16,9 @@ This page teaches you the three ideas the whole library is built from. You do no
 pip install chronologia
 ```
 
-That is everything. You need Python 3.11 or newer. The reckoning core is pure standard library. The natural-language layer needs two small pure-Python helpers. **numtag** reads the numbers of 40 of the 61 languages. [The language table](languages/index.md) lists them. **ovos-spec-tools** loads each language's vocabulary. Nothing here ever talks to the internet.
+That is everything. You need Python 3.11 or newer. The reckoning core is pure standard library. The natural-language layer needs two small pure-Python helpers.
+
+The package **numtag** reads the numbers of 40 of the 61 languages. [The language table](languages/index.md) lists them. The package **ovos-spec-tools** loads each language's vocabulary. Nothing here ever talks to the internet.
 
 ## Your first extraction (60 seconds)
 
@@ -50,7 +52,9 @@ print(span.start_datetime.date(), "→", span.end_datetime.date())  # 2027-06-01
 print(span.width)                                                  # 30 days, 0:00:00
 ```
 
-**Read a date in another language**. Pass the language code. The vocabulary does the rest. chronologia speaks 61 languages, though not all to the same depth. The README's coverage bands say which languages have a full per-language review and which still wait for a native reader. A language also declines constructions its sources do not attest. That refusal is a deliberate answer, not a gap. [When a language declines a phrase](extraction.md#when-a-language-declines-a-phrase) explains how to tell a refusal from a bug.
+**Read a date in another language**. Pass the language code. The vocabulary does the rest. chronologia speaks 61 languages, though not all to the same depth. The README's coverage bands say which languages have a full per-language review and which still wait for a native reader.
+
+A language also declines constructions its sources do not attest. That refusal is a deliberate answer, not a gap. The page [when a language declines a phrase](extraction.md#when-a-language-declines-a-phrase) explains how to tell a refusal from a bug.
 
 ```python
 from chronologia import extract_timespan
@@ -145,7 +149,7 @@ The first day of the year 2000 is day number 2,451,545 on the line. Nothing magi
 
 Python already has a way to hold a date: the built-in `datetime`. It is good, but it has one hard limit: its year must be between 1 and 9999. Ask it about 44 BC or the year 12000 and it simply refuses.
 
-`AstroDate` is this library's answer. **Think of it as a `datetime` whose year can be any whole number at all**, deep in the past or far in the future. It has the same parts as a `datetime`: year, month, day, hour, minute and so on. It has the same abilities: compare two dates, ask the weekday, add a week. You can mix it with a real `datetime`:
+`AstroDate` is this library's answer. Think of it as a `datetime` whose year can be any whole number at all, deep in the past or far in the future. It has the same parts as a `datetime`: year, month, day, hour, minute and so on. It has the same abilities: compare two dates, ask the weekday, add a week. You can mix it with a real `datetime`:
 
 ```python
 from chronologia import AstroDate

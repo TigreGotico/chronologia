@@ -10,7 +10,7 @@ see: docs/getting-started.md, docs/extraction.md
 
 `chronologia` is a date-reckoning engine. It converts between calendars and holds years no `datetime` can. Most important, it returns **spans** whose width and **basis** tell you how well anything is known. That honesty turns out to be useful to very different people for very different reasons.
 
-This page walks through seven audiences. Each one gets a story about a real person with a real problem, a **runnable program** that solves an instance of it, and a few pointers into the deeper guides. The programs are the showcase: copy any one of them and it runs.
+This page walks through seven audiences. Each one gets a story about a real person with a real problem. It also gets a **runnable program** that solves an instance of it, and a few pointers into the deeper guides. The programs are the showcase: copy any one of them and it runs.
 
 A note before we start: voice assistants are the **last** section, not the first. `chronologia` was built to reckon time correctly. Being a good backend for a language parser is one thing that falls out of that, not the reason it exists.
 
@@ -108,7 +108,7 @@ print("Swedish leap day:", TIMELINES["sweden_1700_1712"].date(1712, 2, 30).isofo
 
 The eleven-day answer is the whole point: the two events were recorded in two calendars. The only correct way to measure between them is to send both down to the day-number line and subtract *there*. The regnal spans and the reform timelines let you place a source's own dating into the modern frame without hand-computing any offsets.
 
-**What else you'll want.** [eras-and-rulers.md](eras-and-rulers.md) covers regnal sequences, Roman consular pairs, the three competing Egyptian chronologies and the backwards-counting Roman *ante diem* grammar. Every jurisdiction's reform, the deleted days, the doubled days, the dateline hops, is in [timelines.md](timelines.md). The calendars themselves, and how far each is trustworthy, are in [calendars.md](calendars.md).
+**What else you'll want.** The page [eras-and-rulers.md](eras-and-rulers.md) covers regnal sequences and Roman consular pairs. It also covers the three competing Egyptian chronologies and the backwards-counting Roman *ante diem* grammar. Every jurisdiction's reform, the deleted days, the doubled days, the dateline hops, is in [timelines.md](timelines.md). The calendars themselves, and how far each is trustworthy, are in [calendars.md](calendars.md).
 
 ---
 
@@ -250,9 +250,9 @@ print("modern humans appear:", cosmic_moment(200_000))  # modern humans appear: 
 
 Each answer carries its uncertainty. The equinox is a two-minute-wide span. The full moon is a `predicted` day-wide window. The polar sunrise is a typed `NoSunEvent`, not an invented time. The rover sol is a one-sol-wide stretch of Earth time. That is exactly the habit of mind an astronomy class should leave with.
 
-**What else you'll want.** [sun-moon-and-seasons.md](sun-moon-and-seasons.md) covers equinoxes, solstices, solar terms, moon phases with their measured accuracy bounds, and sunrise and sunset with twilight.
+**What else you'll want.** The page [sun-moon-and-seasons.md](sun-moon-and-seasons.md) covers equinoxes, solstices, solar terms and moon phases with their measured accuracy bounds. It also covers sunrise and sunset with twilight.
 
-[mars-and-beyond.md](mars-and-beyond.md) covers Mars Sol Date, Coordinated Mars Time, the Darian calendar, mission-sol counts and cosmology (redshift → lookback time, the Hubble tension, the Cosmic Calendar).
+The page [mars-and-beyond.md](mars-and-beyond.md) covers Mars Sol Date, Coordinated Mars Time, the Darian calendar and mission-sol counts. It also covers cosmology (redshift → lookback time, the Hubble tension, the Cosmic Calendar).
 
 ---
 
@@ -303,7 +303,7 @@ print("ISO 2027-W01-1:", iso.date(2027, 1, 1).isoformat()[:10])  # ISO 2027-W01-
 
 The two DST cases return a two-tuple and a `NeverExisted`. Priya's scheduler can *test for* these values instead of shipping a wrong instant. `civil_add` keeps 01:30 as 01:30 across the 25-hour day. The GPS/UTC reconciliation is leap-second exact and round-trips. And ISO week 1 lands on 4 January, not 1 January, because the week calendar knows its own rule.
 
-**What else you'll want.** [sun-moon-and-seasons.md](sun-moon-and-seasons.md) and [timezones.md](timezones.md) cover timezone folds and gaps, `civil_add` versus raw `timedelta`, historical local mean time, and the leap-second, UTC, TAI and GPS story. Reading any `zoneinfo` zone as a discontinuity timeline (`zone_timeline`) is in [timelines.md](timelines.md). Span algebra, `overlaps`, `intersect`, `union`, `gap`, `contains`, is the toolkit under all of it (see [getting-started.md](getting-started.md)).
+**What else you'll want.** The pages [sun-moon-and-seasons.md](sun-moon-and-seasons.md) and [timezones.md](timezones.md) cover timezone folds and gaps. They cover `civil_add` versus raw `timedelta` and historical local mean time. They also cover the leap-second, UTC, TAI and GPS story. Reading any `zoneinfo` zone as a discontinuity timeline (`zone_timeline`) is in [timelines.md](timelines.md). Span algebra, `overlaps`, `intersect`, `union`, `gap`, `contains`, is the toolkit under all of it (see [getting-started.md](getting-started.md)).
 
 ---
 
@@ -313,7 +313,7 @@ This is the section people expect a date library to lead with, and it comes last
 
 Every downstream bug flows from that lie. The reminder lands on the wrong edge. "Is X during June?" gets the wrong answer. Nobody can see where the precision was invented.
 
-The fix is not in a separate parser. It is in what the reckoning layer is *allowed to return*. `chronologia` reads the phrase itself. `extract_timespan` returns "the whole of June 2027" as a stretch with a true width. The assistant decides what to do with a month-wide answer instead of pretending it got a timestamp.
+The fix is not in a separate parser. It is in what the reckoning layer is *allowed to return*. The library reads the phrase itself. The function `extract_timespan` returns "the whole of June 2027" as a stretch with a true width. The assistant decides what to do with a month-wide answer instead of pretending it got a timestamp.
 
 ```python
 from chronologia import extract_timespan, AstroDate
@@ -342,7 +342,9 @@ The span is the whole contribution: "June 2027" stays a month wide. The assistan
 
 ## The common thread
 
-Seven audiences, one habit: **typed honesty**. A `DateSpan`'s width says how precisely a thing is known. Its `basis` says whether it was computed, tabulated, reconstructed, or predicted. Where an answer does not exist, the library returns a value that says so. `NeverExisted` marks a deleted or never-happened civil time. `NoSunEvent` marks a polar day. `AmbiguousPeriodError` marks a Bronze Age with no region.
+Seven audiences, one habit: **typed honesty**. A `DateSpan`'s width says how precisely a thing is known. Its `basis` says whether it was computed, tabulated, reconstructed, or predicted.
+
+Where an answer does not exist, the library returns a value that says so. The value `NeverExisted` marks a deleted or never-happened civil time. The value `NoSunEvent` marks a polar day. The error `AmbiguousPeriodError` marks a Bronze Age with no region.
 
 The archivist reaches for that honesty to keep uncertain provenance uncertain. The historian reaches for it to stop a calendar reform corrupting a lifespan. The archaeologist to keep a radiocarbon age from masquerading as a calendar year. The astronomer to teach error bars.
 

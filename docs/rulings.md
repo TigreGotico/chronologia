@@ -14,13 +14,13 @@ Rulings A to C are the readings that differ from ovos-date-parser, the reader th
 
 ## A. A counted offset carries the clock of the anchor
 
-A counted offset is arithmetic on the anchor. So "in two hours" said at 13:04 is 15:04, and `en 3 días` (Aragonese, in three days) said at 13:04 on 2017-06-27 is 2017-06-30 13:04, not 2017-06-30 00:00. Rounding to the hour is a defect, not a convention. Counted periods follow the same rule.
+A counted offset is arithmetic on the anchor. So "in two hours" said at 13:04 is 15:04. And `en 3 días` (Aragonese, in three days) said at 13:04 on 2017-06-27 is 2017-06-30 13:04, not 2017-06-30 00:00. Rounding to the hour is a defect, not a convention. Counted periods follow the same rule.
 
 A counted week, month or year is the anchor plus the count. "In 2 weeks" is the anchor plus 14 days. "3 months ago" is minus 3 calendar months.
 
 ## B. A named period is the calendar unit
 
-"Next week" is the calendar week after the anchor's week, starting on the first weekday of the locale, and "last month" is the previous calendar month. A rolling seven days is not a named period: `la semana vinient` (next week) said on Tuesday 2017-06-27 starts on Monday 2017-07-03, not on 2017-07-04. The engine option `relative_period_mode` takes `calendar` by default and `rolling` for a deployment that wants the rolling reading. The week starts on Monday in 56 locales, on Saturday in ar, sw and fa, and on Sunday in he.
+"Next week" is the calendar week after the anchor's week, starting on the first weekday of the locale. In the same way, "last month" is the previous calendar month. A rolling seven days is not a named period: `la semana vinient` (next week) said on Tuesday 2017-06-27 starts on Monday 2017-07-03, not on 2017-07-04. The engine option `relative_period_mode` takes `calendar` by default and `rolling` for a deployment that wants the rolling reading. The week starts on Monday in 56 locales, on Saturday in ar, sw and fa, and on Sunday in he.
 
 ## C. `prefer_future` means the next occurrence
 
@@ -28,7 +28,7 @@ The next occurrence is the first one strictly after the anchor. An instant equal
 
 ## D. Readings settled for spelled clocks and day words
 
-- A spelled clock is read forward from the hour in ro and it: `nouă și zece` (ten past nine) is 09:10, and `nouă fără zece` (ten to nine) is 08:50. A phrase with no marker still reads in that order.
+- A spelled clock is read forward from the hour in ro and it: `nouă și zece` (ten past nine) is 09:10. And `nouă fără zece` (ten to nine) is 08:50. A phrase with no marker still reads in that order.
 - A spelled clock in es, pt, gl and el reads the same way.
 - Arabic `أمس الأول` is the day before yesterday.
 - en "10 past 4" is 04:10. nl "morgen om 10 uur" is 10:00. id `Rapat pukul tiga sore` is 15:00. ca `d'aquí a 15 minuts` is 15 minutes from the anchor, not the clock 15:00.
@@ -37,11 +37,13 @@ The next occurrence is the first one strictly after the anchor. An instant equal
 
 **1. A month named without a day**. A month whose span contains the anchor is this month. A month that ended before the anchor is the month of next year. This is ruling C applied to a span: "janvier" said in June 2017 is January 2018, and "juin" said in June 2017 is June 2017.
 
-A part of a month ("early march", "first week of march") still keeps the anchor's year. A day named by its number is not a part of a month: a year-less "the fifteenth day of march" names the date "15 march" names. So it is the next 15 March, as ruling C reads a day of a month. A day equal to the anchor's day is that day. "The last day of march" has no number and keeps the anchor's year.
+A part of a month ("early march", "first week of march") still keeps the anchor's year. A day named by its number is not a part of a month. A year-less "the fifteenth day of march" names the date "15 march" names. So it is the next 15 March, as ruling C reads a day of a month. A day equal to the anchor's day is that day. "The last day of march" has no number and keeps the anchor's year.
 
 The end of a range may name a day and a month with no year, weekday or clock. Suppose the anchor reads that end later than its first occurrence on or after the start of the range. Then the end is that first occurrence: "from the last day of february to the first day of march" said on 3 March 2027 ends with 1 March 2027.
 
-When a start with no year rolls past its end, the range reads from the previous occurrence of the start, if that range holds the anchor and its end does not fall earlier in the month of its start: "from the 1st day of december to 10 january" said on 20 December 2026 runs from 1 December 2026 to 10 January 2027. "from the 1st day of september to 30 june" said on 22 November 2026 runs from 1 September 2026 to 30 June 2027. A range whose end names the same month as its start, on an earlier day, is not read that way: "from 2 june to 1 june" and "from 12 june to 5 june" said after their start day name no range. A range from a later month into an earlier one is read that way. So "from 1 june to 31 may" said on 1 December 2026 runs from 1 June 2026 to 31 May 2027. The months are compared by name, not by year.
+When a start with no year rolls past its end, the range reads from the previous occurrence of the start, if that range holds the anchor and its end does not fall earlier in the month of its start: "from the 1st day of december to 10 january" said on 20 December 2026 runs from 1 December 2026 to 10 January 2027. "from the 1st day of september to 30 june" said on 22 November 2026 runs from 1 September 2026 to 30 June 2027.
+
+A range whose end names the same month as its start, on an earlier day, is not read that way: "from 2 june to 1 june" and "from 12 june to 5 june" said after their start day name no range. A range from a later month into an earlier one is read that way. So "from 1 june to 31 may" said on 1 December 2026 runs from 1 June 2026 to 31 May 2027. The months are compared by name, not by year.
 
 **2. A bare hour or an hour-letter clock**. "20h", "21h30" and "3 heures" read as a clock when they are the whole utterance, as the ruling for a bare hour alone says. Inside a sentence with no clock marker, they refuse. So fr "un film de 2 heures", "2h de route", "il reste 3 heures" and "3 heures de travail" refuse. ast "20h" and "21h30" alone read 20:00 and 21:30. This agrees with chronologia #882.
 
@@ -49,9 +51,9 @@ When a start with no year rolls past its end, the range reads from the previous 
 
 **4. pt "antes de ontem" is anteontem**. Priberam lists it as a synonym.
 
-**5. A habitual phrase reads as the next occurrence.** pt "ao sábado", gl "os luns" and fr "le mardi" alone answer the next such day. `extract_datetime` has no recurrence type, and a skill wants a date.
+**5. A habitual phrase reads as the next occurrence.** pt "ao sábado", gl "os luns" and fr "le mardi" alone answer the next such day. The function `extract_datetime` has no recurrence type. And a skill wants a date.
 
-**6. A weekday said on that same weekday is today**. "o venres" said on a Friday answers that Friday. A day is a span, and ruling 1 already makes a span that contains the anchor the current one ("juin" said in June is this June). Ruling C agrees: an instant equal to the anchor is the anchor. A phrase that names the next one ("next Friday", "o próximo venres") still moves forward a week.
+**6. A weekday said on that same weekday is today**. "o venres" said on a Friday answers that Friday. A day is a span. Ruling 1 already makes a span that contains the anchor the current one ("juin" said in June is this June). Ruling C agrees: an instant equal to the anchor is the anchor. A phrase that names the next one ("next Friday", "o próximo venres") still moves forward a week.
 
 **7. ru and uk "<ordinal> числа" is a date**. "двадцатого числа" and "двадцятого числа" name the day of the month, because "числа" names it. The bare genitive ordinal ("двадцатого", "двадцятого") and the digit form "20-го" stay unread, because the left-out noun can be any noun. A cardinal before "числа" is a count: "три числа" is "three numbers".
 
@@ -59,15 +61,15 @@ When a start with no year rolls past its end, the range reads from the previous 
 
 **9. ru "в половине третьего" follows the bare-clock rule**. It reads as "половина третьего" reads. A day period fixes the half of the day: "в половине третьего дня" is 14:30.
 
-**10. "Tonight" is the night of the anchor's own day**. Wiktionary "tonight": "During the night following the current day. During the evening of today." CLDR day periods for en start night1 at 21:00 and morning1 at 00:00, so the en night ends at midnight.
+**10. "Tonight" is the night of the anchor's own day**. Wiktionary "tonight": "During the night following the current day. During the evening of today." CLDR day periods for en start night1 at 21:00 and morning1 at 00:00. So the en night ends at midnight.
 
-A night band that crosses midnight is cut at midnight before its middle hour is taken. With a 21:00 to 06:00 band, "tonight" said at 13:04 answers 22:30 on the anchor day, not 01:30 the next day. An hour said inside the band keeps its own reading (ruling 8: "3 часа ночи" is 03:00).
+A night band that crosses midnight is cut at midnight before its middle hour is taken. With a 21:00 to 06:00 band, "tonight" said at 13:04 answers 22:30 on the anchor day. It does not answer 01:30 the next day. An hour said inside the band keeps its own reading (ruling 8: "3 часа ночи" is 03:00).
 
 **10a. A part of the day that holds the anchor answers the anchor once its middle has passed**. A part of the day named with no day of its own ("tonight", "noću", "dnes večer", "ráno") answers the middle of its band. When the anchor lies inside the band and the middle has passed, the answer is the anchor itself. For a night band, inside the band means inside the kept part between its start and midnight. Before the middle, the middle still answers.
 
-Ruling C decides both: a reading is never before the anchor, and an instant equal to the anchor is the anchor. Said at 23:30 with a 21:00 to 06:00 band, "tonight" answers 23:30. Said at 21:30 it answers 22:30. cs "dnes večer" said at 21:00, inside the 18:00 to 22:00 evening band, answers 21:00, not 20:00.
+Ruling C decides both: a reading is never before the anchor, and an instant equal to the anchor is the anchor. Said at 23:30 with a 21:00 to 06:00 band, "tonight" answers 23:30. Said at 21:30 it answers 22:30. And cs "dnes večer" said at 21:00, inside the 18:00 to 22:00 evening band, answers 21:00, not 20:00.
 
-**10b. Ruling 10 holds in every locale**. The cut at midnight follows from what "tonight" names (the night of the anchor's own day), not from the en clock. CLDR gives other locales a night that crosses midnight (hr night1 21:00 to 04:00, cs and sk 22:00 to 04:00). A night named with no day of its own is the night of the anchor's day there too. So hr "noću" said at 13:04 answers 22:30 (21:00 plus half of the three hours to midnight), and cs or sk 23:00.
+**10b. Ruling 10 holds in every locale**. The cut at midnight follows from what "tonight" names (the night of the anchor's own day), not from the en clock. CLDR gives other locales a night that crosses midnight (hr night1 21:00 to 04:00, cs and sk 22:00 to 04:00). A night named with no day of its own is the night of the anchor's day there too. So hr "noću" said at 13:04 answers 22:30 (21:00 plus half of the three hours to midnight). For cs or sk it answers 23:00.
 
 **11. "The new year" is 1 January of the next year**. Wiktionary "New Year": "In particular, January 1 in the Julian and Gregorian calendar (New Year's Day) and the days following." So "how many days until the new year" counts to the next 1 January. The library must not refuse it (TigreGotico/chronologia#933).
 
@@ -75,7 +77,9 @@ Ruling C decides both: a reading is never before the anchor, and an instant equa
 
 No pt source rules on "esta <weekday>" for a day already past: Svobodová (2016, Romanistica Pragensia) covers "próxima" and "passada" only, and no Ciberdúvidas answer was found. A command to an assistant names a future time, so the next occurrence is the safer reading.
 
-**13. "Of the month" with no marker rolls. "Of this month" does not**. An nth day, weekday or week "of the month" ("o dia 5 do mês", "a primeira terça-feira do mês") that ended before the anchor is the next month's. Ruling C and ruling 1 read a span that has passed in the same way. A month that lacks the day is skipped: "o dia 30 do mês" said on 31 January is 30 March.
+**13. "Of the month" with no marker rolls. "Of this month" does not**. An nth day, weekday or week "of the month" ("o dia 5 do mês", "a primeira terça-feira do mês") that ended before the anchor is the next month's. Ruling C and ruling 1 read a span that has passed in the same way.
+
+A month that lacks the day is skipped: "o dia 30 do mês" said on 31 January is 30 March.
 
 "Of this month" names the anchor's own month and never rolls. "deste mês" is "Contracção da preposição de com o pronome este" (Priberam s.v. "deste"), and "este" is "Designativo de pessoa ou coisa que está presente, ou mais próxima de quem fala" (Priberam s.v. "este"). So "o dia 5 deste mês" said on 17 October is 5 October.
 
@@ -85,23 +89,27 @@ The last week of a year is the one that contains 28 December. ISO defines no wee
 
 **15. A weekday beside a day word names that day, or no day**. In "amanhã, domingo" the weekday is an apposition: an "aposto" is a "Nome ou locução nominal que se junta a outro nome para melhor o caracterizar" (Priberam s.v. "aposto", 5). When the two agree, the weekday belongs to the date. When they disagree ("amanhã segunda-feira" said on a Saturday), the phrase names no single day, and the reading is refused rather than guessed.
 
-**15a. The apposed weekday follows the day word**. Ruling 15 reads a weekday only after the day word ("amanhã, domingo"). A weekday before a day word is not folded: in de, nl, da and nb, "morgen" after a weekday names the morning ("Dienstagmorgen": "Morgen des Dienstags", Duden s.v. "Dienstagmorgen"), and es, ast and gl "martes mañana" has the same reading. A sentence boundary between the two words also stops the fold: "vou amanhã. segunda-feira trabalho" names tomorrow.
+**15a. The apposed weekday follows the day word**. Ruling 15 reads a weekday only after the day word ("amanhã, domingo").
 
-**16. "This <weekday>" fixes the day. A passed clock does not move it**. "this tuesday at 10am" said on a Tuesday at 13:04 is that Tuesday at 10:00 (rulings 6 and 12: "este" is "Designativo de pessoa ou coisa que está presente, ou mais próxima de quem fala", Priberam s.v. "este"). A bare weekday with a clock that has passed is the next one. An example is "tuesday at 10am" said on a Tuesday at 13:04. Ruling C reads an instant before the anchor in the same way. The tense of the sentence is outside the parser.
+A weekday before a day word is not folded: in de, nl, da and nb, "morgen" after a weekday names the morning ("Dienstagmorgen": "Morgen des Dienstags", Duden s.v. "Dienstagmorgen"), and es, ast and gl "martes mañana" has the same reading. A sentence boundary between the two words also stops the fold: "vou amanhã. segunda-feira trabalho" names tomorrow.
+
+**16. "This <weekday>" fixes the day. A passed clock does not move it**. "this tuesday at 10am" said on a Tuesday at 13:04 is that Tuesday at 10:00 (rulings 6 and 12: "este" is "Designativo de pessoa ou coisa que está presente, ou mais próxima de quem fala", Priberam s.v. "este").
+
+A bare weekday with a clock that has passed is the next one. An example is "tuesday at 10am" said on a Tuesday at 13:04. Ruling C reads an instant before the anchor in the same way. The tense of the sentence is outside the parser.
 
 **16a. A count before or after a weekday counts from the day ruling 6 names**. "a week before friday" said on Friday 30 June 2017 is 23 June. "the day before friday" is 29 June.
 
 The weekday is that same Friday (ruling 6). The count moves from it even when the answer is in the past. "two days from friday" said on that Friday is 2 July, by the same rule.
 
-**17. A lone spoken hour takes the next twelve-hour reading**. An hour 1 to 12 said with no am/pm word and no part of the day takes whichever of its two readings comes next after the anchor: "at 8" said at 15:00 is 20:00, and pt "às 10 e meia" said at 13:04 is 22:30. A named day or part of the day keeps the spoken hour ("tomorrow at 8" is 08:00, "às 10 da manhã" is 10:00).
+**17. A lone spoken hour takes the next twelve-hour reading**. An hour 1 to 12 said with no am/pm word and no part of the day takes whichever of its two readings comes next after the anchor. "at 8" said at 15:00 is 20:00. And pt "às 10 e meia" said at 13:04 is 22:30. A named day or part of the day keeps the spoken hour ("tomorrow at 8" is 08:00, "às 10 da manhã" is 10:00).
 
-A digit clock follows ruling 23, and 24-hour hours (13 to 23) are as written. A letter-h clock ("8h", "20h", "6h30") reads as written, because the letter h marks the written 24-hour form: fr "à 8h" said at 15:00 is 08:00 the next day. Ruling 2 still decides when a bare hour is a clock at all.
+A digit clock follows ruling 23, and 24-hour hours (13 to 23) are as written. A letter-h clock ("8h", "20h", "6h30") reads as written, because the letter h marks the written 24-hour form. So fr "à 8h" said at 15:00 is 08:00 the next day. Ruling 2 still decides when a bare hour is a clock at all.
 
 **18. pt "quinze dias" is fifteen days**. Priberam s.v. "quinzena", 1: "Período de quinze dias seguidos." No dictionary sense gives "quinze dias" the reading of two weeks, so "daqui a quinze dias" counts fifteen days.
 
 **19. A count with a weekday names that weekday in the period the count reaches**. "daqui a uma semana sexta-feira" is the Friday of the calendar week one week on (ruling B: the locale's week start). "daqui a um mês sexta-feira" and "daqui a um ano sexta-feira" are the first Friday on or after the day the count reaches. The weekday belongs to the date (as an apposition does in ruling 15), so it is never left over.
 
-**20. A clock contradicted by its part of the day**. Hour 0 with a pm-side word refuses in every locale ("00:30 da tarde"). A morning word over hour 13 or later refuses in every locale ("15:00 da manhã"). A night word refuses only an hour from 13 to 17, the CLDR afternoon band. From 18 to 23 it keeps its reading where no source rules it out (de cites Duden and DWDS "Nacht" 1, and no source was found for ru).
+**20. A clock contradicted by its part of the day**. Hour 0 with a pm-side word refuses in every locale ("00:30 da tarde"). A morning word over hour 13 or later refuses in every locale ("15:00 da manhã"). A night word refuses only an hour from 13 to 17, the CLDR afternoon band. From 18 to 23 it keeps its reading where no source rules it out. de cites Duden and DWDS "Nacht" 1. No source was found for ru.
 
 A CLDR day-period band is a formatting label, not a usage limit. So an evening or afternoon word over a 24-hour hour outside its band refuses only in a locale whose resource file cites a usage source for the band. pt cites one, so "22h da tarde" refuses. Every other locale keeps the reading ("21:30 wieczorem" is 21:30, "22:30 evening" is 22:30, ko "오후 19:30" is 19:30). "12:xx" with an evening word stays as read.
 
@@ -111,7 +119,9 @@ The right end of a range takes the left end's cue ("from two thousand to two tho
 
 A unit word or a CLDR currency name right after the number makes it a count whatever cue comes before it. The cue does not reach back across sentence or clause punctuation. Known costs: "before three thousand fans arrived" and "after two thousand people left" read a year, as the ovos-date-parser reader does. "até dois mil e trinta vamos poupar" reads no year.
 
-**22. A bare hour before a counted noun is a count. Any other word after it leaves the clock**. In ast, ca, de, en, es, fr, gl, it, nl and pt the preposition of a clock also introduces a counted group: "wave at 5 people", "a las 3 vecinas", "om 3 mensen", "um 3 Euro". A bare hour behind such a preposition and directly before a noun that counts people or things is not a time of day. With a date it reads the date alone ("a las 3 vecinas mañana" is tomorrow, "look at 5 houses tomorrow" is tomorrow), and alone it reads nothing.
+**22. A bare hour before a counted noun is a count. Any other word after it leaves the clock**. In ast, ca, de, en, es, fr, gl, it, nl and pt the preposition of a clock also introduces a counted group: "wave at 5 people", "a las 3 vecinas", "om 3 mensen", "um 3 Euro".
+
+A bare hour behind such a preposition and directly before a noun that counts people or things is not a time of day. With a date it reads the date alone ("a las 3 vecinas mañana" is tomorrow, "look at 5 houses tomorrow" is tomorrow). Alone it reads nothing.
 
 Each locale lists the nouns, each with a cited dictionary entry (`marker_counted_noun.voc`). Any other word after the hour keeps the clock, and this includes a verb, a pronoun or a name: "a las 8 llegamos", "um 8 gehe ich", "om 8 ben ik thuis", "ich rufe dich um 8 an". The count reading stays a candidate at half the confidence. Known cost: a counted noun that is not on the list reads as a clock ("at 5 lions"). A noun that is on the list and names a place or a time reads as a count.
 
@@ -119,9 +129,9 @@ Each locale lists the nouns, each with a cited dictionary entry (`marker_counted
 
 Consider a digit clock h:mm with an hour from 1 to 11, no leading zero, and no am/pm word or part of the day. It takes the next of its two twelve-hour readings after the anchor, as ruling 17 does for a spoken hour: "wake me up at 6:30" said at 13:04 is 18:30, and "lembra-me às 3:30" said at 15:00 is 15:30.
 
-Other forms read as written: a leading zero ("03:30"), the hour 12 ("12:30" is half past noon) and an hour from 13 to 23 ("15:30"). An am/pm word ("6:30 am") or a part of the day ("às 3:30 da manhã") also makes the clock read as written. "Today" names no part of the day, so "at 3:30 today" said at 15:00 is 15:30. A named later day keeps the written hour ("tomorrow at 6:30" is 06:30). Ruling 17 applies to digit clocks through this ruling.
+Other forms read as written. They are a leading zero ("03:30"), the hour 12 ("12:30" is half past noon) and an hour from 13 to 23 ("15:30"). An am/pm word ("6:30 am") or a part of the day ("às 3:30 da manhã") also makes the clock read as written. "Today" names no part of the day, so "at 3:30 today" said at 15:00 is 15:30. A named later day keeps the written hour ("tomorrow at 6:30" is 06:30). Ruling 17 applies to digit clocks through this ruling.
 
-**24. A unit on either end of a closed range measures both ends**. When a closed range ("desde … até", "de … a", "entre … e", "from … to", "between … and") carries a unit or currency word after either number, both numbers are amounts of that unit. Neither is a year: "desde dois mil euros até três mil" reads no date.
+**24. A unit on either end of a closed range measures both ends**. When a closed range ("desde … até", "de … a", "entre … e", "from … to", "between … and") carries a unit or currency word after either number, both numbers are amounts of that unit. Neither is a year. "desde dois mil euros até três mil" reads no date.
 
 A range of bare numbers with no unit and no year cue keeps the reading ruling 21 gives it. Source: NIST SP 811 (2008), section 7.7, on "to" marking a range of values of one quantity. This supports the shared quantity, not a fact about spoken pt.
 
@@ -151,23 +161,23 @@ The number reader gives the vague word its bound. With no bound, it is the span 
 
 **31. A clock with an offset from a holiday has more than one reading**. "às 9 uma hora antes do natal" names a time. But its words allow several readings. `extract_candidates` returns them ranked, and `extract_timespan` returns the first. First comes the stated clock on the day the offset lands on, in the twelve-hour reading nearer to the offset instant: "às 9 uma hora antes do natal" is 24 December 21:00, and "at 6am 12 hours before easter monday" is Easter Sunday 06:00.
 
-Next comes the offset instant itself (24 December 23:00, Easter Sunday 12:00), then the clock's other twelve-hour reading on that day when the clock has no am/pm word. A clock with "am" or "pm" has no other reading. A clock that agrees with the offset gives one reading. *Not implemented. No issue tracks it.*
+Next comes the offset instant itself (24 December 23:00, Easter Sunday 12:00), then comes the clock's other twelve-hour reading on that day when the clock has no am/pm word. A clock with "am" or "pm" has no other reading. A clock that agrees with the offset gives one reading. *Not implemented. No issue tracks it.*
 
 **32. A clock still ahead today is today**. "at 12:30 am" said at 00:00:30 is 00:30 the same day, as ruling C reads the next occurrence.
 
-**33. A bare "after X" is the open span that starts when X ends**. "after monday", "depois de segunda", "nach Montag" name a time even with no clock: the span from the end of the next X onward, with no end. A phrase that names a time never reads no value just because the end is open. Consumers that need an instant take the span's start. *Not implemented. Tracked in [#1098](https://github.com/TigreGotico/chronologia/issues/1098).*
+**33. A bare "after X" is the open span that starts when X ends**. "after monday", "depois de segunda", "nach Montag" name a time even with no clock. The span runs from the end of the next X onward, with no end. A phrase that names a time never reads no value just because the end is open. Consumers that need an instant take the span's start. *Not implemented. Tracked in [#1098](https://github.com/TigreGotico/chronologia/issues/1098).*
 
-**34. A lone numeral is a candidate, not a reading**. A numeral with no clock marker, no unit and no year cue (da "20", nl "2", "2400") is not a date in `extract_timespan`, as ruling 2 keeps a bare number from being a clock. `extract_candidates` lists its readings, ranked low. These are an hour for 0 to 24, a day of the month for 1 to 31, and a year for a four-digit numeral. A consumer that asked "when?" can take them. *Not implemented. Tracked in [#1032](https://github.com/TigreGotico/chronologia/issues/1032) and [#1035](https://github.com/TigreGotico/chronologia/issues/1035).*
+**34. A lone numeral is a candidate, not a reading**. A numeral with no clock marker, no unit and no year cue (da "20", nl "2", "2400") is not a date in `extract_timespan`, as ruling 2 keeps a bare number from being a clock. The function `extract_candidates` lists its readings, ranked low. These are an hour for 0 to 24, a day of the month for 1 to 31, and a year for a four-digit numeral. A consumer that asked "when?" can take them. *Not implemented. Tracked in [#1032](https://github.com/TigreGotico/chronologia/issues/1032) and [#1035](https://github.com/TigreGotico/chronologia/issues/1035).*
 
 **35. A two-digit year takes the century window of the anchor**. "15/06/20" reads the year in the hundred years from 80 years before the anchor to 20 years after it. This is the default two-digit-year start of ICU (ICU SimpleDateFormat, "set2DigitYearStart": the default is 80 years before the current time).
 
 Said in 2117 it is 2120. Said in 2026 it is 2020. *Not implemented. Tracked in [#1035](https://github.com/TigreGotico/chronologia/issues/1035).*
 
-**36. A night word beside a twelve-hour clock picks the half that falls in the night.** de "um elf Uhr nachts", nl "om 11 's nachts" and "om 11:00 's nachts" are 23:00. "um drei Uhr nachts" is 03:00, and "um zwölf Uhr nachts" is 00:00. The night runs on both sides of midnight ("nachts": "in der Nacht", Duden), so the night word does not mark the am half.
+**36. A night word beside a twelve-hour clock picks the half that falls in the night.** de "um elf Uhr nachts", nl "om 11 's nachts" and "om 11:00 's nachts" are 23:00. "um drei Uhr nachts" is 03:00. And "um zwölf Uhr nachts" is 00:00. The night runs on both sides of midnight ("nachts": "in der Nacht", Duden), so the night word does not mark the am half.
 
 It marks the reading inside the locale's night band (ruling 10). When neither half of the hour falls in that band, the clock keeps the am half. A 24-hour clock with a night word follows ruling 20. *Not implemented. Tracked in [#1079](https://github.com/TigreGotico/chronologia/issues/1079).*
 
-**37. ru "в N-ом часу" is the hour from N-1 to N**. "в восьмом часу" is 07:00 to 08:00, the eighth hour of the clock face, counted as "в половине восьмого" (ruling 9) counts it. A day period fixes the half of the day ("в восьмом часу вечера" is 19:00 to 20:00), and with none the hour takes the next twelve-hour reading after the anchor (ruling 17). The start of the hour picks the reading, as ruling 17 does for a cardinal clock: said at 07:30, "в восьмом часу" is 19:00 to 20:00.
+**37. ru "в N-ом часу" is the hour from N-1 to N**. "в восьмом часу" is 07:00 to 08:00, the eighth hour of the clock face, counted as "в половине восьмого" (ruling 9) counts it. A day period fixes the half of the day ("в восьмом часу вечера" is 19:00 to 20:00). With none, the hour takes the next twelve-hour reading after the anchor (ruling 17). The start of the hour picks the reading, as ruling 17 does for a cardinal clock: said at 07:30, "в восьмом часу" is 19:00 to 20:00.
 
 The hours run first to twelfth: "в двенадцатом часу ночи" is 23:00 to 24:00. The word "часу" is part of the phrase.
 

@@ -121,6 +121,8 @@ Each line is an open issue with a strict `xfail` test for this language. The lin
 
 - A clock in `heures` reads as a length. Example (reader `extract_duration`, lang `fr`, anchor 2017-06-27 13:04): `mets une alarme pour 7 heures demain matin` gives a length of 420 min and `mets une alarme demain matin` left over. [#1063](https://github.com/TigreGotico/chronologia/issues/1063)
 
+- A count of hours of travel after `à` reads as a clock and loses the length. Example (reader `extract_timespan`, lang `fr`, anchor 2017-06-27 13:04): `à 8 heures de route` gives 2017-06-27 20:00 to 2017-06-27 20:01 and `de route` left over. [#1379](https://github.com/TigreGotico/chronologia/issues/1379)
+
 - A length before a part of the day reads as a clock. [#1298](https://github.com/TigreGotico/chronologia/issues/1298)
 
 **Dates, ranges and weeks**

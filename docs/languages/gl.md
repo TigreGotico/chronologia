@@ -44,6 +44,8 @@ To read a phrase, call `extract_timespan` with the phrase, the locale code and a
 
 **The clock** has both toward-the-hour shapes and keeps them apart. `catro menos cuarto` subtracts from the hour already named. Forward is `e`: `cinco e media`, `cinco e cuarto`. The indefinite `un`/`unha` sits in the article vocabulary so the `cuarto` fraction can read. `mediodía` and `medianoite` are points.
 
+**The approximate clock** is marked by `sobre` before the hour. After a part of the day it joins the day before it. The phrase `mañá pola mañá sobre as 7` reads 07:00 tomorrow, with nothing left over. The file `marker_clock_approx.voc` cites Galizionario for `sobre`, "Indica unha localización temporal imprecisa", with the example "Chegou sobre as seis". Standing alone, `sobre as 7` reads 19:00 at 13:04 and leaves `sobre` in the remainder.
+
 **Day parts** take their boundaries from the Unicode CLDR 47 day-period chart, locale `gl`, transcribed in `chronologia/dayparts.py`: `madrugada` `[00:00, 06:00)`, `mañá` `[06:00, 12:00)`, `mediodía` `[12:00, 13:00)`, `tarde` `[13:00, 21:00)`, `noite` `[21:00, 24:00)`. The frame is `pola`, `polo` and their plurals, the contractions of `por` with the definite article.
 
 **Fuzzy month parts, quarters, ISO weeks, decades and eras** all resolve: `mediados de xullo`, `o primeiro trimestre de 2020`, `semana 12`, `os anos 80` and `44 ac`. `a primeira metade de 2020` reads as the first half-year, with `metade` cited to DRAG. The singular `ano` names one year and the plural `anos` frames a decade. They are kept in separate vocabularies so that `o ano 1980` cannot reach the decade slot.
@@ -144,8 +146,6 @@ Each example below runs as a doctest with a fixed anchor, so the output does not
 Each line is an open issue with a strict `xfail` test for this language. The lines are grouped by topic. An example names the reader that produced it, the language and the anchor date, and shows what that reader gives on the test's own phrase.
 
 **Clocks and parts of the day**
-
-- An approximate clock such as `about nine` is not read. Example (reader `extract_timespan`, lang `gl`, anchor 2017-06-27 13:04): `avísame de luns a venres pola mañá sobre as 7` gives 2017-07-03 00:00 to 2017-07-04 00:00 and `avísame de a venres pola mañá sobre as 7` left over. [#1011](https://github.com/TigreGotico/chronologia/issues/1011)
 
 - A day-part phrase after a noun reads as the morning, and a week phrase breaks the clock. Example (reader `extract_timespan`, lang `gl`, anchor 2017-06-27 13:04): `amósame as alarmas de mañá` gives 2017-06-27 06:00 to 2017-06-27 12:00 and `amósame as alarmas` left over. [#1014](https://github.com/TigreGotico/chronologia/issues/1014)
 

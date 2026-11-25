@@ -44,6 +44,8 @@ To read a phrase, call `extract_timespan` with the phrase, the locale code and a
 
 **Markers.** `dimpués` and its variants for "after", `antis` and `denantes` for "before", `dende` for "since", `dica` and `entro a` for "until", `a partir de` for "from", `cada` for "every", `agora` and `ara` for the present. `dica` and `dende` have Aragonese sections on the English Wiktionary deriving them from Latin *de hinc ad* and *deinde*. The locative `en` used with a month name (`en chinero`) is sourced in the locale file to the dictionary of the Academia de l'Aragonés.
 
+**The ordinal last** is `zaguer` and `zaguers`, so `lo zaguer luns d'octubre` is 30 October, read at 13:04 on 27 June 2017. `marker_ordlast.voc` records no source for them.
+
 **Habitual recurrence** is `cada luns`. Answered as a recurrence, this is the repeating Monday. Asked for a span, it comes back as the next Monday with `cada` left in the remainder.
 
 ## Weaker provenance
@@ -128,8 +130,6 @@ Each line is an open issue with a strict `xfail` test for this language. The lin
 - A day word or a counted offset gives no reading. Example (reader `extract_timespan`, lang `an`, anchor 2017-06-27 13:04): `pasau manyana` gives 2017-06-28 00:00 to 2017-06-29 00:00 and `pasau` left over. [#992](https://github.com/TigreGotico/chronologia/issues/992)
 
 - A word for next or last beside a season, month or week stays in the remainder. Example (reader `extract_timespan`, lang `an`, anchor 2017-06-27 13:04): `mes proximo` gives no reading. [#993](https://github.com/TigreGotico/chronologia/issues/993)
-
-- The last weekday of a month gives the whole month, or the weekday alone. Example (reader `extract_timespan`, lang `an`, anchor 2017-06-27 13:04): `lo zaguer luns de marzo` gives 2018-03-01 00:00 to 2018-04-01 00:00 and `de` left over. [#1005](https://github.com/TigreGotico/chronologia/issues/1005)
 
 ---
 [← Arabic](ar.md) · [Home](../index.md) · [Armenian →](hy.md)
