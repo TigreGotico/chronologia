@@ -47,6 +47,7 @@ def _matches(expected, value):
 
 # Span rows that read right on dev: plain tests that keep the fix.
 FIXED_SPANS = {
+    "a las 9, esta noche",
     "el darrer dilluns de març",
     "lo zaguer luns de marzo",
     "avísame de luns a venres pola mañá sobre as 7",
