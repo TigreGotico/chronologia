@@ -1,7 +1,7 @@
 """cs: a bare PLURAL relative-offset unit is not an implied one.
 
 relative_offset's bare-unit orders use "MARKER USG" / "USG MARKER" (schema
-"singular_units", from unit1_<unit>.voc): USG only ever supplies the
+"singular_units", from unit1_<unit>): USG only ever supplies the
 noun's singular case surfaces, so a marker-bound bare unit reads as
 quantity one exactly when it is grammatically singular. "za týdny" is
 the plural "weeks" with no numeral -- not "in a week" -- and must stay a

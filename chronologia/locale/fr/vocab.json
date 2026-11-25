@@ -1,0 +1,1341 @@
+{
+ "format_version": 1,
+ "words": {
+  "clock_dir_past": [
+   "et",
+   "passe",
+   "passees",
+   "passé",
+   "passées"
+  ],
+  "clock_dir_to": [
+   "moins"
+  ],
+  "clock_fraction_15": [
+   "quart"
+  ],
+  "clock_fraction_30": [
+   "demi",
+   "demie"
+  ],
+  "clock_landmark_0": [
+   "minuit"
+  ],
+  "clock_landmark_720": [
+   "midi"
+  ],
+  "clock_meridiem_am": [
+   "matin"
+  ],
+  "clock_meridiem_night": [
+   "nuit"
+  ],
+  "clock_meridiem_pm": [
+   "apres-midi",
+   "après-midi",
+   "soir"
+  ],
+  "clock_zone_0": [
+   "gmt",
+   "utc"
+  ],
+  "daypart_apres_midi_fr": [
+   "apres-midi",
+   "après-midi"
+  ],
+  "daypart_matin_fr": [
+   "matin"
+  ],
+  "daypart_nuit_fr": [
+   "nuit"
+  ],
+  "daypart_soir_fr": [
+   "soir"
+  ],
+  "era_ad_prefix": [
+   "anno domini",
+   "ap jc",
+   "ap. j.-c.",
+   "ap. j.c.",
+   "ap. jc"
+  ],
+  "era_ad_suffix": [
+   "ap jc",
+   "ap. j.-c.",
+   "ap. j.c.",
+   "ap. jc",
+   "apres jesus - christ",
+   "apres jesus-christ",
+   "après jésus - christ",
+   "après jésus-christ",
+   "de notre ere",
+   "de notre ère"
+  ],
+  "era_anno_mundi_prefix": [
+   "anno mundi"
+  ],
+  "era_anno_mundi_suffix": [
+   "anno mundi"
+  ],
+  "era_bc_suffix": [
+   "av jc",
+   "av. j.-c.",
+   "av. j.c.",
+   "av. jc",
+   "avant jesus - christ",
+   "avant jesus-christ",
+   "avant jésus - christ",
+   "avant jésus-christ",
+   "avant notre ere",
+   "avant notre ère"
+  ],
+  "era_bp_suffix": [
+   "ans avant le present",
+   "ans avant le présent",
+   "b.p.",
+   "bp"
+  ],
+  "era_holocene_prefix": [
+   "ere holocene",
+   "ere humaine",
+   "ère holocène",
+   "ère humaine"
+  ],
+  "era_holocene_suffix": [
+   "ere holocene",
+   "ere humaine",
+   "ère holocène",
+   "ère humaine"
+  ],
+  "era_julian_prefix": [
+   "jour julien",
+   "jour julien numero"
+  ],
+  "era_unix_prefix": [
+   "epoque unix",
+   "temps unix",
+   "époque unix"
+  ],
+  "era_year_ref": [
+   "an",
+   "en l an",
+   "en l annee",
+   "en l année",
+   "en l'an",
+   "en l'annee",
+   "en l'année",
+   "l an",
+   "l annee",
+   "l année",
+   "l'an",
+   "l'annee",
+   "l'année"
+  ],
+  "marker_ad": [
+   "apjc"
+  ],
+  "marker_after": [
+   "apres",
+   "après"
+  ],
+  "marker_ago": [
+   "ilya"
+  ],
+  "marker_alarm_at": [
+   "alarme pour",
+   "alarmes pour",
+   "réveil pour",
+   "réveils pour"
+  ],
+  "marker_alarm_joiner": [
+   "et",
+   "ou",
+   "à"
+  ],
+  "marker_and": [
+   "et"
+  ],
+  "marker_article": [
+   "au",
+   "aux",
+   "des",
+   "du",
+   "l",
+   "la",
+   "le",
+   "les",
+   "un",
+   "une"
+  ],
+  "marker_at": [
+   "a",
+   "à"
+  ],
+  "marker_at_counts": [
+   "à"
+  ],
+  "marker_bc": [
+   "avjc"
+  ],
+  "marker_before": [
+   "avant"
+  ],
+  "marker_between": [
+   "entre"
+  ],
+  "marker_bp": [
+   "bp"
+  ],
+  "marker_business": [
+   "ouvrable",
+   "ouvrables",
+   "ouvre",
+   "ouvres",
+   "ouvré",
+   "ouvrée",
+   "ouvrées",
+   "ouvrés"
+  ],
+  "marker_clock_of": [
+   "du"
+  ],
+  "marker_consulship": [
+   "consulat"
+  ],
+  "marker_counted_noun": [
+   "amies",
+   "amis",
+   "billets",
+   "chambres",
+   "enfants",
+   "euros",
+   "invités",
+   "joueurs",
+   "personnes",
+   "places",
+   "tables",
+   "voisines",
+   "voisins"
+  ],
+  "marker_date_article": [
+   "le"
+  ],
+  "marker_defart": [
+   "l",
+   "le"
+  ],
+  "marker_during": [
+   "durant",
+   "en",
+   "pendant"
+  ],
+  "marker_every": [
+   "chaque",
+   "tous",
+   "toutes"
+  ],
+  "marker_exclusion": [
+   "excepté",
+   "hormis",
+   "non",
+   "pas",
+   "sauf"
+  ],
+  "marker_exclusion_bound": [
+   "après",
+   "avant",
+   "depuis",
+   "dès",
+   "jusqu",
+   "jusque"
+  ],
+  "marker_french_republican": [
+   "republique",
+   "republique francaise",
+   "république",
+   "république française"
+  ],
+  "marker_freq_daily": [
+   "quotidiennement"
+  ],
+  "marker_freq_monthly": [
+   "mensuellement"
+  ],
+  "marker_freq_weekly": [
+   "hebdomadairement"
+  ],
+  "marker_freq_yearly": [
+   "annuellement"
+  ],
+  "marker_from": [
+   "de",
+   "depuis",
+   "des",
+   "du",
+   "à partir de"
+  ],
+  "marker_future": [
+   "dans"
+  ],
+  "marker_future_word": [
+   "futur"
+  ],
+  "marker_half": [
+   "demi",
+   "demie",
+   "moitie",
+   "moitié"
+  ],
+  "marker_hebrew": [
+   "calendrier hebraique",
+   "calendrier hébraïque",
+   "hebraique",
+   "hébraïque",
+   "juif",
+   "juive"
+  ],
+  "marker_hour_approx": [
+   "aux alentours de",
+   "dès",
+   "sur les",
+   "vers"
+  ],
+  "marker_hour_statement": [
+   "est",
+   "est déjà",
+   "était",
+   "était déjà"
+  ],
+  "marker_hours": [
+   "h",
+   "heures"
+  ],
+  "marker_in": [
+   "dans",
+   "en"
+  ],
+  "marker_indef": [
+   "un",
+   "une"
+  ],
+  "marker_last": [
+   "dernier",
+   "derniere",
+   "dernieres",
+   "derniers",
+   "dernière",
+   "dernières",
+   "passe",
+   "passee",
+   "passees",
+   "passes",
+   "passé",
+   "passée",
+   "passées",
+   "passés"
+  ],
+  "marker_month_word": [
+   "mois"
+  ],
+  "marker_new": [
+   "nouveau",
+   "nouvel",
+   "nouvelle"
+  ],
+  "marker_next": [
+   "prochain",
+   "prochaine",
+   "prochaines",
+   "prochains",
+   "suivant",
+   "suivante"
+  ],
+  "marker_oclock": [
+   "h",
+   "heure",
+   "heures"
+  ],
+  "marker_of": [
+   "d",
+   "de",
+   "des",
+   "du"
+  ],
+  "marker_on": [
+   "le"
+  ],
+  "marker_ordlast": [
+   "dernier",
+   "derniere",
+   "dernière"
+  ],
+  "marker_participle_aux": [
+   "a",
+   "ai",
+   "aie",
+   "aient",
+   "aies",
+   "ait",
+   "as",
+   "aura",
+   "aurai",
+   "auraient",
+   "aurais",
+   "aurait",
+   "auras",
+   "aurez",
+   "auriez",
+   "aurions",
+   "aurons",
+   "auront",
+   "avaient",
+   "avais",
+   "avait",
+   "avez",
+   "aviez",
+   "avions",
+   "avoir",
+   "avons",
+   "ayant",
+   "ayez",
+   "ayons",
+   "eurent",
+   "eus",
+   "eusse",
+   "eussent",
+   "eusses",
+   "eussiez",
+   "eussions",
+   "eut",
+   "eûmes",
+   "eût",
+   "eûtes",
+   "ont"
+  ],
+  "marker_past": [
+   "ilya"
+  ],
+  "marker_plural": [
+   "s"
+  ],
+  "marker_present": [
+   "aujourd'hui",
+   "maintenant",
+   "present",
+   "présent"
+  ],
+  "marker_pridie": [
+   "pridie"
+  ],
+  "marker_q": [
+   "q",
+   "t"
+  ],
+  "marker_quarter_word": [
+   "trimestre",
+   "trimestres"
+  ],
+  "marker_recur_for": [
+   "pendant",
+   "pour"
+  ],
+  "marker_recur_habitual": [
+   "les"
+  ],
+  "marker_since": [
+   "depuis"
+  ],
+  "marker_this": [
+   "ce",
+   "cet",
+   "cette"
+  ],
+  "marker_to": [
+   "a",
+   "au",
+   "jusqu'au",
+   "jusqu'à",
+   "à"
+  ],
+  "marker_until": [
+   "jusqu'au",
+   "jusqu'aux",
+   "jusqu'en",
+   "jusqu'à",
+   "jusque"
+  ],
+  "marker_week_num": [
+   "semaine",
+   "semaines"
+  ],
+  "marker_weekof": [
+   "la semaine de",
+   "la semaine du",
+   "semaine de",
+   "semaine du"
+  ],
+  "marker_year_plural": [
+   "annees",
+   "années"
+  ],
+  "marker_year_word": [
+   "an",
+   "annee",
+   "annees",
+   "année",
+   "années",
+   "ans"
+  ],
+  "month_1": [
+   "jan",
+   "janv",
+   "janvier"
+  ],
+  "month_10": [
+   "oct",
+   "octobre"
+  ],
+  "month_11": [
+   "nov",
+   "novembre"
+  ],
+  "month_12": [
+   "dec",
+   "decembre",
+   "déc",
+   "décembre"
+  ],
+  "month_2": [
+   "fev",
+   "fevr",
+   "fevrier",
+   "fév",
+   "févr",
+   "février"
+  ],
+  "month_3": [
+   "mars"
+  ],
+  "month_4": [
+   "avr",
+   "avril"
+  ],
+  "month_5": [
+   "mai"
+  ],
+  "month_6": [
+   "juin"
+  ],
+  "month_7": [
+   "juil",
+   "juillet"
+  ],
+  "month_8": [
+   "aout",
+   "août"
+  ],
+  "month_9": [
+   "sep",
+   "sept",
+   "septembre"
+  ],
+  "month_french_republican_1": [
+   "vendemiaire",
+   "vendémiaire"
+  ],
+  "month_french_republican_10": [
+   "messidor"
+  ],
+  "month_french_republican_11": [
+   "thermidor"
+  ],
+  "month_french_republican_12": [
+   "fructidor"
+  ],
+  "month_french_republican_2": [
+   "brumaire"
+  ],
+  "month_french_republican_3": [
+   "frimaire"
+  ],
+  "month_french_republican_4": [
+   "nivose",
+   "nivôse"
+  ],
+  "month_french_republican_5": [
+   "pluviose",
+   "pluviôse"
+  ],
+  "month_french_republican_6": [
+   "ventose",
+   "ventôse"
+  ],
+  "month_french_republican_7": [
+   "germinal"
+  ],
+  "month_french_republican_8": [
+   "floreal",
+   "floréal"
+  ],
+  "month_french_republican_9": [
+   "prairial"
+  ],
+  "month_hebrew_1": [
+   "nisan"
+  ],
+  "month_hebrew_10": [
+   "tevet"
+  ],
+  "month_hebrew_11": [
+   "shevat"
+  ],
+  "month_hebrew_12": [
+   "adar"
+  ],
+  "month_hebrew_13": [
+   "adar 2",
+   "adar b",
+   "adar bet",
+   "adar ii",
+   "adar sheni",
+   "adarbet"
+  ],
+  "month_hebrew_2": [
+   "iyar"
+  ],
+  "month_hebrew_3": [
+   "sivan"
+  ],
+  "month_hebrew_4": [
+   "tammuz"
+  ],
+  "month_hebrew_5": [
+   "av"
+  ],
+  "month_hebrew_6": [
+   "elul"
+  ],
+  "month_hebrew_7": [
+   "tishrei",
+   "tishri"
+  ],
+  "month_hebrew_8": [
+   "cheshvan",
+   "heshvan"
+  ],
+  "month_hebrew_9": [
+   "kislev"
+  ],
+  "month_islamic_civil_1": [
+   "muharram"
+  ],
+  "month_islamic_civil_10": [
+   "shawwal"
+  ],
+  "month_islamic_civil_11": [
+   "dhualqadah"
+  ],
+  "month_islamic_civil_12": [
+   "dhualhijjah"
+  ],
+  "month_islamic_civil_2": [
+   "safar"
+  ],
+  "month_islamic_civil_3": [
+   "rabi al-awwal",
+   "rabialawwal"
+  ],
+  "month_islamic_civil_4": [
+   "rabi al-thani",
+   "rabialthani"
+  ],
+  "month_islamic_civil_5": [
+   "jumadaalawwal"
+  ],
+  "month_islamic_civil_6": [
+   "jumadaalthani"
+  ],
+  "month_islamic_civil_7": [
+   "rajab"
+  ],
+  "month_islamic_civil_8": [
+   "shaaban",
+   "shaban"
+  ],
+  "month_islamic_civil_9": [
+   "ramadan",
+   "ramzan"
+  ],
+  "months": [
+   "août",
+   "avril",
+   "décembre",
+   "février",
+   "janvier",
+   "juillet",
+   "juin",
+   "mai",
+   "mars",
+   "novembre",
+   "octobre",
+   "septembre"
+  ],
+  "named_day_-1": [
+   "hier"
+  ],
+  "named_day_-2": [
+   "avant hier",
+   "avant-hier",
+   "avanthier"
+  ],
+  "named_day_0": [
+   "aujourd'hui",
+   "aujourdhui"
+  ],
+  "named_day_1": [
+   "demain"
+  ],
+  "named_day_2": [
+   "apres demain",
+   "apres-demain",
+   "apresdemain",
+   "après demain",
+   "après-demain"
+  ],
+  "ordinal_suffixes": [
+   "e",
+   "eme",
+   "er",
+   "re",
+   "ème"
+  ],
+  "period_archean": [
+   "archean"
+  ],
+  "period_bronze_age_gb": [
+   "bronze age"
+  ],
+  "period_cambrian": [
+   "cambrian"
+  ],
+  "period_carboniferous": [
+   "carboniferous"
+  ],
+  "period_cenozoic": [
+   "cenozoic"
+  ],
+  "period_cretaceous": [
+   "cretaceous"
+  ],
+  "period_devonian": [
+   "devonian"
+  ],
+  "period_eocene": [
+   "eocene"
+  ],
+  "period_holocene": [
+   "holocene"
+  ],
+  "period_iron_age_gb": [
+   "iron age"
+  ],
+  "period_jurassic": [
+   "jurassic"
+  ],
+  "period_mesozoic": [
+   "mesozoic"
+  ],
+  "period_miocene": [
+   "miocene"
+  ],
+  "period_neogene": [
+   "neogene"
+  ],
+  "period_neolithic_gb": [
+   "neolithic"
+  ],
+  "period_oligocene": [
+   "oligocene"
+  ],
+  "period_ordovician": [
+   "ordovician"
+  ],
+  "period_paleocene": [
+   "paleocene"
+  ],
+  "period_paleogene": [
+   "paleogene"
+  ],
+  "period_paleozoic": [
+   "paleozoic"
+  ],
+  "period_part_early": [
+   "commencement",
+   "debut",
+   "début",
+   "early"
+  ],
+  "period_part_late": [
+   "fin",
+   "late"
+  ],
+  "period_part_mid": [
+   "mi",
+   "mid",
+   "middle",
+   "milieu"
+  ],
+  "period_permian": [
+   "permian"
+  ],
+  "period_phanerozoic": [
+   "phanerozoic"
+  ],
+  "period_pleistocene": [
+   "pleistocene"
+  ],
+  "period_pliocene": [
+   "pliocene"
+  ],
+  "period_proterozoic": [
+   "proterozoic"
+  ],
+  "period_quaternary": [
+   "quaternary"
+  ],
+  "period_silurian": [
+   "silurian"
+  ],
+  "period_triassic": [
+   "triassic"
+  ],
+  "regnal_nengo_heisei": [
+   "heisei"
+  ],
+  "regnal_nengo_meiji": [
+   "meiji"
+  ],
+  "regnal_nengo_reiwa": [
+   "reiwa"
+  ],
+  "regnal_nengo_showa": [
+   "showa"
+  ],
+  "regnal_nengo_taisho": [
+   "taisho"
+  ],
+  "roman_anchor_ides": [
+   "ides",
+   "idibus"
+  ],
+  "roman_anchor_kalends": [
+   "calendes",
+   "calends",
+   "kalendis",
+   "kalends"
+  ],
+  "roman_anchor_nones": [
+   "nones",
+   "nonis"
+  ],
+  "scale_1000": [
+   "mille"
+  ],
+  "scale_1000000": [
+   "million",
+   "millions"
+  ],
+  "scale_1000000000": [
+   "milliard",
+   "milliards"
+  ],
+  "scale_1000000000.short": [
+   "billion",
+   "billions"
+  ],
+  "scale_1000000000000.long": [
+   "billion",
+   "billions"
+  ],
+  "scope_unit_century": [
+   "siecle",
+   "siecles",
+   "siècle",
+   "siècles"
+  ],
+  "scope_unit_decade": [
+   "decennie",
+   "decennies",
+   "décennie",
+   "décennies"
+  ],
+  "scope_unit_millennium": [
+   "millenaire",
+   "millenaires",
+   "millénaire",
+   "millénaires"
+  ],
+  "season_fall": [
+   "automne"
+  ],
+  "season_spring": [
+   "printemps"
+  ],
+  "season_summer": [
+   "ete",
+   "été"
+  ],
+  "season_winter": [
+   "hiver"
+  ],
+  "solar_event_equinox": [
+   "equinoxe",
+   "équinoxe"
+  ],
+  "solar_event_solstice": [
+   "solstice"
+  ],
+  "special_weekend": [
+   "week-end",
+   "week-ends",
+   "weekend"
+  ],
+  "unit_century": [
+   "siecle",
+   "siecles",
+   "siècle",
+   "siècles"
+  ],
+  "unit_day": [
+   "jour",
+   "jours"
+  ],
+  "unit_decade": [
+   "decennie",
+   "decennies",
+   "décennie",
+   "décennies"
+  ],
+  "unit_fortnight": [
+   "quinzaine",
+   "quinzaines"
+  ],
+  "unit_hour": [
+   "h",
+   "heure",
+   "heures"
+  ],
+  "unit_millennium": [
+   "millenaire",
+   "millenaires",
+   "millénaire",
+   "millénaires"
+  ],
+  "unit_minute": [
+   "min",
+   "mins",
+   "minute",
+   "minutes"
+  ],
+  "unit_month": [
+   "mois"
+  ],
+  "unit_second": [
+   "seconde",
+   "secondes"
+  ],
+  "unit_week": [
+   "semaine",
+   "semaines"
+  ],
+  "unit_year": [
+   "an",
+   "annee",
+   "annees",
+   "année",
+   "années",
+   "ans"
+  ],
+  "weekday_0": [
+   "lundi"
+  ],
+  "weekday_1": [
+   "mardi"
+  ],
+  "weekday_2": [
+   "mercredi"
+  ],
+  "weekday_3": [
+   "jeudi"
+  ],
+  "weekday_4": [
+   "vendredi"
+  ],
+  "weekday_5": [
+   "samedi"
+  ],
+  "weekday_6": [
+   "dimanche"
+  ],
+  "weekday_abbr_0": [
+   "lun"
+  ],
+  "weekday_abbr_1": [
+   "mar"
+  ],
+  "weekday_abbr_2": [
+   "mer"
+  ],
+  "weekday_abbr_3": [
+   "jeu"
+  ],
+  "weekday_abbr_4": [
+   "ven"
+  ],
+  "weekday_abbr_5": [
+   "sam"
+  ],
+  "weekday_abbr_6": [
+   "dim"
+  ]
+ },
+ "sources": {
+  "clock_meridiem_night": [
+   "\"nuit\" after an hour is the night band that crosses midnight: \"À deux heures",
+   "de nuit.\" and \"À une heure avancée de la nuit.\" (CNRTL, \"nuit\",",
+   "https://www.cnrtl.fr/definition/nuit).  Small hours 1 to 5 stay AM, evening",
+   "hours 6 to 11 are PM, and twelve is midnight (the band split lives in the",
+   "resolver)."
+  ],
+  "daypart_apres_midi_fr": [
+   "Band boundaries: Unicode CLDR 47 Day Period Rules, locale fr",
+   "(https://www.unicode.org/cldr/charts/47/supplemental/day_periods.html),",
+   "transcribed in chronologia/dayparts.py as [12:00, 18:00).",
+   "The hyphenated surface is tokenizer-canonicalised to \"après midi\" (the",
+   "hyphen splits into two tokens the loader re-glues); ascii-folded twin kept",
+   "for the same reason clock_meridiem_pm.voc keeps one."
+  ],
+  "daypart_matin_fr": [
+   "Band boundaries: Unicode CLDR 47 Day Period Rules, locale fr",
+   "(https://www.unicode.org/cldr/charts/47/supplemental/day_periods.html),",
+   "transcribed in chronologia/dayparts.py as [04:00, 12:00).",
+   "Sources: Tresor de la langue francaise informatise, CNRTL",
+   "(https://www.cnrtl.fr/definition/apres-midi).",
+   "French opens the matin at 04:00, two hours before English morning."
+  ],
+  "daypart_nuit_fr": [
+   "Band boundaries: Unicode CLDR 47 Day Period Rules, locale fr",
+   "(https://www.unicode.org/cldr/charts/47/supplemental/day_periods.html),",
+   "transcribed in chronologia/dayparts.py as [00:00, 04:00).",
+   "Sources: Tresor de la langue francaise informatise, CNRTL",
+   "(https://www.cnrtl.fr/definition/apres-midi).",
+   "The nuit is the small hours, before the matin opens -- not an",
+   "English-shaped night beginning the previous evening."
+  ],
+  "daypart_soir_fr": [
+   "Band boundaries: Unicode CLDR 47 Day Period Rules, locale fr",
+   "(https://www.unicode.org/cldr/charts/47/supplemental/day_periods.html),",
+   "transcribed in chronologia/dayparts.py as [18:00, 24:00).",
+   "Sources: Tresor de la langue francaise informatise, CNRTL",
+   "(https://www.cnrtl.fr/definition/apres-midi).",
+   "The soir runs to midnight; there is no band between it and the nuit."
+  ],
+  "marker_alarm_at": [
+   "Le nom d'un dispositif qui sonne à une heure réglée, et \"pour\" après lui :",
+   "\"un réveil pour 7\", \"une alarme pour 7\".  \"réveil [...] (Technologie)",
+   "Appareil produisant un son à l'heure choisie.\" (Wiktionnaire, s.v.",
+   "\"réveil\", 2.1).  \"alarme [...] (Par atténuation) Avertissement sonore et",
+   "visuel pour rappeler un événement, un rendez-vous, de la part du logiciel",
+   "(application) gestionnaire d'emploi du temps\" (Wiktionnaire, s.v.",
+   "\"alarme\", 7).  \"pour [...] Ce sera pour demain, pour après-demain.\"",
+   "(Wiktionnaire, s.v. \"pour\", 16)."
+  ],
+  "marker_alarm_joiner": [
+   "The words that join two hours that share one later meridiem: \"alarm for 7",
+   "or 8 pm\"."
+  ],
+  "marker_at_counts": [
+   "Clock prepositions that also introduce a counted group: a bare hour behind one",
+   "is doubtful only right before a word of marker_counted_noun.voc.  Attested in",
+   "the parity acceptance rows; no dictionary source checked, a native reviewer is to confirm."
+  ],
+  "marker_clock_of": [
+   "The clock suffix that ties a part of the day to an hour: \"deux heures du",
+   "matin, dix heures du soir\" (Larousse, \"heure\").  \"le matin\" without it is",
+   "the part of the day itself, so \"réunion de deux heures le matin\" is a length."
+  ],
+  "marker_counted_noun": [
+   "Nouns that count people or things a clock never takes: a bare hour behind a",
+   "clock preposition and directly before one of them is a count (\"wave at 5",
+   "people\").  Each word is quoted from its Wiktionary Noun entry",
+   "(https://en.wiktionary.org/wiki/<word>); the fetched pages are kept with the audit.",
+   "personnes: Noun. \"plural of personne\"",
+   "invités: Noun. \"plural of invité\"",
+   "voisins: Noun. \"plural of voisin\"",
+   "voisines: Noun. \"\"",
+   "amis: Noun. \"plural of ami\"",
+   "amies: Noun. \"plural of amie\"",
+   "enfants: Noun. \"plural of enfant\"",
+   "joueurs: Noun. \"plural of joueur\"",
+   "places: Noun. \"plural of place\"",
+   "tables: Noun. \"plural of table\"",
+   "billets: Noun. \"plural of billet\"",
+   "chambres: Noun. \"plural of chambre\"",
+   "euros: Noun. \"plural of euro\""
+  ],
+  "marker_date_article": [
+   "The article that opens a weekday: \"le mardi\".  \"Dans un texte suivi, on met",
+   "un déterminant défini devant le jour de la semaine et non devant la date\"",
+   "(OQLF, Banque de dépannage linguistique, \"Lieu et date dans la lettre\",",
+   "section \"Jour de la semaine devant la date\").  Alone, \"le mardi\" is",
+   "also the habit; a habitual phrase reads as the next such day."
+  ],
+  "marker_defart": [
+   "The definite article a date takes, and only that.  A French date is",
+   "masculine singular -- \"le 15 juin\", \"le 1er janvier\" -- so the feminine and",
+   "the plural are not dates and are not listed: \"les\" opens the recurrence",
+   "\"tous les 10 mai\", and an article slot that eats it takes the recurrence",
+   "with it.",
+   "",
+   "marker_article.voc is the wrong slot here for a second reason.  It also",
+   "carries the contracted prepositions \"du/des/au/aux\", and a slot wide enough",
+   "to take those swallows the \"du\" of \"la semaine du 20 juillet\" -- the week OF",
+   "the twentieth, which then loses its week."
+  ],
+  "marker_half": [
+   "clock/adjectival \"demi/demie\" plus period noun \"moitié\" (l'une des deux parties égales) -- TLFi/Larousse, s.v. \"moitié\"."
+  ],
+  "marker_hour_approx": [
+   "A word of approximation or of a start time before an hour.",
+   "vers: \"À peu près (à telle époque). ➙ environ, sur. Vers (les) cinq",
+   "heures.\" (Le Robert, s.v. \"vers\"); \"l'approximation, devant l'expression",
+   "d'une heure, d'une date\" (Larousse, s.v. \"vers\", 4).",
+   "sur les: \"(approximation) ➙ vers. Sur le soir.\" (Le Robert, s.v. \"sur\").",
+   "dès: \"(temps) Immédiatement, à partir de.\" (Le Robert, s.v. \"dès\").",
+   "\"pour\" is not listed: the same entry gives a length too, \"Pour six mois,",
+   "pendant six mois\" (Le Robert, s.v. \"pour\"), so \"je pars pour 3 heures\" is",
+   "a length, not a clock.",
+   "aux alentours de: \"Aux alentours de (marque l'approximation). [...] ➙ vers.\"",
+   "(Le Robert, s.v. \"alentours\")."
+  ],
+  "marker_hour_statement": [
+   "The verb that states the hour: \"il est 3 heures\", \"c'est 3 heures\", \"il",
+   "était 3 heures\".  \"Il est une heure, midi, etc., sert à indiquer l'heure.\"",
+   "(Larousse, s.v. \"être\", Expressions avec être.)  \"était\" is the same verb.",
+   "The adverb \"déjà\" can stand between the verb and the hour: \"déjà, adverbe.",
+   "Dès maintenant. [...] Il est déjà midi.\" (Le Robert, s.v. \"déjà\".)"
+  ],
+  "marker_participle_aux": [
+   "Forms of the auxiliary \"avoir\" (Larousse, conjugaison du verbe \"avoir\").",
+   "\"été\" right behind one is the past participle of \"être\" (\"il a été\",",
+   "\"il avait été\", \"ils ont été\", Larousse, conjugaison du verbe \"être\"), never the",
+   "season, which follows a determiner or a preposition (\"l'été\", \"cet été\", \"en été\")."
+  ],
+  "marker_recur_habitual": [
+   "Bare PLURAL definite article marking habitual weekday recurrence -- \"les",
+   "lundis\" (\"on Mondays\"), mirroring French's ordinary way of stating a",
+   "recurring weekday. Larousse/Grevisse: the plural article on a day-of-the-",
+   "week noun reads habitually, while the singular (\"le lundi\") is ambiguous",
+   "between \"next Monday\" and a habitual \"on Mondays\" and is deliberately",
+   "excluded from this vocabulary so only the unambiguous plural fires here."
+  ],
+  "month_1": [
+   "Unicode CLDR 47, locale fr, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/fr/ca-gregorian.json): months.format.wide,",
+   "months.stand-alone.wide, months.format.abbreviated,",
+   "months.stand-alone.abbreviated.  CLDR spells the abbreviations with a",
+   "trailing period; the surfaces here drop it.  Not covered by any of those",
+   "charts, and so unattested here: \"jan\"."
+  ],
+  "month_10": [
+   "Unicode CLDR 47, locale fr, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/fr/ca-gregorian.json): months.format.wide,",
+   "months.stand-alone.wide, months.format.abbreviated,",
+   "months.stand-alone.abbreviated.  CLDR spells the abbreviations with a",
+   "trailing period; the surfaces here drop it."
+  ],
+  "month_11": [
+   "Unicode CLDR 47, locale fr, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/fr/ca-gregorian.json): months.format.wide,",
+   "months.stand-alone.wide, months.format.abbreviated,",
+   "months.stand-alone.abbreviated.  CLDR spells the abbreviations with a",
+   "trailing period; the surfaces here drop it."
+  ],
+  "month_12": [
+   "Unicode CLDR 47, locale fr, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/fr/ca-gregorian.json): months.format.wide,",
+   "months.stand-alone.wide, months.format.abbreviated,",
+   "months.stand-alone.abbreviated.  CLDR spells the abbreviations with a",
+   "trailing period; the surfaces here drop it.  Not covered by any of those",
+   "charts, and so unattested here: \"decembre\", \"dec\"."
+  ],
+  "month_2": [
+   "Unicode CLDR 47, locale fr, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/fr/ca-gregorian.json): months.format.wide,",
+   "months.stand-alone.wide, months.format.abbreviated,",
+   "months.stand-alone.abbreviated.  CLDR spells the abbreviations with a",
+   "trailing period; the surfaces here drop it.  Not covered by any of those",
+   "charts, and so unattested here: \"fevrier\", \"fevr\", \"fév\", \"fev\"."
+  ],
+  "month_3": [
+   "Unicode CLDR 47, locale fr, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/fr/ca-gregorian.json): months.format.wide,",
+   "months.stand-alone.wide, months.format.abbreviated,",
+   "months.stand-alone.abbreviated."
+  ],
+  "month_4": [
+   "Unicode CLDR 47, locale fr, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/fr/ca-gregorian.json): months.format.wide,",
+   "months.stand-alone.wide, months.format.abbreviated,",
+   "months.stand-alone.abbreviated.  CLDR spells the abbreviations with a",
+   "trailing period; the surfaces here drop it."
+  ],
+  "month_5": [
+   "Unicode CLDR 47, locale fr, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/fr/ca-gregorian.json): months.format.wide,",
+   "months.stand-alone.wide, months.format.abbreviated,",
+   "months.stand-alone.abbreviated."
+  ],
+  "month_6": [
+   "Unicode CLDR 47, locale fr, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/fr/ca-gregorian.json): months.format.wide,",
+   "months.stand-alone.wide, months.format.abbreviated,",
+   "months.stand-alone.abbreviated."
+  ],
+  "month_7": [
+   "Unicode CLDR 47, locale fr, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/fr/ca-gregorian.json): months.format.wide,",
+   "months.stand-alone.wide, months.format.abbreviated,",
+   "months.stand-alone.abbreviated.  CLDR spells the abbreviations with a",
+   "trailing period; the surfaces here drop it."
+  ],
+  "month_8": [
+   "Unicode CLDR 47, locale fr, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/fr/ca-gregorian.json): months.format.wide,",
+   "months.stand-alone.wide, months.format.abbreviated,",
+   "months.stand-alone.abbreviated.  Not covered by any of those charts, and so",
+   "unattested here: \"aout\"."
+  ],
+  "month_9": [
+   "Unicode CLDR 47, locale fr, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/fr/ca-gregorian.json): months.format.wide,",
+   "months.stand-alone.wide, months.format.abbreviated,",
+   "months.stand-alone.abbreviated.  CLDR spells the abbreviations with a",
+   "trailing period; the surfaces here drop it.  Not covered by any of those",
+   "charts, and so unattested here: \"sep\"."
+  ],
+  "roman_anchor_ides": [
+   "French vernacular forms added; Latin classical forms retained.",
+   "Source: Wikipedia \"Calendrier romain\" (fr):",
+   "  \"... des jours de référence : les calendes, les ides et les nones\".",
+   "  https://fr.wikipedia.org/wiki/Calendrier_romain"
+  ],
+  "roman_anchor_kalends": [
+   "French vernacular forms added; Latin classical forms retained.",
+   "Source: Wikipedia \"Calendrier romain\" (fr):",
+   "  \"... des jours de référence : les calendes, les ides et les nones\".",
+   "  https://fr.wikipedia.org/wiki/Calendrier_romain"
+  ],
+  "roman_anchor_nones": [
+   "French vernacular forms added; Latin classical forms retained.",
+   "Source: Wikipedia \"Calendrier romain\" (fr):",
+   "  \"... des jours de référence : les calendes, les ides et les nones\".",
+   "  https://fr.wikipedia.org/wiki/Calendrier_romain"
+  ],
+  "unit_hour": [
+   "\"h\" is the symbol of the hour: OQLF, Banque de dépannage linguistique,",
+   "\"Écriture des nombres exprimant une durée\": \"2 heures 28 minutes (ou :",
+   "2 h 28 min)\".  The fold reads \"20h\" as a clock elsewhere, so \"h\" reaches",
+   "this unit only after \"dans\" or \"il y a\".",
+   "After \"dans\" or \"il y a\", a count of hours and the minutes after it are one",
+   "length: \"2 h 28 min\" (OQLF, as above).  \"et demie\" adds half an hour: \"Qui a",
+   "la valeur d'une moitié s'ajoutant à la quantité exprimée par le substantif.",
+   "Il a deux ans et demi\" (TLFi, s.v. \"demi\", I.A).  \"et quart\" adds a quarter:",
+   "\"Quart d'heure\" : \"Une des quatre parties égales d'une heure, quinze",
+   "minutes.\" (TLFi, s.v. \"quart\", B.1.a).  \"moins\" takes the minutes away:",
+   "\"Pour indiquer une soustraction\" (TLFi, s.v. \"moins\", II.A), so \"dans 2 h",
+   "moins le quart\" is a length of 1 h 45 min."
+  ],
+  "unit_second": [
+   "Unicode CLDR 47, locale fr, cldr-units-full/main/fr/units.json,",
+   "duration-second: one \"seconde\", other \"secondes\"."
+  ],
+  "weekday_0": [
+   "Unicode CLDR 47, locale fr, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/fr/ca-gregorian.json): days.format.wide,",
+   "days.stand-alone.wide."
+  ],
+  "weekday_1": [
+   "Unicode CLDR 47, locale fr, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/fr/ca-gregorian.json): days.format.wide,",
+   "days.stand-alone.wide."
+  ],
+  "weekday_2": [
+   "Unicode CLDR 47, locale fr, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/fr/ca-gregorian.json): days.format.wide,",
+   "days.stand-alone.wide."
+  ],
+  "weekday_3": [
+   "Unicode CLDR 47, locale fr, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/fr/ca-gregorian.json): days.format.wide,",
+   "days.stand-alone.wide."
+  ],
+  "weekday_4": [
+   "Unicode CLDR 47, locale fr, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/fr/ca-gregorian.json): days.format.wide,",
+   "days.stand-alone.wide."
+  ],
+  "weekday_5": [
+   "Unicode CLDR 47, locale fr, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/fr/ca-gregorian.json): days.format.wide,",
+   "days.stand-alone.wide."
+  ],
+  "weekday_6": [
+   "Unicode CLDR 47, locale fr, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/fr/ca-gregorian.json): days.format.wide,",
+   "days.stand-alone.wide."
+  ],
+  "weekday_abbr_0": [
+   "Unicode CLDR 47, locale fr, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/fr/ca-gregorian.json): days.format.abbreviated,",
+   "days.stand-alone.abbreviated.  CLDR spells the abbreviations with a trailing",
+   "period; the surfaces here drop it."
+  ],
+  "weekday_abbr_1": [
+   "Unicode CLDR 47, locale fr, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/fr/ca-gregorian.json): days.format.abbreviated,",
+   "days.stand-alone.abbreviated.  CLDR spells the abbreviations with a trailing",
+   "period; the surfaces here drop it."
+  ],
+  "weekday_abbr_2": [
+   "Unicode CLDR 47, locale fr, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/fr/ca-gregorian.json): days.format.abbreviated,",
+   "days.stand-alone.abbreviated.  CLDR spells the abbreviations with a trailing",
+   "period; the surfaces here drop it."
+  ],
+  "weekday_abbr_3": [
+   "Unicode CLDR 47, locale fr, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/fr/ca-gregorian.json): days.format.abbreviated,",
+   "days.stand-alone.abbreviated.  CLDR spells the abbreviations with a trailing",
+   "period; the surfaces here drop it."
+  ],
+  "weekday_abbr_4": [
+   "Unicode CLDR 47, locale fr, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/fr/ca-gregorian.json): days.format.abbreviated,",
+   "days.stand-alone.abbreviated.  CLDR spells the abbreviations with a trailing",
+   "period; the surfaces here drop it."
+  ],
+  "weekday_abbr_5": [
+   "Unicode CLDR 47, locale fr, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/fr/ca-gregorian.json): days.format.abbreviated,",
+   "days.stand-alone.abbreviated.  CLDR spells the abbreviations with a trailing",
+   "period; the surfaces here drop it."
+  ],
+  "weekday_abbr_6": [
+   "Unicode CLDR 47, locale fr, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/fr/ca-gregorian.json): days.format.abbreviated,",
+   "days.stand-alone.abbreviated.  CLDR spells the abbreviations with a trailing",
+   "period; the surfaces here drop it."
+  ]
+ }
+}

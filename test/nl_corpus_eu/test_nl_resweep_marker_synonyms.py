@@ -1,9 +1,9 @@
 # -*- coding: utf-8 -*-
 """Second-pass sweep: relative-period marker SYNONYMS not yet exercised.
 
-``chronologia/locale/eu/marker_next.voc`` lists three next-markers
-(``datorren``, ``hurrengo``, ``ondorengo``), ``marker_last.voc`` lists three
-past-markers (``aurreko``, ``joan den``, ``pasa den``), and ``marker_this.voc``
+``chronologia/locale/eu/marker_next`` lists three next-markers
+(``datorren``, ``hurrengo``, ``ondorengo``), ``marker_last`` lists three
+past-markers (``aurreko``, ``joan den``, ``pasa den``), and ``marker_this``
 lists two this-markers (``honetako``, ``oraingo``).  The first-pass
 ``test_rel_period.py`` only ever used ``datorren``/``aurreko``/``aste
 honetako`` -- this sweep exercises the remaining synonyms across week, month

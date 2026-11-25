@@ -2,7 +2,7 @@
 locative.
 
 "v 20. storočí" is the ordinary Slovak for "in the 20th century".
-"scope_unit_century.voc" listed only the nominative "storočie", so the
+"scope_unit_century" listed only the nominative "storočie", so the
 locative "storočí" was not a century word at all: the ordinal-dotted 20 was
 claimed as a clock hour and the century noun was stranded, and "in the 20th
 century" came back as eight o'clock this evening.

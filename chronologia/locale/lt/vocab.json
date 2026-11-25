@@ -1,0 +1,776 @@
+{
+ "format_version": 1,
+ "words": {
+  "clock_dir_to": [
+   "be"
+  ],
+  "clock_fraction_30": [
+   "pusė"
+  ],
+  "clock_landmark_0": [
+   "vidurnaktis",
+   "vidurnaktį"
+  ],
+  "clock_landmark_720": [
+   "vidurdienis",
+   "vidurdienį"
+  ],
+  "clock_meridiem_am": [
+   "priešpiet"
+  ],
+  "clock_meridiem_pm": [
+   "popiet"
+  ],
+  "daypart_afternoon_lt": [
+   "popietė",
+   "popietėje",
+   "popietę"
+  ],
+  "daypart_evening_lt": [
+   "vakaras",
+   "vakare",
+   "vakarą"
+  ],
+  "daypart_morning_lt": [
+   "rytas",
+   "ryte",
+   "rytą"
+  ],
+  "daypart_night_lt": [
+   "naktis",
+   "naktyje",
+   "naktį"
+  ],
+  "marker_after": [
+   "po"
+  ],
+  "marker_and": [
+   "ir"
+  ],
+  "marker_before": [
+   "prieš"
+  ],
+  "marker_between": [
+   "tarp"
+  ],
+  "marker_day_word": [
+   "d"
+  ],
+  "marker_every": [
+   "kas"
+  ],
+  "marker_from": [
+   "nuo"
+  ],
+  "marker_future": [
+   "po"
+  ],
+  "marker_half": [
+   "pusė",
+   "pusėje",
+   "pusės",
+   "pusę"
+  ],
+  "marker_last": [
+   "praeita",
+   "praeitame",
+   "praeitas",
+   "praeiti",
+   "praeito",
+   "praeitoje",
+   "praeitos",
+   "praeitose",
+   "praeituose",
+   "praeitus",
+   "praeitą",
+   "praeitų"
+  ],
+  "marker_next": [
+   "kita",
+   "kitame",
+   "kitas",
+   "kiti",
+   "kito",
+   "kitoje",
+   "kitos",
+   "kitose",
+   "kituose",
+   "kitus",
+   "kitą",
+   "kitų"
+  ],
+  "marker_past": [
+   "prieš"
+  ],
+  "marker_since": [
+   "nuo"
+  ],
+  "marker_this": [
+   "ši",
+   "šiame",
+   "šias",
+   "šie",
+   "šio",
+   "šioje",
+   "šios",
+   "šiose",
+   "šis",
+   "šiuos",
+   "šiuose",
+   "šią",
+   "šių",
+   "šį"
+  ],
+  "marker_to": [
+   "iki"
+  ],
+  "marker_until": [
+   "iki"
+  ],
+  "marker_year_word": [
+   "m",
+   "metai",
+   "metais",
+   "metų"
+  ],
+  "month_1": [
+   "saus.",
+   "sausio",
+   "sausis"
+  ],
+  "month_10": [
+   "spal.",
+   "spalio",
+   "spalis"
+  ],
+  "month_11": [
+   "lapkr.",
+   "lapkritis",
+   "lapkričio"
+  ],
+  "month_12": [
+   "gruod.",
+   "gruodis",
+   "gruodžio"
+  ],
+  "month_2": [
+   "vas.",
+   "vasario",
+   "vasaris"
+  ],
+  "month_3": [
+   "kov.",
+   "kovas",
+   "kovo"
+  ],
+  "month_4": [
+   "bal.",
+   "balandis",
+   "balandžio"
+  ],
+  "month_5": [
+   "geg.",
+   "gegužė",
+   "gegužės"
+  ],
+  "month_6": [
+   "birž.",
+   "birželio",
+   "birželis"
+  ],
+  "month_7": [
+   "liep.",
+   "liepa",
+   "liepos"
+  ],
+  "month_8": [
+   "rugp.",
+   "rugpjūtis",
+   "rugpjūčio"
+  ],
+  "month_9": [
+   "rugs.",
+   "rugsėjis",
+   "rugsėjo"
+  ],
+  "named_day_-1": [
+   "vakar"
+  ],
+  "named_day_-2": [
+   "užvakar"
+  ],
+  "named_day_0": [
+   "šiandien"
+  ],
+  "named_day_1": [
+   "rytoj"
+  ],
+  "named_day_2": [
+   "poryt"
+  ],
+  "scope_unit_century": [
+   "amžiaus",
+   "amžiuje",
+   "amžius",
+   "amžių"
+  ],
+  "scope_unit_decade": [
+   "dešimtmetis",
+   "dešimtmetyje",
+   "dešimtmetį",
+   "dešimtmečio"
+  ],
+  "season_fall": [
+   "rudens",
+   "rudenį",
+   "ruduo"
+  ],
+  "season_spring": [
+   "pavasario",
+   "pavasaris",
+   "pavasarį"
+  ],
+  "season_summer": [
+   "vasara",
+   "vasaros",
+   "vasarą"
+  ],
+  "season_winter": [
+   "žiema",
+   "žiemos",
+   "žiemą"
+  ],
+  "special_weekend": [
+   "savaitgaliai",
+   "savaitgalio",
+   "savaitgalis",
+   "savaitgalių",
+   "savaitgalį"
+  ],
+  "unit1_century": [
+   "amžiaus",
+   "amžius",
+   "amžių"
+  ],
+  "unit1_day": [
+   "diena",
+   "dienos",
+   "dieną"
+  ],
+  "unit1_decade": [
+   "dešimtmetis",
+   "dešimtmetį",
+   "dešimtmečio"
+  ],
+  "unit1_hour": [
+   "valanda",
+   "valandos",
+   "valandą"
+  ],
+  "unit1_minute": [
+   "minutė",
+   "minutės",
+   "minutę"
+  ],
+  "unit1_month": [
+   "mėnesio",
+   "mėnesį",
+   "mėnuo"
+  ],
+  "unit1_second": [
+   "sekundė",
+   "sekundės",
+   "sekundę"
+  ],
+  "unit1_week": [
+   "savaitė",
+   "savaitės",
+   "savaitę"
+  ],
+  "unit1_year": [
+   "metai",
+   "metus",
+   "metų"
+  ],
+  "unit_century": [
+   "amžiai",
+   "amžiaus",
+   "amžius",
+   "amžių"
+  ],
+  "unit_day": [
+   "diena",
+   "dienas",
+   "dienos",
+   "dieną",
+   "dienų"
+  ],
+  "unit_decade": [
+   "dešimtmetis",
+   "dešimtmetį",
+   "dešimtmečiai",
+   "dešimtmečio",
+   "dešimtmečius",
+   "dešimtmečių"
+  ],
+  "unit_hour": [
+   "valanda",
+   "valandas",
+   "valandos",
+   "valandą",
+   "valandų"
+  ],
+  "unit_minute": [
+   "minutes",
+   "minutė",
+   "minutės",
+   "minutę",
+   "minučių"
+  ],
+  "unit_month": [
+   "mėnesiai",
+   "mėnesio",
+   "mėnesius",
+   "mėnesių",
+   "mėnesį",
+   "mėnuo"
+  ],
+  "unit_second": [
+   "sekundes",
+   "sekundė",
+   "sekundės",
+   "sekundę",
+   "sekundžių"
+  ],
+  "unit_week": [
+   "savaites",
+   "savaitė",
+   "savaitės",
+   "savaitę",
+   "savaičių"
+  ],
+  "unit_year": [
+   "metai",
+   "metais",
+   "metus",
+   "metų"
+  ],
+  "weekday_0": [
+   "pirmadienio",
+   "pirmadienis",
+   "pirmadienį"
+  ],
+  "weekday_1": [
+   "antradienio",
+   "antradienis",
+   "antradienį"
+  ],
+  "weekday_2": [
+   "trečiadienio",
+   "trečiadienis",
+   "trečiadienį"
+  ],
+  "weekday_3": [
+   "ketvirtadienio",
+   "ketvirtadienis",
+   "ketvirtadienį"
+  ],
+  "weekday_4": [
+   "penktadienio",
+   "penktadienis",
+   "penktadienį"
+  ],
+  "weekday_5": [
+   "šeštadienio",
+   "šeštadienis",
+   "šeštadienį"
+  ],
+  "weekday_6": [
+   "sekmadienio",
+   "sekmadienis",
+   "sekmadienį"
+  ]
+ },
+ "sources": {
+  "clock_dir_to": [
+   "\"be\" + genitive counts DOWN to the named hour: \"be penkių trys\" is 02:55.",
+   "Source: en.wiktionary.org, https://en.wiktionary.org/wiki/be (\"without\", with the genitive);",
+   "Talkpal, \"Telling Time in Lithuanian Grammar\"."
+  ],
+  "clock_fraction_30": [
+   "The spoken half hour names the COMING hour: \"pusė trijų\" (half of three)",
+   "is 02:30, \"pusė aštuonių\" is 07:30 -- hence bare_half_to + toward_hour_12h,",
+   "with the hour in the genitive.  Source: en.wiktionary.org, https://en.wiktionary.org/wiki/pus%C4%97",
+   "(\"half\"); Talkpal, \"Telling Time in Lithuanian Grammar\"."
+  ],
+  "clock_landmark_0": [
+   "Midnight.  Surface: Unicode CLDR 47 day-period chart, locale lt",
+   "(https://www.unicode.org/cldr/charts/47/supplemental/day_periods.html), dayPeriod \"midnight\".",
+   "Declension: en.wiktionary.org, https://en.wiktionary.org/wiki/vidurnaktis"
+  ],
+  "clock_landmark_720": [
+   "Noon.  Surface: Unicode CLDR 47 day-period chart, locale lt",
+   "(https://www.unicode.org/cldr/charts/47/supplemental/day_periods.html), stand-alone dayPeriod \"noon\".",
+   "Source: en.wiktionary.org, https://en.wiktionary.org/wiki/vidurdienis"
+  ],
+  "clock_meridiem_am": [
+   "Surface: Unicode CLDR 47 day-period chart, locale lt",
+   "(https://www.unicode.org/cldr/charts/47/supplemental/day_periods.html), dayPeriod \"am\"."
+  ],
+  "clock_meridiem_pm": [
+   "Surface: Unicode CLDR 47 day-period chart, locale lt",
+   "(https://www.unicode.org/cldr/charts/47/supplemental/day_periods.html), dayPeriod \"pm\"."
+  ],
+  "daypart_afternoon_lt": [
+   "Band boundaries: Unicode CLDR 47 day-period chart, locale lt",
+   "(https://www.unicode.org/cldr/charts/47/supplemental/day_periods.html),",
+   "transcribed in chronologia/dayparts.py as the afternoon band.",
+   "Surfaces: the CLDR dayPeriod name plus the adverbial case the deictic",
+   "phrase uses; declension from en.wiktionary.org, https://en.wiktionary.org/wiki/popietė."
+  ],
+  "daypart_evening_lt": [
+   "Band boundaries: Unicode CLDR 47 day-period chart, locale lt",
+   "(https://www.unicode.org/cldr/charts/47/supplemental/day_periods.html),",
+   "transcribed in chronologia/dayparts.py as the evening band.",
+   "Surfaces: the CLDR dayPeriod name plus the adverbial case the deictic",
+   "phrase uses; declension from en.wiktionary.org, https://en.wiktionary.org/wiki/vakaras."
+  ],
+  "daypart_morning_lt": [
+   "Band boundaries: Unicode CLDR 47 day-period chart, locale lt",
+   "(https://www.unicode.org/cldr/charts/47/supplemental/day_periods.html),",
+   "transcribed in chronologia/dayparts.py as the morning band.",
+   "Surfaces: the CLDR dayPeriod name plus the adverbial case the deictic",
+   "phrase uses; declension from en.wiktionary.org, https://en.wiktionary.org/wiki/rytas."
+  ],
+  "daypart_night_lt": [
+   "Band boundaries: Unicode CLDR 47 day-period chart, locale lt",
+   "(https://www.unicode.org/cldr/charts/47/supplemental/day_periods.html),",
+   "transcribed in chronologia/dayparts.py as the night band.",
+   "Surfaces: the CLDR dayPeriod name plus the adverbial case the deictic",
+   "phrase uses; declension from en.wiktionary.org, https://en.wiktionary.org/wiki/naktis."
+  ],
+  "marker_after": [
+   "Temporal \"after\".  Source: en.wiktionary.org, https://en.wiktionary.org/wiki/po"
+  ],
+  "marker_and": [
+   "Coordinating \"and\".  Source: en.wiktionary.org, https://en.wiktionary.org/wiki/ir"
+  ],
+  "marker_before": [
+   "Temporal \"before\".  Source: en.wiktionary.org, https://en.wiktionary.org/wiki/prie%C5%A1"
+  ],
+  "marker_between": [
+   "\"tarp\" + genitive = between.  Source: en.wiktionary.org, https://en.wiktionary.org/wiki/tarp"
+  ],
+  "marker_day_word": [
+   "\"d.\", the standard abbreviation of \"diena\" closing a written date",
+   "(\"kovo 1 d.\").  Source: en.wiktionary.org, https://en.wiktionary.org/wiki/diena, synonym section",
+   "(calendar-date sense: \"d.\")."
+  ],
+  "marker_every": [
+   "Distributive \"kas\" = every (\"kas savaitę\").  Source: en.wiktionary.org,",
+   "https://en.wiktionary.org/wiki/kas, sense \"every\" (citing Ambrazas, *Lithuanian Grammar*, 2nd rev.",
+   "ed., pp. 198-201, 205-206)."
+  ],
+  "marker_from": [
+   "\"nuo\" + genitive = from / since.  Source: en.wiktionary.org, https://en.wiktionary.org/wiki/nuo"
+  ],
+  "marker_future": [
+   "\"po\" + genitive marks a forward offset (\"po trijų dienų\" = in three days).",
+   "Source: en.wiktionary.org, https://en.wiktionary.org/wiki/po (\"after, following a certain time",
+   "period\", with the genitive)."
+  ],
+  "marker_half": [
+   "\"pusė\" (half) as the period noun of \"first/second half of <year>\".",
+   "Declension: en.wiktionary.org, https://en.wiktionary.org/wiki/pus%C4%97"
+  ],
+  "marker_last": [
+   "\"praeitas\" (past, last) as the backward determiner (\"praeitą savaitę\").",
+   "Declension: en.wiktionary.org, https://en.wiktionary.org/wiki/praeitas (non-pronominal forms)."
+  ],
+  "marker_next": [
+   "\"kitas\" (the other, the next) as the forward determiner (\"kitą savaitę\").",
+   "Declension: en.wiktionary.org, https://en.wiktionary.org/wiki/kitas (non-pronominal forms)."
+  ],
+  "marker_past": [
+   "\"prieš\" + accusative marks a past offset (\"prieš valandą\" = an hour ago).",
+   "Source: en.wiktionary.org, https://en.wiktionary.org/wiki/prie%C5%A1 (temporal \"before\"; \"ago\")."
+  ],
+  "marker_since": [
+   "\"nuo\" + genitive introduces the start of an open period.",
+   "Source: en.wiktionary.org, https://en.wiktionary.org/wiki/nuo"
+  ],
+  "marker_this": [
+   "Demonstrative \"šis\" (this), used as a determiner; the bare accusative is",
+   "the ordinary in/during form (\"šią savaitę\" = this week).",
+   "Declension: en.wiktionary.org, https://en.wiktionary.org/wiki/%C5%A1is (Lithuanian table)."
+  ],
+  "marker_to": [
+   "\"iki\" closes a range (\"nuo birželio iki rugpjūčio\").",
+   "Source: en.wiktionary.org, https://en.wiktionary.org/wiki/iki"
+  ],
+  "marker_until": [
+   "\"iki\" = until / up to.  Source: en.wiktionary.org, https://en.wiktionary.org/wiki/iki"
+  ],
+  "marker_year_word": [
+   "\"metai\" (year) and its standard abbreviation \"m.\", which follows the year",
+   "in the date form \"1990 m. kovo 1 d.\".  Declension: en.wiktionary.org,",
+   "https://en.wiktionary.org/wiki/metai (plurale tantum)."
+  ],
+  "month_1": [
+   "Nominative (stand-alone) and genitive (format) names: Unicode CLDR 47,",
+   "locale lt, gregorian calendar month names; the genitive is the form the",
+   "date construction uses (\"kovo 1 d.\").  Abbreviation from the same chart."
+  ],
+  "month_10": [
+   "Nominative (stand-alone) and genitive (format) names: Unicode CLDR 47,",
+   "locale lt, gregorian calendar month names; the genitive is the form the",
+   "date construction uses (\"kovo 1 d.\").  Abbreviation from the same chart."
+  ],
+  "month_11": [
+   "Nominative (stand-alone) and genitive (format) names: Unicode CLDR 47,",
+   "locale lt, gregorian calendar month names; the genitive is the form the",
+   "date construction uses (\"kovo 1 d.\").  Abbreviation from the same chart."
+  ],
+  "month_12": [
+   "Nominative (stand-alone) and genitive (format) names: Unicode CLDR 47,",
+   "locale lt, gregorian calendar month names; the genitive is the form the",
+   "date construction uses (\"kovo 1 d.\").  Abbreviation from the same chart."
+  ],
+  "month_2": [
+   "Nominative (stand-alone) and genitive (format) names: Unicode CLDR 47,",
+   "locale lt, gregorian calendar month names; the genitive is the form the",
+   "date construction uses (\"kovo 1 d.\").  Abbreviation from the same chart."
+  ],
+  "month_3": [
+   "Nominative (stand-alone) and genitive (format) names: Unicode CLDR 47,",
+   "locale lt, gregorian calendar month names; the genitive is the form the",
+   "date construction uses (\"kovo 1 d.\").  Abbreviation from the same chart."
+  ],
+  "month_4": [
+   "Nominative (stand-alone) and genitive (format) names: Unicode CLDR 47,",
+   "locale lt, gregorian calendar month names; the genitive is the form the",
+   "date construction uses (\"kovo 1 d.\").  Abbreviation from the same chart."
+  ],
+  "month_5": [
+   "Nominative (stand-alone) and genitive (format) names: Unicode CLDR 47,",
+   "locale lt, gregorian calendar month names; the genitive is the form the",
+   "date construction uses (\"kovo 1 d.\").  Abbreviation from the same chart."
+  ],
+  "month_6": [
+   "Nominative (stand-alone) and genitive (format) names: Unicode CLDR 47,",
+   "locale lt, gregorian calendar month names; the genitive is the form the",
+   "date construction uses (\"kovo 1 d.\").  Abbreviation from the same chart."
+  ],
+  "month_7": [
+   "Nominative (stand-alone) and genitive (format) names: Unicode CLDR 47,",
+   "locale lt, gregorian calendar month names; the genitive is the form the",
+   "date construction uses (\"kovo 1 d.\").  Abbreviation from the same chart."
+  ],
+  "month_8": [
+   "Nominative (stand-alone) and genitive (format) names: Unicode CLDR 47,",
+   "locale lt, gregorian calendar month names; the genitive is the form the",
+   "date construction uses (\"kovo 1 d.\").  Abbreviation from the same chart."
+  ],
+  "month_9": [
+   "Nominative (stand-alone) and genitive (format) names: Unicode CLDR 47,",
+   "locale lt, gregorian calendar month names; the genitive is the form the",
+   "date construction uses (\"kovo 1 d.\").  Abbreviation from the same chart."
+  ],
+  "named_day_-1": [
+   "Adverb \"yesterday\".  Source: en.wiktionary.org, https://en.wiktionary.org/wiki/vakar"
+  ],
+  "named_day_-2": [
+   "Adverb \"the day before yesterday\".  Source: en.wiktionary.org,",
+   "https://en.wiktionary.org/wiki/u%C5%BEvakar"
+  ],
+  "named_day_0": [
+   "Adverb \"today\".  Source: en.wiktionary.org, https://en.wiktionary.org/wiki/%C5%A1iandien"
+  ],
+  "named_day_1": [
+   "Adverb \"tomorrow\".  Source: en.wiktionary.org, https://en.wiktionary.org/wiki/rytoj"
+  ],
+  "named_day_2": [
+   "Adverb \"on the day after tomorrow\".  Source: en.wiktionary.org,",
+   "https://en.wiktionary.org/wiki/poryt"
+  ],
+  "scope_unit_century": [
+   "Century as a scoping period noun.  Declension: en.wiktionary.org,",
+   "https://en.wiktionary.org/wiki/amžius."
+  ],
+  "scope_unit_decade": [
+   "Decade as a scoping period noun.  Declension: en.wiktionary.org,",
+   "https://en.wiktionary.org/wiki/dešimtmetis."
+  ],
+  "season_fall": [
+   "Declension: en.wiktionary.org, https://en.wiktionary.org/wiki/ruduo.  The accusative is the",
+   "adverbial \"in <season>\" form (\"vasarą\" = in summer)."
+  ],
+  "season_spring": [
+   "Declension: en.wiktionary.org, https://en.wiktionary.org/wiki/pavasaris.  The accusative is the",
+   "adverbial \"in <season>\" form (\"vasarą\" = in summer)."
+  ],
+  "season_summer": [
+   "Declension: en.wiktionary.org, https://en.wiktionary.org/wiki/vasara.  The accusative is the",
+   "adverbial \"in <season>\" form (\"vasarą\" = in summer)."
+  ],
+  "season_winter": [
+   "Declension: en.wiktionary.org, https://en.wiktionary.org/wiki/žiema.  The accusative is the",
+   "adverbial \"in <season>\" form (\"vasarą\" = in summer)."
+  ],
+  "special_weekend": [
+   "Declension: en.wiktionary.org, https://en.wiktionary.org/wiki/savaitgalis"
+  ],
+  "unit1_century": [
+   "Singular of the unit noun (nominative and accusative).",
+   "Includes the genitive singular, the form \"po\" (in/after) governs.",
+   "Declension: en.wiktionary.org, https://en.wiktionary.org/wiki/amžius."
+  ],
+  "unit1_day": [
+   "Singular of the unit noun (nominative and accusative).",
+   "Includes the genitive singular, the form \"po\" (in/after) governs.",
+   "Declension: en.wiktionary.org, https://en.wiktionary.org/wiki/diena."
+  ],
+  "unit1_decade": [
+   "Singular of the unit noun (nominative and accusative).",
+   "Includes the genitive singular, the form \"po\" (in/after) governs.",
+   "Declension: en.wiktionary.org, https://en.wiktionary.org/wiki/dešimtmetis."
+  ],
+  "unit1_hour": [
+   "Singular of the unit noun (nominative and accusative).",
+   "Includes the genitive singular, the form \"po\" (in/after) governs.",
+   "Declension: en.wiktionary.org, https://en.wiktionary.org/wiki/valanda."
+  ],
+  "unit1_minute": [
+   "Singular of the unit noun (nominative and accusative).",
+   "Includes the genitive singular, the form \"po\" (in/after) governs.",
+   "Declension: en.wiktionary.org, https://en.wiktionary.org/wiki/minutė."
+  ],
+  "unit1_month": [
+   "Singular of the unit noun (nominative and accusative).",
+   "Includes the genitive singular, the form \"po\" (in/after) governs.",
+   "Declension: en.wiktionary.org, https://en.wiktionary.org/wiki/mėnuo."
+  ],
+  "unit1_second": [
+   "Singular of the unit noun (nominative and accusative).",
+   "Includes the genitive singular, the form \"po\" (in/after) governs.",
+   "Declension: en.wiktionary.org, https://en.wiktionary.org/wiki/sekundė."
+  ],
+  "unit1_week": [
+   "Singular of the unit noun (nominative and accusative).",
+   "Includes the genitive singular, the form \"po\" (in/after) governs.",
+   "Declension: en.wiktionary.org, https://en.wiktionary.org/wiki/savaitė."
+  ],
+  "unit1_year": [
+   "Singular of the unit noun (nominative and accusative).",
+   "Includes the genitive singular, the form \"po\" (in/after) governs.",
+   "Declension: en.wiktionary.org, https://en.wiktionary.org/wiki/metai."
+  ],
+  "unit_century": [
+   "Declension: en.wiktionary.org, https://en.wiktionary.org/wiki/amžius.",
+   "The counted noun's form keys off the numeral's last digit -- nominative",
+   "singular after a numeral ending in 1, nominative plural after 2-9,",
+   "genitive plural after 0 and 11-19 -- and the accusative is the form",
+   "\"prieš\" (ago) imposes, so all of them are surfaces of this unit."
+  ],
+  "unit_day": [
+   "Declension: en.wiktionary.org, https://en.wiktionary.org/wiki/diena.",
+   "The counted noun's form keys off the numeral's last digit -- nominative",
+   "singular after a numeral ending in 1, nominative plural after 2-9,",
+   "genitive plural after 0 and 11-19 -- and the accusative is the form",
+   "\"prieš\" (ago) imposes, so all of them are surfaces of this unit."
+  ],
+  "unit_decade": [
+   "Declension: en.wiktionary.org, https://en.wiktionary.org/wiki/dešimtmetis.",
+   "The counted noun's form keys off the numeral's last digit -- nominative",
+   "singular after a numeral ending in 1, nominative plural after 2-9,",
+   "genitive plural after 0 and 11-19 -- and the accusative is the form",
+   "\"prieš\" (ago) imposes, so all of them are surfaces of this unit."
+  ],
+  "unit_hour": [
+   "Declension: en.wiktionary.org, https://en.wiktionary.org/wiki/valanda.",
+   "The counted noun's form keys off the numeral's last digit -- nominative",
+   "singular after a numeral ending in 1, nominative plural after 2-9,",
+   "genitive plural after 0 and 11-19 -- and the accusative is the form",
+   "\"prieš\" (ago) imposes, so all of them are surfaces of this unit."
+  ],
+  "unit_minute": [
+   "Declension: en.wiktionary.org, https://en.wiktionary.org/wiki/minutė.",
+   "The counted noun's form keys off the numeral's last digit -- nominative",
+   "singular after a numeral ending in 1, nominative plural after 2-9,",
+   "genitive plural after 0 and 11-19 -- and the accusative is the form",
+   "\"prieš\" (ago) imposes, so all of them are surfaces of this unit."
+  ],
+  "unit_month": [
+   "Declension: en.wiktionary.org, https://en.wiktionary.org/wiki/mėnuo.",
+   "The counted noun's form keys off the numeral's last digit -- nominative",
+   "singular after a numeral ending in 1, nominative plural after 2-9,",
+   "genitive plural after 0 and 11-19 -- and the accusative is the form",
+   "\"prieš\" (ago) imposes, so all of them are surfaces of this unit."
+  ],
+  "unit_second": [
+   "Declension: en.wiktionary.org, https://en.wiktionary.org/wiki/sekundė.",
+   "The counted noun's form keys off the numeral's last digit -- nominative",
+   "singular after a numeral ending in 1, nominative plural after 2-9,",
+   "genitive plural after 0 and 11-19 -- and the accusative is the form",
+   "\"prieš\" (ago) imposes, so all of them are surfaces of this unit.",
+   "Unicode CLDR 47, locale lt, cldr-units-full/main/lt/units.json,",
+   "duration-second: one \"sekundė\", few/many \"sekundės\", other \"sekundžių\"."
+  ],
+  "unit_week": [
+   "Declension: en.wiktionary.org, https://en.wiktionary.org/wiki/savaitė.",
+   "The counted noun's form keys off the numeral's last digit -- nominative",
+   "singular after a numeral ending in 1, nominative plural after 2-9,",
+   "genitive plural after 0 and 11-19 -- and the accusative is the form",
+   "\"prieš\" (ago) imposes, so all of them are surfaces of this unit."
+  ],
+  "unit_year": [
+   "Declension: en.wiktionary.org, https://en.wiktionary.org/wiki/metai.",
+   "The counted noun's form keys off the numeral's last digit -- nominative",
+   "singular after a numeral ending in 1, nominative plural after 2-9,",
+   "genitive plural after 0 and 11-19 -- and the accusative is the form",
+   "\"prieš\" (ago) imposes, so all of them are surfaces of this unit."
+  ],
+  "weekday_0": [
+   "Nominative: Unicode CLDR 47, locale lt, gregorian wide weekday names.",
+   "Genitive and accusative: en.wiktionary.org declension table of",
+   "https://en.wiktionary.org/wiki/pirmadienis (masculine -is stem).  The accusative is the",
+   "ordinary adverbial \"on <weekday>\" form (\"praeitą penktadienį\")."
+  ],
+  "weekday_1": [
+   "Nominative: Unicode CLDR 47, locale lt, gregorian wide weekday names.",
+   "Genitive and accusative: en.wiktionary.org declension table of",
+   "https://en.wiktionary.org/wiki/antradienis (masculine -is stem).  The accusative is the",
+   "ordinary adverbial \"on <weekday>\" form (\"praeitą penktadienį\")."
+  ],
+  "weekday_2": [
+   "Nominative: Unicode CLDR 47, locale lt, gregorian wide weekday names.",
+   "Genitive and accusative: en.wiktionary.org declension table of",
+   "https://en.wiktionary.org/wiki/trečiadienis (masculine -is stem).  The accusative is the",
+   "ordinary adverbial \"on <weekday>\" form (\"praeitą penktadienį\")."
+  ],
+  "weekday_3": [
+   "Nominative: Unicode CLDR 47, locale lt, gregorian wide weekday names.",
+   "Genitive and accusative: en.wiktionary.org declension table of",
+   "https://en.wiktionary.org/wiki/ketvirtadienis (masculine -is stem).  The accusative is the",
+   "ordinary adverbial \"on <weekday>\" form (\"praeitą penktadienį\")."
+  ],
+  "weekday_4": [
+   "Nominative: Unicode CLDR 47, locale lt, gregorian wide weekday names.",
+   "Genitive and accusative: en.wiktionary.org declension table of",
+   "https://en.wiktionary.org/wiki/penktadienis (masculine -is stem).  The accusative is the",
+   "ordinary adverbial \"on <weekday>\" form (\"praeitą penktadienį\")."
+  ],
+  "weekday_5": [
+   "Nominative: Unicode CLDR 47, locale lt, gregorian wide weekday names.",
+   "Genitive and accusative: en.wiktionary.org declension table of",
+   "https://en.wiktionary.org/wiki/šeštadienis (masculine -is stem).  The accusative is the",
+   "ordinary adverbial \"on <weekday>\" form (\"praeitą penktadienį\")."
+  ],
+  "weekday_6": [
+   "Nominative: Unicode CLDR 47, locale lt, gregorian wide weekday names.",
+   "Genitive and accusative: en.wiktionary.org declension table of",
+   "https://en.wiktionary.org/wiki/sekmadienis (masculine -is stem).  The accusative is the",
+   "ordinary adverbial \"on <weekday>\" form (\"praeitą penktadienį\")."
+  ]
+ }
+}

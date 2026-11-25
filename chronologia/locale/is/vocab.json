@@ -1,0 +1,791 @@
+{
+ "format_version": 1,
+ "words": {
+  "clock_dir_past": [
+   "yfir"
+  ],
+  "clock_dir_to": [
+   "í"
+  ],
+  "clock_fraction_15": [
+   "korter",
+   "kortér"
+  ],
+  "clock_fraction_30": [
+   "hálf"
+  ],
+  "clock_landmark_0": [
+   "miðnætti",
+   "miðnættið"
+  ],
+  "clock_landmark_720": [
+   "hádegi",
+   "hádegið"
+  ],
+  "clock_meridiem_am": [
+   "f.h."
+  ],
+  "clock_meridiem_pm": [
+   "e.h."
+  ],
+  "daypart_afternoon_is": [
+   "síðdegi",
+   "síðdegis",
+   "síðdegið"
+  ],
+  "daypart_evening_is": [
+   "kvöld",
+   "kvöldi",
+   "kvöldið"
+  ],
+  "daypart_morning_is": [
+   "morgni",
+   "morgun",
+   "morguninn",
+   "morgunn"
+  ],
+  "daypart_night_is": [
+   "nótt",
+   "nóttin",
+   "nóttina",
+   "nóttu"
+  ],
+  "marker_ago": [
+   "síðan"
+  ],
+  "marker_and": [
+   "og"
+  ],
+  "marker_at": [
+   "kl.",
+   "klukkan"
+  ],
+  "marker_during": [
+   "í"
+  ],
+  "marker_future": [
+   "eftir"
+  ],
+  "marker_in": [
+   "á",
+   "í"
+  ],
+  "marker_last": [
+   "síðasta",
+   "síðastan",
+   "síðastar",
+   "síðasti",
+   "síðastir",
+   "síðastliðin",
+   "síðastliðinn",
+   "síðastliðinni",
+   "síðastliðið",
+   "síðastliðna",
+   "síðastliðni",
+   "síðastliðnu",
+   "síðastliðnum",
+   "síðastra",
+   "síðastrar",
+   "síðastri",
+   "síðasts",
+   "síðastur",
+   "síðust",
+   "síðustu",
+   "síðustum"
+  ],
+  "marker_minute_word": [
+   "mínútu",
+   "mínútur"
+  ],
+  "marker_next": [
+   "næsta",
+   "næstan",
+   "næsti",
+   "næstri",
+   "næstu",
+   "næstum",
+   "næstur"
+  ],
+  "marker_past": [
+   "fyrir"
+  ],
+  "marker_this": [
+   "þennan",
+   "þessa",
+   "þessari",
+   "þessi",
+   "þessu",
+   "þessum",
+   "þetta"
+  ],
+  "marker_year_word": [
+   "árið"
+  ],
+  "month_1": [
+   "jan.",
+   "janúar"
+  ],
+  "month_10": [
+   "okt.",
+   "október"
+  ],
+  "month_11": [
+   "nóv.",
+   "nóvember"
+  ],
+  "month_12": [
+   "des.",
+   "desember"
+  ],
+  "month_2": [
+   "feb.",
+   "febrúar"
+  ],
+  "month_3": [
+   "mar.",
+   "mars"
+  ],
+  "month_4": [
+   "apr.",
+   "apríl"
+  ],
+  "month_5": [
+   "maí"
+  ],
+  "month_6": [
+   "jún.",
+   "júní"
+  ],
+  "month_7": [
+   "júl.",
+   "júlí"
+  ],
+  "month_8": [
+   "ágú.",
+   "ágúst"
+  ],
+  "month_9": [
+   "sep.",
+   "september"
+  ],
+  "named_day_-1": [
+   "í gær"
+  ],
+  "named_day_-2": [
+   "í fyrradag"
+  ],
+  "named_day_0": [
+   "í dag"
+  ],
+  "named_day_1": [
+   "á morgun"
+  ],
+  "scope_unit_century": [
+   "aldar",
+   "öld",
+   "öldin",
+   "öldinni"
+  ],
+  "scope_unit_decade": [
+   "áratug",
+   "áratugar",
+   "áratugnum",
+   "áratugur",
+   "áratugurinn"
+  ],
+  "season_fall": [
+   "haust",
+   "hausti",
+   "haustið"
+  ],
+  "season_spring": [
+   "vor",
+   "vori",
+   "vorið"
+  ],
+  "season_summer": [
+   "sumar",
+   "sumarið",
+   "sumri"
+  ],
+  "season_winter": [
+   "vetri",
+   "vetur",
+   "veturinn"
+  ],
+  "special_weekend": [
+   "helgar",
+   "helgi",
+   "helgin",
+   "helgina"
+  ],
+  "unit1_century": [
+   "aldar",
+   "öld"
+  ],
+  "unit1_day": [
+   "dag",
+   "dags",
+   "dagur",
+   "degi"
+  ],
+  "unit1_decade": [
+   "áratug",
+   "áratugar",
+   "áratugur"
+  ],
+  "unit1_hour": [
+   "klukkustund",
+   "klukkustundar"
+  ],
+  "unit1_millennium": [
+   "árþúsund",
+   "árþúsundi",
+   "árþúsunds"
+  ],
+  "unit1_minute": [
+   "mínúta",
+   "mínútu"
+  ],
+  "unit1_month": [
+   "mánaðar",
+   "mánuð",
+   "mánuði",
+   "mánuður"
+  ],
+  "unit1_second": [
+   "sekúnda",
+   "sekúndu"
+  ],
+  "unit1_week": [
+   "vika",
+   "viku"
+  ],
+  "unit1_year": [
+   "ár",
+   "ári",
+   "árs"
+  ],
+  "unit_century": [
+   "alda",
+   "aldar",
+   "aldir",
+   "öld",
+   "öldum"
+  ],
+  "unit_day": [
+   "dag",
+   "daga",
+   "dagar",
+   "dags",
+   "dagur",
+   "degi",
+   "dögum"
+  ],
+  "unit_decade": [
+   "áratug",
+   "áratuga",
+   "áratugar",
+   "áratugi",
+   "áratugir",
+   "áratugum",
+   "áratugur"
+  ],
+  "unit_hour": [
+   "klukkustund",
+   "klukkustunda",
+   "klukkustundar",
+   "klukkustundir",
+   "klukkustundum"
+  ],
+  "unit_millennium": [
+   "árþúsund",
+   "árþúsunda",
+   "árþúsundi",
+   "árþúsunds",
+   "árþúsundum"
+  ],
+  "unit_minute": [
+   "mínúta",
+   "mínútna",
+   "mínútu",
+   "mínútum",
+   "mínútur"
+  ],
+  "unit_month": [
+   "mánaða",
+   "mánaðar",
+   "mánuð",
+   "mánuði",
+   "mánuðir",
+   "mánuðum",
+   "mánuður"
+  ],
+  "unit_second": [
+   "sekúnda",
+   "sekúndna",
+   "sekúndu",
+   "sekúndum",
+   "sekúndur"
+  ],
+  "unit_week": [
+   "vika",
+   "vikna",
+   "viku",
+   "vikum",
+   "vikur"
+  ],
+  "unit_year": [
+   "ár",
+   "ára",
+   "ári",
+   "árs",
+   "árum"
+  ],
+  "weekday_0": [
+   "mánudag",
+   "mánudaginn",
+   "mánudagur",
+   "mánudegi"
+  ],
+  "weekday_1": [
+   "þriðjudag",
+   "þriðjudaginn",
+   "þriðjudagur",
+   "þriðjudegi"
+  ],
+  "weekday_2": [
+   "miðvikudag",
+   "miðvikudaginn",
+   "miðvikudagur",
+   "miðvikudegi"
+  ],
+  "weekday_3": [
+   "fimmtudag",
+   "fimmtudaginn",
+   "fimmtudagur",
+   "fimmtudegi"
+  ],
+  "weekday_4": [
+   "föstudag",
+   "föstudaginn",
+   "föstudagur",
+   "föstudegi"
+  ],
+  "weekday_5": [
+   "laugardag",
+   "laugardaginn",
+   "laugardagur",
+   "laugardegi"
+  ],
+  "weekday_6": [
+   "sunnudag",
+   "sunnudaginn",
+   "sunnudagur",
+   "sunnudegi"
+  ]
+ },
+ "sources": {
+  "clock_dir_past": [
+   "\"yfir\" (over, past) counts UP from the named hour: \"kortér yfir tvö\"",
+   "is 02:15.  Source: en.wiktionary.org, https://en.wiktionary.org/wiki/kortér."
+  ],
+  "clock_dir_to": [
+   "\"í\" (to) counts DOWN to the named hour: \"kortér í þrjú\" is 02:45.",
+   "Source: en.wiktionary.org, https://en.wiktionary.org/wiki/kortér."
+  ],
+  "clock_fraction_15": [
+   "A quarter of an hour, which takes its direction from \"yfir\"/\"í\".",
+   "Source: en.wiktionary.org, https://en.wiktionary.org/wiki/kortér (with \"korter\" listed there as",
+   "the alternative spelling)."
+  ],
+  "clock_fraction_30": [
+   "The spoken half hour names the COMING hour: \"hálf tvö\" is 01:30, not",
+   "02:30 -- hence bare_half_to + toward_hour_12h.  Source:",
+   "en.wiktionary.org, Appendix:Telling time in Icelandic (row 1:30)."
+  ],
+  "clock_landmark_0": [
+   "Midnight.  Surface: Unicode CLDR 47, locale is, dayPeriod \"midnight\";",
+   "declension from en.wiktionary.org, https://en.wiktionary.org/wiki/miðnætti."
+  ],
+  "clock_landmark_720": [
+   "Noon.  Surface: Unicode CLDR 47, locale is, dayPeriod \"noon\";",
+   "declension from en.wiktionary.org, https://en.wiktionary.org/wiki/hádegi."
+  ],
+  "clock_meridiem_am": [
+   "Unicode CLDR 47, locale is, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/is/ca-gregorian.json).",
+   "dayPeriod \"am\" (fyrir hádegi, before noon)."
+  ],
+  "clock_meridiem_pm": [
+   "Unicode CLDR 47, locale is, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/is/ca-gregorian.json).",
+   "dayPeriod \"pm\" (eftir hádegi, after noon)."
+  ],
+  "daypart_afternoon_is": [
+   "Band boundaries: Unicode CLDR 47 dayPeriodRuleSet for is (cldr-json",
+   "cldr-core/supplemental/dayPeriods.json), transcribed in",
+   "chronologia/dayparts.py.",
+   "Unicode CLDR 47, locale is, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/is/ca-gregorian.json).",
+   "dayPeriod \"afternoon1\" (the wide name \"eftir hádegi\" is two words;",
+   "the abbreviated name \"síðdegis\" is the single-token surface).",
+   "Declension: en.wiktionary.org, https://en.wiktionary.org/wiki/síðdegi."
+  ],
+  "daypart_evening_is": [
+   "Band boundaries: Unicode CLDR 47 dayPeriodRuleSet for is (cldr-json",
+   "cldr-core/supplemental/dayPeriods.json), transcribed in",
+   "chronologia/dayparts.py.",
+   "Unicode CLDR 47, locale is, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/is/ca-gregorian.json).",
+   "dayPeriod \"evening1\".  Declension: en.wiktionary.org, https://en.wiktionary.org/wiki/kvöld."
+  ],
+  "daypart_morning_is": [
+   "Band boundaries: Unicode CLDR 47 dayPeriodRuleSet for is (cldr-json",
+   "cldr-core/supplemental/dayPeriods.json), transcribed in",
+   "chronologia/dayparts.py.",
+   "Unicode CLDR 47, locale is, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/is/ca-gregorian.json).",
+   "dayPeriod \"morning1\".  Declension: en.wiktionary.org, https://en.wiktionary.org/wiki/morgunn."
+  ],
+  "daypart_night_is": [
+   "Band boundaries: Unicode CLDR 47 dayPeriodRuleSet for is (cldr-json",
+   "cldr-core/supplemental/dayPeriods.json), transcribed in",
+   "chronologia/dayparts.py.",
+   "Unicode CLDR 47, locale is, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/is/ca-gregorian.json).",
+   "dayPeriod \"night1\".  Declension: en.wiktionary.org, https://en.wiktionary.org/wiki/nótt."
+  ],
+  "marker_ago": [
+   "The optional reinforcing \"síðan\" that may close an offset back",
+   "(\"fyrir fimm mínútum síðan\"); the dative on \"fyrir\" already carries",
+   "the meaning.  Source: en.wiktionary.org, https://en.wiktionary.org/wiki/síðan."
+  ],
+  "marker_and": [
+   "Coordinating \"and\".  Source: en.wiktionary.org, https://en.wiktionary.org/wiki/og"
+  ],
+  "marker_at": [
+   "\"klukkan\" (at ... o'clock), literally \"the clock\"; \"kl.\" is its",
+   "standard abbreviation.  Source: en.wiktionary.org, https://en.wiktionary.org/wiki/klukkan",
+   "(\"Ég kem klukkan þrjú\" -- I'll be there at three o'clock)."
+  ],
+  "marker_during": [
+   "\"i\" (i with acute) is the locative preposition used with months",
+   "(\"i januar\").",
+   "Source: en.wiktionary.org, entry \"í\" (Icelandic), \"in\"."
+  ],
+  "marker_future": [
+   "\"eftir\" + ACCUSATIVE is the offset forward: \"Ég kem eftir tíu mínútur\"",
+   "(I'll be there in ten minutes).  Source: en.wiktionary.org, https://en.wiktionary.org/wiki/eftir."
+  ],
+  "marker_in": [
+   "The locative-time prepositions that open a bare relative period: \"í\" +",
+   "dative (\"í þessari viku\" -- this week) and \"á\" (\"á morgun\").  Sources:",
+   "en.wiktionary.org, https://en.wiktionary.org/wiki/í and https://en.wiktionary.org/wiki/á (temporal senses)."
+  ],
+  "marker_last": [
+   "\"síðastliðinn\" (last, previous), glossed for a repeating period of",
+   "time.  Declension: en.wiktionary.org, https://en.wiktionary.org/wiki/síðastliðinn.",
+   "\"síðastur\" (last, most recent), the superlative of \"síðari\".  The weak",
+   "forms are the ones an oblique relative period uses -- \"á síðasta ári\",",
+   "\"í síðasta mánuði\" (weak dative singular), \"í síðustu viku\" (weak",
+   "feminine oblique singular).  The bare neuter \"síðast\" is left out: as a",
+   "standalone token it is the ordinary adverb \"last, most recently\".",
+   "Declension: en.wiktionary.org, https://en.wiktionary.org/wiki/síðari (superlative table).",
+   "The three phrases: CLDR dateFields, locale \"is\", year/month/week",
+   "relative-type--1."
+  ],
+  "marker_minute_word": [
+   "The optional \"mínútur\"/\"mínútu\" between the minute count and the",
+   "clock direction (\"fimmtán mínútur yfir eitt\").  Source:",
+   "en.wiktionary.org, Appendix:Telling time in Icelandic."
+  ],
+  "marker_next": [
+   "\"næstur\" (next).  Declension: en.wiktionary.org, https://en.wiktionary.org/wiki/næstur -- the weak",
+   "forms are the ones a temporal phrase uses (\"næsta fimmtudag\",",
+   "\"í næstu viku\")."
+  ],
+  "marker_past": [
+   "\"fyrir\" + DATIVE is the offset back: \"fyrir tveimur árum\" (two years",
+   "ago).  The same headword takes the ACCUSATIVE for \"before <event>\"",
+   "(\"fyrir næsta sunnudag\"), a different construction that this locale",
+   "does not read.  Source: en.wiktionary.org, https://en.wiktionary.org/wiki/fyrir (preposition,",
+   "dative sense \"ago\" and accusative sense \"before\")."
+  ],
+  "marker_this": [
+   "The demonstrative \"þessi\" (this).  Declension: en.wiktionary.org,",
+   "https://en.wiktionary.org/wiki/þessi."
+  ],
+  "marker_year_word": [
+   "\"árið\", the definite \"the year\" that may open a year reference",
+   "(\"árið 1990\").  Declension: en.wiktionary.org, https://en.wiktionary.org/wiki/ár."
+  ],
+  "month_1": [
+   "Unicode CLDR 47, locale is, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/is/ca-gregorian.json).",
+   "Icelandic month names do not decline, so the wide name is the",
+   "only form the date construction reads; the abbreviation is the",
+   "calendar's own short form from the same table."
+  ],
+  "month_10": [
+   "Unicode CLDR 47, locale is, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/is/ca-gregorian.json).",
+   "Icelandic month names do not decline, so the wide name is the",
+   "only form the date construction reads; the abbreviation is the",
+   "calendar's own short form from the same table."
+  ],
+  "month_11": [
+   "Unicode CLDR 47, locale is, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/is/ca-gregorian.json).",
+   "Icelandic month names do not decline, so the wide name is the",
+   "only form the date construction reads; the abbreviation is the",
+   "calendar's own short form from the same table."
+  ],
+  "month_12": [
+   "Unicode CLDR 47, locale is, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/is/ca-gregorian.json).",
+   "Icelandic month names do not decline, so the wide name is the",
+   "only form the date construction reads; the abbreviation is the",
+   "calendar's own short form from the same table."
+  ],
+  "month_2": [
+   "Unicode CLDR 47, locale is, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/is/ca-gregorian.json).",
+   "Icelandic month names do not decline, so the wide name is the",
+   "only form the date construction reads; the abbreviation is the",
+   "calendar's own short form from the same table."
+  ],
+  "month_3": [
+   "Unicode CLDR 47, locale is, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/is/ca-gregorian.json).",
+   "Icelandic month names do not decline, so the wide name is the",
+   "only form the date construction reads; the abbreviation is the",
+   "calendar's own short form from the same table."
+  ],
+  "month_4": [
+   "Unicode CLDR 47, locale is, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/is/ca-gregorian.json).",
+   "Icelandic month names do not decline, so the wide name is the",
+   "only form the date construction reads; the abbreviation is the",
+   "calendar's own short form from the same table."
+  ],
+  "month_5": [
+   "Unicode CLDR 47, locale is, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/is/ca-gregorian.json).",
+   "Icelandic month names do not decline, so the wide name is the",
+   "only form the date construction reads; the abbreviation is the",
+   "calendar's own short form from the same table."
+  ],
+  "month_6": [
+   "Unicode CLDR 47, locale is, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/is/ca-gregorian.json).",
+   "Icelandic month names do not decline, so the wide name is the",
+   "only form the date construction reads; the abbreviation is the",
+   "calendar's own short form from the same table."
+  ],
+  "month_7": [
+   "Unicode CLDR 47, locale is, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/is/ca-gregorian.json).",
+   "Icelandic month names do not decline, so the wide name is the",
+   "only form the date construction reads; the abbreviation is the",
+   "calendar's own short form from the same table."
+  ],
+  "month_8": [
+   "Unicode CLDR 47, locale is, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/is/ca-gregorian.json).",
+   "Icelandic month names do not decline, so the wide name is the",
+   "only form the date construction reads; the abbreviation is the",
+   "calendar's own short form from the same table."
+  ],
+  "month_9": [
+   "Unicode CLDR 47, locale is, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/is/ca-gregorian.json).",
+   "Icelandic month names do not decline, so the wide name is the",
+   "only form the date construction reads; the abbreviation is the",
+   "calendar's own short form from the same table."
+  ],
+  "named_day_-1": [
+   "Adverb \"yesterday\".  Source: en.wiktionary.org, https://en.wiktionary.org/wiki/í_gær"
+  ],
+  "named_day_-2": [
+   "Adverb \"the day before yesterday\".  Source: en.wiktionary.org,",
+   "https://en.wiktionary.org/wiki/í_fyrradag"
+  ],
+  "named_day_0": [
+   "Adverb \"today\".  Source: en.wiktionary.org, https://en.wiktionary.org/wiki/í_dag"
+  ],
+  "named_day_1": [
+   "Adverb \"tomorrow\".  Source: en.wiktionary.org, https://en.wiktionary.org/wiki/á_morgun"
+  ],
+  "scope_unit_century": [
+   "Century as a scoping period noun.  Declension: en.wiktionary.org, https://en.wiktionary.org/wiki/öld."
+  ],
+  "scope_unit_decade": [
+   "Decade as a scoping period noun.  Declension: en.wiktionary.org, https://en.wiktionary.org/wiki/áratugur."
+  ],
+  "season_fall": [
+   "Declension: en.wiktionary.org, https://en.wiktionary.org/wiki/haust."
+  ],
+  "season_spring": [
+   "Declension: en.wiktionary.org, https://en.wiktionary.org/wiki/vor."
+  ],
+  "season_summer": [
+   "Declension: en.wiktionary.org, https://en.wiktionary.org/wiki/sumar."
+  ],
+  "season_winter": [
+   "Declension: en.wiktionary.org, https://en.wiktionary.org/wiki/vetur."
+  ],
+  "special_weekend": [
+   "\"helgi\" (weekend).  Declension: en.wiktionary.org, https://en.wiktionary.org/wiki/helgi."
+  ],
+  "unit1_century": [
+   "Declension: en.wiktionary.org, https://en.wiktionary.org/wiki/öld (indefinite forms).",
+   "Singular only: the form a count of one, spoken or unspoken, takes."
+  ],
+  "unit1_day": [
+   "Declension: en.wiktionary.org, https://en.wiktionary.org/wiki/dagur (indefinite forms).",
+   "Singular only: the form a count of one, spoken or unspoken, takes."
+  ],
+  "unit1_decade": [
+   "Declension: en.wiktionary.org, https://en.wiktionary.org/wiki/áratugur (indefinite forms).",
+   "Singular only: the form a count of one, spoken or unspoken, takes."
+  ],
+  "unit1_hour": [
+   "Declension: en.wiktionary.org, https://en.wiktionary.org/wiki/klukkustund (indefinite forms).",
+   "Singular only: the form a count of one, spoken or unspoken, takes."
+  ],
+  "unit1_millennium": [
+   "Declension: en.wiktionary.org, https://en.wiktionary.org/wiki/árþúsund (indefinite forms).",
+   "Singular only: the form a count of one, spoken or unspoken, takes."
+  ],
+  "unit1_minute": [
+   "Declension: en.wiktionary.org, https://en.wiktionary.org/wiki/mínúta (indefinite forms).",
+   "Singular only: the form a count of one, spoken or unspoken, takes."
+  ],
+  "unit1_month": [
+   "Declension: en.wiktionary.org, https://en.wiktionary.org/wiki/mánuður (indefinite forms).",
+   "Singular only: the form a count of one, spoken or unspoken, takes."
+  ],
+  "unit1_second": [
+   "Declension: en.wiktionary.org, https://en.wiktionary.org/wiki/sekúnda (indefinite forms).",
+   "Singular only: the form a count of one, spoken or unspoken, takes."
+  ],
+  "unit1_week": [
+   "Declension: en.wiktionary.org, https://en.wiktionary.org/wiki/vika (indefinite forms).",
+   "Singular only: the form a count of one, spoken or unspoken, takes."
+  ],
+  "unit1_year": [
+   "Declension: en.wiktionary.org, https://en.wiktionary.org/wiki/ár (indefinite forms).",
+   "Singular only: the form a count of one, spoken or unspoken, takes."
+  ],
+  "unit_century": [
+   "Declension: en.wiktionary.org, https://en.wiktionary.org/wiki/öld (indefinite forms).",
+   "The construction imposes the case -- dative after \"fyrir\" (ago),",
+   "accusative after \"eftir\" (in) -- and the count imposes the number,",
+   "so every indefinite form of the noun is a surface of this unit."
+  ],
+  "unit_day": [
+   "Declension: en.wiktionary.org, https://en.wiktionary.org/wiki/dagur (indefinite forms).",
+   "The construction imposes the case -- dative after \"fyrir\" (ago),",
+   "accusative after \"eftir\" (in) -- and the count imposes the number,",
+   "so every indefinite form of the noun is a surface of this unit."
+  ],
+  "unit_decade": [
+   "Declension: en.wiktionary.org, https://en.wiktionary.org/wiki/áratugur (indefinite forms).",
+   "The construction imposes the case -- dative after \"fyrir\" (ago),",
+   "accusative after \"eftir\" (in) -- and the count imposes the number,",
+   "so every indefinite form of the noun is a surface of this unit."
+  ],
+  "unit_hour": [
+   "Declension: en.wiktionary.org, https://en.wiktionary.org/wiki/klukkustund (indefinite forms).",
+   "The construction imposes the case -- dative after \"fyrir\" (ago),",
+   "accusative after \"eftir\" (in) -- and the count imposes the number,",
+   "so every indefinite form of the noun is a surface of this unit."
+  ],
+  "unit_millennium": [
+   "Declension: en.wiktionary.org, https://en.wiktionary.org/wiki/árþúsund (indefinite forms).",
+   "The construction imposes the case -- dative after \"fyrir\" (ago),",
+   "accusative after \"eftir\" (in) -- and the count imposes the number,",
+   "so every indefinite form of the noun is a surface of this unit."
+  ],
+  "unit_minute": [
+   "Declension: en.wiktionary.org, https://en.wiktionary.org/wiki/mínúta (indefinite forms).",
+   "The construction imposes the case -- dative after \"fyrir\" (ago),",
+   "accusative after \"eftir\" (in) -- and the count imposes the number,",
+   "so every indefinite form of the noun is a surface of this unit."
+  ],
+  "unit_month": [
+   "Declension: en.wiktionary.org, https://en.wiktionary.org/wiki/mánuður (indefinite forms).",
+   "The construction imposes the case -- dative after \"fyrir\" (ago),",
+   "accusative after \"eftir\" (in) -- and the count imposes the number,",
+   "so every indefinite form of the noun is a surface of this unit."
+  ],
+  "unit_second": [
+   "Declension: en.wiktionary.org, https://en.wiktionary.org/wiki/sekúnda (indefinite forms).",
+   "The construction imposes the case -- dative after \"fyrir\" (ago),",
+   "accusative after \"eftir\" (in) -- and the count imposes the number,",
+   "so every indefinite form of the noun is a surface of this unit."
+  ],
+  "unit_week": [
+   "Declension: en.wiktionary.org, https://en.wiktionary.org/wiki/vika (indefinite forms).",
+   "The construction imposes the case -- dative after \"fyrir\" (ago),",
+   "accusative after \"eftir\" (in) -- and the count imposes the number,",
+   "so every indefinite form of the noun is a surface of this unit."
+  ],
+  "unit_year": [
+   "Declension: en.wiktionary.org, https://en.wiktionary.org/wiki/ár (indefinite forms).",
+   "The construction imposes the case -- dative after \"fyrir\" (ago),",
+   "accusative after \"eftir\" (in) -- and the count imposes the number,",
+   "so every indefinite form of the noun is a surface of this unit."
+  ],
+  "weekday_0": [
+   "Unicode CLDR 47, locale is, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/is/ca-gregorian.json).",
+   "Declension: en.wiktionary.org, https://en.wiktionary.org/wiki/mánudagur.  The date-construction",
+   "form is the accusative, bare or with the suffixed article, which is",
+   "what the bare temporal accusative uses (\"á mánudaginn\")."
+  ],
+  "weekday_1": [
+   "Unicode CLDR 47, locale is, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/is/ca-gregorian.json).",
+   "Declension: en.wiktionary.org, https://en.wiktionary.org/wiki/þriðjudagur.  The date-construction",
+   "form is the accusative, bare or with the suffixed article, which is",
+   "what the bare temporal accusative uses (\"á mánudaginn\")."
+  ],
+  "weekday_2": [
+   "Unicode CLDR 47, locale is, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/is/ca-gregorian.json).",
+   "Declension: en.wiktionary.org, https://en.wiktionary.org/wiki/miðvikudagur.  The date-construction",
+   "form is the accusative, bare or with the suffixed article, which is",
+   "what the bare temporal accusative uses (\"á mánudaginn\")."
+  ],
+  "weekday_3": [
+   "Unicode CLDR 47, locale is, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/is/ca-gregorian.json).",
+   "Declension: en.wiktionary.org, https://en.wiktionary.org/wiki/fimmtudagur.  The date-construction",
+   "form is the accusative, bare or with the suffixed article, which is",
+   "what the bare temporal accusative uses (\"á mánudaginn\")."
+  ],
+  "weekday_4": [
+   "Unicode CLDR 47, locale is, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/is/ca-gregorian.json).",
+   "Declension: en.wiktionary.org, https://en.wiktionary.org/wiki/föstudagur.  The date-construction",
+   "form is the accusative, bare or with the suffixed article, which is",
+   "what the bare temporal accusative uses (\"á mánudaginn\")."
+  ],
+  "weekday_5": [
+   "Unicode CLDR 47, locale is, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/is/ca-gregorian.json).",
+   "Declension: en.wiktionary.org, https://en.wiktionary.org/wiki/laugardagur.  The date-construction",
+   "form is the accusative, bare or with the suffixed article, which is",
+   "what the bare temporal accusative uses (\"á mánudaginn\")."
+  ],
+  "weekday_6": [
+   "Unicode CLDR 47, locale is, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/is/ca-gregorian.json).",
+   "Declension: en.wiktionary.org, https://en.wiktionary.org/wiki/sunnudagur.  The date-construction",
+   "form is the accusative, bare or with the suffixed article, which is",
+   "what the bare temporal accusative uses (\"á mánudaginn\")."
+  ]
+ }
+}

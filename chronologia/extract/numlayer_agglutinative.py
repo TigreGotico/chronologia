@@ -44,7 +44,7 @@ def _with_bare_case_hour(inner: Fold, hours: Dict[str, float], at_surface: str,
     a synthetic zero-width ``at`` marker plus the hour number, so the "at
     HOUR" clock order binds it, alone or after a daypart lead.  The marker is
     skipped when the hour already follows a word in ``skip_before``.
-    ``at_surface`` must be a surface of the locale's ``marker_at.voc`` and
+    ``at_surface`` must be a surface of the locale's ``marker_at`` and
     ``hours`` maps each glued surface to its value.
 
     ``digit_suffix`` is the same suffix written after a digit hour, which the

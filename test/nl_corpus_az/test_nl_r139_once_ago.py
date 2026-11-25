@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 """R139: 'öncə' is a standard Azerbaijani past-direction (ago) postposition,
 same register as 'əvvəl'/'qabaq' (all mean "before/ago"). It was missing from
-marker_past.voc, so '3 gün öncə' silently failed to parse (returned None)
+marker_past, so '3 gün öncə' silently failed to parse (returned None)
 while the semantically identical '3 gün əvvəl' worked.
 
 Independent arithmetic against this corpus's anchor (2017-06-27 13:04):

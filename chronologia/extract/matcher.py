@@ -550,7 +550,7 @@ def _connector_targets(surfaces: frozenset) -> Tuple[frozenset, int]:
 def alarm_marker_span(tokens: Tuple[Token, ...],
                       spec: LangSpec) -> Optional[Tuple[int, int]]:
     """The first alarm noun with its preposition in ``tokens``
-    (``marker_alarm_at.voc``), as the index of its first token and its length."""
+    (``marker_alarm_at``), as the index of its first token and its length."""
     tokens = tuple(tokens)
     for i in range(len(tokens)):
         n = _connector_span("alarm_at", tokens, i, spec)
@@ -577,7 +577,7 @@ def _day_cue_follows(tokens: Tuple[Token, ...], end: int,
                      spec: LangSpec) -> bool:
     """Whether a meridiem word reads with a second hour right after this bare
     hour: "alarm for 7 or 8 pm", "7 or 8 in the morning".  The cue counts only
-    after one joiner word (``marker_alarm_joiner.voc``) and a second bare hour;
+    after one joiner word (``marker_alarm_joiner``) and a second bare hour;
     a date word between the hour and the cue keeps the alarm reading."""
     if (end + 1 >= len(tokens) or tokens[end].break_before
             or tokens[end].text not in spec.alarm_joiners
@@ -603,7 +603,7 @@ def _alarm_hour_goes_on(tokens: Tuple[Token, ...], end: int,
                         spec: LangSpec) -> bool:
     """Whether the words after the hour of an "alarm for <hour>" reading make
     it a length or leave minutes unread: a unit ("10 minutes"), a word that
-    adds to a count (``marker_alarm_length.voc``: "10 more minutes"), a number,
+    adds to a count (``marker_alarm_length``: "10 more minutes"), a number,
     a clock fraction or direction, or any word before a second counted unit
     ("10 through 15 minutes")."""
     if end >= len(tokens):
@@ -706,8 +706,8 @@ class ConstructionMatcher:
                     # reading of that exact genitive, not "last Sunday") is a
                     # genuinely ambiguous phrase: refuse the weekday reading
                     # instead of silently picking one sense.  The ambiguous
-                    # surface is a locale fact (``marker_weekday_week_ambiguous
-                    # .voc`` -> ``spec.connectors["weekday_week_ambiguous"]``);
+                    # surface is a locale fact (``marker_weekday_week_ambiguous``
+                    # -> ``spec.connectors["weekday_week_ambiguous"]``);
                     # a locale that ships none of these words is unaffected.
                     if (name in ("weekday_ref", "weekday_of_week")
                             and ("WEEKDAY" in slots or "WEEKDAYFULL" in slots)
@@ -719,7 +719,7 @@ class ConstructionMatcher:
                     # A "this" marker that a locale keeps away from a
                     # weekday ("neste luns") gives no weekday reading of its
                     # own; the bare weekday reads instead.  The list is a
-                    # locale fact (``marker_this_not_weekday.voc``).
+                    # locale fact (``marker_this_not_weekday``).
                     if (name == "weekday_ref" and "REL_MARKER" in slots
                             and slots["REL_MARKER"].text
                             in self.spec.connectors.get(
@@ -729,7 +729,7 @@ class ConstructionMatcher:
                     # "desta") always comes before its noun, so a match never
                     # ends on it: "a semana deste natal" is the week of
                     # Christmas, not this week.  The list is a locale fact
-                    # (``marker_rel_preposed.voc``).
+                    # (``marker_rel_preposed``).
                     if (tokens[end - 1].text
                             in self.spec.connectors.get(
                                 "rel_preposed", frozenset())):
@@ -745,7 +745,7 @@ class ConstructionMatcher:
                     # "el llunes de mañana" is Monday morning, but in "a
                     # partir de mañana" and "el día de mañana" the word
                     # "mañana" is tomorrow.  The list is a locale fact
-                    # (``marker_daypart_after_day.voc``).
+                    # (``marker_daypart_after_day``).
                     if (name == "daypart_ref" and "REL_MARKER" not in slots
                             and tokens[start].text
                             in self.spec.connectors.get(
@@ -794,7 +794,7 @@ class ConstructionMatcher:
                     # directly after the marker is refused, whether the
                     # marker is bound inside the candidate or stands just
                     # before it.  The marker list is a locale fact
-                    # (``marker_singular_only.voc``).
+                    # (``marker_singular_only``).
                     _mi = (slots["REL_MARKER"].index if "REL_MARKER" in slots
                            else start - 1)
                     if (0 <= _mi < len(tokens) - 1
@@ -810,7 +810,7 @@ class ConstructionMatcher:
                     # as a date ("o último dia do mês", "a última semana de
                     # 2026") is a longer candidate and still wins.  A locale
                     # opts in by listing its "of" words in
-                    # ``marker_ordlast_of.voc``: where the "last" word also
+                    # ``marker_ordlast_of``: where the "last" word also
                     # means "previous" and the preposition also means "in"
                     # (de "letzte Woche im Büro", fr "la semaine dernière de
                     # nouveau"), the phrase names a place or an activity
@@ -832,10 +832,10 @@ class ConstructionMatcher:
                     # mark between the two keeps the weekday: a calendar
                     # note ("segunda, aula de piano") names the day, then
                     # the event.  The four lists are locale facts
-                    # (``marker_weekday_ordinal_homonym.voc``,
-                    # ``marker_ordinal_noun.voc``,
-                    # ``marker_weekday_fraction_homonym.voc`` and
-                    # ``marker_fraction_noun.voc``); a locale shipping none
+                    # (``marker_weekday_ordinal_homonym``,
+                    # ``marker_ordinal_noun``,
+                    # ``marker_weekday_fraction_homonym`` and
+                    # ``marker_fraction_noun``); a locale shipping none
                     # is unaffected.
                     _wd = slots.get("WEEKDAY") or slots.get("WEEKDAYFULL")
                     if (name == "weekday_ref" and _wd is not None
@@ -860,8 +860,8 @@ class ConstructionMatcher:
                     # tokenizer drops punctuation, so a clause start is the
                     # start of the utterance or a lead word such as "já".
                     # The marker and the lead words are locale facts
-                    # (``marker_past_clause_initial.voc`` and
-                    # ``marker_clause_lead.voc``).
+                    # (``marker_past_clause_initial`` and
+                    # ``marker_clause_lead``).
                     if (name == "relative_offset" and "MARKER" in slots
                             and slots["MARKER"].text
                             in self.spec.connectors.get(
@@ -884,7 +884,7 @@ class ConstructionMatcher:
                     # meses", "fui a Lisboa faz dois meses"), and so it does
                     # before "que" ("a minha mãe faz dois meses que está
                     # internada"): that "que" follows a time phrase
-                    # (``marker_elapsed_que.voc``).
+                    # (``marker_elapsed_que``).
                     if (name == "relative_offset" and "MARKER" in slots
                             and slots["MARKER"].text
                             in self.spec.connectors.get(
@@ -911,8 +911,8 @@ class ConstructionMatcher:
                     # and so does a weather word that opens the next
                     # sentence ("O avião caiu faz um dia. Frio e chuva
                     # dificultam as buscas").  The lists are locale facts
-                    # (``marker_weather_adjective.voc``,
-                    # ``marker_weather_noun.voc`` and ``marker_of.voc``).
+                    # (``marker_weather_adjective``,
+                    # ``marker_weather_noun`` and ``marker_of``).
                     if (name == "relative_offset" and "MARKER" in slots
                             and slots["MARKER"].text
                             in self.spec.connectors.get(
@@ -937,7 +937,7 @@ class ConstructionMatcher:
                     # follow its count: "dois anos atrás" does, while "em"
                     # is a preposition and "dois anos em maio" is not "in
                     # two years".  The trailing words are a locale fact
-                    # (``marker_postposed_direction.voc``); a locale without
+                    # (``marker_postposed_direction``); a locale without
                     # the file keeps every trailing marker.
                     postposed = self.spec.connectors.get(
                         "postposed_direction")
@@ -966,7 +966,7 @@ class ConstructionMatcher:
                     # This declines a false weekday reading; it does not assert
                     # the duration one, which stays unavailable.  The
                     # count-ambiguous surface is a locale fact
-                    # (``marker_weekday_counted_ambiguous.voc`` ->
+                    # (``marker_weekday_counted_ambiguous`` ->
                     # ``spec.connectors["weekday_counted_ambiguous"]``), and is
                     # kept apart from ``weekday_week_ambiguous`` above because
                     # the two state different things: that one refuses the
@@ -1067,7 +1067,7 @@ class ConstructionMatcher:
                     # phrase refuses together.  As with the weekday veto, this
                     # declines a false reading without asserting the refused
                     # one, which stays unavailable.  The ambiguous unit is a
-                    # locale fact (``marker_daypart_counted_ambiguous.voc`` ->
+                    # locale fact (``marker_daypart_counted_ambiguous`` ->
                     # ``spec.connectors["daypart_counted_ambiguous"]``), so a
                     # locale that reads its hours normally is untouched --
                     # English "at three tonight" deliberately keeps its hour.
@@ -1150,7 +1150,7 @@ class ConstructionMatcher:
                             continue
                     # "alarm for 10" is a clock, "alarm for 10 minutes" is a
                     # length, and "alarm for 7 e meia" has minutes that the
-                    # bare hour would drop (``marker_alarm_at.voc``).
+                    # bare hour would drop (``marker_alarm_at``).
                     if (name == "clock_time"
                             and _connector_span("alarm_at", tokens, start,
                                                 self.spec)
@@ -1164,7 +1164,7 @@ class ConstructionMatcher:
                     # adjective and the day, not Good Friday.  A single-word
                     # name ("Karfreitag") has no such homograph and is kept.
                     # The locale lists the articles in
-                    # ``marker_holiday_indef.voc``.  A language whose article
+                    # ``marker_holiday_indef``.  A language whose article
                     # is also its numeral ("een") reaches the matcher as the
                     # number 1, so a leading 1 counts as the article there.
                     if "HOLIDAY" in slots and start > 0:
@@ -1221,10 +1221,10 @@ class ConstructionMatcher:
         In some languages the preposition of a clock also introduces a counted
         group: "wave at 5 people", "a las 3 vecinas" (to the three
         neighbours), "om 3 mensen" (about three people).  The locale lists
-        those prepositions in ``marker_at_counts.voc`` and the nouns that count
-        people or things in ``marker_counted_noun.voc``.  A bare hour behind
+        those prepositions in ``marker_at_counts`` and the nouns that count
+        people or things in ``marker_counted_noun``.  A bare hour behind
         one of the prepositions, or behind an alarm noun and its "for"
-        (``marker_alarm_at.voc``), and directly before one of the nouns is
+        (``marker_alarm_at``), and directly before one of the nouns is
         doubtful, unless a comma or a sentence period ends the hour.  Any
         other word after the hour, a verb included, leaves the
         clock as it is.  A doubtful clock stays a candidate, marked ``doubt``;
@@ -1259,8 +1259,8 @@ class ConstructionMatcher:
         ``tokens[marker]`` sets the count apart from the subject, which
         then belongs to a later verb ("a minha mãe, faz dois meses,
         morreu").  The lists are locale facts
-        (``marker_subject_pronoun.voc`` and
-        ``marker_subject_determiner.voc``)."""
+        (``marker_subject_pronoun`` and
+        ``marker_subject_determiner``)."""
         def opens(i: int) -> bool:
             return i == 0 or tokens[i].break_before
 
@@ -1316,9 +1316,9 @@ class ConstructionMatcher:
         articles for the adjective also needs one right before the marker:
         en bare "last week" is "previous" ("I told you last week of the
         change"), only "the last week of school" is "final".  The lists are
-        locale facts (``marker_ordlast_of.voc``,
-        ``marker_ordlast_of_locution.voc``, ``marker_manner_noun.voc`` and
-        ``marker_ordlast_article.voc``)."""
+        locale facts (``marker_ordlast_of``,
+        ``marker_ordlast_of_locution``, ``marker_manner_noun`` and
+        ``marker_ordlast_article``)."""
         connectors = self.spec.connectors
         if (end >= len(tokens) or tokens[end].break_before
                 or tokens[end].text not in connectors.get("ordlast_of",

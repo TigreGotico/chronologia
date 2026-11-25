@@ -40,7 +40,7 @@ objects-out), mirroring :mod:`chronologia.extract.anchored`:
   date-resolving submatch the engine already produced -- the reference is
   *whatever was resolved* just past the ``after``/``before`` marker.
 
-The surfaces are a per-locale fact (``marker_business.voc``: business/working,
+The surfaces are a per-locale fact (``marker_business``: business/working,
 dia útil, día hábil/laborable, Werktag/Arbeitstag, jour ouvrable/ouvré); the
 counting logic is generic.
 """

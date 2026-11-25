@@ -131,7 +131,7 @@ def test_shared_month_garbage_never_raises(text):
 
 
 # -- the shared-month range with the "dia" label on both ends: "dia" heads the
-# idiom "dia N de <mes>" (see marker_day_label.voc) and, written alone, "dia
+# idiom "dia N de <mes>" (see marker_day_label) and, written alone, "dia
 # N" still resolves on its own to the Nth of the ANCHOR month -- so the bare
 # "5" borrowing path (test_shared_month_range_reads_both_days, above) used to
 # skip it, and "do dia 2 ao dia 5 de setembro" bound only the dated right end

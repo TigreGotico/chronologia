@@ -52,9 +52,9 @@ def test_season_year(text, gs, ge):
     # gen. wiosny; "jesień" (fem., soft) -> gen. jesieni; "zima" (fem.) ->
     # gen. zimy.  "lato" (summer) is deliberately SKIPPED here: its genitive
     # singular is also "lata", but "lata" is already the suppletive plural
-    # of "rok" (year) in unit_year.voc and is asserted as such in
+    # of "rok" (year) in unit_year and is asserted as such in
     # test_nl_relative.py ("2 lata" = "2 years") -- adding it to
-    # season_summer.voc would collide with that live year-plural reading,
+    # season_summer would collide with that live year-plural reading,
     # so it is left out to avoid a regression.
     ("wiosny 2027", AstroDate(2027, 3, 1), AstroDate(2027, 6, 1)),
     ("jesieni 2027", AstroDate(2027, 9, 1), AstroDate(2027, 12, 1)),

@@ -1,0 +1,1016 @@
+{
+ "format_version": 1,
+ "words": {
+  "clock_dir_past": [
+   "over"
+  ],
+  "clock_dir_to": [
+   "voor"
+  ],
+  "clock_fraction_15": [
+   "kwart"
+  ],
+  "clock_fraction_30": [
+   "half"
+  ],
+  "clock_landmark_0": [
+   "middernacht"
+  ],
+  "clock_landmark_720": [
+   "middag"
+  ],
+  "clock_meridiem_am": [
+   "morgens",
+   "ochtends",
+   "vanmorgen",
+   "vanochtend"
+  ],
+  "clock_meridiem_night": [
+   "nachts"
+  ],
+  "clock_meridiem_pm": [
+   "avonds",
+   "middags",
+   "vanavond",
+   "vanmiddag"
+  ],
+  "clock_zone_0": [
+   "gmt",
+   "utc"
+  ],
+  "daypart_avond_nl": [
+   "avond",
+   "vanavond"
+  ],
+  "daypart_middag_nl": [
+   "vanmiddag"
+  ],
+  "daypart_nacht_nl": [
+   "nacht",
+   "vannacht"
+  ],
+  "daypart_ochtend_nl": [
+   "ochtend",
+   "vanmorgen",
+   "vanochtend"
+  ],
+  "marker_ad": [
+   "n. chr.",
+   "n.chr.",
+   "na christus"
+  ],
+  "marker_after": [
+   "na"
+  ],
+  "marker_ago": [
+   "geleden"
+  ],
+  "marker_alarm_at": [
+   "wekker voor",
+   "wekkers voor"
+  ],
+  "marker_alarm_joiner": [
+   "en",
+   "of",
+   "tot"
+  ],
+  "marker_and": [
+   "en",
+   "tot"
+  ],
+  "marker_article": [
+   "de",
+   "het"
+  ],
+  "marker_at": [
+   "om"
+  ],
+  "marker_at_counts": [
+   "om"
+  ],
+  "marker_bc": [
+   "v. chr.",
+   "v.chr.",
+   "voor christus"
+  ],
+  "marker_before": [
+   "voor"
+  ],
+  "marker_between": [
+   "tussen"
+  ],
+  "marker_bp": [
+   "b.p.",
+   "bp"
+  ],
+  "marker_business": [
+   "werkdag",
+   "werkdagen"
+  ],
+  "marker_clock_lead": [
+   "om"
+  ],
+  "marker_clock_of": [
+   "s"
+  ],
+  "marker_counted_noun": [
+   "buren",
+   "euro",
+   "gasten",
+   "kaartjes",
+   "kamers",
+   "kinderen",
+   "man",
+   "mannen",
+   "mensen",
+   "personen",
+   "persoon",
+   "redenen",
+   "spelers",
+   "stoelen",
+   "tafels",
+   "volwassenen",
+   "vrienden"
+  ],
+  "marker_date_lead": [
+   "op"
+  ],
+  "marker_dayparttoday": [
+   "vanavond",
+   "vanmiddag",
+   "vanmorgen",
+   "vanochtend"
+  ],
+  "marker_during": [
+   "gedurende",
+   "in",
+   "tijdens"
+  ],
+  "marker_every": [
+   "elk",
+   "elke",
+   "ieder",
+   "iedere"
+  ],
+  "marker_freq_daily": [
+   "dagelijks"
+  ],
+  "marker_freq_monthly": [
+   "maandelijks"
+  ],
+  "marker_freq_weekly": [
+   "wekelijks"
+  ],
+  "marker_freq_yearly": [
+   "jaarlijks"
+  ],
+  "marker_from": [
+   "van",
+   "vanaf"
+  ],
+  "marker_future": [
+   "over"
+  ],
+  "marker_half": [
+   "helft"
+  ],
+  "marker_holiday_indef": [
+   "een"
+  ],
+  "marker_hours": [
+   "uur"
+  ],
+  "marker_in": [
+   "in"
+  ],
+  "marker_indef": [
+   "een"
+  ],
+  "marker_last": [
+   "afgelopen",
+   "laatste",
+   "vorig",
+   "vorige"
+  ],
+  "marker_month_word": [
+   "maand",
+   "maanden"
+  ],
+  "marker_new": [
+   "nieuw"
+  ],
+  "marker_next": [
+   "aankomend",
+   "aankomende",
+   "aanstaand",
+   "aanstaande",
+   "komende",
+   "volgend",
+   "volgende"
+  ],
+  "marker_oclock": [
+   "uur"
+  ],
+  "marker_of": [
+   "van"
+  ],
+  "marker_on": [
+   "op"
+  ],
+  "marker_ordlast": [
+   "laatste"
+  ],
+  "marker_past": [
+   "geleden"
+  ],
+  "marker_present": [
+   "heden",
+   "nu"
+  ],
+  "marker_q": [
+   "q"
+  ],
+  "marker_quarter_word": [
+   "kwartaal",
+   "kwartalen"
+  ],
+  "marker_recur_for": [
+   "gedurende"
+  ],
+  "marker_recur_om_de": [
+   "om"
+  ],
+  "marker_s": [
+   "s"
+  ],
+  "marker_since": [
+   "sedert",
+   "sinds"
+  ],
+  "marker_this": [
+   "deze",
+   "dit"
+  ],
+  "marker_to": [
+   "t/m",
+   "tot",
+   "tot en met"
+  ],
+  "marker_until": [
+   "tot"
+  ],
+  "marker_until_amount": [
+   "hoeveel"
+  ],
+  "marker_upcoming": [
+   "aankomend",
+   "aankomende",
+   "aanstaand",
+   "aanstaande",
+   "komende"
+  ],
+  "marker_week_num": [
+   "week",
+   "weken"
+  ],
+  "marker_weekday": [
+   "werkdag",
+   "werkdagen"
+  ],
+  "marker_weekday_count": [
+   "werkdagen"
+  ],
+  "marker_weekof": [
+   "de week van",
+   "week van"
+  ],
+  "marker_year_plural": [
+   "jaren"
+  ],
+  "marker_year_word": [
+   "jaar",
+   "jaren"
+  ],
+  "month_1": [
+   "jan",
+   "januari"
+  ],
+  "month_10": [
+   "okt",
+   "oktober"
+  ],
+  "month_11": [
+   "nov",
+   "november"
+  ],
+  "month_12": [
+   "dec",
+   "december"
+  ],
+  "month_2": [
+   "feb",
+   "februari"
+  ],
+  "month_3": [
+   "maart",
+   "mrt"
+  ],
+  "month_4": [
+   "apr",
+   "april"
+  ],
+  "month_5": [
+   "mei"
+  ],
+  "month_6": [
+   "jun",
+   "juni"
+  ],
+  "month_7": [
+   "jul",
+   "juli"
+  ],
+  "month_8": [
+   "aug",
+   "augustus"
+  ],
+  "month_9": [
+   "sep",
+   "september"
+  ],
+  "months": [
+   "april",
+   "augustus",
+   "december",
+   "februari",
+   "januari",
+   "juli",
+   "juni",
+   "maart",
+   "mei",
+   "november",
+   "oktober",
+   "september"
+  ],
+  "named_day_-1": [
+   "gisteren"
+  ],
+  "named_day_-2": [
+   "eergisteren"
+  ],
+  "named_day_0": [
+   "vandaag"
+  ],
+  "named_day_1": [
+   "morgen"
+  ],
+  "named_day_2": [
+   "overmorgen"
+  ],
+  "ordinal_suffixes": [
+   "."
+  ],
+  "period_archean": [
+   "archeicum"
+  ],
+  "period_bronze_age_gb": [
+   "bronstijd"
+  ],
+  "period_cambrian": [
+   "cambrium"
+  ],
+  "period_carboniferous": [
+   "carboon"
+  ],
+  "period_cenozoic": [
+   "kenozoicum",
+   "kenozoïcum"
+  ],
+  "period_cretaceous": [
+   "krijt"
+  ],
+  "period_devonian": [
+   "devoon"
+  ],
+  "period_eocene": [
+   "eoceen"
+  ],
+  "period_holocene": [
+   "holoceen"
+  ],
+  "period_iron_age_gb": [
+   "ijzertijd"
+  ],
+  "period_jurassic": [
+   "jura"
+  ],
+  "period_mesozoic": [
+   "mesozoicum",
+   "mesozoïcum"
+  ],
+  "period_miocene": [
+   "mioceen"
+  ],
+  "period_neogene": [
+   "neogeen"
+  ],
+  "period_neolithic_gb": [
+   "neolithicum",
+   "nieuwe steentijd"
+  ],
+  "period_oligocene": [
+   "oligoceen"
+  ],
+  "period_ordovician": [
+   "ordovicium"
+  ],
+  "period_paleocene": [
+   "paleoceen"
+  ],
+  "period_paleogene": [
+   "paleogeen"
+  ],
+  "period_paleozoic": [
+   "paleozoicum",
+   "paleozoïcum"
+  ],
+  "period_part_early": [
+   "begin",
+   "vroeg",
+   "vroege"
+  ],
+  "period_part_late": [
+   "eind",
+   "einde",
+   "laat",
+   "late"
+  ],
+  "period_part_mid": [
+   "medio",
+   "midden"
+  ],
+  "period_permian": [
+   "perm"
+  ],
+  "period_phanerozoic": [
+   "fanerozoicum"
+  ],
+  "period_pleistocene": [
+   "pleistoceen"
+  ],
+  "period_pliocene": [
+   "plioceen"
+  ],
+  "period_proterozoic": [
+   "proterozoicum"
+  ],
+  "period_quaternary": [
+   "kwartair"
+  ],
+  "period_silurian": [
+   "siluur"
+  ],
+  "period_triassic": [
+   "trias"
+  ],
+  "roman_anchor_ides": [
+   "iden"
+  ],
+  "roman_anchor_kalends": [
+   "kalenden"
+  ],
+  "roman_anchor_nones": [
+   "nonen"
+  ],
+  "scale_1000": [
+   "duizend"
+  ],
+  "scale_1000000": [
+   "miljoen"
+  ],
+  "scale_1000000000": [
+   "miljard"
+  ],
+  "scale_1000000000.short": [
+   "biljoen"
+  ],
+  "scale_1000000000000.long": [
+   "biljoen"
+  ],
+  "scope_unit_century": [
+   "eeuw",
+   "eeuwen"
+  ],
+  "scope_unit_decade": [
+   "decennia",
+   "decennium"
+  ],
+  "scope_unit_millennium": [
+   "millennia",
+   "millennium"
+  ],
+  "season_fall": [
+   "herfst",
+   "najaar"
+  ],
+  "season_spring": [
+   "lente",
+   "voorjaar"
+  ],
+  "season_summer": [
+   "zomer"
+  ],
+  "season_winter": [
+   "winter"
+  ],
+  "special_weekend": [
+   "weekeinde",
+   "weekend"
+  ],
+  "unit1_century": [
+   "eeuw"
+  ],
+  "unit1_day": [
+   "dag",
+   "dagje"
+  ],
+  "unit1_decade": [
+   "decennium"
+  ],
+  "unit1_hour": [
+   "uur",
+   "uurtje"
+  ],
+  "unit1_millennium": [
+   "millennium"
+  ],
+  "unit1_minute": [
+   "minuut",
+   "minuutje"
+  ],
+  "unit1_month": [
+   "maand",
+   "maandje"
+  ],
+  "unit1_quarter_hour": [
+   "kwartier",
+   "kwartiertje"
+  ],
+  "unit1_second": [
+   "seconde"
+  ],
+  "unit1_week": [
+   "week",
+   "weekje"
+  ],
+  "unit1_year": [
+   "jaar",
+   "jaartje"
+  ],
+  "unit_century": [
+   "eeuw",
+   "eeuwen"
+  ],
+  "unit_day": [
+   "dag",
+   "dagen",
+   "dagje",
+   "dagjes"
+  ],
+  "unit_decade": [
+   "decennia",
+   "decennium"
+  ],
+  "unit_hour": [
+   "uren",
+   "uur",
+   "uurtje",
+   "uurtjes"
+  ],
+  "unit_millennium": [
+   "millennia",
+   "millennium"
+  ],
+  "unit_minute": [
+   "minuten",
+   "minuut",
+   "minuutje",
+   "minuutjes"
+  ],
+  "unit_month": [
+   "maand",
+   "maanden",
+   "maandje",
+   "maandjes"
+  ],
+  "unit_quarter_hour": [
+   "kwartier",
+   "kwartieren",
+   "kwartiertje",
+   "kwartiertjes"
+  ],
+  "unit_second": [
+   "seconde",
+   "seconden"
+  ],
+  "unit_week": [
+   "week",
+   "weekje",
+   "weekjes",
+   "weken"
+  ],
+  "unit_year": [
+   "jaar",
+   "jaartje",
+   "jaartjes",
+   "jaren"
+  ],
+  "weekday_0": [
+   "maandag"
+  ],
+  "weekday_1": [
+   "dinsdag"
+  ],
+  "weekday_2": [
+   "woensdag"
+  ],
+  "weekday_3": [
+   "donderdag"
+  ],
+  "weekday_4": [
+   "vrijdag"
+  ],
+  "weekday_5": [
+   "zaterdag"
+  ],
+  "weekday_6": [
+   "zondag"
+  ],
+  "weekday_abbr_0": [
+   "ma"
+  ],
+  "weekday_abbr_1": [
+   "di"
+  ],
+  "weekday_abbr_2": [
+   "wo"
+  ],
+  "weekday_abbr_3": [
+   "do"
+  ],
+  "weekday_abbr_4": [
+   "vr"
+  ],
+  "weekday_abbr_5": [
+   "za"
+  ],
+  "weekday_abbr_6": [
+   "zo"
+  ]
+ },
+ "sources": {
+  "clock_meridiem_am": [
+   "Postposed morning daypart words that keep a bare 12-hour clock reading in",
+   "the AM half (meridiem offset 0), the am counterpart of",
+   "clock_meridiem_pm.voc.  \"acht uur 's ochtends\" == 08:00; only the noon edge",
+   "is rewritten (12 -> 0).  Bands: Unicode CLDR 47 Day Period Rules, locale nl",
+   "-- ochtend/morning [06:00, 12:00) is the am half.  (\"nachts\" is NOT here:",
+   "the night daypart crosses midnight -- see clock_meridiem_night.voc.)",
+   "\"vanochtend\"/\"vanmorgen\" name today's own morning (marker_dayparttoday.voc), so",
+   "\"om drie uur vanochtend\" is 03:00 today even after it has passed."
+  ],
+  "clock_meridiem_night": [
+   "The NIGHT daypart is a midnight-crossing BAND, not the morning/night AM",
+   "half it was previously grouped in: \"drie uur 's nachts\" (three at night) is",
+   "03:00 but \"elf uur 's nachts\" (eleven at night) is 23:00, and \"twaalf uur",
+   "'s nachts\" is midnight 00:00.  Small hours 1..5 stay AM, late-night hours",
+   "6..11 are PM, twelve is midnight (the band-split lives in the resolver",
+   "_clock_hms).  The AM ceiling follows the CLDR nl nacht band [00:00, 06:00)",
+   "transcribed for nl in chronologia/dayparts.py."
+  ],
+  "clock_meridiem_pm": [
+   "Postposed daypart words that put a bare 12-hour clock reading into the",
+   "afternoon/evening half (meridiem offset +12), exactly as the de locale's",
+   "\"nachmittags\"/\"abends\" already do.  These are the Dutch genitive surfaces",
+   "that trail a clock reading after the fossilised \"'s\" particle",
+   "(\"acht uur 's avonds\" == 20:00, \"drie uur 's middags\" == 15:00).",
+   "Bands: Unicode CLDR 47 Day Period Rules, locale nl -- middag/afternoon",
+   "[12:00, 18:00) and avond/evening [18:00, 24:00) are the pm half.",
+   "\"vanmiddag\"/\"vanavond\" name today's own band (marker_dayparttoday.voc), so",
+   "\"om acht uur vanavond\" is 20:00 today without the clock's roll to tomorrow."
+  ],
+  "daypart_avond_nl": [
+   "Band boundaries: Unicode CLDR 47 Day Period Rules, locale nl",
+   "(https://www.unicode.org/cldr/charts/47/supplemental/day_periods.html),",
+   "transcribed in chronologia/dayparts.py as [18:00, 24:00).",
+   "Sources: Algemeen Nederlands Woordenboek, Instituut voor de Nederlandse",
+   "Taal (https://anw.ivdnt.org/article/ochtend).",
+   "The avond runs to midnight; the nacht takes over after it."
+  ],
+  "daypart_middag_nl": [
+   "Band boundaries: Unicode CLDR 47 Day Period Rules, locale nl",
+   "(https://www.unicode.org/cldr/charts/47/supplemental/day_periods.html),",
+   "transcribed in chronologia/dayparts.py as [12:00, 18:00).",
+   "\"vanmiddag\" is the single-word today+middag surface, the sibling of",
+   "\"vanochtend\" and \"vanavond\".  Wiktionary, \"vanmiddag\": \"this afternoon, the",
+   "afternoon of the current day\"; Wikiwoordenboek: \"tijdens de middag van de",
+   "lopende dag\".  The bare \"middag\" stays the noon landmark of",
+   "clock_landmark_720.voc, so only the fused word is listed here."
+  ],
+  "daypart_nacht_nl": [
+   "Band boundaries: Unicode CLDR 47 Day Period Rules, locale nl",
+   "(https://www.unicode.org/cldr/charts/47/supplemental/day_periods.html),",
+   "transcribed in chronologia/dayparts.py as [00:00, 06:00).",
+   "Sources: Algemeen Nederlands Woordenboek, Instituut voor de Nederlandse",
+   "Taal (https://anw.ivdnt.org/article/ochtend).",
+   "\"vannacht\" is a single-word today/tonight+nacht surface, the ANW's own",
+   "entry and the Dutch shape of \"vanavond\"/\"vanochtend\" for this band."
+  ],
+  "daypart_ochtend_nl": [
+   "Band boundaries: Unicode CLDR 47 Day Period Rules, locale nl",
+   "(https://www.unicode.org/cldr/charts/47/supplemental/day_periods.html),",
+   "transcribed in chronologia/dayparts.py as [06:00, 12:00).",
+   "Sources: Algemeen Nederlands Woordenboek, Instituut voor de Nederlandse",
+   "Taal (https://anw.ivdnt.org/article/ochtend).",
+   "\"vanochtend\" is a single-word today+ochtend surface, the Dutch shape of",
+   "English \"tonight\", and the ANW carries it as its own entry.",
+   "\"vanmorgen\" is a synonym of \"vanochtend\" the ANW also carries as its own",
+   "entry -- here \"morgen\" is the older word for the morning ITSELF (as in",
+   "\"goedemorgen\"), not the \"morgen\"=tomorrow relative-day word it is",
+   "everywhere else in this locale; the two never compete because \"vanmorgen\"",
+   "is a single fused token, not a split \"van\" + \"morgen\"."
+  ],
+  "marker_alarm_at": [
+   "Het zelfstandig naamwoord van een toestel dat op een ingestelde tijd geluid",
+   "maakt, en \"voor\" erna: \"wekker voor 7\".  \"wekker [...] een apparaat dat",
+   "gebruikt wordt om de tijd bij te houden en een functie heeft die veel geluid",
+   "produceert op een ingestelde tijd -- Zet de wekker voor morgenochtend maar",
+   "een halfuurtje eerder\" (Wiktionary, s.v. \"wekker\").  \"voor [...] ten",
+   "behoeve van\" (Wiktionary, s.v. \"voor\", 7)."
+  ],
+  "marker_alarm_joiner": [
+   "The words that join two hours that share one later meridiem: \"alarm for 7",
+   "or 8 pm\"."
+  ],
+  "marker_at_counts": [
+   "Clock prepositions that also introduce a counted group: a bare hour behind one",
+   "is doubtful only right before a word of marker_counted_noun.voc.  Attested in",
+   "the parity acceptance rows; no dictionary source checked, a native reviewer is to confirm."
+  ],
+  "marker_clock_lead": [
+   "Words that open a clock time and belong to it. They fold only in front of",
+   "a number, a clock time, a clock fraction or a clock landmark.",
+   "Each word is shown opening a clock time on the page named in brackets,",
+   "saved under knowledge/wiki/audits/chronologia/parity-fixes/marker-strand/sources/ in the workspace.",
+   "om: Wiktionary \"om\": \"at (a time): Ik sta om vijf uur buiten.\" [nl-om.wikitext.txt]; woorden.org \"om\": \"op het tijdstip van vb: ik kom om acht uur\" [woorden-om.txt]"
+  ],
+  "marker_clock_of": [
+   "The clock suffix that ties a part of the day to an hour: \"twee uur 's",
+   "middags\" (Van Dale, \"middag\").  Without it \"twee uur\" before a part of the",
+   "day is a length."
+  ],
+  "marker_counted_noun": [
+   "Nouns that count people or things a clock never takes: a bare hour behind a",
+   "clock preposition and directly before one of them is a count (\"wave at 5",
+   "people\").  Each word is quoted from its Wiktionary Noun entry",
+   "(https://en.wiktionary.org/wiki/<word>); the fetched pages are kept with the audit.",
+   "persoon: Noun. \"person, individual\"",
+   "personen: Noun. \"plural of persoon\"",
+   "mensen: Noun. \"plural of mens\"",
+   "gasten: Noun. \"plural of gast\"",
+   "buren: Noun. \"plural of buur\"",
+   "vrienden: Noun. \"plural of vriend\"",
+   "kinderen: Noun. \"plural of kind\"",
+   "volwassenen: Noun. \"plural of volwassene\"",
+   "spelers: Noun. \"plural of speler\"",
+   "stoelen: Noun. \"plural of stoel\"",
+   "tafels: Noun. \"plural of tafel\"",
+   "kaartjes: Noun. \"plural of kaartje\"",
+   "kamers: Noun. \"plural of kamer\"",
+   "euro: Noun. \"euro currency\"",
+   "man: Noun. \"man, human male, either adult or age-irrespective\"",
+   "mannen: Noun. \"plural of man\"",
+   "redenen: Noun. \"plural of reden\""
+  ],
+  "marker_date_lead": [
+   "Words that open a date or a clock time and belong to it.",
+   "Each word is shown opening a time or date phrase on the page named in brackets,",
+   "saved under knowledge/wiki/audits/chronologia/parity-fixes/marker-strand/sources/ in the workspace.",
+   "op: Wiktionary \"op\": \"on; referencing a date: op maandag\" [nl-op.wikitext.txt]"
+  ],
+  "marker_dayparttoday": [
+   "bare daypart surfaces lexically fused with TODAY: \"vanavond\"/\"vanochtend\"/",
+   "\"vanmorgen\"/\"vanmiddag\" already name today's own band, unlike the plain band words",
+   "\"avond\"/\"ochtend\" (which compose with the clock's own future-roll rule --",
+   "see test_nl_r117 in the en corpus for the documented convention)."
+  ],
+  "marker_during": [
+   "\"in\" is the locative preposition used with months (\"in januari\").",
+   "Source: en.wiktionary.org, entry \"in\" (Dutch), \"in\"."
+  ],
+  "marker_holiday_indef": [
+   "Dutch indefinite article that cannot precede a holiday name made of an",
+   "adjective and a weekday: \"een goede vrijdag\" is any good Friday."
+  ],
+  "marker_next": [
+   "\"aankomend [...] aanstaand\": coming, next (Wiktionary nl, s.v. \"aankomend\", with the",
+   "example \"Aanstaande woensdag komen mijn kinderen eten\")."
+  ],
+  "marker_ordlast": [
+   "Dutch \"last\" ordinal determiner.  \"de laatste zaterdag van augustus\".",
+   "Attributive superlative of \"laat\" -> invariant \"laatste\".  Van Dale, \"laatste\"."
+  ],
+  "marker_s": [
+   "The fossilised Dutch genitive particle \"'s\" (from \"des\") that introduces a",
+   "postposed daypart (\"'s avonds\", \"'s middags\", \"'s nachts\", \"'s ochtends\").",
+   "The tokenizer strips the apostrophe, so the surface reaching the grammar is",
+   "a bare \"s\"; the clock orders consume it optionally before the meridiem word."
+  ],
+  "marker_to": [
+   "\"t/m\" is the written abbreviation of \"tot en met\" (Wiktionary, s.v. \"t/m\":",
+   "\"initialism of tot en met\"; https://en.wiktionary.org/wiki/t/m)."
+  ],
+  "marker_until_amount": [
+   "The interrogative that follows \"tot\" when the limit is an amount, not a time:",
+   "\"tot hoeveel graden koelt het af?\".  \"hoeveel [...] vragend telwoord: welk",
+   "aantal?\" (Wiktionary, s.v. \"hoeveel\")."
+  ],
+  "marker_upcoming": [
+   "The words that name the first one that follows, never the one after it: \"komende",
+   "avond\" is this evening before it begins, \"komend weekend\" the coming weekend.",
+   "Each word is also in marker_next.voc, which moves a week, month or weekday forward.",
+   "Wiktionary, s.v. \"aanstaand\": \"eerstvolgend, komend\"."
+  ],
+  "month_1": [
+   "Unicode CLDR 47, locale nl, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/nl/ca-gregorian.json): months.format.wide,",
+   "months.stand-alone.wide, months.format.abbreviated,",
+   "months.stand-alone.abbreviated."
+  ],
+  "month_10": [
+   "Unicode CLDR 47, locale nl, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/nl/ca-gregorian.json): months.format.wide,",
+   "months.stand-alone.wide, months.format.abbreviated,",
+   "months.stand-alone.abbreviated."
+  ],
+  "month_11": [
+   "Unicode CLDR 47, locale nl, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/nl/ca-gregorian.json): months.format.wide,",
+   "months.stand-alone.wide, months.format.abbreviated,",
+   "months.stand-alone.abbreviated."
+  ],
+  "month_12": [
+   "Unicode CLDR 47, locale nl, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/nl/ca-gregorian.json): months.format.wide,",
+   "months.stand-alone.wide, months.format.abbreviated,",
+   "months.stand-alone.abbreviated."
+  ],
+  "month_2": [
+   "Unicode CLDR 47, locale nl, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/nl/ca-gregorian.json): months.format.wide,",
+   "months.stand-alone.wide, months.format.abbreviated,",
+   "months.stand-alone.abbreviated."
+  ],
+  "month_3": [
+   "Unicode CLDR 47, locale nl, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/nl/ca-gregorian.json): months.format.wide,",
+   "months.stand-alone.wide, months.format.abbreviated,",
+   "months.stand-alone.abbreviated."
+  ],
+  "month_4": [
+   "Unicode CLDR 47, locale nl, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/nl/ca-gregorian.json): months.format.wide,",
+   "months.stand-alone.wide, months.format.abbreviated,",
+   "months.stand-alone.abbreviated."
+  ],
+  "month_5": [
+   "Unicode CLDR 47, locale nl, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/nl/ca-gregorian.json): months.format.wide,",
+   "months.stand-alone.wide, months.format.abbreviated,",
+   "months.stand-alone.abbreviated."
+  ],
+  "month_6": [
+   "Unicode CLDR 47, locale nl, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/nl/ca-gregorian.json): months.format.wide,",
+   "months.stand-alone.wide, months.format.abbreviated,",
+   "months.stand-alone.abbreviated."
+  ],
+  "month_7": [
+   "Unicode CLDR 47, locale nl, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/nl/ca-gregorian.json): months.format.wide,",
+   "months.stand-alone.wide, months.format.abbreviated,",
+   "months.stand-alone.abbreviated."
+  ],
+  "month_8": [
+   "Unicode CLDR 47, locale nl, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/nl/ca-gregorian.json): months.format.wide,",
+   "months.stand-alone.wide, months.format.abbreviated,",
+   "months.stand-alone.abbreviated."
+  ],
+  "month_9": [
+   "Unicode CLDR 47, locale nl, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/nl/ca-gregorian.json): months.format.wide,",
+   "months.stand-alone.wide, months.format.abbreviated,",
+   "months.stand-alone.abbreviated."
+  ],
+  "roman_anchor_ides": [
+   "Dutch vernacular Roman-calendar anchor names.",
+   "Sources: Wikipedia \"Nonen (kalender)\", \"Iden (kalender)\" (nl); the",
+   "  vernacular \"Kalenden\"/\"Iden\" are the standard Dutch forms.",
+   "  https://nl.wikipedia.org/wiki/Nonen_(kalender)",
+   "  https://nl.wikipedia.org/wiki/Iden_(kalender)"
+  ],
+  "roman_anchor_kalends": [
+   "Dutch vernacular Roman-calendar anchor names.",
+   "Sources: Wikipedia \"Nonen (kalender)\", \"Iden (kalender)\" (nl); the",
+   "  vernacular \"Kalenden\"/\"Iden\" are the standard Dutch forms.",
+   "  https://nl.wikipedia.org/wiki/Nonen_(kalender)",
+   "  https://nl.wikipedia.org/wiki/Iden_(kalender)"
+  ],
+  "roman_anchor_nones": [
+   "Dutch vernacular Roman-calendar anchor names.",
+   "Sources: Wikipedia \"Nonen (kalender)\", \"Iden (kalender)\" (nl); the",
+   "  vernacular \"Kalenden\"/\"Iden\" are the standard Dutch forms.",
+   "  https://nl.wikipedia.org/wiki/Nonen_(kalender)",
+   "  https://nl.wikipedia.org/wiki/Iden_(kalender)"
+  ],
+  "unit1_second": [
+   "Unicode CLDR 47, locale nl, cldr-units-full/main/nl/units.json,",
+   "duration-second, unitPattern-count-one \"seconde\"."
+  ],
+  "unit_second": [
+   "Unicode CLDR 47, locale nl, cldr-units-full/main/nl/units.json,",
+   "duration-second: one \"seconde\", other \"seconden\"."
+  ],
+  "weekday_0": [
+   "Unicode CLDR 47, locale nl, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/nl/ca-gregorian.json): days.format.wide,",
+   "days.stand-alone.wide."
+  ],
+  "weekday_1": [
+   "Unicode CLDR 47, locale nl, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/nl/ca-gregorian.json): days.format.wide,",
+   "days.stand-alone.wide."
+  ],
+  "weekday_2": [
+   "Unicode CLDR 47, locale nl, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/nl/ca-gregorian.json): days.format.wide,",
+   "days.stand-alone.wide."
+  ],
+  "weekday_3": [
+   "Unicode CLDR 47, locale nl, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/nl/ca-gregorian.json): days.format.wide,",
+   "days.stand-alone.wide."
+  ],
+  "weekday_4": [
+   "Unicode CLDR 47, locale nl, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/nl/ca-gregorian.json): days.format.wide,",
+   "days.stand-alone.wide."
+  ],
+  "weekday_5": [
+   "Unicode CLDR 47, locale nl, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/nl/ca-gregorian.json): days.format.wide,",
+   "days.stand-alone.wide."
+  ],
+  "weekday_6": [
+   "Unicode CLDR 47, locale nl, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/nl/ca-gregorian.json): days.format.wide,",
+   "days.stand-alone.wide."
+  ],
+  "weekday_abbr_0": [
+   "Unicode CLDR 47, locale nl, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/nl/ca-gregorian.json): days.format.abbreviated,",
+   "days.stand-alone.abbreviated, days.format.short, days.stand-alone.short."
+  ],
+  "weekday_abbr_1": [
+   "Unicode CLDR 47, locale nl, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/nl/ca-gregorian.json): days.format.abbreviated,",
+   "days.stand-alone.abbreviated, days.format.short, days.stand-alone.short."
+  ],
+  "weekday_abbr_2": [
+   "Unicode CLDR 47, locale nl, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/nl/ca-gregorian.json): days.format.abbreviated,",
+   "days.stand-alone.abbreviated, days.format.short, days.stand-alone.short."
+  ],
+  "weekday_abbr_3": [
+   "Unicode CLDR 47, locale nl, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/nl/ca-gregorian.json): days.format.abbreviated,",
+   "days.stand-alone.abbreviated, days.format.short, days.stand-alone.short."
+  ],
+  "weekday_abbr_4": [
+   "Unicode CLDR 47, locale nl, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/nl/ca-gregorian.json): days.format.abbreviated,",
+   "days.stand-alone.abbreviated, days.format.short, days.stand-alone.short."
+  ],
+  "weekday_abbr_5": [
+   "Unicode CLDR 47, locale nl, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/nl/ca-gregorian.json): days.format.abbreviated,",
+   "days.stand-alone.abbreviated, days.format.short, days.stand-alone.short."
+  ],
+  "weekday_abbr_6": [
+   "Unicode CLDR 47, locale nl, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/nl/ca-gregorian.json): days.format.abbreviated,",
+   "days.stand-alone.abbreviated, days.format.short, days.stand-alone.short."
+  ]
+ }
+}

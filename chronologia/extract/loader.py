@@ -1,27 +1,26 @@
-"""Load a :class:`LangSpec` from ``locale/<lang>/lang.json`` + ``*.voc``.
+"""Load a :class:`LangSpec` from ``locale/<lang>/lang.json`` + ``vocab.json``.
 
-Same loading convention as ``eras_scan.load_era_patterns`` -- vocab files
-are read through ``ovos_spec_tools.LocaleResources`` so ``(a|b)`` /
-``[optional]`` expansion applies uniformly.
+``vocab.json`` maps each resource base name to the surfaces of that
+vocabulary, already expanded.
 
-Slot *values* are facts encoded in the filename (the loader's only
-convention, keeping behaviour out of the JSON):
+Slot *values* are facts encoded in the base name (the loader's only
+convention, keeping behaviour out of ``lang.json``):
 
 ======================  ===========================================
-filename                meaning
+base name               meaning
 ======================  ===========================================
-``month_<n>.voc``       month number ``n`` (1..12)
-``weekday_<n>.voc``     weekday index ``n`` (0 == Monday)
-``unit_<kind>.voc``     offset unit ``kind`` (day/week/month/year/...)
-``jurisdiction_<code>.voc``  country/region-name surface -> jurisdiction code ``code``
-``named_day_<off>.voc`` named day at day-offset ``off`` (signed)
-``daypart_<name>.voc`` surfaces naming the time-of-day band ``name``
-``marker_past.voc``     direction marker, sign -1
-``marker_future.voc``   direction marker, sign +1
-``marker_next.voc``     relative marker, +1 week
-``marker_last.voc``     relative marker, -1 week
-``marker_this.voc``     relative marker, current week
-``marker_<x>.voc``      connector vocab named ``x`` (e.g. ``of``)
+``month_<n>``           month number ``n`` (1..12)
+``weekday_<n>``         weekday index ``n`` (0 == Monday)
+``unit_<kind>``         offset unit ``kind`` (day/week/month/year/...)
+``jurisdiction_<code>`` country/region-name surface -> jurisdiction code ``code``
+``named_day_<off>``     named day at day-offset ``off`` (signed)
+``daypart_<name>``      surfaces naming the time-of-day band ``name``
+``marker_past``         direction marker, sign -1
+``marker_future``       direction marker, sign +1
+``marker_next``         relative marker, +1 week
+``marker_last``         relative marker, -1 week
+``marker_this``         relative marker, current week
+``marker_<x>``          connector vocab named ``x`` (e.g. ``of``)
 ======================  ===========================================
 
 ``lang.json`` states facts only: tokenizer switches, construction orders
@@ -30,15 +29,10 @@ optional dotted bindings (``numbers``, ``hook``).
 """
 from __future__ import annotations
 
-import glob
 import json
 import os
-from functools import lru_cache
 from importlib import import_module
-from pathlib import Path
 from typing import Any, Callable, Dict, List, Optional, Tuple
-
-from ovos_spec_tools import LocaleResources, expand, read_resource_file
 
 from dataclasses import replace
 
@@ -49,22 +43,16 @@ from chronologia.extract.compiler import parse_order
 from chronologia.extract.model import (Conventions, LangSpec,
                                            TokenizerModes)
 from chronologia.extract.normaliser import TemporalNormaliser
-from chronologia.extract.numlayer import attach
+from chronologia.extract.numlayer import attach, read_vocabulary
 from chronologia.extract.schema import validate as validate_locale
 from chronologia.extract.tokenizer import Tokenizer
 
 LOCALE_DIR = os.path.join(os.path.dirname(__file__), os.pardir, "locale")
 
-# LocaleResources reads every language of a tree at construction, and an
-# installed tree does not change while the process runs: one instance per
-# tree serves every language.
-_locale_resources = lru_cache(maxsize=None)(LocaleResources)
-
-
 # Marks a vocabulary file whose surfaces fill a set instead of a surface -> value map.
 _SET = object()
 
-# Files that name a single table: ``marker_<x>.voc`` -> ((table, value), ...).
+# Vocabularies that name a single table: base name -> ((table, value), ...).
 _EXACT = {
     "marker_past": (("directions", -1),),
     "marker_future": (("directions", 1),),
@@ -94,7 +82,7 @@ _EXACT = {
     "marker_alarm_joiner": (("alarm_joiners", _SET),),
 }
 
-# ``<prefix><rest>.voc``: every surface maps to ``convert(rest)`` in each
+# ``<prefix><rest>``: every surface maps to ``convert(rest)`` in each
 # listed table.  The first matching prefix wins, so a longer prefix precedes
 # the shorter one it extends.
 _PREFIXED: List[Tuple[str, Tuple[str, ...], Callable[[str], Any]]] = [
@@ -128,24 +116,20 @@ def _resolve_dotted(ref: Optional[str]) -> Optional[Callable]:
     return getattr(import_module(module), attr)
 
 
-def _read_surfaces(lang: str, lang_dir: str, cfg: dict, res) -> Dict[str, List[str]]:
-    """Expand every ``.voc`` of the language: file base name -> surfaces.
+def _read_surfaces(lang_dir: str, cfg: dict) -> Dict[str, List[str]]:
+    """Read the vocabulary of the language: base name -> surfaces.
 
     The tokenizer drops punctuation, so a surface with internal punctuation
     ("μ.μ.", "week-end") can never equal a token's text.  Each surface is
     therefore also registered in its token-canonical form, and the original is
     kept.
     """
-    vocab_map = res.vocabularies(lang)
     tok = cfg.get("tokenizer", {})
     tokenizer = Tokenizer(TokenizerModes(
         split_contractions=tok.get("split_contractions", False),
         ordinal_dot=tok.get("ordinal_dot", False)))
     surfaces = {}
-    for path in sorted(glob.glob(os.path.join(lang_dir, "*.voc"))):
-        templates = read_resource_file(Path(path))
-        samples = dict.fromkeys(
-            s for template in templates for s in expand(template, vocab_map))
+    for base, samples in read_vocabulary(lang_dir).items():
         out = [s.lower() for s in samples]
         seen = set(out)
         for surface in list(out):
@@ -153,7 +137,7 @@ def _read_surfaces(lang: str, lang_dir: str, cfg: dict, res) -> Dict[str, List[s
             if canon and canon not in seen:
                 seen.add(canon)
                 out.append(canon)
-        surfaces[os.path.basename(path)[:-len(".voc")]] = out
+        surfaces[base] = out
     return surfaces
 
 
@@ -163,19 +147,19 @@ def _add_month(tables: dict, lang: str, base: str, surfaces: List[str]) -> None:
         n = int(rest)
         if not 1 <= n <= 12:
             raise ValueError(
-                f"{base}.voc: Gregorian month number {n} out of range 1..12")
+                f"{base}: Gregorian month number {n} out of range 1..12")
         tables["months"].update(dict.fromkeys(surfaces, n))
         return
-    # month_<calendar>_<n>.voc
+    # month_<calendar>_<n>
     cal_key, _, num = rest.rpartition("_")
     if cal_key not in CALENDARS:
         raise ValueError(
-            f"{base}.voc names unknown calendar {cal_key!r}; "
+            f"{base} names unknown calendar {cal_key!r}; "
             f"known: {sorted(CALENDARS)}")
     month_count = CALENDARS[cal_key].month_count
     if not num.isdigit() or not 1 <= int(num) <= month_count:
         raise ValueError(
-            f"{base}.voc: month number {num!r} out of range "
+            f"{base}: month number {num!r} out of range "
             f"1..{month_count} for calendar {cal_key!r}")
     calendars = tables["calendar_months"]
     for other, table in calendars.items():
@@ -194,14 +178,14 @@ def _add_weekday(tables: dict, lang: str, base: str, surfaces: List[str]) -> Non
     abbreviated = base.startswith("weekday_abbr_")
     idx = int(base[len("weekday_abbr_" if abbreviated else "weekday_"):])
     if not 0 <= idx <= 6:
-        raise ValueError(f"{base}.voc: weekday index {idx} out of range 0..6")
+        raise ValueError(f"{base}: weekday index {idx} out of range 0..6")
     tables["weekdays"].update(dict.fromkeys(surfaces, idx))
     if not abbreviated:
         tables.setdefault("weekday_full", {}).update(dict.fromkeys(surfaces, idx))
 
 
 def _add_regnal(tables: dict, lang: str, base: str, surfaces: List[str]) -> None:
-    # regnal_<seqkey>_<segname>.voc; the sequence key may contain underscores
+    # regnal_<seqkey>_<segname>; the sequence key may contain underscores
     # ("egyptian_low"), so it is the longest registered key that prefixes the name.
     from chronologia.regnal import REGNAL_SEQUENCES
     rest = base[len("regnal_"):]
@@ -214,8 +198,8 @@ def _add_regnal(tables: dict, lang: str, base: str, surfaces: List[str]) -> None
 
 
 def _add_scale(tables: dict, lang: str, base: str, surfaces: List[str]) -> None:
-    # scale_<value>.voc holds mode-independent surfaces; scale_<value>.short.voc
-    # and .long.voc hold the surfaces of one dialect scale.  Every surface also
+    # scale_<value> holds mode-independent surfaces; scale_<value>.short
+    # and .long hold the surfaces of one dialect scale.  Every surface also
     # lands in ``scales`` so the SCALE slot binds it whatever the mode.
     stem, dot, mode = base[len("scale_"):].rpartition(".")
     if not dot or mode not in ("short", "long"):
@@ -231,7 +215,7 @@ def _add_scale(tables: dict, lang: str, base: str, surfaces: List[str]) -> None:
 
 
 def _add_cycle(tables: dict, lang: str, base: str, surfaces: List[str]) -> None:
-    # cycle_<key>_<n>.voc: day <n> (0-based) of the named day cycle
+    # cycle_<key>_<n>: day <n> (0-based) of the named day cycle
     key, _, num = base[len("cycle_"):].rpartition("_")
     tables.setdefault("day_cycles", {}).update(dict.fromkeys(surfaces, key))
     tables.setdefault("cycle_positions", {}).update(
@@ -255,7 +239,7 @@ def _fill(tables: dict, table: str, surfaces: List[str], value: Any) -> None:
 
 
 def _load_vocabulary(lang: str, surfaces_by_file: Dict[str, List[str]]) -> dict:
-    """Fill the LangSpec vocabulary tables from the ``.voc`` file names."""
+    """Fill the LangSpec vocabulary tables from the base names of ``vocab.json``."""
     tables: Dict[str, Any] = {name: {} for name in (
         "months", "weekdays", "units", "named_days", "directions",
         "rel_markers", "connectors", "calendar_months")}
@@ -288,7 +272,7 @@ def _plural_units(units: dict, scope_units: dict, singular_units: dict) -> froze
 
     The scoped-ordinal reading is vetoed for them: "the two <unit>s of June"
     is a count, "the second <unit> of June" an ordinal.  A locale that ships
-    ``unit1_<kind>.voc`` states its singulars, and every other unit surface is
+    ``unit1_<kind>`` states its singulars, and every other unit surface is
     plural.  Without them a surface is plural when another same-kind surface
     plus ``s``/``es`` (or ``y`` -> ``ies``) spells it.
     """
@@ -380,8 +364,7 @@ def load_lang_spec(lang: str, locale_dir: str = LOCALE_DIR) -> LangSpec:
     with open(os.path.join(lang_dir, "lang.json"), encoding="utf-8") as fh:
         cfg = json.load(fh)
 
-    vocabulary = _load_vocabulary(lang, _read_surfaces(
-        lang, lang_dir, cfg, _locale_resources(locale_dir)))
+    vocabulary = _load_vocabulary(lang, _read_surfaces(lang_dir, cfg))
     orders, flags = _load_constructions(cfg)
 
     spec = LangSpec(

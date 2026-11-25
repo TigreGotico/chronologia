@@ -2,7 +2,7 @@
 
 Croatian season nouns are neuter ("ljeto", "proljeće"), so "last summer"
 is "prošlo ljeto" -- the neuter nominative/accusative of the determiner.
-"marker_last.voc" listed only the masculine and feminine paradigms, so the
+"marker_last" listed only the masculine and feminine paradigms, so the
 determiner could not bind: the season resolved on its own and the stranded
 "prošlo" came back in the remainder, turning "last summer" into *this*
 summer with no signal that anything had been dropped.

@@ -1,4 +1,0 @@
-# Plural day-part words that a number before them turns into a count of days
-# ("three mornings", "two mornings ago"), so they name no band.  Each is a
-# surface of daypart_morning.voc.
-mornings

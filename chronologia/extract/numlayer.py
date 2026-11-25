@@ -17,16 +17,16 @@ units of the scale word.
 from __future__ import annotations
 
 import re
+import json
 from bisect import bisect_right
 from dataclasses import dataclass, field, replace
 from fractions import Fraction
 from functools import lru_cache
 from pathlib import Path
-from typing import (Collection, Dict, FrozenSet, Mapping, Optional, Tuple,
-                    Union)
+from typing import (Collection, Dict, FrozenSet, List, Mapping, Optional,
+                    Tuple, Union)
 
 from numtag import Form, Kind, NumberMention, Scale, tag_numbers
-from ovos_spec_tools import expand, read_resource_file
 
 from chronologia.extract.model import Token
 from chronologia.extract.numfold_engine import reindex
@@ -44,6 +44,53 @@ NUMTAG_LANGS = {"pt": "pt-PT", "en": "en", "es": "es", "gl": "gl", "ca": "ca",
                 "pl": "pl", "ru": "ru", "sk": "sk", "sl": "sl", "uk": "uk"}
 
 _LOCALE_DIR = Path(__file__).resolve().parent.parent / "locale"
+
+
+VOCAB_FORMAT_VERSION = 1
+
+
+def _unique_keys(pairs):
+    """``object_pairs_hook`` that refuses an object with a repeated key."""
+    keys = [key for key, _ in pairs]
+    if len(set(keys)) != len(keys):
+        repeated = sorted({key for key in keys if keys.count(key) > 1})
+        raise ValueError(f"repeated key(s) {repeated}")
+    return dict(pairs)
+
+
+def read_vocabulary(lang_dir) -> Dict[str, List[str]]:
+    """The surfaces of ``<lang_dir>/vocab.json``, by resource base name."""
+    path = Path(lang_dir) / "vocab.json"
+    with open(path, encoding="utf-8") as fh:
+        try:
+            data = json.load(fh, object_pairs_hook=_unique_keys)
+        except ValueError as error:
+            raise ValueError(f"{path}: {error}") from error
+    version = data.get("format_version")
+    if type(version) is not int or version != VOCAB_FORMAT_VERSION:
+        raise ValueError(
+            f"{path}: format_version {version!r} is not "
+            f"supported, expected {VOCAB_FORMAT_VERSION}")
+    return data["words"]
+
+
+@lru_cache(maxsize=None)
+def vocabulary(lang: str) -> Dict[str, List[str]]:
+    """The surfaces of ``locale/<lang>/vocab.json``, by resource base name."""
+    return read_vocabulary(_LOCALE_DIR / lang)
+
+
+@lru_cache(maxsize=None)
+def locale_words(lang: str, *prefixes: str) -> FrozenSet[str]:
+    """The lower-cased surfaces of every vocabulary of ``lang`` whose base
+    name starts with one of ``prefixes``.  The test runs on the base name with a
+    dot appended, so a prefix that ends in a dot matches that base name and the
+    dotted names under it: ``marker_in.`` names ``marker_in`` and no
+    ``marker_in_*``, and ``scale_1000.`` names ``scale_1000`` and
+    ``scale_1000.short``."""
+    return frozenset(
+        s.lower() for base, surfaces in vocabulary(lang).items()
+        if (base + ".").startswith(prefixes) for s in surfaces)
 
 
 def reads(lang: str) -> bool:
@@ -211,17 +258,17 @@ def attach(tokens: Tuple[Token, ...], text: str,
 def scale_factors(lang: str) -> Dict[Optional[Scale], Dict[str, int]]:
     """The factors of the deep-time scale words of the locale ``lang``.
 
-    The ``scale_<factor>.voc`` files name the words with one factor on both
-    scales (key ``None``); ``scale_<factor>.short.voc`` and ``.long.voc`` name
-    the factor of a billion-cognate on that scale.
+    The ``scale_<factor>`` vocabularies name the words with one factor on both
+    scales (key ``None``); ``scale_<factor>.short`` and ``.long`` name the
+    factor of a billion-cognate on that scale.
     """
     out: Dict[Optional[Scale], Dict[str, int]] = {
         None: {}, Scale.SHORT: {}, Scale.LONG: {}}
-    for path in sorted((_LOCALE_DIR / lang).glob("scale_*.voc")):
-        factor, _, scale = path.stem[len("scale_"):].partition(".")
-        table = out[Scale(scale) if scale else None]
-        for template in read_resource_file(path):
-            table.update((s.lower(), int(factor)) for s in expand(template, {}))
+    for base, surfaces in vocabulary(lang).items():
+        if base.startswith("scale_"):
+            factor, _, scale = base[len("scale_"):].partition(".")
+            out[Scale(scale) if scale else None].update(
+                (s.lower(), int(factor)) for s in surfaces)
     return out
 
 
@@ -235,13 +282,6 @@ def scale_factor(word: str, mention: NumberMention,
         if factor is not None:
             return factor
     return factors[None].get(word)
-
-
-def voc_file_words(lang: str, name: str) -> FrozenSet[str]:
-    """The surfaces of the file ``name`` of the locale ``lang``, as written."""
-    return frozenset(
-        s for template in read_resource_file(_LOCALE_DIR / lang / name)
-        for s in expand(template, {}))
 
 
 def mention_number(mention: NumberMention,

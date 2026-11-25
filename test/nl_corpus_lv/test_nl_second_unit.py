@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 """The second as a duration unit in Latvian.
 
-``unit_second.voc`` closes the gap that left a phrase counting seconds
+``unit_second`` closes the gap that left a phrase counting seconds
 unparsed while the same phrase counting minutes resolved.  Every expected
 span is the anchor shifted by the stated number of seconds, computed here
 rather than read back from the engine.

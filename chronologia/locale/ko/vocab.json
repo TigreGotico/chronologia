@@ -1,0 +1,528 @@
+{
+ "format_version": 1,
+ "words": {
+  "clock_dir_to": [
+   "전"
+  ],
+  "clock_fraction_30": [
+   "반"
+  ],
+  "clock_landmark_0": [
+   "자정"
+  ],
+  "clock_landmark_720": [
+   "정오"
+  ],
+  "clock_meridiem_am": [
+   "오전"
+  ],
+  "clock_meridiem_pm": [
+   "오후"
+  ],
+  "daypart_achim_ko": [
+   "아침"
+  ],
+  "daypart_bam_ko": [
+   "밤"
+  ],
+  "daypart_jeonyeok_ko": [
+   "저녁"
+  ],
+  "daypart_ohu_ko": [
+   "오후"
+  ],
+  "daypart_ojeon_ko": [
+   "오전"
+  ],
+  "marker_at": [
+   "에"
+  ],
+  "marker_day_word": [
+   "일"
+  ],
+  "marker_future": [
+   "후"
+  ],
+  "marker_last": [
+   "지난"
+  ],
+  "marker_minute_word": [
+   "분"
+  ],
+  "marker_next": [
+   "다음"
+  ],
+  "marker_oclock": [
+   "시"
+  ],
+  "marker_past": [
+   "전"
+  ],
+  "marker_this": [
+   "이번"
+  ],
+  "marker_year_word": [
+   "년"
+  ],
+  "month_1": [
+   "1월"
+  ],
+  "month_10": [
+   "10월"
+  ],
+  "month_11": [
+   "11월"
+  ],
+  "month_12": [
+   "12월"
+  ],
+  "month_2": [
+   "2월"
+  ],
+  "month_3": [
+   "3월"
+  ],
+  "month_4": [
+   "4월"
+  ],
+  "month_5": [
+   "5월"
+  ],
+  "month_6": [
+   "6월"
+  ],
+  "month_7": [
+   "7월"
+  ],
+  "month_8": [
+   "8월"
+  ],
+  "month_9": [
+   "9월"
+  ],
+  "named_day_-1": [
+   "어제"
+  ],
+  "named_day_-2": [
+   "그저께"
+  ],
+  "named_day_-3": [
+   "그끄저께"
+  ],
+  "named_day_0": [
+   "오늘"
+  ],
+  "named_day_1": [
+   "내일"
+  ],
+  "named_day_2": [
+   "모레"
+  ],
+  "named_day_3": [
+   "글피"
+  ],
+  "unit1_day": [
+   "일"
+  ],
+  "unit1_hour": [
+   "시간"
+  ],
+  "unit1_minute": [
+   "분"
+  ],
+  "unit1_month": [
+   "개월",
+   "달"
+  ],
+  "unit1_second": [
+   "초"
+  ],
+  "unit1_week": [
+   "주",
+   "주일"
+  ],
+  "unit1_year": [
+   "년",
+   "해"
+  ],
+  "unit_day": [
+   "일"
+  ],
+  "unit_hour": [
+   "시간"
+  ],
+  "unit_minute": [
+   "분"
+  ],
+  "unit_month": [
+   "개월",
+   "달"
+  ],
+  "unit_second": [
+   "초"
+  ],
+  "unit_week": [
+   "주",
+   "주일"
+  ],
+  "unit_year": [
+   "년",
+   "해"
+  ],
+  "weekday_0": [
+   "월요일"
+  ],
+  "weekday_1": [
+   "화요일"
+  ],
+  "weekday_2": [
+   "수요일"
+  ],
+  "weekday_3": [
+   "목요일"
+  ],
+  "weekday_4": [
+   "금요일"
+  ],
+  "weekday_5": [
+   "토요일"
+  ],
+  "weekday_6": [
+   "일요일"
+  ]
+ },
+ "sources": {
+  "clock_dir_to": [
+   "The backward clock reading is obligatorily marked, and marked at the END of",
+   "the phrase: 세 시 십 분 전 is ten minutes BEFORE three, 02:50.  Because the",
+   "marker is required and final, the forward and backward readings never",
+   "collide and neither has to be guessed.  Elon.io, Korean grammar, \"Half, To,",
+   "and Past: 반, 전, 후\"."
+  ],
+  "clock_fraction_30": [
+   "반 is \"half\", and on a clock it stands in for 삼십 분: it counts FORWARD",
+   "from the hour just named, so 두 시 반 is 2:30.  Elon.io, Korean grammar,",
+   "\"Half, To, and Past: 반, 전, 후\"; the same forward reading appears in Korean",
+   "Study Junkie, \"Telling Time in Korean\", with 열두시반 for 12:30."
+  ],
+  "clock_landmark_0": [
+   "Unicode CLDR 47, ko ca-gregorian.json, dayPeriods.format.wide midnight."
+  ],
+  "clock_landmark_720": [
+   "Unicode CLDR 47, ko ca-gregorian.json, dayPeriods.format.wide noon."
+  ],
+  "clock_meridiem_am": [
+   "Unicode CLDR 47, ko ca-gregorian.json, dayPeriods.format.wide am.  The",
+   "marker LEADS the hour in Korean (오전 9시), the opposite of English order."
+  ],
+  "clock_meridiem_pm": [
+   "Unicode CLDR 47, ko ca-gregorian.json, dayPeriods.format.wide pm."
+  ],
+  "daypart_achim_ko": [
+   "Band boundaries: Unicode CLDR 47 Day Period Rules, locale ko",
+   "(cldr/common/supplemental/dayPeriods.xml), transcribed in",
+   "chronologia/dayparts.py; label from ko ca-gregorian.json",
+   "dayPeriods.format.wide.  The 03:00-06:00 band."
+  ],
+  "daypart_bam_ko": [
+   "Band boundaries: Unicode CLDR 47 Day Period Rules, locale ko",
+   "(cldr/common/supplemental/dayPeriods.xml), transcribed in",
+   "chronologia/dayparts.py; label from ko ca-gregorian.json",
+   "dayPeriods.format.wide.  The 21:00-03:00 band."
+  ],
+  "daypart_jeonyeok_ko": [
+   "Band boundaries: Unicode CLDR 47 Day Period Rules, locale ko",
+   "(cldr/common/supplemental/dayPeriods.xml), transcribed in",
+   "chronologia/dayparts.py; label from ko ca-gregorian.json",
+   "dayPeriods.format.wide.  The 18:00-21:00 band."
+  ],
+  "daypart_ohu_ko": [
+   "Band boundaries: Unicode CLDR 47 Day Period Rules, locale ko",
+   "(cldr/common/supplemental/dayPeriods.xml), transcribed in",
+   "chronologia/dayparts.py; label from ko ca-gregorian.json",
+   "dayPeriods.format.wide.  The 12:00-18:00 band, whose",
+   "label is also the pm marker."
+  ],
+  "daypart_ojeon_ko": [
+   "Band boundaries: Unicode CLDR 47 Day Period Rules, locale ko",
+   "(cldr/common/supplemental/dayPeriods.xml), transcribed in",
+   "chronologia/dayparts.py; label from ko ca-gregorian.json",
+   "dayPeriods.format.wide.  The 06:00-12:00 band, whose",
+   "label is also the am marker."
+  ],
+  "marker_at": [
+   "en.wiktionary.org, -에 -- \"at; indicates that the preceding noun functions",
+   "as a temporal adverb, making a point in time\".  Written onto the noun with",
+   "no space (3시에); the language hook cuts it back off."
+  ],
+  "marker_day_word": [
+   "Unicode CLDR 47, ko ca-gregorian.json, dateFormats long -- \"y년 MMMM d일\".",
+   "일 closes the day of the month.  It is the same syllable as the day",
+   "duration unit and as the Sino numeral one; here it is licensed only by a",
+   "day number standing immediately before it."
+  ],
+  "marker_future": [
+   "Unicode CLDR 47, cldr-json cldr-dates-full/main/ko/dateFields.json.  The \"in N units\" pattern ends in 후."
+  ],
+  "marker_last": [
+   "Unicode CLDR 47, cldr-json cldr-dates-full/main/ko/dateFields.json.  The relative-type -1 forms are 지난주 and 지난달."
+  ],
+  "marker_minute_word": [
+   "Unicode CLDR 47, ko ca-gregorian.json, timeFormats \"a h:mm\" spelled out:",
+   "분 closes the minute count of a clock reading."
+  ],
+  "marker_next": [
+   "Unicode CLDR 47, cldr-json cldr-dates-full/main/ko/dateFields.json.  The relative-type 1 forms are 다음 주 and 다음 달."
+  ],
+  "marker_oclock": [
+   "Unicode CLDR 47, ko ca-gregorian.json.  시 names the hour of the clock.",
+   "It is also the ordinary word for a city and for a poem, so it reads as an",
+   "hour only behind a numeral -- every order that binds it puts an hour in",
+   "front of it."
+  ],
+  "marker_past": [
+   "Unicode CLDR 47, cldr-json cldr-dates-full/main/ko/dateFields.json.  The \"N units ago\" pattern ends in 전.",
+   "",
+   "전 also means \"before\" on a clock face, where it turns a minute count into",
+   "minutes BEFORE the hour just named (세 시 십 분 전 is ten to three).  The",
+   "two readings never collide, because the clock one is licensed by a named",
+   "hour standing in front of it and this one is not."
+  ],
+  "marker_this": [
+   "Unicode CLDR 47, cldr-json cldr-dates-full/main/ko/dateFields.json.  The relative-type 0 forms are 이번 주 and 이번 달."
+  ],
+  "marker_year_word": [
+   "Unicode CLDR 47, cldr-json cldr-dates-full/main/ko/ca-gregorian.json.  The",
+   "long date format is \"y년 MMMM d일\": every field carries its own suffix, and",
+   "년 is the year's."
+  ],
+  "month_1": [
+   "Unicode CLDR 47, cldr-json cldr-dates-full/main/ko/ca-gregorian.json.",
+   "months.format.wide and months.format.abbreviated are identical: the",
+   "Sino-Korean numeral written in digits plus the month word."
+  ],
+  "month_10": [
+   "Unicode CLDR 47, cldr-json cldr-dates-full/main/ko/ca-gregorian.json.",
+   "months.format.wide and months.format.abbreviated are identical: the",
+   "Sino-Korean numeral written in digits plus the month word."
+  ],
+  "month_11": [
+   "Unicode CLDR 47, cldr-json cldr-dates-full/main/ko/ca-gregorian.json.",
+   "months.format.wide and months.format.abbreviated are identical: the",
+   "Sino-Korean numeral written in digits plus the month word."
+  ],
+  "month_12": [
+   "Unicode CLDR 47, cldr-json cldr-dates-full/main/ko/ca-gregorian.json.",
+   "months.format.wide and months.format.abbreviated are identical: the",
+   "Sino-Korean numeral written in digits plus the month word."
+  ],
+  "month_2": [
+   "Unicode CLDR 47, cldr-json cldr-dates-full/main/ko/ca-gregorian.json.",
+   "months.format.wide and months.format.abbreviated are identical: the",
+   "Sino-Korean numeral written in digits plus the month word."
+  ],
+  "month_3": [
+   "Unicode CLDR 47, cldr-json cldr-dates-full/main/ko/ca-gregorian.json.",
+   "months.format.wide and months.format.abbreviated are identical: the",
+   "Sino-Korean numeral written in digits plus the month word."
+  ],
+  "month_4": [
+   "Unicode CLDR 47, cldr-json cldr-dates-full/main/ko/ca-gregorian.json.",
+   "months.format.wide and months.format.abbreviated are identical: the",
+   "Sino-Korean numeral written in digits plus the month word."
+  ],
+  "month_5": [
+   "Unicode CLDR 47, cldr-json cldr-dates-full/main/ko/ca-gregorian.json.",
+   "months.format.wide and months.format.abbreviated are identical: the",
+   "Sino-Korean numeral written in digits plus the month word."
+  ],
+  "month_6": [
+   "Unicode CLDR 47, cldr-json cldr-dates-full/main/ko/ca-gregorian.json.",
+   "months.format.wide and months.format.abbreviated are identical: the",
+   "Sino-Korean numeral written in digits plus the month word."
+  ],
+  "month_7": [
+   "Unicode CLDR 47, cldr-json cldr-dates-full/main/ko/ca-gregorian.json.",
+   "months.format.wide and months.format.abbreviated are identical: the",
+   "Sino-Korean numeral written in digits plus the month word."
+  ],
+  "month_8": [
+   "Unicode CLDR 47, cldr-json cldr-dates-full/main/ko/ca-gregorian.json.",
+   "months.format.wide and months.format.abbreviated are identical: the",
+   "Sino-Korean numeral written in digits plus the month word."
+  ],
+  "month_9": [
+   "Unicode CLDR 47, cldr-json cldr-dates-full/main/ko/ca-gregorian.json.",
+   "months.format.wide and months.format.abbreviated are identical: the",
+   "Sino-Korean numeral written in digits plus the month word."
+  ],
+  "named_day_-1": [
+   "Unicode CLDR 47, cldr-json cldr-dates-full/main/ko/dateFields.json.  day relative-type -1."
+  ],
+  "named_day_-2": [
+   "en.wiktionary.org, 그저께 -- the day before yesterday."
+  ],
+  "named_day_-3": [
+   "en.wiktionary.org, 그끄저께 -- two days before yesterday."
+  ],
+  "named_day_0": [
+   "Unicode CLDR 47, cldr-json cldr-dates-full/main/ko/dateFields.json.  day relative-type 0."
+  ],
+  "named_day_1": [
+   "Unicode CLDR 47, cldr-json cldr-dates-full/main/ko/dateFields.json.  day relative-type 1."
+  ],
+  "named_day_2": [
+   "en.wiktionary.org, 모레 -- the day after tomorrow."
+  ],
+  "named_day_3": [
+   "en.wiktionary.org, 글피 -- two days after tomorrow."
+  ],
+  "unit1_day": [
+   "Korean marks no number on a noun, so the counted and uncounted forms of",
+   "a unit are one and the same word.  Listed here as well so the engine reads",
+   "this locale as having no plural unit surfaces at all."
+  ],
+  "unit1_hour": [
+   "Korean marks no number on a noun, so the counted and uncounted forms of",
+   "a unit are one and the same word.  Listed here as well so the engine reads",
+   "this locale as having no plural unit surfaces at all."
+  ],
+  "unit1_minute": [
+   "Korean marks no number on a noun, so the counted and uncounted forms of",
+   "a unit are one and the same word.  Listed here as well so the engine reads",
+   "this locale as having no plural unit surfaces at all."
+  ],
+  "unit1_month": [
+   "Korean marks no number on a noun, so the counted and uncounted forms of",
+   "a unit are one and the same word.  Listed here as well so the engine reads",
+   "this locale as having no plural unit surfaces at all."
+  ],
+  "unit1_second": [
+   "Korean marks no number on a noun, so the counted and uncounted forms of",
+   "a unit are one and the same word.  Listed here as well so the engine reads",
+   "this locale as having no plural unit surfaces at all."
+  ],
+  "unit1_week": [
+   "Korean marks no number on a noun, so the counted and uncounted forms of",
+   "a unit are one and the same word.  Listed here as well so the engine reads",
+   "this locale as having no plural unit surfaces at all."
+  ],
+  "unit1_year": [
+   "Korean marks no number on a noun, so the counted and uncounted forms of",
+   "a unit are one and the same word.  Listed here as well so the engine reads",
+   "this locale as having no plural unit surfaces at all."
+  ],
+  "unit_day": [
+   "Unicode CLDR 47, cldr-json cldr-dates-full/main/ko/dateFields.json.  \"{0}일 전\" / \"{0}일 후\".",
+   "",
+   "일 also marks the day of the month (3월 15일) and is the Sino numeral one.",
+   "The readings are told apart by position, never by the string: the day",
+   "marker follows a day number inside a date, the duration unit carries its",
+   "own count and a direction word."
+  ],
+  "unit_hour": [
+   "Unicode CLDR 47, cldr-json cldr-dates-full/main/ko/dateFields.json.  \"{0}시간 전\" / \"{0}시간 후\".",
+   "",
+   "시간 counts hours; 시 names the hour of the clock and is not a duration."
+  ],
+  "unit_minute": [
+   "Unicode CLDR 47, cldr-json cldr-dates-full/main/ko/dateFields.json.  \"{0}분 전\" / \"{0}분 후\"."
+  ],
+  "unit_month": [
+   "Unicode CLDR 47, cldr-json cldr-dates-full/main/ko/dateFields.json.  The COUNTED month is 개월 -- \"{0}개월 전\" --",
+   "and not the calendar label 월, which numbers the months of the year (3월 is",
+   "March).  The two are grammatical in the same position and mean different",
+   "things, so only the counter ships here; 월 stays a month name.",
+   "달 is the native month noun, the unit of 지난달 / 이번 달 / 다음 달."
+  ],
+  "unit_second": [
+   "Unicode CLDR 47, cldr-json cldr-dates-full/main/ko/dateFields.json.  \"{0}초 전\" / \"{0}초 후\"."
+  ],
+  "unit_week": [
+   "Unicode CLDR 47, cldr-json cldr-dates-full/main/ko/dateFields.json.  \"{0}주 전\" / \"{0}주 후\".",
+   "주일 is the fuller form of the same noun (일주일 is one week)."
+  ],
+  "unit_year": [
+   "Unicode CLDR 47, cldr-json cldr-dates-full/main/ko/dateFields.json.  \"{0}년 전\" / \"{0}년 후\".",
+   "해 is the native word for the year, the unit the relative-period forms",
+   "작년 / 올해 / 내년 name (dateFields year relative-type -1/0/1)."
+  ],
+  "weekday_0": [
+   "Unicode CLDR 47, cldr-json cldr-dates-full/main/ko/ca-gregorian.json.",
+   "days.format.wide, indexed from Monday.",
+   "",
+   "The abbreviated forms CLDR also carries are single syllables (일 월 화 수",
+   "목 금 토) and each is an ordinary word in its own right -- 일 is the day,",
+   "the numeral one and Sunday at once, 월 is the month and Monday, 수 is a",
+   "number and water, 금 is gold.  Nothing inside the phrase tells the readings",
+   "apart; only a calendar grid does, and a grid is not prose.  They are",
+   "therefore not shipped, and a bare abbreviation names no weekday here."
+  ],
+  "weekday_1": [
+   "Unicode CLDR 47, cldr-json cldr-dates-full/main/ko/ca-gregorian.json.",
+   "days.format.wide, indexed from Monday.",
+   "",
+   "The abbreviated forms CLDR also carries are single syllables (일 월 화 수",
+   "목 금 토) and each is an ordinary word in its own right -- 일 is the day,",
+   "the numeral one and Sunday at once, 월 is the month and Monday, 수 is a",
+   "number and water, 금 is gold.  Nothing inside the phrase tells the readings",
+   "apart; only a calendar grid does, and a grid is not prose.  They are",
+   "therefore not shipped, and a bare abbreviation names no weekday here."
+  ],
+  "weekday_2": [
+   "Unicode CLDR 47, cldr-json cldr-dates-full/main/ko/ca-gregorian.json.",
+   "days.format.wide, indexed from Monday.",
+   "",
+   "The abbreviated forms CLDR also carries are single syllables (일 월 화 수",
+   "목 금 토) and each is an ordinary word in its own right -- 일 is the day,",
+   "the numeral one and Sunday at once, 월 is the month and Monday, 수 is a",
+   "number and water, 금 is gold.  Nothing inside the phrase tells the readings",
+   "apart; only a calendar grid does, and a grid is not prose.  They are",
+   "therefore not shipped, and a bare abbreviation names no weekday here."
+  ],
+  "weekday_3": [
+   "Unicode CLDR 47, cldr-json cldr-dates-full/main/ko/ca-gregorian.json.",
+   "days.format.wide, indexed from Monday.",
+   "",
+   "The abbreviated forms CLDR also carries are single syllables (일 월 화 수",
+   "목 금 토) and each is an ordinary word in its own right -- 일 is the day,",
+   "the numeral one and Sunday at once, 월 is the month and Monday, 수 is a",
+   "number and water, 금 is gold.  Nothing inside the phrase tells the readings",
+   "apart; only a calendar grid does, and a grid is not prose.  They are",
+   "therefore not shipped, and a bare abbreviation names no weekday here."
+  ],
+  "weekday_4": [
+   "Unicode CLDR 47, cldr-json cldr-dates-full/main/ko/ca-gregorian.json.",
+   "days.format.wide, indexed from Monday.",
+   "",
+   "The abbreviated forms CLDR also carries are single syllables (일 월 화 수",
+   "목 금 토) and each is an ordinary word in its own right -- 일 is the day,",
+   "the numeral one and Sunday at once, 월 is the month and Monday, 수 is a",
+   "number and water, 금 is gold.  Nothing inside the phrase tells the readings",
+   "apart; only a calendar grid does, and a grid is not prose.  They are",
+   "therefore not shipped, and a bare abbreviation names no weekday here."
+  ],
+  "weekday_5": [
+   "Unicode CLDR 47, cldr-json cldr-dates-full/main/ko/ca-gregorian.json.",
+   "days.format.wide, indexed from Monday.",
+   "",
+   "The abbreviated forms CLDR also carries are single syllables (일 월 화 수",
+   "목 금 토) and each is an ordinary word in its own right -- 일 is the day,",
+   "the numeral one and Sunday at once, 월 is the month and Monday, 수 is a",
+   "number and water, 금 is gold.  Nothing inside the phrase tells the readings",
+   "apart; only a calendar grid does, and a grid is not prose.  They are",
+   "therefore not shipped, and a bare abbreviation names no weekday here."
+  ],
+  "weekday_6": [
+   "Unicode CLDR 47, cldr-json cldr-dates-full/main/ko/ca-gregorian.json.",
+   "days.format.wide, indexed from Monday.",
+   "",
+   "The abbreviated forms CLDR also carries are single syllables (일 월 화 수",
+   "목 금 토) and each is an ordinary word in its own right -- 일 is the day,",
+   "the numeral one and Sunday at once, 월 is the month and Monday, 수 is a",
+   "number and water, 금 is gold.  Nothing inside the phrase tells the readings",
+   "apart; only a calendar grid does, and a grid is not prose.  They are",
+   "therefore not shipped, and a bare abbreviation names no weekday here."
+  ]
+ }
+}

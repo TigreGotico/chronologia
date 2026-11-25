@@ -1,0 +1,613 @@
+{
+ "format_version": 1,
+ "words": {
+  "clock_dir_past": [
+   "múlt"
+  ],
+  "clock_dir_to": [
+   "múlva"
+  ],
+  "clock_fraction_15": [
+   "negyed"
+  ],
+  "clock_fraction_30": [
+   "fél"
+  ],
+  "clock_fraction_45": [
+   "háromnegyed"
+  ],
+  "clock_landmark_0": [
+   "éjfél",
+   "éjfélkor"
+  ],
+  "clock_landmark_720": [
+   "dél",
+   "délben"
+  ],
+  "clock_meridiem_am": [
+   "de.",
+   "délelőtt",
+   "reggel"
+  ],
+  "clock_meridiem_night": [
+   "éjjel"
+  ],
+  "clock_meridiem_pm": [
+   "du.",
+   "délután",
+   "este"
+  ],
+  "clock_zone_0": [
+   "gmt",
+   "utc"
+  ],
+  "daypart_afternoon_hu": [
+   "délután"
+  ],
+  "daypart_evening_hu": [
+   "este"
+  ],
+  "daypart_morning_hu": [
+   "délelőtt",
+   "reggel"
+  ],
+  "daypart_night_hu": [
+   "hajnal",
+   "éjjel"
+  ],
+  "marker_ad": [
+   "i. sz.",
+   "i.sz.",
+   "időszámításunk szerint",
+   "kr. u.",
+   "kr.u."
+  ],
+  "marker_after": [
+   "után"
+  ],
+  "marker_ago": [
+   "ezelőtt"
+  ],
+  "marker_and": [
+   "és"
+  ],
+  "marker_article": [
+   "a",
+   "az"
+  ],
+  "marker_at": [
+   "-kor",
+   "kor"
+  ],
+  "marker_bc": [
+   "i. e.",
+   "i.e.",
+   "időszámításunk előtt",
+   "kr. e.",
+   "kr.e."
+  ],
+  "marker_before": [
+   "előtt"
+  ],
+  "marker_between": [
+   "között"
+  ],
+  "marker_between_post": [
+   "közt",
+   "között"
+  ],
+  "marker_business": [
+   "munkanap",
+   "munkanapot",
+   "munkanappal"
+  ],
+  "marker_during": [
+   "alatt",
+   "folyamán"
+  ],
+  "marker_every": [
+   "minden"
+  ],
+  "marker_freq_daily": [
+   "naponta"
+  ],
+  "marker_freq_monthly": [
+   "havonta"
+  ],
+  "marker_freq_weekly": [
+   "hetente"
+  ],
+  "marker_freq_yearly": [
+   "évente"
+  ],
+  "marker_from": [
+   "-tól",
+   "-től",
+   "tól",
+   "től"
+  ],
+  "marker_future": [
+   "múlva"
+  ],
+  "marker_half": [
+   "fele",
+   "felében"
+  ],
+  "marker_hours": [
+   "óra"
+  ],
+  "marker_in": [
+   "múlva"
+  ],
+  "marker_indef": [
+   "egy"
+  ],
+  "marker_last": [
+   "elmúlt",
+   "előző",
+   "múlt"
+  ],
+  "marker_month_word": [
+   "hónap"
+  ],
+  "marker_next": [
+   "jövő",
+   "következő"
+  ],
+  "marker_oclock": [
+   "óra",
+   "órakor",
+   "órára"
+  ],
+  "marker_of": [
+   "-i"
+  ],
+  "marker_past": [
+   "ezelott",
+   "ezelőtt"
+  ],
+  "marker_present": [
+   "most"
+  ],
+  "marker_q": [
+   "q"
+  ],
+  "marker_quarter_word": [
+   "negyedév",
+   "negyedévben"
+  ],
+  "marker_since": [
+   "óta"
+  ],
+  "marker_this": [
+   "ez",
+   "ezen"
+  ],
+  "marker_to": [
+   "-ig",
+   "ig"
+  ],
+  "marker_until": [
+   "ig"
+  ],
+  "marker_week_num": [
+   "hetének",
+   "hét",
+   "héten"
+  ],
+  "marker_weekof": [
+   "a hét",
+   "hét"
+  ],
+  "marker_year_word": [
+   "év",
+   "évben",
+   "éve",
+   "évek",
+   "évvel"
+  ],
+  "month_1": [
+   "január",
+   "januárban"
+  ],
+  "month_10": [
+   "október",
+   "októberben"
+  ],
+  "month_11": [
+   "november",
+   "novemberben"
+  ],
+  "month_12": [
+   "december",
+   "decemberben"
+  ],
+  "month_2": [
+   "február",
+   "februárban"
+  ],
+  "month_3": [
+   "március",
+   "márciusban"
+  ],
+  "month_4": [
+   "április",
+   "áprilisban"
+  ],
+  "month_5": [
+   "május",
+   "májusban"
+  ],
+  "month_6": [
+   "június",
+   "júniusban"
+  ],
+  "month_7": [
+   "július",
+   "júliusban"
+  ],
+  "month_8": [
+   "augusztus",
+   "augusztusban"
+  ],
+  "month_9": [
+   "szeptember",
+   "szeptemberben"
+  ],
+  "named_day_-1": [
+   "tegnap"
+  ],
+  "named_day_-2": [
+   "tegnapelőtt"
+  ],
+  "named_day_0": [
+   "ma"
+  ],
+  "named_day_1": [
+   "holnap"
+  ],
+  "named_day_2": [
+   "holnapután"
+  ],
+  "period_part_early": [
+   "eleje",
+   "elején"
+  ],
+  "period_part_late": [
+   "vége",
+   "végén"
+  ],
+  "period_part_mid": [
+   "közepe",
+   "közepén"
+  ],
+  "scale_1000": [
+   "ezer"
+  ],
+  "scale_1000000": [
+   "millió"
+  ],
+  "scale_1000000000": [
+   "milliárd"
+  ],
+  "scope_unit_century": [
+   "század",
+   "évszázad"
+  ],
+  "scope_unit_decade": [
+   "évtized"
+  ],
+  "scope_unit_millennium": [
+   "évezred"
+  ],
+  "season_fall": [
+   "ősszel",
+   "ősz"
+  ],
+  "season_spring": [
+   "tavasszal",
+   "tavasz"
+  ],
+  "season_summer": [
+   "nyár",
+   "nyáron"
+  ],
+  "season_winter": [
+   "tél",
+   "télen"
+  ],
+  "special_weekend": [
+   "hétvége",
+   "hétvégén"
+  ],
+  "unit_century": [
+   "század",
+   "évszázad"
+  ],
+  "unit_day": [
+   "nap",
+   "napig",
+   "napja",
+   "napot",
+   "nappal",
+   "napra"
+  ],
+  "unit_decade": [
+   "évtized"
+  ],
+  "unit_hour": [
+   "óra",
+   "óráig",
+   "órára",
+   "órát",
+   "órával"
+  ],
+  "unit_millennium": [
+   "évezred"
+  ],
+  "unit_minute": [
+   "perc",
+   "perccel",
+   "percet",
+   "percig",
+   "percre"
+  ],
+  "unit_month": [
+   "hónap",
+   "hónapja",
+   "hónapot",
+   "hónappal",
+   "hónapra"
+  ],
+  "unit_second": [
+   "másodperc",
+   "másodperccel",
+   "másodpercet",
+   "másodpercre"
+  ],
+  "unit_week": [
+   "hete",
+   "hetet",
+   "hét",
+   "héten",
+   "hétig",
+   "hétre",
+   "héttel"
+  ],
+  "unit_year": [
+   "év",
+   "éve",
+   "évet",
+   "évre",
+   "évvel"
+  ],
+  "weekday_0": [
+   "hétfő",
+   "hétfője",
+   "hétfőn"
+  ],
+  "weekday_1": [
+   "kedd",
+   "kedden",
+   "keddje"
+  ],
+  "weekday_2": [
+   "szerda",
+   "szerdája",
+   "szerdán"
+  ],
+  "weekday_3": [
+   "csütörtök",
+   "csütörtökje",
+   "csütörtökön"
+  ],
+  "weekday_4": [
+   "péntek",
+   "pénteken",
+   "péntekje"
+  ],
+  "weekday_5": [
+   "szombat",
+   "szombatja",
+   "szombaton"
+  ],
+  "weekday_6": [
+   "vasárnap",
+   "vasárnapja",
+   "vasárnapon"
+  ]
+ },
+ "sources": {
+  "clock_fraction_15": [
+   "Hungarian counting-toward-the-hour clock: \"negyed <H>\" == the first",
+   "quarter of the way toward hour H, i.e. (H-1):15 -- \"negyed kilenc\" == 08:15.",
+   "Citation: Rounds, Carol H. \"Hungarian: An Essential Grammar\", 2nd ed.,",
+   "Routledge 2009, sec. on telling the time (\"negyed\", \"fel\", \"haromnegyed\"",
+   "counted toward the coming hour); Wiktionary \"negyed\" (Hungarian), sense",
+   "\"quarter toward the named hour\"."
+  ],
+  "clock_fraction_30": [
+   "Hungarian counting-toward-the-hour clock: \"fel <H>\" == half of the way",
+   "toward hour H, i.e. (H-1):30 -- \"fel kilenc\" == 08:30 (half before nine).",
+   "Citation: Rounds, Carol H. \"Hungarian: An Essential Grammar\", 2nd ed.,",
+   "Routledge 2009, sec. on telling the time; Wiktionary \"fel\" (Hungarian)."
+  ],
+  "clock_fraction_45": [
+   "Hungarian counting-toward-the-hour clock: \"haromnegyed <H>\" == three",
+   "quarters of the way toward hour H, i.e. (H-1):45 -- \"haromnegyed kilenc\"",
+   "== 08:45.  Citation: Rounds, Carol H. \"Hungarian: An Essential Grammar\",",
+   "2nd ed., Routledge 2009, sec. on telling the time; Wiktionary",
+   "\"haromnegyed\" (Hungarian), sense \"three quarters toward the named hour\"."
+  ],
+  "clock_meridiem_night": [
+   "The NIGHT daypart is a BAND that crosses midnight: hu.wikipedia prose has",
+   "\"ejjel 11-kor\" (23:00), and \"éjjel\" glosses as \"at night\" (en.wiktionary,",
+   "s.v. éjjel), so \"éjjel 2-kor\" is 02:00.  Small hours 1..5 stay AM, evening",
+   "hours 6..11 are PM, twelve is midnight (the band-split lives in the",
+   "resolver _clock_hms).  https://en.wiktionary.org/wiki/éjjel"
+  ],
+  "daypart_afternoon_hu": [
+   "Band boundaries: Unicode CLDR 47 Day Period Rules, locale hu",
+   "(https://www.unicode.org/cldr/charts/47/supplemental/day_periods.html),",
+   "transcribed in chronologia/dayparts.py as the afternoon band.",
+   "Surface: adverb 'in the afternoon' -- the deictic form these phrases use.",
+   "Source: Wiktionary, délután — https://en.wiktionary.org/wiki/délután"
+  ],
+  "daypart_evening_hu": [
+   "Band boundaries: Unicode CLDR 47 Day Period Rules, locale hu",
+   "(https://www.unicode.org/cldr/charts/47/supplemental/day_periods.html),",
+   "transcribed in chronologia/dayparts.py as the evening band.",
+   "Surface: adverb 'in the evening' -- the deictic form these phrases use.",
+   "Source: Wiktionary, este — https://en.wiktionary.org/wiki/este"
+  ],
+  "daypart_morning_hu": [
+   "Band boundaries: Unicode CLDR 47 Day Period Rules, locale hu",
+   "(https://www.unicode.org/cldr/charts/47/supplemental/day_periods.html),",
+   "transcribed in chronologia/dayparts.py as the morning band.",
+   "Surface: adverbs 'in the morning' / 'in the forenoon' -- the deictic form these phrases use.",
+   "Source: Wiktionary, reggel — https://en.wiktionary.org/wiki/reggel ; délelőtt — https://en.wiktionary.org/wiki/délelőtt"
+  ],
+  "daypart_night_hu": [
+   "Band boundaries: Unicode CLDR 47 Day Period Rules, locale hu",
+   "(https://www.unicode.org/cldr/charts/47/supplemental/day_periods.html),",
+   "transcribed in chronologia/dayparts.py as the night band.",
+   "Surface: adverbs 'at night' / 'at dawn' -- the deictic form these phrases use.",
+   "Source: Wiktionary, éjjel — https://en.wiktionary.org/wiki/éjjel ; hajnal — https://en.wiktionary.org/wiki/hajnal"
+  ],
+  "marker_oclock": [
+   "sublative of \"óra\" (\"három órára\", to three o'clock): Wiktionary, hu \"óra\", declension table."
+  ],
+  "month_1": [
+   "Unicode CLDR 47, locale hu, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/hu/ca-gregorian.json): months.format.wide,",
+   "months.stand-alone.wide.  Not covered by any of those charts, and so",
+   "unattested here: \"januárban\"."
+  ],
+  "month_10": [
+   "Unicode CLDR 47, locale hu, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/hu/ca-gregorian.json): months.format.wide,",
+   "months.stand-alone.wide.  Not covered by any of those charts, and so",
+   "unattested here: \"októberben\"."
+  ],
+  "month_11": [
+   "Unicode CLDR 47, locale hu, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/hu/ca-gregorian.json): months.format.wide,",
+   "months.stand-alone.wide.  Not covered by any of those charts, and so",
+   "unattested here: \"novemberben\"."
+  ],
+  "month_12": [
+   "Unicode CLDR 47, locale hu, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/hu/ca-gregorian.json): months.format.wide,",
+   "months.stand-alone.wide.  Not covered by any of those charts, and so",
+   "unattested here: \"decemberben\"."
+  ],
+  "month_2": [
+   "Unicode CLDR 47, locale hu, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/hu/ca-gregorian.json): months.format.wide,",
+   "months.stand-alone.wide.  Not covered by any of those charts, and so",
+   "unattested here: \"februárban\"."
+  ],
+  "month_3": [
+   "Unicode CLDR 47, locale hu, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/hu/ca-gregorian.json): months.format.wide,",
+   "months.stand-alone.wide.  Not covered by any of those charts, and so",
+   "unattested here: \"márciusban\"."
+  ],
+  "month_4": [
+   "Unicode CLDR 47, locale hu, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/hu/ca-gregorian.json): months.format.wide,",
+   "months.stand-alone.wide.  Not covered by any of those charts, and so",
+   "unattested here: \"áprilisban\"."
+  ],
+  "month_5": [
+   "Unicode CLDR 47, locale hu, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/hu/ca-gregorian.json): months.format.wide,",
+   "months.stand-alone.wide.  Not covered by any of those charts, and so",
+   "unattested here: \"májusban\"."
+  ],
+  "month_6": [
+   "Unicode CLDR 47, locale hu, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/hu/ca-gregorian.json): months.format.wide,",
+   "months.stand-alone.wide.  Not covered by any of those charts, and so",
+   "unattested here: \"júniusban\"."
+  ],
+  "month_7": [
+   "Unicode CLDR 47, locale hu, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/hu/ca-gregorian.json): months.format.wide,",
+   "months.stand-alone.wide.  Not covered by any of those charts, and so",
+   "unattested here: \"júliusban\"."
+  ],
+  "month_8": [
+   "Unicode CLDR 47, locale hu, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/hu/ca-gregorian.json): months.format.wide,",
+   "months.stand-alone.wide.  Not covered by any of those charts, and so",
+   "unattested here: \"augusztusban\"."
+  ],
+  "month_9": [
+   "Unicode CLDR 47, locale hu, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/hu/ca-gregorian.json): months.format.wide,",
+   "months.stand-alone.wide.  Not covered by any of those charts, and so",
+   "unattested here: \"szeptemberben\"."
+  ],
+  "unit_day": [
+   "sublative (\"for N nap\", -ra/-re): Wiktionary, hu \"nap\", declension table."
+  ],
+  "unit_hour": [
+   "sublative (\"for N óra\", -ra/-re): Wiktionary, hu \"óra\", declension table."
+  ],
+  "unit_minute": [
+   "sublative (\"for N perc\", -ra/-re): Wiktionary, hu \"perc\", declension table."
+  ],
+  "unit_month": [
+   "sublative (\"for N hónap\", -ra/-re): Wiktionary, hu \"hónap\", declension table."
+  ],
+  "unit_second": [
+   "sublative (\"for N másodperc\", -ra/-re): Wiktionary, hu \"másodperc\", declension table."
+  ],
+  "unit_year": [
+   "sublative (\"for N év\", -ra/-re): Wiktionary, hu \"év\", declension table."
+  ],
+  "weekday_0": [
+   "Unicode CLDR 47, locale hu, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/hu/ca-gregorian.json): days.format.wide,",
+   "days.stand-alone.wide.  Not covered by any of those charts, and so",
+   "unattested here: \"hétfőn\", \"hétfője\"."
+  ],
+  "weekday_1": [
+   "Unicode CLDR 47, locale hu, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/hu/ca-gregorian.json): days.format.wide,",
+   "days.stand-alone.wide.  Not covered by any of those charts, and so",
+   "unattested here: \"kedden\", \"keddje\"."
+  ],
+  "weekday_2": [
+   "Unicode CLDR 47, locale hu, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/hu/ca-gregorian.json): days.format.wide,",
+   "days.stand-alone.wide.  Not covered by any of those charts, and so",
+   "unattested here: \"szerdán\", \"szerdája\"."
+  ],
+  "weekday_3": [
+   "Unicode CLDR 47, locale hu, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/hu/ca-gregorian.json): days.format.wide,",
+   "days.stand-alone.wide.  Not covered by any of those charts, and so",
+   "unattested here: \"csütörtökön\", \"csütörtökje\"."
+  ],
+  "weekday_4": [
+   "Unicode CLDR 47, locale hu, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/hu/ca-gregorian.json): days.format.wide,",
+   "days.stand-alone.wide.  Not covered by any of those charts, and so",
+   "unattested here: \"pénteken\", \"péntekje\"."
+  ],
+  "weekday_5": [
+   "Unicode CLDR 47, locale hu, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/hu/ca-gregorian.json): days.format.wide,",
+   "days.stand-alone.wide.  Not covered by any of those charts, and so",
+   "unattested here: \"szombaton\", \"szombatja\"."
+  ],
+  "weekday_6": [
+   "Unicode CLDR 47, locale hu, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/hu/ca-gregorian.json): days.format.wide,",
+   "days.stand-alone.wide.  Not covered by any of those charts, and so",
+   "unattested here: \"vasárnapon\", \"vasárnapja\"."
+  ]
+ }
+}

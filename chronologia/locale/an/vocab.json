@@ -1,0 +1,415 @@
+{
+ "format_version": 1,
+ "words": {
+  "clock_dir_past": [
+   "e"
+  ],
+  "clock_dir_to": [
+   "menos"
+  ],
+  "clock_fraction_15": [
+   "quarto"
+  ],
+  "clock_fraction_30": [
+   "meya",
+   "meyo"
+  ],
+  "clock_landmark_0": [
+   "meyanuei",
+   "meyanueyt"
+  ],
+  "clock_landmark_720": [
+   "mediodía",
+   "meydia",
+   "meydiya"
+  ],
+  "clock_meridiem_am": [
+   "maitin",
+   "maitino"
+  ],
+  "clock_meridiem_night": [
+   "nuei",
+   "nueit",
+   "nueyt"
+  ],
+  "clock_meridiem_pm": [
+   "tardada",
+   "tarde",
+   "tardi"
+  ],
+  "clock_zone_0": [
+   "gmt",
+   "utc"
+  ],
+  "marker_ad": [
+   "dc"
+  ],
+  "marker_after": [
+   "dempues",
+   "dempués",
+   "dimpues",
+   "dimpués"
+  ],
+  "marker_and": [
+   "e",
+   "y"
+  ],
+  "marker_article": [
+   "a",
+   "as",
+   "es",
+   "lo",
+   "o",
+   "os",
+   "ra",
+   "ras"
+  ],
+  "marker_at": [
+   "a",
+   "as",
+   "la",
+   "las",
+   "ras"
+  ],
+  "marker_bc": [
+   "ac"
+  ],
+  "marker_before": [
+   "antes",
+   "antis",
+   "denantes"
+  ],
+  "marker_business": [
+   "fener",
+   "feners",
+   "laborable",
+   "laborables"
+  ],
+  "marker_during": [
+   "en"
+  ],
+  "marker_every": [
+   "cada"
+  ],
+  "marker_freq_daily": [
+   "diariament"
+  ],
+  "marker_freq_monthly": [
+   "mensualment"
+  ],
+  "marker_freq_weekly": [
+   "semanalment"
+  ],
+  "marker_freq_yearly": [
+   "anualment"
+  ],
+  "marker_from": [
+   "a partir de"
+  ],
+  "marker_future": [
+   "dentro",
+   "en"
+  ],
+  "marker_half": [
+   "meya",
+   "meyo"
+  ],
+  "marker_in": [
+   "en"
+  ],
+  "marker_last": [
+   "pasada",
+   "pasau",
+   "zaguer"
+  ],
+  "marker_next": [
+   "que vien",
+   "que viene",
+   "vinient"
+  ],
+  "marker_of": [
+   "d",
+   "de"
+  ],
+  "marker_ordlast": [
+   "zaguer",
+   "zaguers"
+  ],
+  "marker_past": [
+   "fa"
+  ],
+  "marker_present": [
+   "agora",
+   "aguora",
+   "ara"
+  ],
+  "marker_q": [
+   "q",
+   "t"
+  ],
+  "marker_quarter_word": [
+   "trimestre",
+   "trimestres"
+  ],
+  "marker_recur_for": [
+   "durante",
+   "por"
+  ],
+  "marker_since": [
+   "dende",
+   "desde"
+  ],
+  "marker_this": [
+   "esta",
+   "este",
+   "ista",
+   "iste"
+  ],
+  "marker_until": [
+   "dica",
+   "entro",
+   "entro a"
+  ],
+  "marker_week_num": [
+   "semana",
+   "semanas"
+  ],
+  "marker_weekof": [
+   "a semana de",
+   "semana de"
+  ],
+  "marker_year_plural": [
+   "anyos"
+  ],
+  "marker_year_word": [
+   "anyo",
+   "anyos",
+   "año"
+  ],
+  "month_1": [
+   "chinero"
+  ],
+  "month_10": [
+   "octubre"
+  ],
+  "month_11": [
+   "noviembre"
+  ],
+  "month_12": [
+   "aviento",
+   "deciembre"
+  ],
+  "month_2": [
+   "febrero"
+  ],
+  "month_3": [
+   "marzo"
+  ],
+  "month_4": [
+   "abril"
+  ],
+  "month_5": [
+   "mayo"
+  ],
+  "month_6": [
+   "chunyo"
+  ],
+  "month_7": [
+   "chuliol"
+  ],
+  "month_8": [
+   "agosto"
+  ],
+  "month_9": [
+   "setiembre"
+  ],
+  "months": [
+   "abril",
+   "agosto",
+   "chinero",
+   "chuliol",
+   "chunyo",
+   "deciembre",
+   "febrero",
+   "marzo",
+   "mayo",
+   "noviembre",
+   "octubre",
+   "setiembre"
+  ],
+  "named_day_-1": [
+   "ahiere",
+   "ayere"
+  ],
+  "named_day_-2": [
+   "antesdayere",
+   "antiyer"
+  ],
+  "named_day_0": [
+   "hue",
+   "huei"
+  ],
+  "named_day_1": [
+   "demán",
+   "manyana"
+  ],
+  "named_day_2": [
+   "pasadoman"
+  ],
+  "period_part_early": [
+   "prencipio",
+   "prencipios",
+   "primerias",
+   "primerías"
+  ],
+  "period_part_late": [
+   "fin",
+   "final",
+   "zagueras",
+   "zaguerias",
+   "zaguerías"
+  ],
+  "period_part_mid": [
+   "meitat",
+   "meyanias",
+   "meyanías",
+   "meyo"
+  ],
+  "scale_1000": [
+   "mil"
+  ],
+  "scale_1000000": [
+   "milions",
+   "millon",
+   "millons",
+   "millón"
+  ],
+  "scope_unit_century": [
+   "sieglo",
+   "sieglos"
+  ],
+  "scope_unit_decade": [
+   "decada",
+   "decadas",
+   "decenio",
+   "decenios"
+  ],
+  "season_fall": [
+   "agüerro"
+  ],
+  "season_spring": [
+   "primavera"
+  ],
+  "season_summer": [
+   "estiu",
+   "verano"
+  ],
+  "season_winter": [
+   "hibierno",
+   "ivierno"
+  ],
+  "unit_century": [
+   "sieglo",
+   "sieglos"
+  ],
+  "unit_day": [
+   "dia",
+   "dias",
+   "diya",
+   "diyas",
+   "día",
+   "días"
+  ],
+  "unit_decade": [
+   "decada",
+   "decadas",
+   "decenio",
+   "decenios"
+  ],
+  "unit_hour": [
+   "hora",
+   "horas"
+  ],
+  "unit_minute": [
+   "minuto",
+   "minutos"
+  ],
+  "unit_month": [
+   "mes",
+   "meses"
+  ],
+  "unit_week": [
+   "semana",
+   "semanas"
+  ],
+  "unit_year": [
+   "anyo",
+   "anyos",
+   "año",
+   "años"
+  ],
+  "weekday_0": [
+   "luns"
+  ],
+  "weekday_1": [
+   "martes"
+  ],
+  "weekday_2": [
+   "miercres"
+  ],
+  "weekday_3": [
+   "chueves"
+  ],
+  "weekday_4": [
+   "viernes"
+  ],
+  "weekday_5": [
+   "sabado"
+  ],
+  "weekday_6": [
+   "dominche"
+  ]
+ },
+ "sources": {
+  "clock_meridiem_night": [
+   "The NIGHT daypart is a midnight-crossing BAND in colloquial clock usage,",
+   "not a uniform +12 PM shift: \"la una de nueyt\" is 01:00, \"las diez de nueyt\"",
+   "is 22:00, twelve is midnight 00:00.  Small hours 1..5 stay AM, evening",
+   "hours 6..11 are PM, twelve is midnight (band-split in resolver _clock_hms).",
+   "AN is Ibero-Romance and shares the same madrugada band [00:00, 06:00) as",
+   "es/ca/pt (chronologia/dayparts.py); the 5|6 cut is inherited from the",
+   "RAE/DIEC/Priberam-cited boundary for the sibling Ibero-Romance locales",
+   "(see chronologia/locale/es/clock_meridiem_night.voc) pending native",
+   "confirmation for Aragonese (tracked in issue #266)."
+  ],
+  "marker_during": [
+   "\"en\" is the locative preposition used with months (\"en chinero\").",
+   "Source: Diccionario aragones, https://academiadelaragones.org/."
+  ],
+  "marker_year_plural": [
+   "The plural year noun that frames a decade (\"os anyos 80\"); the singular",
+   "\"anyo\" names a single year and must not reach the decade slot.",
+   "Source: Wiktionary, s.v. \"anyo\" (https://en.wiktionary.org/wiki/anyo),",
+   "Aragonese noun: \"anyo m (plural anyos)\", citing the Aragonario,",
+   "diccionario castellano-aragones."
+  ],
+  "scope_unit_century": [
+   "Wiktionary \"sieglo\" (en.wiktionary.org/wiki/sieglo): Aragonese masculine",
+   "noun \"century\", plural \"sieglos\", a semi-learned borrowing from Latin",
+   "saeculum."
+  ],
+  "scope_unit_decade": [
+   "Wiktionary \"decada\" (en.wiktionary.org/wiki/decada): Aragonese feminine",
+   "noun \"decade (10 years)\", synonym of \"decenio\" -- both listed."
+  ],
+  "unit_century": [
+   "Wiktionary \"sieglo\" (en.wiktionary.org/wiki/sieglo): Aragonese masculine",
+   "noun \"century\", plural \"sieglos\", a semi-learned borrowing from Latin",
+   "saeculum."
+  ],
+  "unit_decade": [
+   "Wiktionary \"decada\" (en.wiktionary.org/wiki/decada): Aragonese feminine",
+   "noun \"decade (10 years)\", synonym of \"decenio\" -- both listed."
+  ]
+ }
+}

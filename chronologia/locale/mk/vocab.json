@@ -1,0 +1,595 @@
+{
+ "format_version": 1,
+ "words": {
+  "clock_dir_past": [
+   "и"
+  ],
+  "clock_fraction_30": [
+   "пол"
+  ],
+  "clock_landmark_0": [
+   "полноќ",
+   "полноќта"
+  ],
+  "clock_landmark_720": [
+   "напладне",
+   "пладне",
+   "пладнето"
+  ],
+  "clock_meridiem_am": [
+   "am",
+   "наутро",
+   "претпл",
+   "претпладне"
+  ],
+  "clock_meridiem_pm": [
+   "pm",
+   "навечер",
+   "попл",
+   "попладне"
+  ],
+  "daypart_nautro_mk": [
+   "наутро",
+   "утро"
+  ],
+  "daypart_navecher_mk": [
+   "вечер",
+   "навечер"
+  ],
+  "daypart_nokje_mk": [
+   "ноќе"
+  ],
+  "daypart_popladne_mk": [
+   "попладне"
+  ],
+  "daypart_pretpladne_mk": [
+   "претпладне"
+  ],
+  "marker_after": [
+   "по"
+  ],
+  "marker_and": [
+   "и"
+  ],
+  "marker_at": [
+   "во"
+  ],
+  "marker_before": [
+   "пред"
+  ],
+  "marker_between": [
+   "меѓу",
+   "помеѓу"
+  ],
+  "marker_every": [
+   "секое",
+   "секои",
+   "секој",
+   "секоја"
+  ],
+  "marker_future": [
+   "за"
+  ],
+  "marker_last": [
+   "минат",
+   "мината",
+   "минатата",
+   "минати",
+   "минатиот",
+   "минатите",
+   "минато",
+   "минатото",
+   "последното"
+  ],
+  "marker_minute_word": [
+   "минута",
+   "минути"
+  ],
+  "marker_next": [
+   "следната",
+   "следниот",
+   "следното"
+  ],
+  "marker_oclock": [
+   "час",
+   "часа",
+   "часот"
+  ],
+  "marker_of": [
+   "на"
+  ],
+  "marker_past": [
+   "пред"
+  ],
+  "marker_quarter_word": [
+   "тримесечја",
+   "тримесечје",
+   "тримесечјето"
+  ],
+  "marker_this": [
+   "ова",
+   "оваа",
+   "овие",
+   "овој"
+  ],
+  "marker_until": [
+   "до"
+  ],
+  "marker_year_plural": [
+   "години",
+   "годиниве",
+   "годинине",
+   "годините"
+  ],
+  "marker_year_word": [
+   "г",
+   "година",
+   "годината"
+  ],
+  "month_1": [
+   "јан",
+   "јануари"
+  ],
+  "month_10": [
+   "окт",
+   "октомври"
+  ],
+  "month_11": [
+   "ное",
+   "ноември"
+  ],
+  "month_12": [
+   "дек",
+   "декември"
+  ],
+  "month_2": [
+   "фев",
+   "февруари"
+  ],
+  "month_3": [
+   "мар",
+   "март"
+  ],
+  "month_4": [
+   "апр",
+   "април"
+  ],
+  "month_5": [
+   "мај"
+  ],
+  "month_6": [
+   "јун",
+   "јуни"
+  ],
+  "month_7": [
+   "јул",
+   "јули"
+  ],
+  "month_8": [
+   "авг",
+   "август"
+  ],
+  "month_9": [
+   "сеп",
+   "септември"
+  ],
+  "named_day_-1": [
+   "вчера"
+  ],
+  "named_day_-2": [
+   "завчера"
+  ],
+  "named_day_0": [
+   "денес",
+   "денеска"
+  ],
+  "named_day_1": [
+   "утре"
+  ],
+  "named_day_2": [
+   "другиден",
+   "задутре"
+  ],
+  "season_fall": [
+   "есен",
+   "есента"
+  ],
+  "season_spring": [
+   "пролет",
+   "пролетта"
+  ],
+  "season_summer": [
+   "лето",
+   "летото"
+  ],
+  "season_winter": [
+   "зима",
+   "зимата"
+  ],
+  "special_weekend": [
+   "викенд",
+   "викенди",
+   "викендот"
+  ],
+  "unit1_day": [
+   "ден"
+  ],
+  "unit1_hour": [
+   "час"
+  ],
+  "unit1_minute": [
+   "минута"
+  ],
+  "unit1_month": [
+   "месец"
+  ],
+  "unit1_second": [
+   "секунда"
+  ],
+  "unit1_week": [
+   "седмица"
+  ],
+  "unit1_year": [
+   "година"
+  ],
+  "unit_day": [
+   "ден",
+   "дена"
+  ],
+  "unit_hour": [
+   "час",
+   "часа"
+  ],
+  "unit_minute": [
+   "минута",
+   "минути"
+  ],
+  "unit_month": [
+   "месец",
+   "месеца",
+   "месеци"
+  ],
+  "unit_second": [
+   "секунда",
+   "секунди"
+  ],
+  "unit_week": [
+   "недели",
+   "седмица",
+   "седмици"
+  ],
+  "unit_year": [
+   "година",
+   "години"
+  ],
+  "weekday_0": [
+   "пон",
+   "понеделник"
+  ],
+  "weekday_1": [
+   "вто",
+   "вторник"
+  ],
+  "weekday_2": [
+   "сре",
+   "среда"
+  ],
+  "weekday_3": [
+   "чет",
+   "четврток"
+  ],
+  "weekday_4": [
+   "пет",
+   "петок"
+  ],
+  "weekday_5": [
+   "саб",
+   "сабота"
+  ],
+  "weekday_6": [
+   "нед",
+   "недела"
+  ]
+ },
+ "sources": {
+  "clock_dir_past": [
+   "The Macedonian clock is ADDITIVE ONLY: minutes are counted forward from the",
+   "hour already named, through 59, and и (\"and\") is the only direction word.",
+   "reper.net.mk, style guide on writing the time, worked examples \"девет и",
+   "петнаесет\" (9:15), \"девет и пол\" (9:30) and \"дваесет и еден и педесет\"",
+   "(21:50).  There is no minutes-to-the-hour form: mk.wikipedia's \"Предлози во",
+   "македонскиот јазик\" §Без catalogues every sense of без and names no temporal",
+   "one, so no clock_dir_to.voc ships."
+  ],
+  "clock_fraction_30": [
+   "reper.net.mk, style guide on writing the time: \"девет и пол\" is 9:30 -- the",
+   "half hour is added to the hour already named, not subtracted from the next.",
+   "No quarter-hour word ships: the same guide writes the quarter as \"девет и",
+   "петнаесет\", with the minute spelled out."
+  ],
+  "clock_landmark_0": [
+   "Unicode CLDR 47, cldr-json cldr-dates-full/main/mk/ca-gregorian.json.  dayPeriods midnight.",
+   "en.wiktionary.org, Macedonian entry полноќ (noun, \"midnight\"), definite полноќта."
+  ],
+  "clock_landmark_720": [
+   "Unicode CLDR 47, cldr-json cldr-dates-full/main/mk/ca-gregorian.json.  dayPeriods noon: напладне in the format context,",
+   "пладне stand-alone.",
+   "en.wiktionary.org, Macedonian entry пладне (noun, \"noon\"), definite пладнето."
+  ],
+  "clock_meridiem_am": [
+   "Unicode CLDR 47, cldr-json cldr-dates-full/main/mk/ca-gregorian.json.  dayPeriods am \"претпл.\" (the tokenizer drops the",
+   "dot).",
+   "The spoken half of the day: CLDR 47 names morning1 (04:00-10:00) \"наутро\" and morning2",
+   "(10:00-12:00) \"претпладне\", and both are adverbs in their own right -- en.wiktionary.org,",
+   "Macedonian entries наутро (\"in the morning\") and претпладне (\"before noon\")."
+  ],
+  "clock_meridiem_pm": [
+   "Unicode CLDR 47, cldr-json cldr-dates-full/main/mk/ca-gregorian.json.  dayPeriods pm \"попл.\".",
+   "The spoken half of the day: CLDR 47 names afternoon1 (12:00-18:00) \"попладне\" and evening1",
+   "(18:00-24:00) \"навечер\", and both are adverbs in their own right -- en.wiktionary.org, Macedonian",
+   "entries попладне (\"in the afternoon\") and навечер (\"in the evening\") -- so they qualify a named",
+   "hour the way \"следобед\" does in Bulgarian."
+  ],
+  "daypart_nautro_mk": [
+   "Band boundaries: Unicode CLDR 47 Day Period Rules, locale mk",
+   "(cldr-core/supplemental/dayPeriods.json), transcribed in",
+   "chronologia/dayparts.py as the наутро (morning1, 04:00-10:00) band.",
+   "en.wiktionary.org, Macedonian entry наутро (adverb, \"in the morning\"); утро is the stand-alone",
+   "form CLDR gives for the same band."
+  ],
+  "daypart_navecher_mk": [
+   "Band boundaries: Unicode CLDR 47 Day Period Rules, locale mk",
+   "(cldr-core/supplemental/dayPeriods.json), transcribed in",
+   "chronologia/dayparts.py as the навечер (evening1, 18:00-24:00) band.",
+   "en.wiktionary.org, Macedonian entry навечер (adverb, \"in the evening\"); вечер is the stand-alone",
+   "form CLDR gives for the same band."
+  ],
+  "daypart_nokje_mk": [
+   "Band boundaries: Unicode CLDR 47 Day Period Rules, locale mk",
+   "(cldr-core/supplemental/dayPeriods.json), transcribed in",
+   "chronologia/dayparts.py as the ноќе (night1, 00:00-04:00) band.",
+   "en.wiktionary.org, Macedonian entry ноќе (adverb, \"at night\")."
+  ],
+  "daypart_popladne_mk": [
+   "Band boundaries: Unicode CLDR 47 Day Period Rules, locale mk",
+   "(cldr-core/supplemental/dayPeriods.json), transcribed in",
+   "chronologia/dayparts.py as the попладне (afternoon1, 12:00-18:00) band.",
+   "en.wiktionary.org, Macedonian entry попладне (noun/adverb, \"afternoon, in the afternoon\")."
+  ],
+  "daypart_pretpladne_mk": [
+   "Band boundaries: Unicode CLDR 47 Day Period Rules, locale mk",
+   "(cldr-core/supplemental/dayPeriods.json), transcribed in",
+   "chronologia/dayparts.py as the претпладне (morning2, 10:00-12:00) band.",
+   "Unicode CLDR 47, cldr-json cldr-dates-full/main/mk/ca-gregorian.json.  dayPeriods morning2, both format and stand-alone."
+  ],
+  "marker_after": [
+   "mk.wikipedia, \"Предлози во македонскиот јазик\", §По: temporal succession."
+  ],
+  "marker_and": [
+   "Unicode CLDR 47, cldr-json cldr-dates-full/main/mk/dateFields.json. -- и joins the tens to the unit of a compound numeral",
+   "(en.wiktionary.org, Module:number_list/data/mk, \"дваесет и еден\")."
+  ],
+  "marker_at": [
+   "en.wiktionary.org, Macedonian entry час, worked example \"автобусот тргнува во 5 часот\"."
+  ],
+  "marker_before": [
+   "en.wiktionary.org, Macedonian entry пред, sense \"before\"."
+  ],
+  "marker_between": [
+   "mk.wikipedia, \"Предлози во македонскиот јазик\", §Меѓу."
+  ],
+  "marker_every": [
+   "en.wiktionary.org, Macedonian entry секој (determiner, \"every, each\"), whose declension",
+   "table gives секоја (f), секое (n) and секои (pl)."
+  ],
+  "marker_future": [
+   "Unicode CLDR 47, cldr-json cldr-dates-full/main/mk/dateFields.json.  every future relative-time pattern is \"за {0} ...\"."
+  ],
+  "marker_last": [
+   "Unicode CLDR 47, cldr-json cldr-dates-full/main/mk/dateFields.json.  relative-type--1 spells \"минатиот месец\", \"минатата",
+   "седмица\", \"минатата среда\" -- the adjective agrees in gender with its noun.",
+   "последното is the form the quarter field uses.",
+   "en.wiktionary.org, Macedonian entry минат (\"previous, past, last\"), whose declension table gives",
+   "the indefinite and definite forms alike."
+  ],
+  "marker_minute_word": [
+   "en.wiktionary.org, Macedonian entry минута."
+  ],
+  "marker_next": [
+   "Unicode CLDR 47, cldr-json cldr-dates-full/main/mk/dateFields.json.  relative-type-1 spells \"следниот месец\", \"следната",
+   "седмица\", \"следното тримесечје\"."
+  ],
+  "marker_oclock": [
+   "en.wiktionary.org, Macedonian entry час, worked example \"колку е часот? - три часот е\"",
+   "-- the hour noun carries the definite article when it names a clock time."
+  ],
+  "marker_of": [
+   "Adnominal linker: на (\"петтиот ден на месецот\")."
+  ],
+  "marker_past": [
+   "Unicode CLDR 47, cldr-json cldr-dates-full/main/mk/dateFields.json.  every past relative-time pattern is \"пред {0} ...\".",
+   "en.wiktionary.org, Macedonian entry пред, sense \"ago\" (\"се вселивме пред две години\")."
+  ],
+  "marker_quarter_word": [
+   "Unicode CLDR 47, cldr-json cldr-dates-full/main/mk/dateFields.json.  quarter displayName тримесечје, counted plural",
+   "тримесечја; тримесечјето is the definite form the relative phrases use."
+  ],
+  "marker_this": [
+   "Unicode CLDR 47, cldr-json cldr-dates-full/main/mk/dateFields.json.  relative-type-0 spells \"овој месец\", \"оваа година\",",
+   "\"ова тримесечје\".",
+   "en.wiktionary.org, Macedonian entry овој, whose declension gives the plural овие."
+  ],
+  "marker_until": [
+   "mk.wikipedia, \"Предлози во македонскиот јазик\", §До: \"достигнување до",
+   "извесен временски момент\" -- reaching a point in time, worked example \"до полноќ\"."
+  ],
+  "marker_year_plural": [
+   "The plural of \"година\" (year).  A count of years takes the plural (\"988",
+   "години\"); the singular names a year (\"988 година\").",
+   "Source: en.wiktionary.org, \"година\", Macedonian inflection table:",
+   "indefinite plural \"години\", definite plural \"годините\", \"годиниве\",",
+   "\"годинине\"."
+  ],
+  "marker_year_word": [
+   "Unicode CLDR 47, cldr-json cldr-dates-full/main/mk/ca-gregorian.json.  dateFormats spell every date line with a trailing",
+   "literal \"г.\", the abbreviation of година."
+  ],
+  "month_1": [
+   "Unicode CLDR 47, cldr-json cldr-dates-full/main/mk/ca-gregorian.json.  months.format.wide and months.format.abbreviated (the",
+   "abbreviation is written with a trailing dot, which the tokenizer drops)."
+  ],
+  "month_10": [
+   "Unicode CLDR 47, cldr-json cldr-dates-full/main/mk/ca-gregorian.json.  months.format.wide and months.format.abbreviated (the",
+   "abbreviation is written with a trailing dot, which the tokenizer drops)."
+  ],
+  "month_11": [
+   "Unicode CLDR 47, cldr-json cldr-dates-full/main/mk/ca-gregorian.json.  months.format.wide and months.format.abbreviated (the",
+   "abbreviation is written with a trailing dot, which the tokenizer drops)."
+  ],
+  "month_12": [
+   "Unicode CLDR 47, cldr-json cldr-dates-full/main/mk/ca-gregorian.json.  months.format.wide and months.format.abbreviated (the",
+   "abbreviation is written with a trailing dot, which the tokenizer drops)."
+  ],
+  "month_2": [
+   "Unicode CLDR 47, cldr-json cldr-dates-full/main/mk/ca-gregorian.json.  months.format.wide and months.format.abbreviated (the",
+   "abbreviation is written with a trailing dot, which the tokenizer drops)."
+  ],
+  "month_3": [
+   "Unicode CLDR 47, cldr-json cldr-dates-full/main/mk/ca-gregorian.json.  months.format.wide and months.format.abbreviated (the",
+   "abbreviation is written with a trailing dot, which the tokenizer drops)."
+  ],
+  "month_4": [
+   "Unicode CLDR 47, cldr-json cldr-dates-full/main/mk/ca-gregorian.json.  months.format.wide and months.format.abbreviated (the",
+   "abbreviation is written with a trailing dot, which the tokenizer drops)."
+  ],
+  "month_5": [
+   "Unicode CLDR 47, cldr-json cldr-dates-full/main/mk/ca-gregorian.json.  months.format.wide and months.format.abbreviated (the",
+   "abbreviation is written with a trailing dot, which the tokenizer drops)."
+  ],
+  "month_6": [
+   "Unicode CLDR 47, cldr-json cldr-dates-full/main/mk/ca-gregorian.json.  months.format.wide and months.format.abbreviated (the",
+   "abbreviation is written with a trailing dot, which the tokenizer drops)."
+  ],
+  "month_7": [
+   "Unicode CLDR 47, cldr-json cldr-dates-full/main/mk/ca-gregorian.json.  months.format.wide and months.format.abbreviated (the",
+   "abbreviation is written with a trailing dot, which the tokenizer drops)."
+  ],
+  "month_8": [
+   "Unicode CLDR 47, cldr-json cldr-dates-full/main/mk/ca-gregorian.json.  months.format.wide and months.format.abbreviated (the",
+   "abbreviation is written with a trailing dot, which the tokenizer drops)."
+  ],
+  "month_9": [
+   "Unicode CLDR 47, cldr-json cldr-dates-full/main/mk/ca-gregorian.json.  months.format.wide and months.format.abbreviated (the",
+   "abbreviation is written with a trailing dot, which the tokenizer drops)."
+  ],
+  "named_day_-1": [
+   "Unicode CLDR 47, cldr-json cldr-dates-full/main/mk/dateFields.json.  day relative-type--1."
+  ],
+  "named_day_-2": [
+   "Unicode CLDR 47, cldr-json cldr-dates-full/main/mk/dateFields.json.  day relative-type--2."
+  ],
+  "named_day_0": [
+   "Unicode CLDR 47, cldr-json cldr-dates-full/main/mk/dateFields.json.  day relative-type-0.",
+   "en.wiktionary.org, Macedonian entry денес (adverb, \"today\"); денеска is",
+   "the equally current variant listed there as a related term."
+  ],
+  "named_day_1": [
+   "Unicode CLDR 47, cldr-json cldr-dates-full/main/mk/dateFields.json.  day relative-type-1."
+  ],
+  "named_day_2": [
+   "Unicode CLDR 47, cldr-json cldr-dates-full/main/mk/dateFields.json.  day relative-type-2.",
+   "en.wiktionary.org, Macedonian entry задутре, which lists другиден as its synonym."
+  ],
+  "season_fall": [
+   "en.wiktionary.org, Macedonian entry есен (noun, \"autumn, fall\"), definite есента."
+  ],
+  "season_spring": [
+   "en.wiktionary.org, Macedonian entry есен, coordinate-terms box \"Seasons in Macedonian\",",
+   "which glosses пролет as spring; есента-style definite forms come from each",
+   "entry's own declension table."
+  ],
+  "season_summer": [
+   "en.wiktionary.org, Macedonian entry лето (noun, \"summer\"), definite летото."
+  ],
+  "season_winter": [
+   "en.wiktionary.org, Macedonian entry зима (noun, \"winter\"), definite зимата."
+  ],
+  "special_weekend": [
+   "en.wiktionary.org, Macedonian entry викенд (noun, \"weekend\"), definite викендот."
+  ],
+  "unit1_day": [
+   "en.wiktionary.org, Macedonian entry ден."
+  ],
+  "unit1_hour": [
+   "en.wiktionary.org, Macedonian entry час."
+  ],
+  "unit1_minute": [
+   "en.wiktionary.org, Macedonian entry минута."
+  ],
+  "unit1_month": [
+   "en.wiktionary.org, Macedonian entry месец."
+  ],
+  "unit1_second": [
+   "en.wiktionary.org, Macedonian entry секунда."
+  ],
+  "unit1_week": [
+   "Unicode CLDR 47, cldr-json cldr-dates-full/main/mk/dateFields.json.  week displayName."
+  ],
+  "unit1_year": [
+   "en.wiktionary.org, Macedonian entry година."
+  ],
+  "unit_day": [
+   "en.wiktionary.org, Macedonian entry ден: the plural is денови but the COUNT FORM -- the",
+   "shape a noun takes behind a numeral -- is дена, and дена is what CLDR spells",
+   "every counted day offset with (\"пред {0} дена\").  Only the count form ships:",
+   "денови counts nothing."
+  ],
+  "unit_hour": [
+   "en.wiktionary.org, Macedonian entry час: general plural часови, count form часа, and",
+   "часа is the form CLDR counts hours with (\"пред {0} часа\")."
+  ],
+  "unit_minute": [
+   "en.wiktionary.org, Macedonian entry минута (plural минути)."
+  ],
+  "unit_month": [
+   "Unicode CLDR 47, cldr-json cldr-dates-full/main/mk/dateFields.json.  \"пред {0} месеци\".",
+   "en.wiktionary.org, Macedonian entry месец, count form месеца."
+  ],
+  "unit_second": [
+   "en.wiktionary.org, Macedonian entry секунда (plural секунди)."
+  ],
+  "unit_week": [
+   "Unicode CLDR 47, cldr-json cldr-dates-full/main/mk/dateFields.json.  The week field's displayName is седмица and its",
+   "counted plural седмици.  недели, the plural of недела, is the colloquial",
+   "rival (en.wiktionary.org, Macedonian entry недела, sense \"week\"); the SINGULAR недела is left to the",
+   "weekday vocabulary, where it is Sunday."
+  ],
+  "unit_year": [
+   "Unicode CLDR 47, cldr-json cldr-dates-full/main/mk/dateFields.json.  \"пред {0} години\"."
+  ],
+  "weekday_0": [
+   "Unicode CLDR 47, cldr-json cldr-dates-full/main/mk/ca-gregorian.json.  days.format.wide and days.format.abbreviated."
+  ],
+  "weekday_1": [
+   "Unicode CLDR 47, cldr-json cldr-dates-full/main/mk/ca-gregorian.json.  days.format.wide and days.format.abbreviated."
+  ],
+  "weekday_2": [
+   "Unicode CLDR 47, cldr-json cldr-dates-full/main/mk/ca-gregorian.json.  days.format.wide and days.format.abbreviated."
+  ],
+  "weekday_3": [
+   "Unicode CLDR 47, cldr-json cldr-dates-full/main/mk/ca-gregorian.json.  days.format.wide and days.format.abbreviated."
+  ],
+  "weekday_4": [
+   "Unicode CLDR 47, cldr-json cldr-dates-full/main/mk/ca-gregorian.json.  days.format.wide and days.format.abbreviated."
+  ],
+  "weekday_5": [
+   "Unicode CLDR 47, cldr-json cldr-dates-full/main/mk/ca-gregorian.json.  days.format.wide and days.format.abbreviated."
+  ],
+  "weekday_6": [
+   "Unicode CLDR 47, cldr-json cldr-dates-full/main/mk/ca-gregorian.json.  days.format.wide and days.format.abbreviated.",
+   "недела is also the colloquial word for a week; only the Sunday reading",
+   "ships on the singular, and the week is седмица (CLDR's own displayName",
+   "for the week field), so the two never contend for the same surface."
+  ]
+ }
+}

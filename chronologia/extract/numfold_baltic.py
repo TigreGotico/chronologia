@@ -161,7 +161,7 @@ def governed_case(n: int) -> str:
 
 
 #: unit noun surfaces per governed form, in the nominative and the accusative
-#: (the case "prieš" imposes).  Same declension tables the ``unit_*.voc``
+#: (the case "prieš" imposes).  Same declension tables the ``unit_*``
 #: files cite: en.wiktionary.org for diena, savaitė, mėnuo, metai, valanda,
 #: minutė, amžius, dešimtmetis.
 UNIT_FORMS: Dict[str, Dict[str, str]] = {

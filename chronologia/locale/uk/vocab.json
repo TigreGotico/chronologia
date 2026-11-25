@@ -1,0 +1,911 @@
+{
+ "format_version": 1,
+ "words": {
+  "clock_fraction_15": [
+   "чверть"
+  ],
+  "clock_fraction_30": [
+   "пів"
+  ],
+  "clock_landmark_0": [
+   "опівночі",
+   "північ"
+  ],
+  "clock_landmark_720": [
+   "опівдні",
+   "полудень"
+  ],
+  "clock_meridiem_am": [
+   "ранку"
+  ],
+  "clock_meridiem_night": [
+   "ночі"
+  ],
+  "clock_meridiem_pm": [
+   "вечора",
+   "дня"
+  ],
+  "clock_zone_0": [
+   "gmt",
+   "utc"
+  ],
+  "daypart_afternoon_uk": [
+   "вдень"
+  ],
+  "daypart_evening_uk": [
+   "ввечері",
+   "увечері"
+  ],
+  "daypart_morning_uk": [
+   "вранці",
+   "зранку",
+   "щоранку"
+  ],
+  "daypart_night_uk": [
+   "вночі"
+  ],
+  "marker_ad": [
+   "н. е.",
+   "н.е.",
+   "нашої ери"
+  ],
+  "marker_after": [
+   "після"
+  ],
+  "marker_alarm_at": [
+   "будильник на"
+  ],
+  "marker_and": [
+   "та",
+   "і"
+  ],
+  "marker_at": [
+   "в",
+   "о",
+   "об",
+   "у"
+  ],
+  "marker_bc": [
+   "до н. е.",
+   "до н.е.",
+   "до нашої ери"
+  ],
+  "marker_before": [
+   "до",
+   "перед"
+  ],
+  "marker_between": [
+   "між"
+  ],
+  "marker_business": [
+   "робочий",
+   "робочих",
+   "робочі"
+  ],
+  "marker_day_label": [
+   "числа"
+  ],
+  "marker_during": [
+   "в",
+   "у"
+  ],
+  "marker_every": [
+   "кожен",
+   "кожна",
+   "кожного",
+   "кожної",
+   "кожні",
+   "що"
+  ],
+  "marker_for_date": [
+   "на"
+  ],
+  "marker_freq_daily": [
+   "щодня"
+  ],
+  "marker_freq_monthly": [
+   "щомісяця"
+  ],
+  "marker_freq_weekly": [
+   "щотижня"
+  ],
+  "marker_freq_yearly": [
+   "щороку"
+  ],
+  "marker_from": [
+   "від",
+   "з"
+  ],
+  "marker_future": [
+   "через"
+  ],
+  "marker_half": [
+   "половина",
+   "пів"
+  ],
+  "marker_in": [
+   "через"
+  ],
+  "marker_indef": [
+   "один",
+   "одна"
+  ],
+  "marker_last": [
+   "минула",
+   "минуле",
+   "минулий",
+   "минулим",
+   "минулими",
+   "минулих",
+   "минулого",
+   "минулому",
+   "минулою",
+   "минулої",
+   "минулу",
+   "минулі",
+   "минулій",
+   "попереднього",
+   "попередньому",
+   "попередньої",
+   "попередню",
+   "попередня",
+   "попереднє",
+   "попередні",
+   "попередній",
+   "попереднім",
+   "попередніми",
+   "попередніх"
+  ],
+  "marker_month_word": [
+   "місяця"
+  ],
+  "marker_na": [
+   "на"
+  ],
+  "marker_next": [
+   "наступна",
+   "наступне",
+   "наступний",
+   "наступним",
+   "наступними",
+   "наступних",
+   "наступного",
+   "наступному",
+   "наступною",
+   "наступної",
+   "наступну",
+   "наступні",
+   "наступній"
+  ],
+  "marker_oclock": [
+   "годин",
+   "годині"
+  ],
+  "marker_of": [
+   "в",
+   "у"
+  ],
+  "marker_offset_lead": [
+   "за",
+   "через"
+  ],
+  "marker_ordlast": [
+   "останнього",
+   "останньому",
+   "останньою",
+   "останньої",
+   "останню",
+   "остання",
+   "останнє",
+   "останні",
+   "останній",
+   "останнім",
+   "останніми",
+   "останніх"
+  ],
+  "marker_past": [
+   "тому"
+  ],
+  "marker_q": [
+   "q"
+  ],
+  "marker_quarter_word": [
+   "квартал",
+   "квартали",
+   "кварталу"
+  ],
+  "marker_recur_for": [
+   "протягом"
+  ],
+  "marker_since": [
+   "від",
+   "з"
+  ],
+  "marker_this": [
+   "це",
+   "цей",
+   "цим",
+   "цими",
+   "цих",
+   "цього",
+   "цьому",
+   "цю",
+   "ця",
+   "ці",
+   "цій",
+   "цією",
+   "цієї"
+  ],
+  "marker_to": [
+   "до",
+   "по"
+  ],
+  "marker_until": [
+   "до"
+  ],
+  "marker_week_num": [
+   "тиждень",
+   "тижня"
+  ],
+  "marker_weekof": [
+   "на тижні",
+   "тиждень від",
+   "тиждень з"
+  ],
+  "marker_year_count_one": [
+   "рік"
+  ],
+  "marker_year_plural": [
+   "рокам",
+   "роками",
+   "роках",
+   "роки",
+   "років"
+  ],
+  "marker_year_word": [
+   "року",
+   "рік"
+  ],
+  "month_1": [
+   "січень",
+   "січнем",
+   "січня",
+   "січні"
+  ],
+  "month_10": [
+   "жовтень",
+   "жовтнем",
+   "жовтня",
+   "жовтні"
+  ],
+  "month_11": [
+   "листопад",
+   "листопада",
+   "листопадом",
+   "листопаді"
+  ],
+  "month_12": [
+   "грудень",
+   "груднем",
+   "грудня",
+   "грудні"
+  ],
+  "month_2": [
+   "лютий",
+   "лютим",
+   "лютого",
+   "лютому"
+  ],
+  "month_3": [
+   "березень",
+   "березнем",
+   "березня",
+   "березні"
+  ],
+  "month_4": [
+   "квітень",
+   "квітнем",
+   "квітня",
+   "квітні"
+  ],
+  "month_5": [
+   "травень",
+   "травнем",
+   "травня",
+   "травні"
+  ],
+  "month_6": [
+   "червень",
+   "червнем",
+   "червня",
+   "червні"
+  ],
+  "month_7": [
+   "липень",
+   "липнем",
+   "липня",
+   "липні"
+  ],
+  "month_8": [
+   "серпень",
+   "серпнем",
+   "серпня",
+   "серпні"
+  ],
+  "month_9": [
+   "вересень",
+   "вереснем",
+   "вересня",
+   "вересні"
+  ],
+  "named_day_-1": [
+   "вчора",
+   "учора"
+  ],
+  "named_day_-2": [
+   "позавчора"
+  ],
+  "named_day_0": [
+   "сьогодні"
+  ],
+  "named_day_1": [
+   "завтра"
+  ],
+  "named_day_2": [
+   "післязавтра"
+  ],
+  "period_part_early": [
+   "початку",
+   "початок"
+  ],
+  "period_part_late": [
+   "кінець",
+   "кінця",
+   "кінці"
+  ],
+  "period_part_mid": [
+   "середина",
+   "середині"
+  ],
+  "scale_1000": [
+   "тисяч",
+   "тисяча",
+   "тисячі"
+  ],
+  "scope_unit_century": [
+   "століття"
+  ],
+  "scope_unit_decade": [
+   "десятиліття"
+  ],
+  "season_fall": [
+   "восени",
+   "осені",
+   "осінь"
+  ],
+  "season_spring": [
+   "весна",
+   "весни",
+   "навесні"
+  ],
+  "season_summer": [
+   "влітку",
+   "літа",
+   "літо"
+  ],
+  "season_winter": [
+   "взимку",
+   "зима",
+   "зими"
+  ],
+  "special_weekend": [
+   "вихідних",
+   "вихідні"
+  ],
+  "unit1_century": [
+   "вік",
+   "століття"
+  ],
+  "unit1_day": [
+   "день",
+   "днем",
+   "дню",
+   "дня"
+  ],
+  "unit1_decade": [
+   "декада",
+   "десятиліття"
+  ],
+  "unit1_hour": [
+   "година",
+   "годиною",
+   "годину",
+   "годині"
+  ],
+  "unit1_minute": [
+   "хвилина",
+   "хвилиною",
+   "хвилину",
+   "хвилині"
+  ],
+  "unit1_month": [
+   "місяцем",
+   "місяць",
+   "місяцю",
+   "місяця"
+  ],
+  "unit1_second": [
+   "секунда",
+   "секундою",
+   "секунду",
+   "секунді"
+  ],
+  "unit1_week": [
+   "тиждень",
+   "тижнем",
+   "тижню",
+   "тижня"
+  ],
+  "unit1_year": [
+   "рокові",
+   "роком",
+   "року",
+   "році",
+   "рік"
+  ],
+  "unit_century": [
+   "вік",
+   "століття"
+  ],
+  "unit_day": [
+   "день",
+   "днем",
+   "дню",
+   "дня",
+   "дням",
+   "днями",
+   "днях",
+   "дні",
+   "днів"
+  ],
+  "unit_decade": [
+   "декада",
+   "десятиліття"
+  ],
+  "unit_hour": [
+   "годин",
+   "година",
+   "годинам",
+   "годинами",
+   "годинах",
+   "години",
+   "годиною",
+   "годину",
+   "годині"
+  ],
+  "unit_minute": [
+   "хвилин",
+   "хвилина",
+   "хвилинам",
+   "хвилинами",
+   "хвилинах",
+   "хвилини",
+   "хвилиною",
+   "хвилину",
+   "хвилині"
+  ],
+  "unit_month": [
+   "місяцем",
+   "місяць",
+   "місяцю",
+   "місяця",
+   "місяцям",
+   "місяцями",
+   "місяцях",
+   "місяці",
+   "місяців"
+  ],
+  "unit_second": [
+   "секунд",
+   "секунда",
+   "секундам",
+   "секундами",
+   "секундах",
+   "секунди",
+   "секундою",
+   "секунду",
+   "секунді"
+  ],
+  "unit_week": [
+   "тиждень",
+   "тижнем",
+   "тижню",
+   "тижня",
+   "тижням",
+   "тижнями",
+   "тижнях",
+   "тижні",
+   "тижнів"
+  ],
+  "unit_year": [
+   "рокам",
+   "роками",
+   "роках",
+   "роки",
+   "рокові",
+   "роком",
+   "року",
+   "років",
+   "році",
+   "рік"
+  ],
+  "weekday_0": [
+   "понеділка",
+   "понеділок"
+  ],
+  "weekday_1": [
+   "вівторка",
+   "вівторок"
+  ],
+  "weekday_2": [
+   "середа",
+   "середи",
+   "середу"
+  ],
+  "weekday_3": [
+   "четвер",
+   "четверга"
+  ],
+  "weekday_4": [
+   "п'ятницю",
+   "п'ятниця",
+   "п'ятниці"
+  ],
+  "weekday_5": [
+   "субота",
+   "суботи",
+   "суботу"
+  ],
+  "weekday_6": [
+   "неділю",
+   "неділя",
+   "неділі"
+  ]
+ },
+ "sources": {
+  "clock_fraction_15": [
+   "See marker_na.voc: \"чверть на одинадцяту\" == a quarter onto the eleventh",
+   "== 10:15.  Citation: promovu.in.ua, https://promovu.in.ua/time/."
+  ],
+  "clock_fraction_30": [
+   "See marker_na.voc: \"пів на другу\" == half onto the second == 01:30.",
+   "Citation: promovu.in.ua, https://promovu.in.ua/time/; miyklas.com.ua.",
+   "The clock preposition \"о\" leads the fraction as it leads any clock: \"Рівно о",
+   "пів до сьомої\" (Kotsiubynsky, quoted in Б. Антоненко-Давидович, \"Як ми",
+   "говоримо\", section \"Непорозуміння з часом\", which pairs \"пів на третю й пів",
+   "до третьої\").  https://osvita.ua/school/literature/a/79209/list-53.html"
+  ],
+  "clock_landmark_0": [
+   "Adverb \"at midnight\": СУМ-11, s.v. опівночі, \"Серед ночі, о дванадцятій чи",
+   "близько дванадцятої години ночі\"."
+  ],
+  "clock_landmark_720": [
+   "Adverb \"at noon\": СУМ-11, s.v. опівдні, \"В середині дня, в час, коли сонце",
+   "стоїть у зеніті\"."
+  ],
+  "clock_meridiem_night": [
+   "The NIGHT daypart is a BAND that crosses midnight: СУМ-11, s.v. ніч,",
+   "sense 1, \"Частина доби від заходу до сходу сонця, з вечора до ранку\", so",
+   "\"о 2 ночі\" is 02:00 and \"об 11 ночі\" is 23:00.  Small hours 1..5 stay AM,",
+   "evening hours 6..11 are PM, twelve is midnight (the band-split lives in the",
+   "resolver _clock_hms).  https://slovnyk.ua/index.php?swrd=ніч"
+  ],
+  "clock_meridiem_pm": [
+   "CLDR 47 names the Ukrainian afternoon \"dnya\", and it is the surface a",
+   "spoken afternoon hour takes: \"o 15 dnya\".  See daypart_afternoon_uk.voc",
+   "for why it cannot follow a bare numeral."
+  ],
+  "daypart_afternoon_uk": [
+   "Band boundaries: Unicode CLDR 47 Day Period Rules, locale uk",
+   "(https://www.unicode.org/cldr/charts/47/supplemental/day_periods.html),",
+   "transcribed in chronologia/dayparts.py as the afternoon band.",
+   "Surface: adverb 'in the daytime' -- the deictic form these phrases use.",
+   "Source: Wiktionary, вдень — https://en.wiktionary.org/wiki/вдень"
+  ],
+  "daypart_evening_uk": [
+   "Band boundaries: Unicode CLDR 47 Day Period Rules, locale uk",
+   "(https://www.unicode.org/cldr/charts/47/supplemental/day_periods.html),",
+   "transcribed in chronologia/dayparts.py as the evening band.",
+   "Surface: adverb 'in the evening' -- the deictic form these phrases use.",
+   "Source: Wiktionary, ввечері — https://en.wiktionary.org/wiki/ввечері"
+  ],
+  "daypart_morning_uk": [
+   "Band boundaries: Unicode CLDR 47 Day Period Rules, locale uk",
+   "(https://www.unicode.org/cldr/charts/47/supplemental/day_periods.html),",
+   "transcribed in chronologia/dayparts.py as the morning band.",
+   "Surface: adverb 'in the morning' -- the deictic form these phrases use.",
+   "Source: Wiktionary, вранці — https://en.wiktionary.org/wiki/вранці",
+   "Adverb \"щоранку\" (every morning) names the same band."
+  ],
+  "daypart_night_uk": [
+   "Band boundaries: Unicode CLDR 47 Day Period Rules, locale uk",
+   "(https://www.unicode.org/cldr/charts/47/supplemental/day_periods.html),",
+   "transcribed in chronologia/dayparts.py as the night band.",
+   "Surface: adverb 'at night' -- the deictic form these phrases use.",
+   "Source: Wiktionary, вночі — https://en.wiktionary.org/wiki/вночі"
+  ],
+  "marker_ad": [
+   "\"н. е.\" abbreviates \"нашої ери\"; the Український правопис lists it among",
+   "the general graphic abbreviations, §62",
+   "(http://newpravopys.mova.info/pravopys.aspx?SectionID=3457)."
+  ],
+  "marker_alarm_at": [
+   "The noun of a clock that sounds at a set time, and \"на\" after it: \"будильник",
+   "на сьому\".  \"будильник: годинник із спеціальним механізмом, що дзвонить у",
+   "потрібний час\" (Wiktionary, s.v. \"будильник\").  СУМ-11, s.v. на 1, sense 9:",
+   "\"Уживається при позначенні часу, коли відбувається якась дія\"",
+   "(https://slovnyk.ua/index.php?swrd=на)."
+  ],
+  "marker_at": [
+   "\"об\" is the form of \"о\" before a vowel when it names the hour: СУМ-11, s.v.",
+   "об, sense 1, \"Уживається при точному або приблизному означенні години,",
+   "коли відбувається дія (тільки перед голосним)\", example \"об 11 годині\".",
+   "https://slovnyk.ua/index.php?swrd=об"
+  ],
+  "marker_bc": [
+   "\"до н. е.\" abbreviates \"до нашої ери\" and is listed among the general",
+   "graphic abbreviations of the Український правопис, §62",
+   "(http://newpravopys.mova.info/pravopys.aspx?SectionID=3457). The unspaced",
+   "\"до н.е.\" is the common typed variant."
+  ],
+  "marker_day_label": [
+   "Day-of-month label noun: \"двадцятого числа\" names the twentieth day of the",
+   "month, the genitive of \"число\" in its calendar sense.  Bound only after a",
+   "spelled day ordinal (WORDORD), so \"три числа\" (\"three numbers\") stays a",
+   "count.  Source: СУМ-11, s.v. число, sense 2, \"21 числа\"."
+  ],
+  "marker_during": [
+   "Locative \"u\"/\"v\" governing a month (\"u sichni\").",
+   "Source: en.wiktionary.org, entry \"у\" (Ukrainian), \"in\"."
+  ],
+  "marker_for_date": [
+   "\"на\" + accusative names the day a thing is meant for: \"на завтра\",",
+   "\"на п'ятницю\". Source: uk.wiktionary.org, s.v. на, sense 9 (із знах. в.):",
+   "\"Уживається для позначення часу, коли відбувається якась дія.\"",
+   "\"на\" + locative names the span a thing happens in: \"на вихідних\".",
+   "Source: the same entry, sense 10 (з місц. в., розм.): \"Уживається для",
+   "позначення відтинка часу, протягом якого відбувається дія\"."
+  ],
+  "marker_half": [
+   "Ukrainian period noun \"half\" for \"first/second half of <year>\" (half_period).",
+   "\"половина\": Словник української мови (СУМ, 11 т.) -- \"половина\" = одна з двох",
+   "  рівних частин цілого (\"перша половина року\").  http://sum.in.ua/s/polovyna",
+   "\"пів\" is the bound/prefixal form kept for the clock half-hour path."
+  ],
+  "marker_last": [
+   "Ukrainian \"last/previous\" determiner, the full adjectival paradigm.  The",
+   "ordinary way to say it is the adverbial genitive -- \"минулого тижня\",",
+   "\"минулого місяця\", \"минулого року\" -- and the locative \"у минулому році\" is",
+   "just as common; the nominative \"минулий тиждень\" is the marked register.",
+   "Both the hard stem \"минулий\" and the soft stem \"попередній\" are listed in",
+   "full, per the paradigms in *Український правопис* (2019), §§ on the",
+   "declension of adjectives.",
+   "https://nus.org.ua/wp-content/uploads/2019/05/Ukr.-pravopys-2019-1.pdf"
+  ],
+  "marker_month_word": [
+   "The noun \"місяць\" in the genitive after a day: \"п'ятого числа минулого",
+   "місяця\" names the fifth day of the previous month.  Bound only after",
+   "\"<ordinal> числа REL_MARKER\", where the marker names the month outright.",
+   "Source: Wiktionary, s.v. місяць, sense 1, \"період часу, дванадцята частина",
+   "року\" (https://uk.wiktionary.org/wiki/місяць); declension 5c in the same",
+   "entry, genitive singular \"мі́сяця\"."
+  ],
+  "marker_na": [
+   "Ukrainian toward-hour connector \"на\" (\"onto\"): \"пів на другу\" == half onto",
+   "the second (hour) == 01:30 -- the fraction counts toward the NAMED hour,",
+   "which is therefore the coming one, mirroring Russian's bare genitive",
+   "construction but spelled with an explicit preposition + accusative case.",
+   "Citation 1: promovu.in.ua, \"Час англійською\" -- \"13:30 - пів на другу\"",
+   "(13:30, i.e. 1:30 pm) and \"10:15 - чверть на одинадцяту, чверть по десятій\".",
+   "https://promovu.in.ua/time/",
+   "Citation 2: miyklas.com.ua, 6th-grade Ukrainian-language lesson",
+   "\"Використання числівників на позначення дат і часу\" -- \"10:30 ... пів на",
+   "одинадцяту\" (half onto the eleventh == 10:30).",
+   "https://www.miyklas.com.ua/p/ukrainska-mova/6-klas/chislivnik-14257/vikoristannia-chislivnikiv-na-poznachennia-dat-i-chasu-37756/"
+  ],
+  "marker_next": [
+   "Ukrainian \"next/following\" determiner, the full adjectival paradigm.  As with",
+   "\"минулий\" the temporal phrase is normally the adverbial genitive (\"наступного",
+   "тижня\") or the locative (\"у наступному місяці\"), so the whole paradigm is",
+   "listed rather than the citation form alone.  *Український правопис* (2019),",
+   "declension of adjectives.",
+   "https://nus.org.ua/wp-content/uploads/2019/05/Ukr.-pravopys-2019-1.pdf"
+  ],
+  "marker_ordlast": [
+   "Ukrainian \"last\" ordinal determiner, the soft-stem adjective paradigm.",
+   "\"ostannii ponedilok travnya\" = last Monday of May.  Ukrainskyi pravopys (2019)."
+  ],
+  "marker_this": [
+   "Ukrainian \"this\" demonstrative, the full pronominal paradigm.  \"цього тижня\"",
+   "and \"цього року\" are the ordinary forms and both are genitive.  The dative",
+   "\"цьому\" is listed but the homograph \"тому\" is NOT: in Ukrainian \"тому\" is the",
+   "ago-marker (\"два дні тому\"), and folding it in here would read a past offset",
+   "as a present one.  *Український правопис* (2019), declension of pronouns.",
+   "https://nus.org.ua/wp-content/uploads/2019/05/Ukr.-pravopys-2019-1.pdf"
+  ],
+  "marker_to": [
+   "\"по\" із знахідним відмінком -- кінець інтервалу, названий день входить у нього.",
+   "  Словник української мови в 11 томах, т. 6, s.v. \"по\", знач. 13: \"у сполуч. з",
+   "  прийм. з, рідше від та ім. або порядк. числ., що означають день, число, рік",
+   "  ... уживається при вказуванні на кінець дії, стану\"; приклади \"З березня по",
+   "  вересень 1917 року\", \"XXIII з'їзд КПРС відбувався з 29 березня по 8 квітня",
+   "  1966 року\" -- з'їзд засідав і 8 квітня.",
+   "  Тому \"з 5 по 12 червня\" -- по 12 червня включно."
+  ],
+  "marker_year_count_one": [
+   "The form of \"рік\" that a count of years ending in one takes: \"101 рік тому\"",
+   "is 101 years ago.",
+   "Source: en.wikipedia.org, \"Ukrainian grammar\", numerals: \"In the nominative",
+   "case, the nouns agree with the last number in any compound number.\"  One",
+   "is \"один\", which agrees with a singular noun (\"один рік\")."
+  ],
+  "marker_year_plural": [
+   "The plural of \"рік\" (year).  A count of years takes the plural (\"988",
+   "років\"); the singular names a year (\"у 988 році\", \"988 рік\").",
+   "Source: en.wiktionary.org, \"рік\", Ukrainian declension table: plural",
+   "nominative and accusative \"роки\", genitive \"років\", dative \"рокам\",",
+   "instrumental \"роками\", locative \"роках\"."
+  ],
+  "month_1": [
+   "Unicode CLDR 47, locale uk, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/uk/ca-gregorian.json): months.format.wide,",
+   "months.stand-alone.wide.  Not covered by any of those charts, and so",
+   "unattested here: \"січнем\", \"січні\"."
+  ],
+  "month_10": [
+   "Unicode CLDR 47, locale uk, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/uk/ca-gregorian.json): months.format.wide,",
+   "months.stand-alone.wide.  Not covered by any of those charts, and so",
+   "unattested here: \"жовтнем\", \"жовтні\"."
+  ],
+  "month_11": [
+   "Unicode CLDR 47, locale uk, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/uk/ca-gregorian.json): months.format.wide,",
+   "months.stand-alone.wide.  Not covered by any of those charts, and so",
+   "unattested here: \"листопадом\", \"листопаді\"."
+  ],
+  "month_12": [
+   "Unicode CLDR 47, locale uk, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/uk/ca-gregorian.json): months.format.wide,",
+   "months.stand-alone.wide.  Not covered by any of those charts, and so",
+   "unattested here: \"груднем\", \"грудні\"."
+  ],
+  "month_2": [
+   "Unicode CLDR 47, locale uk, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/uk/ca-gregorian.json): months.format.wide,",
+   "months.stand-alone.wide.  Not covered by any of those charts, and so",
+   "unattested here: \"лютим\", \"лютому\"."
+  ],
+  "month_3": [
+   "Unicode CLDR 47, locale uk, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/uk/ca-gregorian.json): months.format.wide,",
+   "months.stand-alone.wide.  Not covered by any of those charts, and so",
+   "unattested here: \"березнем\", \"березні\"."
+  ],
+  "month_4": [
+   "Unicode CLDR 47, locale uk, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/uk/ca-gregorian.json): months.format.wide,",
+   "months.stand-alone.wide.  Not covered by any of those charts, and so",
+   "unattested here: \"квітнем\", \"квітні\"."
+  ],
+  "month_5": [
+   "Unicode CLDR 47, locale uk, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/uk/ca-gregorian.json): months.format.wide,",
+   "months.stand-alone.wide.  Not covered by any of those charts, and so",
+   "unattested here: \"травнем\", \"травні\"."
+  ],
+  "month_6": [
+   "Unicode CLDR 47, locale uk, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/uk/ca-gregorian.json): months.format.wide,",
+   "months.stand-alone.wide.  Not covered by any of those charts, and so",
+   "unattested here: \"червнем\", \"червні\"."
+  ],
+  "month_7": [
+   "Unicode CLDR 47, locale uk, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/uk/ca-gregorian.json): months.format.wide,",
+   "months.stand-alone.wide.  Not covered by any of those charts, and so",
+   "unattested here: \"липнем\", \"липні\"."
+  ],
+  "month_8": [
+   "Unicode CLDR 47, locale uk, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/uk/ca-gregorian.json): months.format.wide,",
+   "months.stand-alone.wide.  Not covered by any of those charts, and so",
+   "unattested here: \"серпнем\", \"серпні\"."
+  ],
+  "month_9": [
+   "Unicode CLDR 47, locale uk, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/uk/ca-gregorian.json): months.format.wide,",
+   "months.stand-alone.wide.  Not covered by any of those charts, and so",
+   "unattested here: \"вереснем\", \"вересні\"."
+  ],
+  "named_day_-1": [
+   "Ukrainian \"yesterday\".  Both spellings are standard: the entry heads",
+   "\"учора\" and lists \"вчора\" as an alternative form, the ordinary у-/в-",
+   "alternation.  Source: en.wiktionary.org, https://en.wiktionary.org/wiki/учора.",
+   "\"учора\" is also what CLDR dateFields gives for locale \"uk\", day",
+   "relative-type--1."
+  ],
+  "unit1_second": [
+   "Ukrainian \"секунда\" singular surfaces: nominative, locative, accusative",
+   "and instrumental."
+  ],
+  "unit_day": [
+   "Ukrainian \"день\", fleeting-vowel stem (день / дня).  Full paradigm per",
+   "*Український правопис* (2019)."
+  ],
+  "unit_hour": [
+   "Ukrainian \"година\", full first-declension paradigm.",
+   "*Український правопис* (2019), declension of nouns."
+  ],
+  "unit_minute": [
+   "Ukrainian \"хвилина\", full first-declension paradigm.",
+   "*Український правопис* (2019), declension of nouns."
+  ],
+  "unit_month": [
+   "Ukrainian \"місяць\", full paradigm.",
+   "*Український правопис* (2019), declension of nouns."
+  ],
+  "unit_second": [
+   "Ukrainian \"секунда\", full first-declension paradigm, matching the depth of",
+   "unit_minute.voc.",
+   "Unicode CLDR 47, locale uk, cldr-units-full/main/uk/units.json,",
+   "duration-second: one \"секунда\", few \"секунди\", many \"секунд\".",
+   "*Український правопис* (2019), declension of nouns."
+  ],
+  "unit_week": [
+   "Ukrainian \"тиждень\".  The stem loses its fleeting vowel outside the",
+   "nominative/accusative singular (тиждень / тижня).  Full paradigm per",
+   "*Український правопис* (2019), declension of nouns."
+  ],
+  "unit_year": [
+   "Ukrainian \"рік\", suppletive in the locative singular (\"у році\") and regular",
+   "elsewhere.  Full paradigm per *Український правопис* (2019)."
+  ],
+  "weekday_0": [
+   "Unicode CLDR 47, locale uk, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/uk/ca-gregorian.json): days.format.wide,",
+   "days.stand-alone.wide.  Not covered by any of those charts, and so",
+   "unattested here: \"понеділка\"."
+  ],
+  "weekday_1": [
+   "Unicode CLDR 47, locale uk, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/uk/ca-gregorian.json): days.format.wide,",
+   "days.stand-alone.wide.  Not covered by any of those charts, and so",
+   "unattested here: \"вівторка\"."
+  ],
+  "weekday_2": [
+   "Unicode CLDR 47, locale uk, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/uk/ca-gregorian.json): days.format.wide,",
+   "days.stand-alone.wide.  Not covered by any of those charts, and so",
+   "unattested here: \"середу\", \"середи\"."
+  ],
+  "weekday_3": [
+   "Unicode CLDR 47, locale uk, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/uk/ca-gregorian.json): days.format.wide,",
+   "days.stand-alone.wide.  Not covered by any of those charts, and so",
+   "unattested here: \"четверга\"."
+  ],
+  "weekday_5": [
+   "Unicode CLDR 47, locale uk, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/uk/ca-gregorian.json): days.format.wide,",
+   "days.stand-alone.wide.  Not covered by any of those charts, and so",
+   "unattested here: \"суботу\", \"суботи\"."
+  ],
+  "weekday_6": [
+   "Unicode CLDR 47, locale uk, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/uk/ca-gregorian.json): days.format.wide,",
+   "days.stand-alone.wide.  Not covered by any of those charts, and so",
+   "unattested here: \"неділю\", \"неділі\"."
+  ]
+ }
+}

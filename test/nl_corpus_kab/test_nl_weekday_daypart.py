@@ -4,7 +4,7 @@
 A weekday names its next occurrence, or the anchor day while the band there
 has not ended, and the trailing daypart narrows that day to its band. Anchor
 Tue 2017-06-27; all gold from independent arithmetic. Weekday surfaces are the
-locale's weekday_*.voc tables; daypart surfaces are attested by native speaker
+locale's weekday_* tables; daypart surfaces are attested by native speaker
 athmanemokraoui (#265). Bands use chronologia's default day-period convention.
 """
 from datetime import timedelta
@@ -14,7 +14,7 @@ import pytest
 from ._corpus import ANCHOR, span
 from .test_nl_daypart_matrix import BANDS, _band
 
-# weekday index (Mon=0) -> Kabyle surface (weekday_N.voc)
+# weekday index (Mon=0) -> Kabyle surface (weekday_N)
 WD = {
     0: "letnayen", 1: "ttlata", 2: "laṛebɛa", 3: "lexmis",
     4: "lǧemɛa", 5: "ssebt", 6: "lḥedd",

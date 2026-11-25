@@ -1,6 +1,6 @@
 """R119 sibling probe (fr): a resolved PINPOINT clock start with a trailing
 bare "pendant <duration>" extends the span's end, sharing the "recur_for"
-marker vocabulary (``marker_recur_for.voc`` -> "pendant"/"pour") the
+marker vocabulary (``marker_recur_for`` -> "pendant"/"pour") the
 recurrence grammar already ships -- no new locale data needed.
 
 Note: a bare "pendant 2 heures" (no OTHER clock cue) is not pinned as a

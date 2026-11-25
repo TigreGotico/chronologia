@@ -1,0 +1,1063 @@
+{
+ "format_version": 1,
+ "words": {
+  "clock_dir_past": [
+   "y"
+  ],
+  "clock_dir_to": [
+   "menos",
+   "para"
+  ],
+  "clock_fraction_15": [
+   "cuarto"
+  ],
+  "clock_fraction_30": [
+   "media",
+   "medio"
+  ],
+  "clock_landmark_0": [
+   "medianoche"
+  ],
+  "clock_landmark_720": [
+   "mediodia",
+   "mediodía"
+  ],
+  "clock_meridiem_am": [
+   "a.m.",
+   "am",
+   "madrugada",
+   "manana",
+   "mañana"
+  ],
+  "clock_meridiem_late": [
+   "tarde"
+  ],
+  "clock_meridiem_night": [
+   "noche"
+  ],
+  "clock_meridiem_pm": [
+   "p.m.",
+   "pm",
+   "tarde"
+  ],
+  "clock_zone_0": [
+   "gmt",
+   "utc"
+  ],
+  "daypart_madrugada_es": [
+   "madrugada"
+  ],
+  "daypart_manana_es": [
+   "manana",
+   "mañana"
+  ],
+  "daypart_noche_es": [
+   "noche"
+  ],
+  "daypart_tarde_es": [
+   "tarde"
+  ],
+  "era_ad_suffix": [
+   "d. c.",
+   "d. de c.",
+   "d.c.",
+   "dc",
+   "de nuestra era",
+   "despues de cristo",
+   "después de cristo",
+   "e.c."
+  ],
+  "era_anno_mundi_prefix": [
+   "anno mundi"
+  ],
+  "era_anno_mundi_suffix": [
+   "anno mundi"
+  ],
+  "era_bc_suffix": [
+   "a. c.",
+   "a. de c.",
+   "a.c.",
+   "a.e.c.",
+   "ac",
+   "aec",
+   "antes de cristo",
+   "antes de nuestra era"
+  ],
+  "era_bp_suffix": [
+   "a.p.",
+   "anos antes del presente",
+   "ap",
+   "años antes del presente"
+  ],
+  "era_holocene_prefix": [
+   "era holocena",
+   "era humana"
+  ],
+  "era_holocene_suffix": [
+   "era holocena",
+   "era humana"
+  ],
+  "era_julian_prefix": [
+   "dia juliano",
+   "dia juliano numero",
+   "día juliano",
+   "día juliano número"
+  ],
+  "era_unix_prefix": [
+   "tiempo unix",
+   "timestamp unix"
+  ],
+  "era_year_ref": [
+   "el ano",
+   "el ano de",
+   "el año",
+   "el año de",
+   "en el ano",
+   "en el ano de",
+   "en el año",
+   "en el año de"
+  ],
+  "marker_ad": [
+   "dc",
+   "ec"
+  ],
+  "marker_after": [
+   "despues",
+   "después"
+  ],
+  "marker_alarm_at": [
+   "alarma para",
+   "alarmas para",
+   "despertador para",
+   "despertadores para"
+  ],
+  "marker_alarm_joiner": [
+   "a",
+   "e",
+   "o",
+   "u",
+   "y"
+  ],
+  "marker_and": [
+   "e",
+   "y"
+  ],
+  "marker_article": [
+   "el",
+   "la",
+   "las",
+   "los"
+  ],
+  "marker_at": [
+   "a",
+   "al",
+   "la",
+   "las"
+  ],
+  "marker_at_counts": [
+   "a"
+  ],
+  "marker_bc": [
+   "ac",
+   "aec"
+  ],
+  "marker_before": [
+   "antes"
+  ],
+  "marker_between": [
+   "entre"
+  ],
+  "marker_bp": [
+   "ap"
+  ],
+  "marker_business": [
+   "habil",
+   "habiles",
+   "hábil",
+   "hábiles",
+   "laborable",
+   "laborables"
+  ],
+  "marker_clock_approx": [
+   "sobre",
+   "tipo"
+  ],
+  "marker_counted_noun": [
+   "adultos",
+   "alumnas",
+   "alumnos",
+   "amigas",
+   "amigo",
+   "amigos",
+   "asientos",
+   "chicas",
+   "chicos",
+   "entradas",
+   "euros",
+   "gatas",
+   "gatos",
+   "habitaciones",
+   "invitadas",
+   "invitados",
+   "jugadoras",
+   "jugadores",
+   "mesas",
+   "niñas",
+   "niños",
+   "persona",
+   "personas",
+   "primas",
+   "primos",
+   "sillas",
+   "vecinas",
+   "vecino",
+   "vecinos"
+  ],
+  "marker_date_lead": [
+   "a",
+   "el"
+  ],
+  "marker_day_label": [
+   "día"
+  ],
+  "marker_dayframe": [
+   "por"
+  ],
+  "marker_during": [
+   "durante",
+   "en"
+  ],
+  "marker_every": [
+   "cada",
+   "todas",
+   "todos"
+  ],
+  "marker_exclusion": [
+   "excepto",
+   "menos",
+   "no",
+   "salvo"
+  ],
+  "marker_exclusion_bound": [
+   "antes",
+   "desde",
+   "despues",
+   "después",
+   "hasta",
+   "tras"
+  ],
+  "marker_freq_daily": [
+   "diariamente"
+  ],
+  "marker_freq_monthly": [
+   "mensualmente"
+  ],
+  "marker_freq_weekly": [
+   "semanalmente"
+  ],
+  "marker_freq_yearly": [
+   "anualmente"
+  ],
+  "marker_from": [
+   "a partir de",
+   "de",
+   "del",
+   "desde"
+  ],
+  "marker_future": [
+   "dentro",
+   "en"
+  ],
+  "marker_half": [
+   "mitad"
+  ],
+  "marker_hour_approx": [
+   "hacia la",
+   "hacia las",
+   "sobre la",
+   "sobre las"
+  ],
+  "marker_hour_statement": [
+   "es la",
+   "son las"
+  ],
+  "marker_in": [
+   "en"
+  ],
+  "marker_last": [
+   "anterior",
+   "pasada",
+   "pasadas",
+   "pasado",
+   "pasados",
+   "ultima",
+   "ultimas",
+   "ultimo",
+   "ultimos",
+   "última",
+   "últimas",
+   "último",
+   "últimos"
+  ],
+  "marker_month_word": [
+   "mes"
+  ],
+  "marker_next": [
+   "proxima",
+   "proximas",
+   "proximo",
+   "proximos",
+   "próxima",
+   "próximas",
+   "próximo",
+   "próximos",
+   "que viene",
+   "siguiente"
+  ],
+  "marker_of": [
+   "de",
+   "del"
+  ],
+  "marker_on": [
+   "el"
+  ],
+  "marker_ordlast": [
+   "ultima",
+   "ultimo",
+   "última",
+   "último"
+  ],
+  "marker_past": [
+   "atras",
+   "atrás",
+   "hace"
+  ],
+  "marker_plural": [
+   "s"
+  ],
+  "marker_present": [
+   "ahora",
+   "presente"
+  ],
+  "marker_q": [
+   "q",
+   "t"
+  ],
+  "marker_quarter_word": [
+   "trimestre",
+   "trimestres"
+  ],
+  "marker_recur_for": [
+   "durante",
+   "por"
+  ],
+  "marker_recur_habitual": [
+   "las",
+   "los"
+  ],
+  "marker_since": [
+   "desde"
+  ],
+  "marker_this": [
+   "esta",
+   "este"
+  ],
+  "marker_to": [
+   "a",
+   "al",
+   "hasta"
+  ],
+  "marker_until": [
+   "hasta"
+  ],
+  "marker_until_amount": [
+   "cuánta",
+   "cuántas",
+   "cuánto",
+   "cuántos"
+  ],
+  "marker_week_num": [
+   "semana",
+   "semanas"
+  ],
+  "marker_weekof": [
+   "la semana de",
+   "la semana del",
+   "semana de",
+   "semana del"
+  ],
+  "marker_year_plural": [
+   "anos",
+   "años"
+  ],
+  "marker_year_word": [
+   "ano",
+   "anos",
+   "año",
+   "años"
+  ],
+  "month_1": [
+   "ene",
+   "enero"
+  ],
+  "month_10": [
+   "oct",
+   "octubre"
+  ],
+  "month_11": [
+   "nov",
+   "noviembre"
+  ],
+  "month_12": [
+   "dic",
+   "diciembre"
+  ],
+  "month_2": [
+   "feb",
+   "febrero"
+  ],
+  "month_3": [
+   "mar",
+   "marzo"
+  ],
+  "month_4": [
+   "abr",
+   "abril"
+  ],
+  "month_5": [
+   "may",
+   "mayo"
+  ],
+  "month_6": [
+   "jun",
+   "junio"
+  ],
+  "month_7": [
+   "jul",
+   "julio"
+  ],
+  "month_8": [
+   "ago",
+   "agosto"
+  ],
+  "month_9": [
+   "sep",
+   "septiembre",
+   "setiembre"
+  ],
+  "months": [
+   "abril",
+   "agosto",
+   "diciembre",
+   "enero",
+   "febrero",
+   "julio",
+   "junio",
+   "marzo",
+   "mayo",
+   "noviembre",
+   "octubre",
+   "septiembre"
+  ],
+  "named_day_-1": [
+   "ayer"
+  ],
+  "named_day_-2": [
+   "anteayer"
+  ],
+  "named_day_0": [
+   "hoy"
+  ],
+  "named_day_1": [
+   "manana",
+   "mañana"
+  ],
+  "named_day_2": [
+   "pasado manana",
+   "pasado mañana"
+  ],
+  "ordinal_suffixes": [
+   ".ª",
+   ".º",
+   "a",
+   "er",
+   "o",
+   "ª",
+   "º"
+  ],
+  "period_part_early": [
+   "comienzo",
+   "comienzos",
+   "inicio",
+   "inicios",
+   "principio",
+   "principios"
+  ],
+  "period_part_late": [
+   "fin",
+   "final",
+   "finales",
+   "fines"
+  ],
+  "period_part_mid": [
+   "mediados",
+   "medio"
+  ],
+  "roman_anchor_ides": [
+   "idus"
+  ],
+  "roman_anchor_kalends": [
+   "calendas",
+   "kalendas"
+  ],
+  "roman_anchor_nones": [
+   "nonas"
+  ],
+  "scale_1000": [
+   "mil"
+  ],
+  "scale_1000000": [
+   "millon",
+   "millones",
+   "millón"
+  ],
+  "scale_1000000000": [
+   "millardo",
+   "millardos"
+  ],
+  "scale_1000000000.short": [
+   "billon",
+   "billones",
+   "billón"
+  ],
+  "scale_1000000000000.long": [
+   "billon",
+   "billones",
+   "billón"
+  ],
+  "scope_unit_century": [
+   "siglo",
+   "siglos"
+  ],
+  "scope_unit_decade": [
+   "decada",
+   "decadas",
+   "década",
+   "décadas"
+  ],
+  "scope_unit_millennium": [
+   "milenio",
+   "milenios"
+  ],
+  "season_fall": [
+   "otono",
+   "otoño"
+  ],
+  "season_spring": [
+   "primavera"
+  ],
+  "season_summer": [
+   "verano"
+  ],
+  "season_winter": [
+   "invierno"
+  ],
+  "solar_event_equinox": [
+   "equinoccio",
+   "equinocio"
+  ],
+  "solar_event_solstice": [
+   "solsticio"
+  ],
+  "special_weekend": [
+   "fin de semana",
+   "fines de semana"
+  ],
+  "unit_century": [
+   "siglo",
+   "siglos"
+  ],
+  "unit_day": [
+   "dia",
+   "dias",
+   "día",
+   "días"
+  ],
+  "unit_decade": [
+   "decada",
+   "decadas",
+   "década",
+   "décadas"
+  ],
+  "unit_fortnight": [
+   "quincena",
+   "quincenas"
+  ],
+  "unit_hour": [
+   "hora",
+   "horas"
+  ],
+  "unit_millennium": [
+   "milenio",
+   "milenios"
+  ],
+  "unit_minute": [
+   "min",
+   "minuto",
+   "minutos"
+  ],
+  "unit_month": [
+   "mes",
+   "meses"
+  ],
+  "unit_second": [
+   "segundo",
+   "segundos"
+  ],
+  "unit_week": [
+   "semana",
+   "semanas"
+  ],
+  "unit_year": [
+   "ano",
+   "anos",
+   "año",
+   "años"
+  ],
+  "weekday_0": [
+   "lunes"
+  ],
+  "weekday_1": [
+   "martes"
+  ],
+  "weekday_2": [
+   "miercoles",
+   "miércoles"
+  ],
+  "weekday_3": [
+   "jueves"
+  ],
+  "weekday_4": [
+   "viernes"
+  ],
+  "weekday_5": [
+   "sabado",
+   "sábado"
+  ],
+  "weekday_6": [
+   "domingo"
+  ],
+  "weekday_abbr_0": [
+   "lun"
+  ],
+  "weekday_abbr_1": [
+   "mar"
+  ],
+  "weekday_abbr_2": [
+   "mié"
+  ],
+  "weekday_abbr_3": [
+   "jue"
+  ],
+  "weekday_abbr_4": [
+   "vie"
+  ],
+  "weekday_abbr_5": [
+   "sab"
+  ],
+  "weekday_abbr_6": [
+   "dom"
+  ]
+ },
+ "sources": {
+  "clock_dir_to": [
+   "fraction-first \"toward\" direction (\"un cuarto para las cuatro\" == 3:45),",
+   "distinct from the hour-first \"menos\" subtraction (\"las cuatro menos cuarto\")."
+  ],
+  "clock_meridiem_late": [
+   "\"tarde\" is also the adverb \"late\": \"A última hora, cuando el tiempo propicio",
+   "ya ha pasado [...]\", e.g. \"Has perdido el tren, llegaste tarde\"",
+   "(Wikcionario, s.v. \"tarde\", adverbio de tiempo, sense 1)."
+  ],
+  "clock_meridiem_night": [
+   "The NIGHT daypart is a BAND that crosses midnight in colloquial clock",
+   "usage, not a uniform +12 PM shift: \"la una de la noche\" is 01:00 and \"las",
+   "doce de la noche\" is midnight 00:00, while \"las diez de la noche\" is 22:00.",
+   "Small hours 1..5 stay AM, evening hours 6..11 are PM, twelve is midnight",
+   "(the band-split lives in the resolver _clock_hms).  The AM ceiling follows",
+   "the madrugada band [00:00, 06:00) transcribed for es in chronologia/",
+   "dayparts.py; colloquial \"de la noche\" for the small hours: RAE/DPD, s.v.",
+   "\"noche\" (https://dle.rae.es/noche)."
+  ],
+  "daypart_madrugada_es": [
+   "Band boundaries: Unicode CLDR 47 Day Period Rules, locale es",
+   "(https://www.unicode.org/cldr/charts/47/supplemental/day_periods.html),",
+   "transcribed in chronologia/dayparts.py as [00:00, 06:00).",
+   "Sources: Diccionario de la lengua espanola, RAE (https://dle.rae.es/tarde).",
+   "The small hours, which English has no single word for."
+  ],
+  "daypart_manana_es": [
+   "Band boundaries: Unicode CLDR 47 Day Period Rules, locale es",
+   "(https://www.unicode.org/cldr/charts/47/supplemental/day_periods.html),",
+   "transcribed in chronologia/dayparts.py as [06:00, 12:00).",
+   "Sources: Diccionario de la lengua espanola, RAE (https://dle.rae.es/tarde).",
+   "The bare word is NOT read here as the morning: \"manana\" is also the",
+   "Spanish for tomorrow, and that reading wins unless an article, a",
+   "demonstrative or \"de\" licenses the day-part one. See daypart_ref in",
+   "lang.json, which omits the bare order for exactly this reason."
+  ],
+  "daypart_noche_es": [
+   "Band boundaries: Unicode CLDR 47 Day Period Rules, locale es",
+   "(https://www.unicode.org/cldr/charts/47/supplemental/day_periods.html),",
+   "transcribed in chronologia/dayparts.py as [20:00, 24:00).",
+   "Sources: Diccionario de la lengua espanola, RAE (https://dle.rae.es/tarde)."
+  ],
+  "daypart_tarde_es": [
+   "Band boundaries: Unicode CLDR 47 Day Period Rules, locale es",
+   "(https://www.unicode.org/cldr/charts/47/supplemental/day_periods.html),",
+   "transcribed in chronologia/dayparts.py as [12:00, 20:00).",
+   "Sources: Diccionario de la lengua espanola, RAE (https://dle.rae.es/tarde).",
+   "RAE: \"Parte del dia comprendida entre el mediodia y el anochecer\" --",
+   "one span across what English splits into afternoon and early evening."
+  ],
+  "marker_alarm_at": [
+   "El sustantivo de un aparato que suena a una hora fijada, y \"para\" tras él:",
+   "\"despertador para 7\", \"alarma para 7\".  \"despertador [...] Reloj que está",
+   "temporizado para hacer sonar una alarma a cierta hora del día y así",
+   "despertar a quien duerme.\" (Wikcionario, s.v. \"despertador\", 3).  \"alarma\"",
+   "nombra la señal sonora de ese reloj (\"hacer sonar una alarma\", misma",
+   "entrada); su definición propia es \"Dispositivo sonoro que se activa en",
+   "caso de emergencia o peligro.\" (Wikcionario, s.v. \"alarma\", 5).  \"para",
+   "[...] Indica un plazo o tiempo futuro impreciso.\" (Wikcionario, s.v.",
+   "\"para\", 6)."
+  ],
+  "marker_alarm_joiner": [
+   "The words that join two hours that share one later meridiem: \"alarm for 7",
+   "or 8 pm\"."
+  ],
+  "marker_at_counts": [
+   "Clock prepositions that also introduce a counted group: a bare hour behind one",
+   "is doubtful only right before a word of marker_counted_noun.voc.  Attested in",
+   "the parity acceptance rows; no dictionary source checked, a native reviewer is to confirm."
+  ],
+  "marker_between": [
+   "Spanish range \"between\" framing (entre A y B).",
+   "\"entre\": RAE, DLE s.v. \"entre\" (preposicion) -- denota situacion o estado en",
+   "  medio de dos terminos (\"entre junio y agosto\"). Pairs with marker_and",
+   "  (\"y\"/\"e\"). https://dle.rae.es/entre"
+  ],
+  "marker_clock_approx": [
+   "A word that makes the clock after it approximate and joins it to the day or",
+   "the part of the day before it: \"por la mañana sobre las 7\".  sobre: \"7.",
+   "Referido al tiempo, indica que se está cerca de un momento determinado.",
+   "Sinónimos: hacia, cerca de.\" (Wikcionario s.v. \"sobre\", 7).  tipo:",
+   "\"Aproximadamente a las; alrededor de tal tiempo.  Ámbito: Argentina.  Uso:",
+   "coloquial.\" (Wikcionario s.v. \"tipo\", adverbio de tiempo, 9)."
+  ],
+  "marker_counted_noun": [
+   "Nouns that count people or things a clock never takes: a bare hour behind a",
+   "clock preposition and directly before one of them is a count (\"wave at 5",
+   "people\").  Each word is quoted from its Wiktionary Noun entry",
+   "(https://en.wiktionary.org/wiki/<word>); the fetched pages are kept with the audit.",
+   "persona: Noun. \"person\"",
+   "personas: Noun. \"plural of persona\"",
+   "invitados: Noun. \"form of invitado\"",
+   "invitadas: Noun. \"form of invitada\"",
+   "vecino: Noun. \"neighbour\"",
+   "vecinos: Noun. \"plural of vecino\"",
+   "vecinas: Noun. \"form of vecina\"",
+   "amigo: Noun. \"friend\"",
+   "amigos: Noun. \"form of amigo\"",
+   "amigas: Noun. \"plural of amiga\"",
+   "niños: Noun. \"plural of niño\"",
+   "niñas: Noun. \"plural of niña\"",
+   "chicos: Noun. \"form of chico\"",
+   "chicas: Noun. \"form of chica\"",
+   "adultos: Noun. \"form of adulto\"",
+   "jugadores: Noun. \"plural of jugador\"",
+   "jugadoras: Noun. \"form of jugadora\"",
+   "asientos: Noun. \"plural of asiento\"",
+   "sillas: Noun. \"plural of silla\"",
+   "mesas: Noun. \"plural of mesa\"",
+   "entradas: Noun. \"form of entrada\"",
+   "habitaciones: Noun. \"plural of habitación\"",
+   "alumnos: Noun. \"plural of alumno\"",
+   "alumnas: Noun. \"plural of alumna\"",
+   "primos: Noun. \"plural of primo\"",
+   "primas: Noun. \"form of prima\"",
+   "gatos: Noun. \"plural of gato\"",
+   "gatas: Noun. \"plural of gata\"",
+   "euros: Noun. \"plural of euro\""
+  ],
+  "marker_date_lead": [
+   "Words that open a date or a clock time and belong to it.",
+   "Each word is shown opening a time or date phrase on the page named in brackets,",
+   "saved under knowledge/wiki/audits/chronologia/parity-fixes/marker-strand/sources/ in the workspace.",
+   "a: DLE \"a\" 6.: \"Precisa el lugar o tiempo en que sucede algo. Firmaré a la noche.\" [rae-a.txt]",
+   "el: DLE \"el\" 2.: \"unidades del calendario. ... El viernes empieza las vacaciones.\" [rae-el.txt]"
+  ],
+  "marker_day_label": [
+   "Spanish day-of-month label noun -- \"día\" (\"day\") heads the everyday idiom",
+   "\"día N de <mes>\" (\"day 3 of March\" == the 3rd of March), a genuine temporal",
+   "function word (RAE, Ortografía de la lengua española 5.2.5.1; DPD s.v.",
+   "\"día\") -- distinct from a bare ordinal reading, and NOT itself part of the",
+   "date construction's own grammar, so it was left stranded, unconsumed, in a",
+   "range endpoint's remainder even though the date it labels bound correctly.",
+   "Registered as its own marker so range-endpoint resolution",
+   "(:func:`chronologia.extract.timespan._resolve_endpoint`) can fold an",
+   "immediately-adjacent leading \"día\" into the consumed set precisely when the",
+   "date it labels actually bound -- never when the date fails to resolve, so a",
+   "\"día\" elsewhere in the sentence is untouched."
+  ],
+  "marker_dayframe": [
+   "The frame Spanish puts in front of a part of the day (\"por la mañana\",",
+   "\"por la tarde\"). Unlike Galician \"pola\" and Portuguese \"pela\" the",
+   "preposition does not contract with the article, so the article follows it",
+   "as its own word.",
+   "Source: Diccionario de la lengua espanola, https://dle.rae.es/por."
+  ],
+  "marker_during": [
+   "\"en\" is the locative preposition used with months (\"en enero\");",
+   "\"durante\" is the explicit \"during\" reading (\"durante enero\").",
+   "Source: Diccionario de la lengua espanola, https://dle.rae.es/en."
+  ],
+  "marker_from": [
+   "Spanish range \"from\" lead -- opens a bounded or open interval and, crucially,",
+   "disambiguates the hyper-common preposition \"a\" (marker_to) as a genuine range",
+   "boundary: a bare \"A a B\" is only trusted as a range when a \"from\" lead is present.",
+   "\"de\": RAE/DPD s.v. \"de\" (preposicion) -- punto de partida / origen, correlativa",
+   "  de \"a\" (\"de junio a agosto\"). Diccionario panhispanico de dudas (RAE-ASALE).",
+   "\"desde\": RAE, DLE s.v. \"desde\" (preposicion) -- punto de origen en el tiempo o",
+   "  el espacio (\"desde junio\", \"desde 2010\"). https://dle.rae.es/desde",
+   "\"a partir de\": RAE -- locucion prepositiva, punto de comienzo.",
+   "\"del\": contraccion obligatoria de la preposicion \"de\" + el articulo \"el\"",
+   "  (RAE-ASALE, Nueva gramatica de la lengua espanola, 21.3; Ortografia de la",
+   "  lengua espanola, 3.4.2.2). Es la forma escrita corriente del inicio de un",
+   "  intervalo cuando el termino lleva articulo: \"del 5 al 12 de junio\"."
+  ],
+  "marker_half": [
+   "period noun \"mitad\" (una de las dos partes iguales) -- RAE, Diccionario de la lengua española, s.v. \"mitad\"."
+  ],
+  "marker_hour_approx": [
+   "A word of approximation before an hour: \"sobre las 20h\", \"hacia las 20h\".",
+   "sobre: \"7. Referido al tiempo, indica que se está cerca de un momento",
+   "determinado. Sinónimos: hacia, cerca de.\" (Wikcionario, s.v. \"sobre\", 7).",
+   "hacia: \"around, about (indicating time)\" (Wiktionary, s.v. \"hacia\",",
+   "Spanish, preposition)."
+  ],
+  "marker_hour_statement": [
+   "The verb that states the hour, with its article: \"son las 15h\", \"es la",
+   "una\".  \"ser [...] 10. Se usa para decir la hora o fecha.\" (Wikcionario,",
+   "s.v. \"ser\", 10)."
+  ],
+  "marker_month_word": [
+   "Spanish \"mes\" (\"month\"), the noun that ends \"el día 5 del mes que viene\"",
+   "(RAE DLE s.v. \"mes\")."
+  ],
+  "marker_recur_habitual": [
+   "Bare PLURAL definite article marking habitual weekday recurrence -- \"los",
+   "lunes\" / \"las\" (feminine agreement is never needed for a weekday noun, but",
+   "both forms are listed for symmetry with the article vocabulary). RAE/DPD",
+   "s.v. \"el\" -- the plural article on a day-of-the-week noun reads",
+   "habitually (\"Los lunes vamos al cine\" -- \"We go to the cinema on",
+   "Mondays\"), while the singular (\"El lunes vamos al cine\") names the single",
+   "next Monday. Deliberately holds ONLY the plural surfaces: \"el\"/\"la\" are",
+   "excluded so the singular reading is structurally unreachable here, not",
+   "merely guarded against."
+  ],
+  "marker_to": [
+   "Spanish range \"to\" boundary -- the term / upper limit of a bounded interval.",
+   "\"a\": RAE/DPD s.v. \"a\" (preposicion) -- marks el termino o punto de llegada,",
+   "  correlativa de \"de\" (\"de junio a agosto\", \"de 5 a 12\").",
+   "  Diccionario panhispanico de dudas (RAE-ASALE), s.v. \"a\".",
+   "\"hasta\": RAE, DLE s.v. \"hasta\" (preposicion) -- limite de tiempo, lugar o",
+   "  cantidad (\"de junio hasta agosto\"). https://dle.rae.es/hasta",
+   "\"al\": contraccion obligatoria de la preposicion \"a\" + el articulo \"el\"",
+   "  (RAE-ASALE, Nueva gramatica de la lengua espanola, 21.3). Correlativa de",
+   "  \"del\" en la construccion \"del ... al ...\", que la Ortografia de la lengua",
+   "  espanola (5.2.5.1) da como forma normal del intervalo de fechas."
+  ],
+  "marker_until_amount": [
+   "The interrogative that follows \"hasta\" when the limit is an amount, not a",
+   "time: \"¿hasta cuántos grados va a subir?\".  \"cuánto [...] (adjetivo",
+   "interrogativo) Qué número de o qué cantidad de.\" (Wikcionario, s.v.",
+   "\"cuánto\", 1)."
+  ],
+  "marker_year_plural": [
+   "The plural year noun that frames a decade (\"los años veinte\", \"los años",
+   "1980\"); the singular in marker_year_word.voc names a single year (\"el año",
+   "1980\") and must not reach the decade slot.  The unaccented spelling is",
+   "kept alongside, as it is there.",
+   "Source: Diccionario panhispánico de dudas, RAE, s.v. \"década\"",
+   "(https://www.rae.es/dpd/década): \"Es habitual utilizar expresiones como",
+   "los años veinte, la década de los treinta, los cuarenta, etc.\"; \"Es",
+   "posible emplear cifras en su expresión si acompañan a la palabra años:",
+   "los años 20.\""
+  ],
+  "month_1": [
+   "Unicode CLDR 47, locale es, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/es/ca-gregorian.json): months.format.wide,",
+   "months.stand-alone.wide, months.format.abbreviated,",
+   "months.stand-alone.abbreviated."
+  ],
+  "month_10": [
+   "Unicode CLDR 47, locale es, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/es/ca-gregorian.json): months.format.wide,",
+   "months.stand-alone.wide, months.format.abbreviated,",
+   "months.stand-alone.abbreviated."
+  ],
+  "month_11": [
+   "Unicode CLDR 47, locale es, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/es/ca-gregorian.json): months.format.wide,",
+   "months.stand-alone.wide, months.format.abbreviated,",
+   "months.stand-alone.abbreviated."
+  ],
+  "month_12": [
+   "Unicode CLDR 47, locale es, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/es/ca-gregorian.json): months.format.wide,",
+   "months.stand-alone.wide, months.format.abbreviated,",
+   "months.stand-alone.abbreviated."
+  ],
+  "month_2": [
+   "Unicode CLDR 47, locale es, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/es/ca-gregorian.json): months.format.wide,",
+   "months.stand-alone.wide, months.format.abbreviated,",
+   "months.stand-alone.abbreviated."
+  ],
+  "month_3": [
+   "Unicode CLDR 47, locale es, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/es/ca-gregorian.json): months.format.wide,",
+   "months.stand-alone.wide, months.format.abbreviated,",
+   "months.stand-alone.abbreviated."
+  ],
+  "month_4": [
+   "Unicode CLDR 47, locale es, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/es/ca-gregorian.json): months.format.wide,",
+   "months.stand-alone.wide, months.format.abbreviated,",
+   "months.stand-alone.abbreviated."
+  ],
+  "month_5": [
+   "Unicode CLDR 47, locale es, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/es/ca-gregorian.json): months.format.wide,",
+   "months.stand-alone.wide, months.format.abbreviated,",
+   "months.stand-alone.abbreviated."
+  ],
+  "month_6": [
+   "Unicode CLDR 47, locale es, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/es/ca-gregorian.json): months.format.wide,",
+   "months.stand-alone.wide, months.format.abbreviated,",
+   "months.stand-alone.abbreviated."
+  ],
+  "month_7": [
+   "Unicode CLDR 47, locale es, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/es/ca-gregorian.json): months.format.wide,",
+   "months.stand-alone.wide, months.format.abbreviated,",
+   "months.stand-alone.abbreviated."
+  ],
+  "month_8": [
+   "Unicode CLDR 47, locale es, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/es/ca-gregorian.json): months.format.wide,",
+   "months.stand-alone.wide, months.format.abbreviated,",
+   "months.stand-alone.abbreviated."
+  ],
+  "month_9": [
+   "Unicode CLDR 47, locale es, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/es/ca-gregorian.json): months.format.wide,",
+   "months.stand-alone.wide.  Not covered by any of those charts, and so",
+   "unattested here: \"setiembre\", \"sep\"."
+  ],
+  "roman_anchor_ides": [
+   "Spanish vernacular Roman-calendar anchor names.",
+   "Source: Wikipedia \"Calendario romano\" (es), \"Divisiones del mes\":",
+   "  \"Las calendas (kalendae) ... Las nonas (nonae) ... Los idus (idus)\".",
+   "  https://es.wikipedia.org/wiki/Calendario_romano"
+  ],
+  "roman_anchor_kalends": [
+   "Spanish vernacular Roman-calendar anchor names.",
+   "Source: Wikipedia \"Calendario romano\" (es), \"Divisiones del mes\":",
+   "  \"Las calendas (kalendae) ... Las nonas (nonae) ... Los idus (idus)\".",
+   "  https://es.wikipedia.org/wiki/Calendario_romano"
+  ],
+  "roman_anchor_nones": [
+   "Spanish vernacular Roman-calendar anchor names.",
+   "Source: Wikipedia \"Calendario romano\" (es), \"Divisiones del mes\":",
+   "  \"Las calendas (kalendae) ... Las nonas (nonae) ... Los idus (idus)\".",
+   "  https://es.wikipedia.org/wiki/Calendario_romano"
+  ],
+  "unit_minute": [
+   "min: the symbol of the minute, \"minute min 1 min = 60 s\" (BIPM, The",
+   "International System of Units, 9th ed., table 8)."
+  ],
+  "unit_second": [
+   "Unicode CLDR 47, locale es, cldr-units-full/main/es/units.json,",
+   "duration-second: one \"segundo\", other \"segundos\"."
+  ],
+  "weekday_0": [
+   "Unicode CLDR 47, locale es, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/es/ca-gregorian.json): days.format.wide,",
+   "days.stand-alone.wide."
+  ],
+  "weekday_1": [
+   "Unicode CLDR 47, locale es, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/es/ca-gregorian.json): days.format.wide,",
+   "days.stand-alone.wide."
+  ],
+  "weekday_2": [
+   "Unicode CLDR 47, locale es, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/es/ca-gregorian.json): days.format.wide,",
+   "days.stand-alone.wide.  Not covered by any of those charts, and so",
+   "unattested here: \"miercoles\"."
+  ],
+  "weekday_3": [
+   "Unicode CLDR 47, locale es, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/es/ca-gregorian.json): days.format.wide,",
+   "days.stand-alone.wide."
+  ],
+  "weekday_4": [
+   "Unicode CLDR 47, locale es, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/es/ca-gregorian.json): days.format.wide,",
+   "days.stand-alone.wide."
+  ],
+  "weekday_5": [
+   "Unicode CLDR 47, locale es, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/es/ca-gregorian.json): days.format.wide,",
+   "days.stand-alone.wide.  Not covered by any of those charts, and so",
+   "unattested here: \"sabado\"."
+  ],
+  "weekday_6": [
+   "Unicode CLDR 47, locale es, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/es/ca-gregorian.json): days.format.wide,",
+   "days.stand-alone.wide."
+  ],
+  "weekday_abbr_0": [
+   "Unicode CLDR 47, locale es, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/es/ca-gregorian.json): days.format.abbreviated,",
+   "days.stand-alone.abbreviated."
+  ],
+  "weekday_abbr_1": [
+   "Unicode CLDR 47, locale es, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/es/ca-gregorian.json): days.format.abbreviated,",
+   "days.stand-alone.abbreviated."
+  ],
+  "weekday_abbr_2": [
+   "Unicode CLDR 47, locale es, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/es/ca-gregorian.json): days.format.abbreviated,",
+   "days.stand-alone.abbreviated."
+  ],
+  "weekday_abbr_3": [
+   "Unicode CLDR 47, locale es, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/es/ca-gregorian.json): days.format.abbreviated,",
+   "days.stand-alone.abbreviated."
+  ],
+  "weekday_abbr_4": [
+   "Unicode CLDR 47, locale es, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/es/ca-gregorian.json): days.format.abbreviated,",
+   "days.stand-alone.abbreviated."
+  ],
+  "weekday_abbr_6": [
+   "Unicode CLDR 47, locale es, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/es/ca-gregorian.json): days.format.abbreviated,",
+   "days.stand-alone.abbreviated."
+  ]
+ }
+}

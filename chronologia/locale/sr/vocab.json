@@ -1,0 +1,831 @@
+{
+ "format_version": 1,
+ "words": {
+  "clock_dir_minute_15": [
+   "petnaest",
+   "петнаест"
+  ],
+  "clock_dir_past": [
+   "i",
+   "и"
+  ],
+  "clock_dir_to": [
+   "do",
+   "до"
+  ],
+  "clock_fraction_15": [
+   "četvrt",
+   "четврт"
+  ],
+  "clock_fraction_30": [
+   "pola",
+   "пола"
+  ],
+  "clock_landmark_0": [
+   "ponoć",
+   "поноћ"
+  ],
+  "clock_landmark_720": [
+   "podne",
+   "подне"
+  ],
+  "clock_meridiem_am": [
+   "ujutru",
+   "ујутру"
+  ],
+  "clock_meridiem_pm": [
+   "popodne",
+   "uveče",
+   "поподне",
+   "увече"
+  ],
+  "clock_zone_0": [
+   "gmt",
+   "utc"
+  ],
+  "daypart_afternoon_sr": [
+   "popodne",
+   "поподне"
+  ],
+  "daypart_evening_sr": [
+   "uveče",
+   "увече"
+  ],
+  "daypart_morning_sr": [
+   "ujutru",
+   "ујутру"
+  ],
+  "daypart_night_sr": [
+   "noću",
+   "ноћу"
+  ],
+  "marker_after": [
+   "posle",
+   "после"
+  ],
+  "marker_and": [
+   "i",
+   "и"
+  ],
+  "marker_at": [
+   "na",
+   "u",
+   "на",
+   "у"
+  ],
+  "marker_before": [
+   "pre",
+   "пре"
+  ],
+  "marker_between": [
+   "između",
+   "између"
+  ],
+  "marker_day_filler": [
+   "dana",
+   "дана"
+  ],
+  "marker_every": [
+   "svaka",
+   "svaki",
+   "svako",
+   "svaku",
+   "свака",
+   "сваки",
+   "свако",
+   "сваку"
+  ],
+  "marker_from": [
+   "od",
+   "од"
+  ],
+  "marker_future": [
+   "za",
+   "за"
+  ],
+  "marker_in": [
+   "za",
+   "за"
+  ],
+  "marker_last": [
+   "prošla",
+   "prošle",
+   "prošli",
+   "prošlih",
+   "prošlim",
+   "prošlog",
+   "prošloj",
+   "prošlom",
+   "prošlu",
+   "прошла",
+   "прошле",
+   "прошли",
+   "прошлим",
+   "прошлих",
+   "прошлог",
+   "прошлом",
+   "прошлој",
+   "прошлу"
+  ],
+  "marker_next": [
+   "sledeća",
+   "sledeće",
+   "sledećeg",
+   "sledećem",
+   "sledeći",
+   "sledećih",
+   "sledećim",
+   "sledećoj",
+   "sledeću",
+   "следећа",
+   "следеће",
+   "следећег",
+   "следећем",
+   "следећи",
+   "следећим",
+   "следећих",
+   "следећој",
+   "следећу"
+  ],
+  "marker_oclock": [
+   "sat",
+   "sata",
+   "sati",
+   "сат",
+   "сата",
+   "сати"
+  ],
+  "marker_of": [
+   "u",
+   "у"
+  ],
+  "marker_past": [
+   "pre",
+   "пре"
+  ],
+  "marker_since": [
+   "od",
+   "од"
+  ],
+  "marker_this": [
+   "ova",
+   "ovaj",
+   "ove",
+   "ovih",
+   "ovim",
+   "ovo",
+   "ovog",
+   "ovoj",
+   "ovom",
+   "ovu",
+   "ова",
+   "овај",
+   "ове",
+   "овим",
+   "ових",
+   "ово",
+   "овог",
+   "овом",
+   "овој",
+   "ову"
+  ],
+  "marker_to": [
+   "do",
+   "до"
+  ],
+  "marker_until": [
+   "do",
+   "до"
+  ],
+  "marker_weekday_counted_ambiguous": [
+   "nedelja",
+   "nedelje",
+   "недеља",
+   "недеље"
+  ],
+  "marker_weekday_week_ambiguous": [
+   "nedelje",
+   "недеље"
+  ],
+  "marker_year_word": [
+   "godina",
+   "godine",
+   "година",
+   "године"
+  ],
+  "month_1": [
+   "januar",
+   "januara",
+   "јануар",
+   "јануара"
+  ],
+  "month_10": [
+   "oktobar",
+   "oktobra",
+   "октобар",
+   "октобра"
+  ],
+  "month_11": [
+   "novembar",
+   "novembra",
+   "новембар",
+   "новембра"
+  ],
+  "month_12": [
+   "decembar",
+   "decembra",
+   "децембар",
+   "децембра"
+  ],
+  "month_2": [
+   "februar",
+   "februara",
+   "фебруар",
+   "фебруара"
+  ],
+  "month_3": [
+   "mart",
+   "marta",
+   "март",
+   "марта"
+  ],
+  "month_4": [
+   "april",
+   "aprila",
+   "април",
+   "априла"
+  ],
+  "month_5": [
+   "maj",
+   "maja",
+   "мај",
+   "маја"
+  ],
+  "month_6": [
+   "jun",
+   "juna",
+   "јун",
+   "јуна"
+  ],
+  "month_7": [
+   "jul",
+   "jula",
+   "јул",
+   "јула"
+  ],
+  "month_8": [
+   "avgust",
+   "avgusta",
+   "август",
+   "августа"
+  ],
+  "month_9": [
+   "septembar",
+   "septembra",
+   "септембар",
+   "септембра"
+  ],
+  "named_day_-1": [
+   "juče",
+   "јуче"
+  ],
+  "named_day_-2": [
+   "prekjuče",
+   "прекјуче"
+  ],
+  "named_day_0": [
+   "danas",
+   "данас"
+  ],
+  "named_day_1": [
+   "sutra",
+   "сутра"
+  ],
+  "named_day_2": [
+   "prekosutra",
+   "прекосутра"
+  ],
+  "season_fall": [
+   "jesen",
+   "јесен"
+  ],
+  "season_spring": [
+   "proleće",
+   "пролеће"
+  ],
+  "season_summer": [
+   "leto",
+   "лето"
+  ],
+  "season_winter": [
+   "zima",
+   "зима"
+  ],
+  "special_weekend": [
+   "vikend",
+   "викенд"
+  ],
+  "unit1_century": [
+   "vek",
+   "век"
+  ],
+  "unit1_day": [
+   "dan",
+   "дан"
+  ],
+  "unit1_decade": [
+   "decenija",
+   "деценија"
+  ],
+  "unit1_hour": [
+   "sat",
+   "сат"
+  ],
+  "unit1_minute": [
+   "minut",
+   "минут"
+  ],
+  "unit1_month": [
+   "mesec",
+   "месец"
+  ],
+  "unit1_second": [
+   "sekunda",
+   "секунда"
+  ],
+  "unit1_week": [
+   "sedmica",
+   "sedmice",
+   "sedmicu",
+   "седмица",
+   "седмице",
+   "седмицу"
+  ],
+  "unit1_year": [
+   "godina",
+   "година"
+  ],
+  "unit_century": [
+   "vek",
+   "veka",
+   "vekova",
+   "век",
+   "века",
+   "векова"
+  ],
+  "unit_day": [
+   "dan",
+   "dana",
+   "дан",
+   "дана"
+  ],
+  "unit_decade": [
+   "decenija",
+   "decenije",
+   "деценија",
+   "деценије"
+  ],
+  "unit_hour": [
+   "sat",
+   "sata",
+   "sati",
+   "сат",
+   "сата",
+   "сати"
+  ],
+  "unit_minute": [
+   "minut",
+   "minuta",
+   "минут",
+   "минута"
+  ],
+  "unit_month": [
+   "mesec",
+   "meseca",
+   "meseci",
+   "месец",
+   "месеца",
+   "месеци"
+  ],
+  "unit_second": [
+   "sekunda",
+   "sekunde",
+   "sekundi",
+   "секунда",
+   "секунде",
+   "секунди"
+  ],
+  "unit_week": [
+   "sedmica",
+   "sedmice",
+   "седмица",
+   "седмице"
+  ],
+  "unit_year": [
+   "godina",
+   "godine",
+   "година",
+   "године"
+  ],
+  "weekday_0": [
+   "ponedeljak",
+   "ponedeljka",
+   "понедељак",
+   "понедељка"
+  ],
+  "weekday_1": [
+   "utorak",
+   "utorka",
+   "уторак",
+   "уторка"
+  ],
+  "weekday_2": [
+   "sreda",
+   "srede",
+   "sredu",
+   "среда",
+   "среде",
+   "среду"
+  ],
+  "weekday_3": [
+   "četvrtak",
+   "četvrtka",
+   "четвртак",
+   "четвртка"
+  ],
+  "weekday_4": [
+   "petak",
+   "petka",
+   "петак",
+   "петка"
+  ],
+  "weekday_5": [
+   "subota",
+   "subote",
+   "subotu",
+   "субота",
+   "суботе",
+   "суботу"
+  ],
+  "weekday_6": [
+   "nedelja",
+   "nedelje",
+   "nedelju",
+   "недеља",
+   "недеље",
+   "недељу"
+  ]
+ },
+ "sources": {
+  "clock_dir_minute_15": [
+   "Subtractive-only literal minute count in \"MINUTE do HOUR\": \"petnaest do",
+   "sedam\" (fifteen to seven) == 6:45.  Unlike \"četvrt\" this is not a bare",
+   "fraction word (Serbian never says a bare \"*petnaest sedam*\"), so it lives",
+   "in its own CLOCKMIN class, valid only alongside CLOCKDIR -- exactly the",
+   "ru \"без пятнадцати\" shape.  gospeakserbian, \"Telling Time in Serbian\"."
+  ],
+  "clock_dir_past": [
+   "The additive \"past\" reading of HOUR CLOCKDIR FRACTION: \"dva i četvrt\" (two",
+   "and a quarter) == 2:15.  Wiktionary, i (conjunction) --",
+   "https://en.wiktionary.org/wiki/i#Serbo-Croatian"
+  ],
+  "clock_dir_to": [
+   "The subtractive \"to\" reading of FRACTION CLOCKDIR HOUR: \"četvrt do tri\"",
+   "== 2:45, \"petnaest do sedam\" == 6:45.  Wikipedia, \"Date and time notation",
+   "in Serbia\"; gospeakserbian, \"Telling Time in Serbian\".  Wiktionary, do",
+   "(preposition) -- https://en.wiktionary.org/wiki/do#Serbo-Croatian"
+  ],
+  "clock_fraction_15": [
+   "\"dva i četvrt\" (two and a quarter) == 2:15; \"četvrt do tri\" (quarter to",
+   "three) == 2:45.  Wiktionary, četvrt --",
+   "https://en.wiktionary.org/wiki/%C4%8Detvrt#Serbo-Croatian"
+  ],
+  "clock_fraction_30": [
+   "\"pola četiri\" (half four) == 3:30, toward the coming hour -- Wikipedia,",
+   "\"Date and time notation in Serbia\"; gospeakserbian; Talkpal.  Wiktionary,",
+   "pola -- https://en.wiktionary.org/wiki/pola#Serbo-Croatian"
+  ],
+  "clock_meridiem_am": [
+   "Source: Wiktionary, ujutru -- https://en.wiktionary.org/wiki/ujutru"
+  ],
+  "clock_meridiem_pm": [
+   "Source: Wiktionary, popodne -- https://en.wiktionary.org/wiki/popodne",
+   "and uveče -- https://en.wiktionary.org/wiki/uve%C4%8De"
+  ],
+  "daypart_afternoon_sr": [
+   "Band boundaries: Unicode CLDR 47 Day Period Rules, locale sr.",
+   "Source: Wiktionary, popodne -- https://en.wiktionary.org/wiki/popodne"
+  ],
+  "daypart_evening_sr": [
+   "Band boundaries: Unicode CLDR 47 Day Period Rules, locale sr.",
+   "Source: Wiktionary, uveče -- https://en.wiktionary.org/wiki/uve%C4%8De"
+  ],
+  "daypart_morning_sr": [
+   "Band boundaries: Unicode CLDR 47 Day Period Rules, locale sr",
+   "(https://www.unicode.org/cldr/charts/47/supplemental/day_periods.html),",
+   "transcribed in chronologia/dayparts.py as the morning band.",
+   "Source: Wiktionary, ujutru -- https://en.wiktionary.org/wiki/ujutru"
+  ],
+  "daypart_night_sr": [
+   "Band boundaries: Unicode CLDR 47 Day Period Rules, locale sr.",
+   "Source: Wiktionary, noću -- https://en.wiktionary.org/wiki/no%C4%87u"
+  ],
+  "marker_after": [
+   "Wiktionary, posle -- https://en.wiktionary.org/wiki/posle#Serbo-Croatian"
+  ],
+  "marker_before": [
+   "\"prije/pre X\" (before X) -- Wiktionary, pre --",
+   "https://en.wiktionary.org/wiki/pre#Serbo-Croatian"
+  ],
+  "marker_between": [
+   "\"između X i Y\" -- Wiktionary, između --",
+   "https://en.wiktionary.org/wiki/izme%C4%91u#Serbo-Croatian ; the \"i\" glue",
+   "is the ordinary conjunction (marker_and.voc), following the sibling",
+   "between-construction shape (hr marker_between.voc)."
+  ],
+  "marker_day_filler": [
+   "Serbian shares Croatian's idiom: a bare genitive-plural \"dana\"/\"дана\" (of",
+   "days) trailing a year/month/week count is the emphatic filler \"mesec",
+   "DANA\" (literally \"a month OF DAYS\" == exactly one month), never a genuine",
+   "extra day -- a standalone \"+1 day\" reads the nominative \"dan\"/\"дан\", not",
+   "this genitive-plural form.  Wiktionary, dan, Serbo-Croatian declension",
+   "table (genitive plural \"dana\"). https://en.wiktionary.org/wiki/dan#Serbo-Croatian"
+  ],
+  "marker_every": [
+   "Wiktionary, svaki -- https://en.wiktionary.org/wiki/svaki#Serbo-Croatian"
+  ],
+  "marker_last": [
+   "\"last/previous\" determiner, adjectival paradigm (nominative + the",
+   "genitive-feminine \"prošle godine\" = last year).  Talkpal, \"Time-related",
+   "vocabulary in Serbian\" -- single-sourced."
+  ],
+  "marker_next": [
+   "\"next/following\" determiner, adjectival paradigm (nominative + the",
+   "genitive/dative \"sledeće godine\" = next year).  Talkpal, \"Time-related",
+   "vocabulary in Serbian\" -- single-sourced, so only the attested nominative",
+   "and the ordinary genitive-feminine \"godine\" agreement are shipped."
+  ],
+  "marker_oclock": [
+   "The bare \"o'clock\" word inflects with the hour count exactly like the",
+   "duration unit: \"jedan sat\" (one o'clock, nominative), \"dva sata\" (two",
+   "o'clock, the genitive SINGULAR/paucal, not \"*dva sati*\"), \"pet sati\"",
+   "(five o'clock, genitive plural).  Wiktionary, sat, declension table --",
+   "https://en.wiktionary.org/wiki/sat#Serbo-Croatian"
+  ],
+  "marker_past": [
+   "\"pre\" doubles as the offset-direction marker for the \"ago\" reading",
+   "(\"pre tri dana\" = three days ago) and, in marker_before.voc, as \"before X\".",
+   "Both frames are wired: Wiktionary, pre --",
+   "https://en.wiktionary.org/wiki/pre#Serbo-Croatian ; Talkpal, \"Telling Time",
+   "in Serbian\" (pre = ago)."
+  ],
+  "marker_this": [
+   "\"this\" demonstrative, pronominal paradigm (nominative + the",
+   "genitive-feminine \"ove godine\" = this year).  Talkpal, \"Time-related",
+   "vocabulary in Serbian\" -- single-sourced."
+  ],
+  "marker_weekday_counted_ambiguous": [
+   "\"nedelja\" names both the weekday Sunday and, in some sources, the week",
+   "(see weekday_6.voc) -- a COUNT immediately before it (\"dve nedelja\", \"10",
+   "nedelja\") can only be a span of weeks, since nobody counts specific",
+   "Sundays that way, but this locale ships no week duration unit under",
+   "\"nedelja\" (sedmica is the unambiguous week word; unit_week.voc/",
+   "unit1_week.voc). Answering the lone-Sunday sub-reading and stranding the",
+   "count would be a worse wrong answer than none, so the count vetoes the",
+   "weekday match instead of asserting the unsourced week reading. Wiktionary,",
+   "nedelja -- https://en.wiktionary.org/wiki/nedelja#Serbo-Croatian",
+   "\"nedelje\" is the paucal (2-4) GENITIVE SINGULAR of the same noun --",
+   "unit_week.voc's own \"sedmica\"/\"sedmice\" pair uses that exact case for a",
+   "counted week (\"dve sedmice\"), so \"dve nedelje\" is read the same way and",
+   "needs the same veto the nominative gets above. Wiktionary, nedelja,",
+   "declension table -- https://en.wiktionary.org/wiki/nedelja#Serbo-Croatian"
+  ],
+  "marker_weekday_week_ambiguous": [
+   "The genitive \"nedelje\" is the form \"prošle/sledeće nedelje\" (\"last/next",
+   "nedelje\") uses -- and dictionaries give \"last WEEK\" as the DEFAULT gloss of",
+   "that exact genitive (Wiktionary marks the weekday sense secondary at this",
+   "case; sr.wikipedia treats nedelja/sedmica as interchangeable for \"week\").",
+   "No source establishes one reading as dominant, so \"prošle/sledeće nedelje\"",
+   "refuses rather than silently picking the weekday sense (see",
+   "weekday_6.voc for the full disambiguation design)."
+  ],
+  "month_1": [
+   "Unicode CLDR 47, locale sr, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/sr/ca-gregorian.json): months.format.wide,",
+   "months.stand-alone.wide.  The Latin-script spellings are the same charts in",
+   "cldr-dates-full/main/sr-Latn/ca-gregorian.json: months.format.wide,",
+   "months.stand-alone.wide.  Not covered by any of those charts, and so",
+   "unattested here: \"januara\", \"јануара\"."
+  ],
+  "month_10": [
+   "Unicode CLDR 47, locale sr, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/sr/ca-gregorian.json): months.format.wide,",
+   "months.stand-alone.wide.  The Latin-script spellings are the same charts in",
+   "cldr-dates-full/main/sr-Latn/ca-gregorian.json: months.format.wide,",
+   "months.stand-alone.wide.  Not covered by any of those charts, and so",
+   "unattested here: \"oktobra\", \"октобра\"."
+  ],
+  "month_11": [
+   "Unicode CLDR 47, locale sr, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/sr/ca-gregorian.json): months.format.wide,",
+   "months.stand-alone.wide.  The Latin-script spellings are the same charts in",
+   "cldr-dates-full/main/sr-Latn/ca-gregorian.json: months.format.wide,",
+   "months.stand-alone.wide.  Not covered by any of those charts, and so",
+   "unattested here: \"novembra\", \"новембра\"."
+  ],
+  "month_12": [
+   "Unicode CLDR 47, locale sr, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/sr/ca-gregorian.json): months.format.wide,",
+   "months.stand-alone.wide.  The Latin-script spellings are the same charts in",
+   "cldr-dates-full/main/sr-Latn/ca-gregorian.json: months.format.wide,",
+   "months.stand-alone.wide.  Not covered by any of those charts, and so",
+   "unattested here: \"decembra\", \"децембра\"."
+  ],
+  "month_2": [
+   "Unicode CLDR 47, locale sr, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/sr/ca-gregorian.json): months.format.wide,",
+   "months.stand-alone.wide.  The Latin-script spellings are the same charts in",
+   "cldr-dates-full/main/sr-Latn/ca-gregorian.json: months.format.wide,",
+   "months.stand-alone.wide.  Not covered by any of those charts, and so",
+   "unattested here: \"februara\", \"фебруара\"."
+  ],
+  "month_3": [
+   "Unicode CLDR 47, locale sr, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/sr/ca-gregorian.json): months.format.wide,",
+   "months.stand-alone.wide.  The Latin-script spellings are the same charts in",
+   "cldr-dates-full/main/sr-Latn/ca-gregorian.json: months.format.wide,",
+   "months.stand-alone.wide.  Not covered by any of those charts, and so",
+   "unattested here: \"marta\", \"марта\"."
+  ],
+  "month_4": [
+   "Unicode CLDR 47, locale sr, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/sr/ca-gregorian.json): months.format.wide,",
+   "months.stand-alone.wide.  The Latin-script spellings are the same charts in",
+   "cldr-dates-full/main/sr-Latn/ca-gregorian.json: months.format.wide,",
+   "months.stand-alone.wide.  Not covered by any of those charts, and so",
+   "unattested here: \"aprila\", \"априла\"."
+  ],
+  "month_5": [
+   "Unicode CLDR 47, locale sr, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/sr/ca-gregorian.json): months.format.wide,",
+   "months.stand-alone.wide, months.format.abbreviated,",
+   "months.stand-alone.abbreviated.  The Latin-script spellings are the same",
+   "charts in cldr-dates-full/main/sr-Latn/ca-gregorian.json:",
+   "months.format.wide, months.stand-alone.wide, months.format.abbreviated,",
+   "months.stand-alone.abbreviated.  Not covered by any of those charts, and so",
+   "unattested here: \"maja\", \"маја\"."
+  ],
+  "month_6": [
+   "Unicode CLDR 47, locale sr, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/sr/ca-gregorian.json): months.format.wide,",
+   "months.stand-alone.wide, months.format.abbreviated,",
+   "months.stand-alone.abbreviated.  The Latin-script spellings are the same",
+   "charts in cldr-dates-full/main/sr-Latn/ca-gregorian.json:",
+   "months.format.wide, months.stand-alone.wide, months.format.abbreviated,",
+   "months.stand-alone.abbreviated.  Not covered by any of those charts, and so",
+   "unattested here: \"juna\", \"јуна\"."
+  ],
+  "month_7": [
+   "Unicode CLDR 47, locale sr, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/sr/ca-gregorian.json): months.format.wide,",
+   "months.stand-alone.wide, months.format.abbreviated,",
+   "months.stand-alone.abbreviated.  The Latin-script spellings are the same",
+   "charts in cldr-dates-full/main/sr-Latn/ca-gregorian.json:",
+   "months.format.wide, months.stand-alone.wide, months.format.abbreviated,",
+   "months.stand-alone.abbreviated.  Not covered by any of those charts, and so",
+   "unattested here: \"jula\", \"јула\"."
+  ],
+  "month_8": [
+   "Unicode CLDR 47, locale sr, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/sr/ca-gregorian.json): months.format.wide,",
+   "months.stand-alone.wide.  The Latin-script spellings are the same charts in",
+   "cldr-dates-full/main/sr-Latn/ca-gregorian.json: months.format.wide,",
+   "months.stand-alone.wide.  Not covered by any of those charts, and so",
+   "unattested here: \"avgusta\", \"августа\"."
+  ],
+  "month_9": [
+   "Unicode CLDR 47, locale sr, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/sr/ca-gregorian.json): months.format.wide,",
+   "months.stand-alone.wide.  The Latin-script spellings are the same charts in",
+   "cldr-dates-full/main/sr-Latn/ca-gregorian.json: months.format.wide,",
+   "months.stand-alone.wide.  Not covered by any of those charts, and so",
+   "unattested here: \"septembra\", \"септембра\"."
+  ],
+  "unit1_week": [
+   "Nominative (bare/subject use), accusative \"sedmicu\" (after \"za\" -- \"za",
+   "sedmicu\" = in a week), and genitive singular \"sedmice\" (after \"pre\" --",
+   "\"pre sedmice\" = a week ago).  Wiktionary, sedmica, declension table --",
+   "https://en.wiktionary.org/wiki/sedmica#Serbo-Croatian"
+  ],
+  "unit_century": [
+   "Full paradigm plus paucal: \"dva veka\" (2-4, gen sg), \"pet vekova\" (5+,",
+   "gen pl).  Wiktionary, vek, declension table --",
+   "https://en.wiktionary.org/wiki/vek#Serbo-Croatian"
+  ],
+  "unit_day": [
+   "\"dan\" syncretises genitive singular and genitive plural: \"dva dana\" (2-4)",
+   "and \"pet dana\" (5+) are both \"dana\".  Wiktionary, dan, declension table --",
+   "https://en.wiktionary.org/wiki/dan#Serbo-Croatian"
+  ],
+  "unit_decade": [
+   "Full paradigm plus paucal: \"dve decenije\" (2-4, gen sg), \"pet decenija\"",
+   "(5+, gen pl).  Wiktionary, decenija, declension table --",
+   "https://en.wiktionary.org/wiki/decenija#Serbo-Croatian"
+  ],
+  "unit_hour": [
+   "Full paradigm: nominative singular (1), then the paucal rule -- 2-4",
+   "GENITIVE SINGULAR \"sata\", 5+ GENITIVE PLURAL \"sati\".  A naive gen.pl-only",
+   "reading mislabels \"sata\" as the paucal, which is wrong: it is the",
+   "genitive SINGULAR.  Wiktionary, sat, declension table --",
+   "https://en.wiktionary.org/wiki/sat#Serbo-Croatian"
+  ],
+  "unit_minute": [
+   "\"minut\" syncretises genitive singular and genitive plural to the same",
+   "surface: \"dva minuta\" (2-4, gen sg) and \"pet minuta\" (5+, gen pl) are both",
+   "\"minuta\".  Wiktionary, minut, declension table --",
+   "https://en.wiktionary.org/wiki/minut#Serbo-Croatian"
+  ],
+  "unit_month": [
+   "Full paradigm plus paucal: \"dva meseca\" (2-4, gen sg), \"pet meseci\" (5+,",
+   "gen pl).  Wiktionary, mesec, declension table --",
+   "https://en.wiktionary.org/wiki/mesec#Serbo-Croatian"
+  ],
+  "unit_second": [
+   "Full paradigm: nominative singular (1), then the paucal rule -- 2-4",
+   "GENITIVE SINGULAR, 5+ GENITIVE PLURAL -- \"dve sekunde\", \"pet sekundi\".",
+   "Wiktionary, sekunda, declension table --",
+   "https://en.wiktionary.org/wiki/sekunda#Serbo-Croatian"
+  ],
+  "unit_week": [
+   "\"sedmica\" is the unambiguous week word this locale ships as a duration",
+   "unit; \"nedelja\" is deliberately excluded here (see weekday_6.voc) because",
+   "it also names Sunday and the two senses are not locally disambiguable in",
+   "a bare NUM+UNIT phrase.  Full paradigm plus paucal: \"dve sedmice\" (2-4,",
+   "gen sg), \"pet sedmica\" (5+, gen pl).  Wiktionary, sedmica, declension",
+   "table -- https://en.wiktionary.org/wiki/sedmica#Serbo-Croatian"
+  ],
+  "unit_year": [
+   "Full paradigm plus paucal: \"dve godine\" (2-4, gen sg), \"pet godina\" (5+,",
+   "gen pl).  Wiktionary, godina, declension table --",
+   "https://en.wiktionary.org/wiki/godina#Serbo-Croatian"
+  ],
+  "weekday_0": [
+   "Unicode CLDR 47, locale sr, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/sr/ca-gregorian.json): days.format.wide,",
+   "days.stand-alone.wide.  The Latin-script spellings are the same charts in",
+   "cldr-dates-full/main/sr-Latn/ca-gregorian.json: days.format.wide,",
+   "days.stand-alone.wide.  Not covered by any of those charts, and so",
+   "unattested here: \"ponedeljka\", \"понедељка\"."
+  ],
+  "weekday_1": [
+   "Unicode CLDR 47, locale sr, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/sr/ca-gregorian.json): days.format.wide,",
+   "days.stand-alone.wide.  The Latin-script spellings are the same charts in",
+   "cldr-dates-full/main/sr-Latn/ca-gregorian.json: days.format.wide,",
+   "days.stand-alone.wide.  Not covered by any of those charts, and so",
+   "unattested here: \"utorka\", \"уторка\"."
+  ],
+  "weekday_2": [
+   "Unicode CLDR 47, locale sr, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/sr/ca-gregorian.json): days.format.wide,",
+   "days.stand-alone.wide.  The Latin-script spellings are the same charts in",
+   "cldr-dates-full/main/sr-Latn/ca-gregorian.json: days.format.wide,",
+   "days.stand-alone.wide.  Not covered by any of those charts, and so",
+   "unattested here: \"sredu\", \"среду\", \"srede\", \"среде\"."
+  ],
+  "weekday_3": [
+   "Unicode CLDR 47, locale sr, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/sr/ca-gregorian.json): days.format.wide,",
+   "days.stand-alone.wide.  The Latin-script spellings are the same charts in",
+   "cldr-dates-full/main/sr-Latn/ca-gregorian.json: days.format.wide,",
+   "days.stand-alone.wide.  Not covered by any of those charts, and so",
+   "unattested here: \"četvrtka\", \"четвртка\"."
+  ],
+  "weekday_4": [
+   "Unicode CLDR 47, locale sr, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/sr/ca-gregorian.json): days.format.wide,",
+   "days.stand-alone.wide.  The Latin-script spellings are the same charts in",
+   "cldr-dates-full/main/sr-Latn/ca-gregorian.json: days.format.wide,",
+   "days.stand-alone.wide.  Not covered by any of those charts, and so",
+   "unattested here: \"petka\", \"петка\"."
+  ],
+  "weekday_5": [
+   "Unicode CLDR 47, locale sr, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/sr/ca-gregorian.json): days.format.wide,",
+   "days.stand-alone.wide.  The Latin-script spellings are the same charts in",
+   "cldr-dates-full/main/sr-Latn/ca-gregorian.json: days.format.wide,",
+   "days.stand-alone.wide.  Not covered by any of those charts, and so",
+   "unattested here: \"subotu\", \"суботу\", \"subote\", \"суботе\"."
+  ],
+  "weekday_6": [
+   "\"nedelja\" names BOTH the weekday Sunday and (dialectally/dictionary-wise)",
+   "the week -- Wiktionary marks the week sense secondary/regional and",
+   "sr.wikipedia treats sedmica as the unmarked \"week\" word.  This locale",
+   "resolves the ambiguity by CONSTRUCTION, not by guessing: nedelja binds only",
+   "the weekday slot (WEEKDAY == Sunday, as in \"u nedelju\"), and the duration",
+   "unit is sedmica alone (unit_week.voc/unit1_week.voc) -- nedelja never enters",
+   "a duration reading, so \"nedelju dana\" refuses rather than silently picking a",
+   "sense.  Wiktionary, nedelja -- https://en.wiktionary.org/wiki/nedelja#Serbo-Croatian"
+  ]
+ }
+}

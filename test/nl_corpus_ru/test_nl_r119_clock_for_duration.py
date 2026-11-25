@@ -7,7 +7,7 @@ Russian's OWN clock idiom says "at 9 o'clock" as "в 9 часов" -- the
 preposition "в" is baked into the clock construction itself, and is also a
 common leading/leftover word with nothing to do with any duration bound
 ("в следующий вторник ..." == "on next Tuesday ..."). The real "for" bound
-in Russian is the two-word marker "в течение" (``marker_recur_for.voc``);
+in Russian is the two-word marker "в течение" (``marker_recur_for``);
 flattening that surface into its INDIVIDUAL words ({"в", "течение"}) let the
 bare "в" alone stand in for the whole marker, so a stray leading "в" caused
 the entire rest of an already-fully-resolved sentence to be misread as a

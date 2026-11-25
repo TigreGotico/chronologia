@@ -1,0 +1,919 @@
+{
+ "format_version": 1,
+ "words": {
+  "clock_dir_past": [
+   "i"
+  ],
+  "clock_dir_to": [
+   "menys"
+  ],
+  "clock_fraction_15": [
+   "quart"
+  ],
+  "clock_fraction_30": [
+   "mig",
+   "mitja"
+  ],
+  "clock_landmark_0": [
+   "mitjanit"
+  ],
+  "clock_landmark_720": [
+   "migdia"
+  ],
+  "clock_meridiem_am": [
+   "mati",
+   "matinada",
+   "matí"
+  ],
+  "clock_meridiem_night": [
+   "nit"
+  ],
+  "clock_meridiem_pm": [
+   "tarda",
+   "vespre"
+  ],
+  "clock_zone_0": [
+   "gmt",
+   "utc"
+  ],
+  "daypart_mati_ca": [
+   "mati",
+   "matí"
+  ],
+  "daypart_matinada_ca": [
+   "matinada"
+  ],
+  "daypart_nit_ca": [
+   "nit"
+  ],
+  "daypart_tarda_ca": [
+   "tarda"
+  ],
+  "daypart_vespre_ca": [
+   "vespre"
+  ],
+  "marker_ad": [
+   "dc",
+   "ec"
+  ],
+  "marker_after": [
+   "despres",
+   "després"
+  ],
+  "marker_and": [
+   "i"
+  ],
+  "marker_article": [
+   "el",
+   "els",
+   "l",
+   "la",
+   "les"
+  ],
+  "marker_at": [
+   "a",
+   "al",
+   "l",
+   "la",
+   "les"
+  ],
+  "marker_at_counts": [
+   "a"
+  ],
+  "marker_bc": [
+   "ac",
+   "aec"
+  ],
+  "marker_before": [
+   "abans"
+  ],
+  "marker_between": [
+   "entre"
+  ],
+  "marker_bp": [
+   "ap"
+  ],
+  "marker_counted_noun": [
+   "adults",
+   "amics",
+   "amigues",
+   "convidats",
+   "entrades",
+   "habitacions",
+   "jugadors",
+   "nenes",
+   "nens",
+   "noies",
+   "nois",
+   "persona",
+   "persones",
+   "seients",
+   "taules"
+  ],
+  "marker_date_article": [
+   "el"
+  ],
+  "marker_day_label": [
+   "dia"
+  ],
+  "marker_during": [
+   "al",
+   "durant"
+  ],
+  "marker_every": [
+   "cada",
+   "totes",
+   "tots"
+  ],
+  "marker_freq_daily": [
+   "diariament",
+   "diàriament"
+  ],
+  "marker_freq_monthly": [
+   "mensualment"
+  ],
+  "marker_freq_weekly": [
+   "setmanalment"
+  ],
+  "marker_freq_yearly": [
+   "anualment"
+  ],
+  "marker_from": [
+   "a partir de",
+   "de",
+   "del",
+   "des de"
+  ],
+  "marker_future": [
+   "d'aquí a",
+   "dins",
+   "dintre",
+   "en"
+  ],
+  "marker_half": [
+   "meitat",
+   "mig",
+   "mitja"
+  ],
+  "marker_hour_statement": [
+   "són les",
+   "és la"
+  ],
+  "marker_in": [
+   "en"
+  ],
+  "marker_last": [
+   "anterior",
+   "passada",
+   "passades",
+   "passat",
+   "passats",
+   "ultim",
+   "ultima",
+   "ultimes",
+   "ultims",
+   "últim",
+   "última",
+   "últimes",
+   "últims"
+  ],
+  "marker_next": [
+   "proper",
+   "propera",
+   "properes",
+   "propers",
+   "proxim",
+   "proxima",
+   "proximes",
+   "proxims",
+   "pròxim",
+   "pròxima",
+   "pròximes",
+   "pròxims",
+   "que ve",
+   "següent",
+   "vinent",
+   "vinents"
+  ],
+  "marker_oclock": [
+   "hora",
+   "hores"
+  ],
+  "marker_of": [
+   "d",
+   "de",
+   "del",
+   "dels"
+  ],
+  "marker_ordlast": [
+   "darrer",
+   "darrera",
+   "darreres",
+   "darrers",
+   "ultim",
+   "ultima",
+   "últim",
+   "última"
+  ],
+  "marker_past": [
+   "endarrere",
+   "enrere",
+   "fa"
+  ],
+  "marker_present": [
+   "present"
+  ],
+  "marker_q": [
+   "q",
+   "t"
+  ],
+  "marker_quarter_word": [
+   "trimestre",
+   "trimestres"
+  ],
+  "marker_quarters": [
+   "quart",
+   "quarts"
+  ],
+  "marker_recur_for": [
+   "durant",
+   "per"
+  ],
+  "marker_since": [
+   "des",
+   "des de",
+   "des de l'",
+   "des del"
+  ],
+  "marker_this": [
+   "aquest",
+   "aquesta"
+  ],
+  "marker_to": [
+   "a",
+   "al",
+   "fins",
+   "fins a"
+  ],
+  "marker_until": [
+   "fins",
+   "fins a",
+   "fins a l'",
+   "fins al"
+  ],
+  "marker_week_num": [
+   "setmana",
+   "setmanes"
+  ],
+  "marker_weekof": [
+   "la setmana de",
+   "la setmana del",
+   "setmana de",
+   "setmana del"
+  ],
+  "marker_year_plural": [
+   "anys"
+  ],
+  "marker_year_word": [
+   "any",
+   "anys"
+  ],
+  "month_1": [
+   "gen",
+   "gener"
+  ],
+  "month_10": [
+   "oct",
+   "octubre"
+  ],
+  "month_11": [
+   "nov",
+   "novembre"
+  ],
+  "month_12": [
+   "des",
+   "desembre"
+  ],
+  "month_2": [
+   "feb",
+   "febrer"
+  ],
+  "month_3": [
+   "mar",
+   "marc",
+   "març"
+  ],
+  "month_4": [
+   "abr",
+   "abril"
+  ],
+  "month_5": [
+   "mai",
+   "maig"
+  ],
+  "month_6": [
+   "jun",
+   "juny"
+  ],
+  "month_7": [
+   "jul",
+   "juliol"
+  ],
+  "month_8": [
+   "ago",
+   "agost"
+  ],
+  "month_9": [
+   "set",
+   "setembre"
+  ],
+  "months": [
+   "abril",
+   "agost",
+   "desembre",
+   "febrer",
+   "gener",
+   "juliol",
+   "juny",
+   "maig",
+   "març",
+   "novembre",
+   "octubre",
+   "setembre"
+  ],
+  "named_day_-1": [
+   "ahir"
+  ],
+  "named_day_-2": [
+   "abans d'ahir",
+   "abans-d'ahir",
+   "despus-ahir",
+   "despús-ahir"
+  ],
+  "named_day_0": [
+   "avui"
+  ],
+  "named_day_1": [
+   "dema",
+   "demà"
+  ],
+  "named_day_2": [
+   "dema passat",
+   "demà passat",
+   "despus-dema",
+   "despús-demà"
+  ],
+  "ordinal_suffixes": [
+   "a",
+   "n",
+   "r",
+   "t",
+   "ª",
+   "º",
+   "è"
+  ],
+  "period_part_early": [
+   "comencament",
+   "començament",
+   "inici",
+   "inicis",
+   "principi",
+   "principis"
+  ],
+  "period_part_late": [
+   "fi",
+   "final",
+   "finals",
+   "fins"
+  ],
+  "period_part_mid": [
+   "mitjan",
+   "mitjans"
+  ],
+  "roman_anchor_ides": [
+   "ides"
+  ],
+  "roman_anchor_kalends": [
+   "calendes"
+  ],
+  "roman_anchor_nones": [
+   "nones"
+  ],
+  "scale_1000": [
+   "mil"
+  ],
+  "scale_1000000": [
+   "milio",
+   "milions",
+   "milió"
+  ],
+  "scale_1000000000": [
+   "miliard",
+   "miliards"
+  ],
+  "scale_1000000000.short": [
+   "bilions",
+   "bilió"
+  ],
+  "scale_1000000000000.long": [
+   "bilions",
+   "bilió"
+  ],
+  "scope_unit_century": [
+   "segle",
+   "segles"
+  ],
+  "scope_unit_decade": [
+   "decada",
+   "decades",
+   "dècada",
+   "dècades"
+  ],
+  "scope_unit_millennium": [
+   "mileni",
+   "milenis",
+   "mil·lenni",
+   "mil·lennis"
+  ],
+  "season_fall": [
+   "tardor"
+  ],
+  "season_spring": [
+   "primavera"
+  ],
+  "season_summer": [
+   "estiu"
+  ],
+  "season_winter": [
+   "hivern"
+  ],
+  "special_weekend": [
+   "cap de setmana",
+   "caps de setmana"
+  ],
+  "unit1_century": [
+   "segle"
+  ],
+  "unit1_day": [
+   "dia"
+  ],
+  "unit1_decade": [
+   "decada",
+   "dècada"
+  ],
+  "unit1_fortnight": [
+   "quinzena"
+  ],
+  "unit1_hour": [
+   "hora"
+  ],
+  "unit1_millennium": [
+   "mileni",
+   "mil·lenni"
+  ],
+  "unit1_minute": [
+   "minut"
+  ],
+  "unit1_month": [
+   "mes"
+  ],
+  "unit1_second": [
+   "segon"
+  ],
+  "unit1_week": [
+   "setmana"
+  ],
+  "unit1_year": [
+   "any"
+  ],
+  "unit_century": [
+   "segle",
+   "segles"
+  ],
+  "unit_day": [
+   "dia",
+   "dies"
+  ],
+  "unit_decade": [
+   "decada",
+   "decades",
+   "dècada",
+   "dècades"
+  ],
+  "unit_fortnight": [
+   "quinzena",
+   "quinzenes"
+  ],
+  "unit_hour": [
+   "hora",
+   "hores"
+  ],
+  "unit_millennium": [
+   "mileni",
+   "milenis",
+   "mil·lenni",
+   "mil·lennis"
+  ],
+  "unit_minute": [
+   "minut",
+   "minuts"
+  ],
+  "unit_month": [
+   "mes",
+   "mesos"
+  ],
+  "unit_second": [
+   "segon",
+   "segons"
+  ],
+  "unit_week": [
+   "setmana",
+   "setmanes"
+  ],
+  "unit_year": [
+   "any",
+   "anys"
+  ],
+  "weekday_0": [
+   "dilluns"
+  ],
+  "weekday_1": [
+   "dimarts"
+  ],
+  "weekday_2": [
+   "dimecres"
+  ],
+  "weekday_3": [
+   "dijous"
+  ],
+  "weekday_4": [
+   "divendres"
+  ],
+  "weekday_5": [
+   "dissabte"
+  ],
+  "weekday_6": [
+   "diumenge"
+  ],
+  "weekday_abbr_0": [
+   "dl"
+  ],
+  "weekday_abbr_1": [
+   "dt"
+  ],
+  "weekday_abbr_2": [
+   "dc"
+  ],
+  "weekday_abbr_3": [
+   "dj"
+  ],
+  "weekday_abbr_4": [
+   "dv"
+  ],
+  "weekday_abbr_5": [
+   "ds"
+  ],
+  "weekday_abbr_6": [
+   "dg"
+  ]
+ },
+ "sources": {
+  "clock_meridiem_night": [
+   "The NIGHT daypart is a midnight-crossing BAND in colloquial clock usage,",
+   "not a uniform +12 PM shift: \"la una de la nit\" is 01:00, \"les deu de la",
+   "nit\" is 22:00, twelve is midnight 00:00.  Small hours 1..5 stay AM, evening",
+   "hours 6..11 are PM, twelve is midnight (band-split in resolver _clock_hms).",
+   "AM ceiling follows the madrugada band [00:00, 06:00) transcribed for ca in",
+   "chronologia/dayparts.py; Diccionari de la llengua catalana (DIEC2), s.v.",
+   "\"nit\" (https://dlc.iec.cat/)."
+  ],
+  "daypart_mati_ca": [
+   "Band boundaries: Unicode CLDR 47 Day Period Rules, locale ca",
+   "(https://www.unicode.org/cldr/charts/47/supplemental/day_periods.html),",
+   "transcribed in chronologia/dayparts.py as [06:00, 12:00).",
+   "Sources: Gran diccionari de la llengua catalana",
+   "(https://www.diccionari.cat/GDLC/vespre), which defines vespre as the",
+   "\"primeres hores de la nit\" -- an early-evening band Spanish runs",
+   "straight through with one tarde."
+  ],
+  "daypart_matinada_ca": [
+   "Band boundaries: Unicode CLDR 47 Day Period Rules, locale ca",
+   "(https://www.unicode.org/cldr/charts/47/supplemental/day_periods.html),",
+   "transcribed in chronologia/dayparts.py as [00:00, 06:00).",
+   "Sources: Gran diccionari de la llengua catalana",
+   "(https://www.diccionari.cat/GDLC/vespre), which defines vespre as the",
+   "\"primeres hores de la nit\" -- an early-evening band Spanish runs",
+   "straight through with one tarde."
+  ],
+  "daypart_nit_ca": [
+   "Band boundaries: Unicode CLDR 47 Day Period Rules, locale ca",
+   "(https://www.unicode.org/cldr/charts/47/supplemental/day_periods.html),",
+   "transcribed in chronologia/dayparts.py as [21:00, 24:00).",
+   "Sources: Gran diccionari de la llengua catalana",
+   "(https://www.diccionari.cat/GDLC/vespre), which defines vespre as the",
+   "\"primeres hores de la nit\" -- an early-evening band Spanish runs",
+   "straight through with one tarde."
+  ],
+  "daypart_tarda_ca": [
+   "Band boundaries: Unicode CLDR 47 Day Period Rules, locale ca",
+   "(https://www.unicode.org/cldr/charts/47/supplemental/day_periods.html),",
+   "transcribed in chronologia/dayparts.py as [13:00, 19:00).",
+   "Sources: Gran diccionari de la llengua catalana",
+   "(https://www.diccionari.cat/GDLC/vespre), which defines vespre as the",
+   "\"primeres hores de la nit\" -- an early-evening band Spanish runs",
+   "straight through with one tarde.",
+   "Catalan opens the tarda at 13:00, after the hour-wide migdia, not at",
+   "noon the way Spanish and English do."
+  ],
+  "daypart_vespre_ca": [
+   "Band boundaries: Unicode CLDR 47 Day Period Rules, locale ca",
+   "(https://www.unicode.org/cldr/charts/47/supplemental/day_periods.html),",
+   "transcribed in chronologia/dayparts.py as [19:00, 21:00).",
+   "Sources: Gran diccionari de la llengua catalana",
+   "(https://www.diccionari.cat/GDLC/vespre), which defines vespre as the",
+   "\"primeres hores de la nit\" -- an early-evening band Spanish runs",
+   "straight through with one tarde."
+  ],
+  "marker_at_counts": [
+   "Clock prepositions that also introduce a counted group: a bare hour behind one",
+   "is doubtful only right before a word of marker_counted_noun.voc.  Attested in",
+   "the parity acceptance rows; no dictionary source checked, a native reviewer is to confirm."
+  ],
+  "marker_between": [
+   "Catalan range \"between\" framing (entre A i B).",
+   "\"entre\": DIEC2 (IEC), s.v. \"entre\" (preposicio) -- denota situacio o estat",
+   "  enmig de dos termes (\"entre juny i agost\"). Pairs with marker_and (\"i\")."
+  ],
+  "marker_counted_noun": [
+   "Nouns that count people or things a clock never takes: a bare hour behind a",
+   "clock preposition and directly before one of them is a count (\"wave at 5",
+   "people\").  Each word is quoted from its Wiktionary Noun entry",
+   "(https://en.wiktionary.org/wiki/<word>); the fetched pages are kept with the audit.",
+   "persona: Noun. \"person\"",
+   "persones: Noun. \"plural of persona\"",
+   "convidats: Noun. \"plural of convidat\"",
+   "amics: Noun. \"plural of amic\"",
+   "amigues: Noun. \"plural of amiga\"",
+   "nens: Noun. \"plural of nen\"",
+   "nenes: Noun. \"plural of nena\"",
+   "noies: Noun. \"plural of noia\"",
+   "nois: Noun. \"plural of noi\"",
+   "adults: Noun. \"plural of adult\"",
+   "jugadors: Noun. \"plural of jugador\"",
+   "seients: Noun. \"plural of seient\"",
+   "taules: Noun. \"plural of taula\"",
+   "entrades: Noun. \"plural of entrada\"",
+   "habitacions: Noun. \"plural of habitació\""
+  ],
+  "marker_date_article": [
+   "The article that opens the day of an event: \"el 29\", \"el dia 29\", and a",
+   "weekday with its date, \"el dijous 5 de gener\".",
+   "\"Per expressar el dia en què s’esdevé un fet s’utilitza l’article masculí el o bé",
+   "l’expressió el dia\" (Universitat de Barcelona, Llibre d'estil, criteri 2800,",
+   "\"Expressió del temps: dies\").",
+   "The same criterion leaves the article out of \"dijous passat\" and \"dijous",
+   "vinent\", but speech often keeps it (\"el vinent divendres\"), and the",
+   "article then still opens the date."
+  ],
+  "marker_day_label": [
+   "Catalan day-of-month label noun: \"el dia 3 d'agost\" names the 3rd of",
+   "August.",
+   "\"Per expressar el dia en què s’esdevé un fet s’utilitza l’article masculí el o bé",
+   "l’expressió el dia\" (Universitat de Barcelona, Llibre d'estil, criteri 2800,",
+   "\"Expressió del temps: dies\")."
+  ],
+  "marker_during": [
+   "\"al\" (a + el) is the usual frame for a calendar month",
+   "(\"al gener\"); \"durant\" is the explicit \"during\" reading.",
+   "Source: Diccionari de la llengua catalana, https://dlc.iec.cat/."
+  ],
+  "marker_from": [
+   "Catalan range \"from\" lead -- opens a bounded or open interval and, crucially,",
+   "disambiguates the hyper-common preposition \"a\" (marker_to) as a genuine range",
+   "boundary: a bare \"A a B\" is only trusted as a range when a \"from\" lead is present.",
+   "\"de\": DIEC2 (IEC), s.v. \"de\" (preposicio) -- origen / punt de partenca,",
+   "  correlativa d'\"a\" (\"de juny a agost\"). Optimot, fitxa \"de ... a\".",
+   "\"des de\": GEIEC / Gramatica de la llengua catalana (IEC), s.v. \"des de\"",
+   "  (locucio prepositiva) -- punt d'origen en el temps o l'espai (\"des de 2010\").",
+   "\"a partir de\": Optimot -- locucio prepositiva, punt de comencament.",
+   "\"del\": contraccio obligatoria de la preposicio \"de\" + l'article \"el\"",
+   "  (IEC, Gramatica de la llengua catalana, 16.3; DIEC2 s.v. \"del\"). Es la",
+   "  forma escrita corrent de l'inici d'un interval: \"del 5 al 12 de juny\"."
+  ],
+  "marker_future": [
+   "\"d'aquí a\" fronts a future offset (\"d'aquí a cinc dies\" = in five days):",
+   "Wiktionary (en), d'aquí a, Catalan preposition, \"in, within (a time span)\"."
+  ],
+  "marker_half": [
+   "clock/adjectival \"mitja/mig\" plus period noun \"meitat\" (cadascuna de les dues parts iguals) -- IEC, Diccionari de la llengua catalana (DIEC2), s.v. \"meitat\"."
+  ],
+  "marker_hour_statement": [
+   "The verb that states the hour, with its article: \"són les 15h\", \"és la",
+   "una\".  \"hora [...] 2 1 Temps del dia expressat en hores comptades des de",
+   "mitjanit o des de migdia i en fraccions d'hora. ─Quina hora és? ─Són les",
+   "tres o són tres hores.\" (IEC, DIEC2, s.v. \"hora\", 2 1)."
+  ],
+  "marker_oclock": [
+   "\"a les set hores\" = at seven o'clock; the plural noun closes a clock hour",
+   "the way Portuguese \"horas\" does.  Wiktionary, hora (Catalan), \"hour\"."
+  ],
+  "marker_to": [
+   "Catalan range \"to\" boundary -- the term / upper limit of a bounded interval.",
+   "\"a\": DIEC2 (IEC), s.v. \"a\" (preposicio) -- terme o punt d'arribada, correlativa",
+   "  de \"de\" (\"de juny a agost\"). Optimot, construccio \"de ... a\".",
+   "\"fins a\" / \"fins\": DIEC2 (IEC), s.v. \"fins\" (preposicio) -- limit de temps,",
+   "  lloc o quantitat (\"de juny fins a agost\"). GEIEC, \"fins (a)\".",
+   "\"al\": contraccio obligatoria de la preposicio \"a\" + l'article \"el\"",
+   "  (IEC, Gramatica de la llengua catalana, 16.3; DIEC2 s.v. \"al\").",
+   "  Correlativa de \"del\" en la construccio \"del ... al ...\"."
+  ],
+  "marker_year_plural": [
+   "The plural year noun that frames a decade (\"els anys vuitanta\", \"els anys",
+   "1980\"); the singular \"any\" names a single year (\"l'any 1931\") and must not",
+   "reach the decade slot.",
+   "Source: Gran diccionari de la llengua catalana, entry \"any\"",
+   "(https://www.diccionari.cat/GDLC/any): \"els anys vint (o trenta, etc.) --",
+   "Els anys del segon, el tercer, etc., decenni del segle.\""
+  ],
+  "month_1": [
+   "Unicode CLDR 47, locale ca, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/ca/ca-gregorian.json): months.stand-alone.wide,",
+   "months.stand-alone.abbreviated.  CLDR spells the abbreviations with a",
+   "trailing period; the surfaces here drop it."
+  ],
+  "month_10": [
+   "Unicode CLDR 47, locale ca, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/ca/ca-gregorian.json): months.stand-alone.wide,",
+   "months.stand-alone.abbreviated.  CLDR spells the abbreviations with a",
+   "trailing period; the surfaces here drop it."
+  ],
+  "month_11": [
+   "Unicode CLDR 47, locale ca, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/ca/ca-gregorian.json): months.stand-alone.wide,",
+   "months.stand-alone.abbreviated.  CLDR spells the abbreviations with a",
+   "trailing period; the surfaces here drop it."
+  ],
+  "month_12": [
+   "Unicode CLDR 47, locale ca, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/ca/ca-gregorian.json): months.stand-alone.wide,",
+   "months.stand-alone.abbreviated.  CLDR spells the abbreviations with a",
+   "trailing period; the surfaces here drop it."
+  ],
+  "month_2": [
+   "Unicode CLDR 47, locale ca, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/ca/ca-gregorian.json): months.stand-alone.wide.  Not",
+   "covered by any of those charts, and so unattested here: \"feb\"."
+  ],
+  "month_3": [
+   "Unicode CLDR 47, locale ca, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/ca/ca-gregorian.json): months.stand-alone.wide,",
+   "months.stand-alone.abbreviated.  Not covered by any of those charts, and so",
+   "unattested here: \"marc\", \"mar\"."
+  ],
+  "month_4": [
+   "Unicode CLDR 47, locale ca, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/ca/ca-gregorian.json): months.stand-alone.wide,",
+   "months.stand-alone.abbreviated.  CLDR spells the abbreviations with a",
+   "trailing period; the surfaces here drop it."
+  ],
+  "month_5": [
+   "Unicode CLDR 47, locale ca, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/ca/ca-gregorian.json): months.stand-alone.wide,",
+   "months.stand-alone.abbreviated.  Not covered by any of those charts, and so",
+   "unattested here: \"mai\"."
+  ],
+  "month_6": [
+   "Unicode CLDR 47, locale ca, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/ca/ca-gregorian.json): months.stand-alone.wide,",
+   "months.stand-alone.abbreviated.  Not covered by any of those charts, and so",
+   "unattested here: \"jun\"."
+  ],
+  "month_7": [
+   "Unicode CLDR 47, locale ca, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/ca/ca-gregorian.json): months.stand-alone.wide,",
+   "months.stand-alone.abbreviated.  CLDR spells the abbreviations with a",
+   "trailing period; the surfaces here drop it."
+  ],
+  "month_8": [
+   "Unicode CLDR 47, locale ca, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/ca/ca-gregorian.json): months.stand-alone.wide.  Not",
+   "covered by any of those charts, and so unattested here: \"ago\"."
+  ],
+  "month_9": [
+   "Unicode CLDR 47, locale ca, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/ca/ca-gregorian.json): months.stand-alone.wide,",
+   "months.stand-alone.abbreviated.  CLDR spells the abbreviations with a",
+   "trailing period; the surfaces here drop it."
+  ],
+  "roman_anchor_ides": [
+   "Catalan vernacular Roman-calendar anchor names.",
+   "Source: Wikipedia \"Calendari romà\" (ca):",
+   "  \"Calendes ... Nones ... Ides\".",
+   "  https://ca.wikipedia.org/wiki/Calendari_rom%C3%A0"
+  ],
+  "roman_anchor_kalends": [
+   "Catalan vernacular Roman-calendar anchor names.",
+   "Source: Wikipedia \"Calendari romà\" (ca):",
+   "  \"Calendes ... Nones ... Ides\".",
+   "  https://ca.wikipedia.org/wiki/Calendari_rom%C3%A0"
+  ],
+  "roman_anchor_nones": [
+   "Catalan vernacular Roman-calendar anchor names.",
+   "Source: Wikipedia \"Calendari romà\" (ca):",
+   "  \"Calendes ... Nones ... Ides\".",
+   "  https://ca.wikipedia.org/wiki/Calendari_rom%C3%A0"
+  ],
+  "unit1_second": [
+   "Unicode CLDR 47, locale ca, cldr-units-full/main/ca/units.json,",
+   "duration-second, unitPattern-count-one \"segon\"."
+  ],
+  "unit_second": [
+   "Unicode CLDR 47, locale ca, cldr-units-full/main/ca/units.json,",
+   "duration-second: one \"segon\", other \"segons\"."
+  ],
+  "weekday_0": [
+   "Unicode CLDR 47, locale ca, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/ca/ca-gregorian.json): days.format.wide,",
+   "days.stand-alone.wide."
+  ],
+  "weekday_1": [
+   "Unicode CLDR 47, locale ca, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/ca/ca-gregorian.json): days.format.wide,",
+   "days.stand-alone.wide."
+  ],
+  "weekday_2": [
+   "Unicode CLDR 47, locale ca, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/ca/ca-gregorian.json): days.format.wide,",
+   "days.stand-alone.wide."
+  ],
+  "weekday_3": [
+   "Unicode CLDR 47, locale ca, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/ca/ca-gregorian.json): days.format.wide,",
+   "days.stand-alone.wide."
+  ],
+  "weekday_4": [
+   "Unicode CLDR 47, locale ca, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/ca/ca-gregorian.json): days.format.wide,",
+   "days.stand-alone.wide."
+  ],
+  "weekday_5": [
+   "Unicode CLDR 47, locale ca, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/ca/ca-gregorian.json): days.format.wide,",
+   "days.stand-alone.wide."
+  ],
+  "weekday_6": [
+   "Unicode CLDR 47, locale ca, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/ca/ca-gregorian.json): days.format.wide,",
+   "days.stand-alone.wide."
+  ],
+  "weekday_abbr_0": [
+   "Unicode CLDR 47, locale ca, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/ca/ca-gregorian.json): days.format.abbreviated,",
+   "days.stand-alone.abbreviated, days.format.short, days.stand-alone.short.",
+   "CLDR spells the abbreviations with a trailing period; the surfaces here drop",
+   "it."
+  ],
+  "weekday_abbr_1": [
+   "Unicode CLDR 47, locale ca, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/ca/ca-gregorian.json): days.format.abbreviated,",
+   "days.stand-alone.abbreviated, days.format.short, days.stand-alone.short.",
+   "CLDR spells the abbreviations with a trailing period; the surfaces here drop",
+   "it."
+  ],
+  "weekday_abbr_2": [
+   "Unicode CLDR 47, locale ca, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/ca/ca-gregorian.json): days.format.abbreviated,",
+   "days.stand-alone.abbreviated, days.format.short, days.stand-alone.short.",
+   "CLDR spells the abbreviations with a trailing period; the surfaces here drop",
+   "it."
+  ],
+  "weekday_abbr_3": [
+   "Unicode CLDR 47, locale ca, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/ca/ca-gregorian.json): days.format.abbreviated,",
+   "days.stand-alone.abbreviated, days.format.short, days.stand-alone.short.",
+   "CLDR spells the abbreviations with a trailing period; the surfaces here drop",
+   "it."
+  ],
+  "weekday_abbr_4": [
+   "Unicode CLDR 47, locale ca, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/ca/ca-gregorian.json): days.format.abbreviated,",
+   "days.stand-alone.abbreviated, days.format.short, days.stand-alone.short.",
+   "CLDR spells the abbreviations with a trailing period; the surfaces here drop",
+   "it."
+  ],
+  "weekday_abbr_5": [
+   "Unicode CLDR 47, locale ca, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/ca/ca-gregorian.json): days.format.abbreviated,",
+   "days.stand-alone.abbreviated, days.format.short, days.stand-alone.short.",
+   "CLDR spells the abbreviations with a trailing period; the surfaces here drop",
+   "it."
+  ],
+  "weekday_abbr_6": [
+   "Unicode CLDR 47, locale ca, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/ca/ca-gregorian.json): days.format.abbreviated,",
+   "days.stand-alone.abbreviated, days.format.short, days.stand-alone.short.",
+   "CLDR spells the abbreviations with a trailing period; the surfaces here drop",
+   "it."
+  ]
+ }
+}

@@ -1,9 +1,0 @@
-# Unicode CLDR 47, locale sv, cldr-dates-full/main/sv/dateFields.json.
-# day.relative-type-1.
-imorgon
-i morgon
-# the noun "morgondag" (tomorrow) in its definite and definite genitive
-# forms ("morgondagens väder" = tomorrow's weather): Wiktionary, morgondag,
-# morgondagen; sv.wikipedia "Bigert & Bergström" ("Morgondagens väder").
-morgondagen
-morgondagens

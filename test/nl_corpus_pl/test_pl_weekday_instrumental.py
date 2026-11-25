@@ -1,6 +1,6 @@
 """Polish weekday nouns in the instrumental case: "między środą a piątkiem"
 (between Wednesday and Friday) -- "między ... a ..." governs the instrumental,
-the one case ``weekday_N.voc`` never shipped, so the "between" range's own
+the one case ``weekday_N`` never shipped, so the "between" range's own
 sub-parse of each endpoint had nothing to bind and the whole range stranded.
 The genitive counterpart ("od środy do piątku") already worked, proving the
 range machinery itself was never the problem -- only the missing case form.

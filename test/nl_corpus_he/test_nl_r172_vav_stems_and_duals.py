@@ -3,8 +3,8 @@
 hooks (``chronologia.extract.numlayer_semitic``).
 
 1. Curated vav-strip stems (#712's ``_he_vav_strip``) omitted two everyday
-   temporal-function words: לפני (before/ago, ``marker_before.voc``) and
-   the bet-prefixed weekday noun ביום (``weekday_*.voc``'s curated duplicate
+   temporal-function words: לפני (before/ago, ``marker_before``) and
+   the bet-prefixed weekday noun ביום (``weekday_*``'s curated duplicate
    surface).  A vav-prefixed sentence built on either ("ולפני יום", "וביום
    ראשון הבא") either dropped the whole mention or stranded the vav-glued
    word in the remainder, unlike every other curated stem.

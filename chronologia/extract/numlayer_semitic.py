@@ -2,7 +2,7 @@
 """Arabic and Hebrew date words over the numtag number layer.
 
 Fixed multi-word surfaces ("بعد غد", "יום ראשון") are merged to one token by
-``pipeline.merge_multiword``, so the ``*.voc`` files list them with their
+``pipeline.merge_multiword``, so the vocabularies list them with their
 space.
 
 numtag reads the spelled numbers, the "و"-glued compounds and the ordinal
@@ -19,18 +19,15 @@ Each pass is a ``tuple[Token] -> tuple[Token]`` transform that keeps
 from __future__ import annotations
 
 import re as _re
-from pathlib import Path
-
-from ovos_spec_tools import read_resource_file
+from fnmatch import fnmatchcase
 
 from chronologia.extract.model import Token
 from chronologia.extract.numfold_engine import reindex
 from chronologia.extract.numlayer_germanic import (DateWords, count_words, fold,
                                                    locale_words)
+from chronologia.extract.numlayer import vocabulary
 from chronologia.hebrew_numerals import (gematria_value, hebrew_year_value,
                                           is_gematria_numeral)
-
-_LOCALE_DIR = Path(__file__).parent.parent / "locale"
 
 
 _AR_WORDS = DateWords(
@@ -139,7 +136,7 @@ def _ar_clock_hour_fold(tokens):
 
 
 _CLOCK_TEXT = _re.compile(r"\d{1,2}:\d{2}(?::\d{2})?$")
-# Clock-fraction surfaces (``clock_fraction_{30,15}.voc``) without the article
+# Clock-fraction surfaces (``clock_fraction_{30,15}``) without the article
 # or the "و" proclitic.  "الساعة الثالثة والنصف" tokenises as [CLOCK][والنصف], a
 # fused token that is neither CLOCKDIR nor FRACTION.
 _AR_CLOCK_FRACTION = frozenset({"النصف", "نصف", "الربع", "ربع"})
@@ -166,21 +163,20 @@ def _ar_clock_fraction_split(tokens):
 
 
 def _temporal_words(lang, globs):
-    """The single-word surfaces of the vocabulary files matching ``globs``."""
-    words = set()
-    for pattern in globs:
-        for path in sorted((_LOCALE_DIR / lang).glob(pattern)):
-            words.update(w for w in read_resource_file(path) if " " not in w)
-    return frozenset(words)
+    """The single-word surfaces of the vocabularies matching ``globs``."""
+    return frozenset(
+        w for base, surfaces in vocabulary(lang).items()
+        if any(fnmatchcase(base, pattern) for pattern in globs)
+        for w in surfaces if " " not in w)
 
 
 #: Vocabulary files whose bare words may follow a fused waw as a range
 #: endpoint: months (Gregorian and Islamic-civil), weekdays and dayparts.
-#: ``weekday_abbr_6.voc`` is left out: its bare Sunday "أحد" is spelled like
+#: ``weekday_abbr_6`` is left out: its bare Sunday "أحد" is spelled like
 #: the stem inside "واحد" (one), so "واحد وعشرين يوما" would lose a day.
 #: Multiword surfaces are skipped because splitting the proclitic off one
 #: would leave a remainder the multiword merge never re-glues.
-_AR_WORD_ROLE_GLOBS = ("month_*.voc", "weekday_[0-9].voc", "daypart_*.voc")
+_AR_WORD_ROLE_GLOBS = ("month_*", "weekday_[0-9]", "daypart_*")
 
 
 _AR_TEMPORAL_WORDS = _temporal_words("ar", _AR_WORD_ROLE_GLOBS)
@@ -214,7 +210,7 @@ def split_ar_range_word(tokens):
 #: two hours) would split into a Monday range endpoint, and the other bare
 #: weekdays are ordinals.  Multiword surfaces are skipped as in the Arabic
 #: guard.
-_HE_WORD_ROLE_GLOBS = ("month_*.voc", "weekday_5.voc", "daypart_*.voc")
+_HE_WORD_ROLE_GLOBS = ("month_*", "weekday_5", "daypart_*")
 
 #: "אב" (the month Av) is also the everyday noun "father": admitting it read
 #: "אם ואב" (mother and father) as a confident month span.  A fused "ואב" range
@@ -256,14 +252,14 @@ def split_he_range_word(tokens):
 # keeps the dual word's raw and char extent, so an unconsumed dual still
 # reconstructs verbatim.  Both the nominative -ān and the oblique -ayn are
 # read (W. Wright, *A Grammar of the Arabic Language*, 3rd ed., vol. I, §299).
-# Keys are the surfaces of ``locale/ar/unit_dual_*.voc``.
+# Keys are the surfaces of ``locale/ar/unit_dual_*``.
 _AR_DUAL_UNIT_PLURAL = {
-    "ساعتان": "ساعات", "ساعتين": "ساعات",      # unit_dual_hour.voc
-    "يومان": "أيام", "يومين": "أيام",          # unit_dual_day.voc
-    "أسبوعان": "أسابيع", "أسبوعين": "أسابيع",  # unit_dual_week.voc
+    "ساعتان": "ساعات", "ساعتين": "ساعات",      # unit_dual_hour
+    "يومان": "أيام", "يومين": "أيام",          # unit_dual_day
+    "أسبوعان": "أسابيع", "أسبوعين": "أسابيع",  # unit_dual_week
     "اسبوعان": "أسابيع", "اسبوعين": "أسابيع",  # ... alif-hamza-less spelling
-    "دقيقتان": "دقائق", "دقيقتين": "دقائق",    # unit_dual_minute.voc
-    "ثانيتان": "ثوان", "ثانيتين": "ثوان",      # unit_dual_second.voc
+    "دقيقتان": "دقائق", "دقيقتين": "دقائق",    # unit_dual_minute
+    "ثانيتان": "ثوان", "ثانيتين": "ثوان",      # unit_dual_second
 }
 
 
@@ -295,8 +291,8 @@ _AR_ADDITIVE_FRACTION = {"ونصف": 0.5, "وربع": 0.25}
 
 
 _AR_UNIT_SURFACES = frozenset(
-    w for path in sorted((_LOCALE_DIR / "ar").glob("unit_*.voc"))
-    for w in read_resource_file(path))
+    w for base, surfaces in vocabulary("ar").items()
+    if fnmatchcase(base, "unit_*") for w in surfaces)
 
 
 def _ar_additive_fraction(tokens):
@@ -527,17 +523,17 @@ def _he_gematria_rewrite(tokens):
 # ו folds to its remainder when that is in a closed set of date, month and
 # holiday stems; ו-initial roots ("ותיק", "ורוד") stay untouched.
 _HE_VAV_STEMS = frozenset({
-    # named days (named_day_*.voc)
+    # named days (named_day_*)
     "מחר", "היום", "אתמול", "אמש", "מחרתיים", "מחרתים",
-    # Gregorian months (month_*.voc, bare form)
+    # Gregorian months (month_*, bare form)
     "ינואר", "פברואר", "מרץ", "מרס", "אפריל", "מאי", "יוני", "יולי",
     "אוגוסט", "ספטמבר", "אוקטובר", "נובמבר", "דצמבר",
     # holiday surfaces (well_known.tab), including the first word of a
     # multiword surface ("חג" of "חג הפסח") for the multiword merge pass
     "פסח", "חנוכה", "חג",
-    # marker_before.voc: "ולפני יום" is ordinary coordinated speech
+    # marker_before: "ולפני יום" is ordinary coordinated speech
     "לפני",
-    # marker_future.voc: "ובעוד יומיים", the forward sibling of "לפני"
+    # marker_future: "ובעוד יומיים", the forward sibling of "לפני"
     "בעוד",
     # "וביום ראשון הבא" needs "ביום" restored for the multiword merge pass
     "ביום",
@@ -589,12 +585,12 @@ def _he_vav_remerge(tokens):
 # Hebrew dual unit nouns (יומיים, "two days") are split like the Arabic ones,
 # see ``_dual_split``.
 _HE_DUAL_UNIT_PLURAL = {
-    "יומיים": "ימים", "יומים": "ימים",      # unit_dual_day.voc -> unit_day.voc
-    "שעתיים": "שעות",                        # unit_dual_hour.voc -> unit_hour.voc
-    "שבועיים": "שבועות",                     # unit_dual_week.voc -> unit_week.voc
-    "דקתיים": "דקות",                        # unit_dual_minute.voc -> unit_minute.voc
-    "חודשיים": "חודשים",                     # month (no dedicated .voc; unit_month.voc plural)
-    "שנתיים": "שנים",                        # year (no dedicated .voc; unit_year.voc plural)
+    "יומיים": "ימים", "יומים": "ימים",      # unit_dual_day -> unit_day
+    "שעתיים": "שעות",                        # unit_dual_hour -> unit_hour
+    "שבועיים": "שבועות",                     # unit_dual_week -> unit_week
+    "דקתיים": "דקות",                        # unit_dual_minute -> unit_minute
+    "חודשיים": "חודשים",                     # month (no dedicated vocabulary; unit_month plural)
+    "שנתיים": "שנים",                        # year (no dedicated vocabulary; unit_year plural)
 }
 
 

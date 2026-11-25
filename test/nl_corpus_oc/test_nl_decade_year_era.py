@@ -111,7 +111,7 @@ def test_bc_era_year_is_one_less_than_the_bc_number():
 def test_singular_year_word_names_one_year_not_the_decade(text):
     """``an``/``annada`` are singular: they frame a year, never a decade.
 
-    ``era_year_ref.voc`` ships ``l'an`` and ``an`` as year-reference
+    ``era_year_ref`` ships ``l'an`` and ``an`` as year-reference
     surfaces, so the decade construction must key on the plural alone --
     French reads ``l'an 1980`` as 1980 and ``les années 1980`` as the ten
     years, and Occitan says the same thing with the same contrast.

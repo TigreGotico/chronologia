@@ -1,0 +1,801 @@
+{
+ "format_version": 1,
+ "words": {
+  "clock_dir_past": [
+   "बजकर"
+  ],
+  "clock_fraction_15": [
+   "सवा"
+  ],
+  "clock_fraction_30": [
+   "साढ़े",
+   "साढे"
+  ],
+  "clock_fraction_prev_45": [
+   "पौने"
+  ],
+  "clock_landmark_0": [
+   "मध्यरात्रि"
+  ],
+  "clock_landmark_150": [
+   "ढाई"
+  ],
+  "clock_landmark_90": [
+   "डेढ",
+   "डेढ़"
+  ],
+  "clock_meridiem_am": [
+   "am",
+   "पूर्वाह्न"
+  ],
+  "clock_meridiem_pm": [
+   "pm",
+   "अपराह्न"
+  ],
+  "daypart_afternoon_hi": [
+   "दोपहर"
+  ],
+  "daypart_evening_hi": [
+   "शाम"
+  ],
+  "daypart_morning_hi": [
+   "सुबह"
+  ],
+  "daypart_night_hi": [
+   "रात"
+  ],
+  "marker_after": [
+   "के बाद"
+  ],
+  "marker_and": [
+   "और"
+  ],
+  "marker_at": [
+   "बजे"
+  ],
+  "marker_before": [
+   "के पहले",
+   "के पूर्व",
+   "से पहले",
+   "से पूर्व"
+  ],
+  "marker_between": [
+   "के बीच"
+  ],
+  "marker_every": [
+   "प्रत्येक",
+   "हर"
+  ],
+  "marker_from": [
+   "से"
+  ],
+  "marker_future": [
+   "बाद",
+   "में"
+  ],
+  "marker_half": [
+   "आधा",
+   "आधी",
+   "आधे"
+  ],
+  "marker_in": [
+   "में"
+  ],
+  "marker_last": [
+   "पिछला",
+   "पिछली",
+   "पिछले"
+  ],
+  "marker_next": [
+   "अगला",
+   "अगली",
+   "अगले"
+  ],
+  "marker_on": [
+   "को"
+  ],
+  "marker_past": [
+   "पहले"
+  ],
+  "marker_since": [
+   "से"
+  ],
+  "marker_this": [
+   "इस",
+   "इसी"
+  ],
+  "marker_until": [
+   "तक"
+  ],
+  "marker_weekday_word": [
+   "को"
+  ],
+  "month_1": [
+   "जन",
+   "जनवरी"
+  ],
+  "month_10": [
+   "अक्टू",
+   "अक्टूबर"
+  ],
+  "month_11": [
+   "नव",
+   "नवंबर"
+  ],
+  "month_12": [
+   "दिस",
+   "दिसंबर"
+  ],
+  "month_2": [
+   "फर",
+   "फरवरी",
+   "फ़र",
+   "फ़रवरी"
+  ],
+  "month_3": [
+   "मार्च"
+  ],
+  "month_4": [
+   "अप्रैल"
+  ],
+  "month_5": [
+   "मई"
+  ],
+  "month_6": [
+   "जून"
+  ],
+  "month_7": [
+   "जुल",
+   "जुलाई"
+  ],
+  "month_8": [
+   "अग",
+   "अगस्त"
+  ],
+  "month_9": [
+   "सित",
+   "सितंबर"
+  ],
+  "named_day_0": [
+   "आज"
+  ],
+  "scope_unit_century": [
+   "शताब्दियाँ",
+   "शताब्दियों",
+   "शताब्दी",
+   "शती",
+   "सदियाँ",
+   "सदियों",
+   "सदी"
+  ],
+  "scope_unit_decade": [
+   "दशक",
+   "दशकों"
+  ],
+  "scope_unit_millennium": [
+   "सहस्राब्दियाँ",
+   "सहस्राब्दियों",
+   "सहस्राब्दी"
+  ],
+  "season_fall": [
+   "पतझड़",
+   "शरद"
+  ],
+  "season_spring": [
+   "बसंत",
+   "वसंत"
+  ],
+  "season_summer": [
+   "गर्मियाँ",
+   "गर्मियों",
+   "गर्मी",
+   "ग्रीष्म"
+  ],
+  "season_winter": [
+   "शीत",
+   "सर्दियाँ",
+   "सर्दियों",
+   "सर्दी"
+  ],
+  "special_weekend": [
+   "सप्ताहांत"
+  ],
+  "unit1_century": [
+   "शताब्दी",
+   "शती",
+   "सदी"
+  ],
+  "unit1_day": [
+   "दिन"
+  ],
+  "unit1_decade": [
+   "दशक"
+  ],
+  "unit1_hour": [
+   "घंटा",
+   "घंटे"
+  ],
+  "unit1_millennium": [
+   "सहस्राब्दी"
+  ],
+  "unit1_minute": [
+   "मिनट"
+  ],
+  "unit1_month": [
+   "महीना",
+   "महीने",
+   "मास",
+   "माह"
+  ],
+  "unit1_second": [
+   "सेकंड",
+   "सेकण्ड"
+  ],
+  "unit1_week": [
+   "सप्ताह",
+   "हफ़्ता",
+   "हफ़्ते",
+   "हफ्ता",
+   "हफ्ते"
+  ],
+  "unit1_year": [
+   "बरस",
+   "वर्ष",
+   "साल"
+  ],
+  "unit_century": [
+   "शताब्दियाँ",
+   "शताब्दियों",
+   "शताब्दी",
+   "शती",
+   "सदियाँ",
+   "सदियों",
+   "सदी"
+  ],
+  "unit_day": [
+   "दिन",
+   "दिनों"
+  ],
+  "unit_decade": [
+   "दशक",
+   "दशकों"
+  ],
+  "unit_hour": [
+   "घंटा",
+   "घंटे",
+   "घंटों"
+  ],
+  "unit_millennium": [
+   "सहस्राब्दियाँ",
+   "सहस्राब्दियों",
+   "सहस्राब्दी"
+  ],
+  "unit_minute": [
+   "मिनट",
+   "मिनटों"
+  ],
+  "unit_month": [
+   "महीना",
+   "महीने",
+   "महीनों",
+   "मास",
+   "माह"
+  ],
+  "unit_second": [
+   "सेकंड",
+   "सेकण्ड"
+  ],
+  "unit_week": [
+   "सप्ताह",
+   "सप्ताहों",
+   "हफ़्ता",
+   "हफ़्ते",
+   "हफ़्तों",
+   "हफ्ता",
+   "हफ्ते",
+   "हफ्तों"
+  ],
+  "unit_year": [
+   "बरस",
+   "बरसों",
+   "वर्ष",
+   "वर्षों",
+   "साल",
+   "सालों"
+  ],
+  "weekday_0": [
+   "सोमवार"
+  ],
+  "weekday_1": [
+   "मंगलवार"
+  ],
+  "weekday_2": [
+   "बुधवार"
+  ],
+  "weekday_3": [
+   "गुरुवार"
+  ],
+  "weekday_4": [
+   "शुक्रवार"
+  ],
+  "weekday_5": [
+   "शनिवार"
+  ],
+  "weekday_6": [
+   "इतवार",
+   "रविवार"
+  ],
+  "weekday_abbr_0": [
+   "सोम"
+  ],
+  "weekday_abbr_1": [
+   "मंगल"
+  ],
+  "weekday_abbr_2": [
+   "बुध"
+  ],
+  "weekday_abbr_3": [
+   "गुरु"
+  ],
+  "weekday_abbr_4": [
+   "शुक्र"
+  ],
+  "weekday_abbr_5": [
+   "शनि"
+  ],
+  "weekday_abbr_6": [
+   "रवि"
+  ]
+ },
+ "sources": {
+  "clock_dir_past": [
+   "बजकर is the conjunctive participle of बजना, “to hit the hour”",
+   "(en.wiktionary.org, entry “बजना”), and frames the minutes counted FORWARD",
+   "from a struck hour: “आठ बजकर बीस मिनट” is 8:20."
+  ],
+  "clock_fraction_15": [
+   "सवा “and a quarter”: en.wiktionary.org, entry “सवा”, with the usage",
+   "example “सवा एक बज गए हैं” (“the time is 1:15”).  It counts FORWARD from",
+   "the hour it names, exactly as साढ़े does, hence bare_quarter_past."
+  ],
+  "clock_fraction_30": [
+   "साढ़े “half past”: en.wiktionary.org, entry “साढ़े”, glossed “... and a",
+   "half” and “half past”, with the usage example “डेढ़, ढाई, और अब साढ़े तीन",
+   "बज गए हैं” (“1:30, 2:30, and now it's half past three”).  It counts",
+   "FORWARD from the hour it names, hence bare_half_past."
+  ],
+  "clock_fraction_prev_45": [
+   "पौने “a quarter less”, and as a clock reading “quarter to” --",
+   "en.wiktionary.org, entry “पौने”, with the usage example “पौने दस” glossed",
+   "9:45.  It is the ASYMMETRIC member of the set: साढ़े and सवा count forward",
+   "from the hour they name, पौने counts BACK from it, so पौने दस is a quarter",
+   "short of ten and never a quarter past it.  That is why it ships in the",
+   "prev family rather than as a plain fraction."
+  ],
+  "clock_landmark_0": [
+   "मध्यरात्रि “midnight”: Unicode CLDR 47, locale hi, gregorian dayPeriods",
+   "wide, key “midnight”."
+  ],
+  "clock_landmark_150": [
+   "ढाई is the matching suppletive word for two-and-a-half --",
+   "en.wiktionary.org, entry “ढाई”: “two and a half” and “half past two”.",
+   "Minute 150 of the day."
+  ],
+  "clock_landmark_90": [
+   "डेढ़ is a fully suppletive word for one-and-a-half, and as a clock",
+   "reading it IS half past one -- en.wiktionary.org, entry “डेढ़”: “one and",
+   "a half; 1.5” and “half past one; 1:30”.  It is a literal, never composed",
+   "from a half-word plus एक, which is why it ships as a landmark at minute",
+   "90 of the day rather than as a fraction."
+  ],
+  "clock_meridiem_am": [
+   "पूर्वाह्न “forenoon”: en.wiktionary.org, entry “पूर्वाह्न”.  CLDR 47",
+   "ships locale hi's am/pm markers as the Latin abbreviations themselves."
+  ],
+  "clock_meridiem_pm": [
+   "अपराह्न “afternoon”: en.wiktionary.org, entry “अपराह्न”.  CLDR 47 ships",
+   "locale hi's am/pm markers as the Latin abbreviations themselves."
+  ],
+  "daypart_afternoon_hi": [
+   "Band boundaries: Unicode CLDR 47 supplemental dayPeriodRuleSet for",
+   "locale hi (cldr-json 47.0.0, cldr-core/supplemental/dayPeriods.json),",
+   "transcribed in chronologia/dayparts.py as the afternoon band.",
+   "Surface: the CLDR dayPeriod name; en.wiktionary.org, entry “दोपहर”,",
+   "glosses it “afternoon, midday”."
+  ],
+  "daypart_evening_hi": [
+   "Band boundaries: Unicode CLDR 47 supplemental dayPeriodRuleSet for",
+   "locale hi (cldr-json 47.0.0, cldr-core/supplemental/dayPeriods.json),",
+   "transcribed in chronologia/dayparts.py as the evening band.",
+   "Surface: the CLDR dayPeriod name; en.wiktionary.org, entry “शाम”,",
+   "glosses it “evening”."
+  ],
+  "daypart_morning_hi": [
+   "Band boundaries: Unicode CLDR 47 supplemental dayPeriodRuleSet for",
+   "locale hi (cldr-json 47.0.0, cldr-core/supplemental/dayPeriods.json),",
+   "transcribed in chronologia/dayparts.py as the morning band.",
+   "Surface: the CLDR dayPeriod name; en.wiktionary.org, entry “सुबह”,",
+   "glosses it “morning, dawn”."
+  ],
+  "daypart_night_hi": [
+   "Band boundaries: Unicode CLDR 47 supplemental dayPeriodRuleSet for",
+   "locale hi (cldr-json 47.0.0, cldr-core/supplemental/dayPeriods.json),",
+   "transcribed in chronologia/dayparts.py as the night band.",
+   "Surface: the CLDR dayPeriod name; en.wiktionary.org, entry “रात”,",
+   "glosses it “night”."
+  ],
+  "marker_after": [
+   "के बाद “after”: en.wiktionary.org, entry “के बाद”, a postposition",
+   "glossed “after” (“खाने के बाद” -- after eating)."
+  ],
+  "marker_and": [
+   "और “and”, the coordinator the between-frame joins its two bounds with.",
+   "en.wiktionary.org, entry “और”."
+  ],
+  "marker_at": [
+   "बजे “o'clock”, the adverb that closes a spoken clock reading and trails",
+   "the hour: en.wiktionary.org, entry “बजे”, usage example “दो बजे”",
+   "(“two o'clock”)."
+  ],
+  "marker_before": [
+   "से पहले “before”: en.wiktionary.org, entry “से पहले”, a postposition",
+   "glossed “before”.  के पहले is the same frame with the other oblique",
+   "genitive; en.wiktionary lists के पूर्व as its synonym."
+  ],
+  "marker_between": [
+   "के बीच “between”: en.wiktionary.org, entry “के बीच”, a postposition",
+   "glossed “between” and framing two coordinated terms joined by और."
+  ],
+  "marker_every": [
+   "हर “each, every”: en.wiktionary.org, entry “हर”, which lists प्रत्येक as",
+   "its synonym; प्रत्येक's own entry glosses it “each, every”."
+  ],
+  "marker_from": [
+   "से marks the ablative -- “from, since”: en.wiktionary.org, entry “से”."
+  ],
+  "marker_future": [
+   "The future offset marker likewise trails: “{0} दिन में” is CLDR 47's",
+   "future relative-time pattern for locale hi.  बाद is the other everyday",
+   "word for the same reading -- en.wiktionary.org, entry “बाद”, whose own",
+   "usage example is “एक दिन बाद” (“one day later”)."
+  ],
+  "marker_half": [
+   "आधा “half”: en.wiktionary.org, entry “आधा”.  ā-stem, so the feminine",
+   "आधी (its own usage example, “आधी बोतल”) and the oblique आधे ship too."
+  ],
+  "marker_in": [
+   "में “in, inside of, within”: en.wiktionary.org, entry “में”.  It is the",
+   "same postposition CLDR 47 uses to frame a future offset."
+  ],
+  "marker_last": [
+   "पिछला “previous, last”: en.wiktionary.org, entry “पिछला”, whose usage",
+   "example is “पिछली बार” (“last time”).  CLDR 47 uses it for locale hi's",
+   "-1 relative names (“पिछला सप्ताह”, “पिछला माह”, “पिछला वर्ष”).",
+   "Declension (ā-stem): पिछला / पिछले / पिछली."
+  ],
+  "marker_next": [
+   "अगला “next”: en.wiktionary.org, entry “अगला”, whose usage example is",
+   "“अगला साल” (“next year”).  CLDR 47 uses it for locale hi's +1 relative",
+   "names (“अगला सप्ताह”, “अगला माह”, “अगला वर्ष”).  Declension (ā-stem):",
+   "अगला / अगले / अगली, all three attested as their own entries."
+  ],
+  "marker_on": [
+   "को marks the time at which something happens and TRAILS its date --",
+   "en.wiktionary.org, entry “को”, sense “in, at the time of”, with the",
+   "usage examples “बुधवार को” (“on Wednesday”) and “शाम को” (“in the",
+   "evening”)."
+  ],
+  "marker_past": [
+   "The past offset marker trails its quantity: “{0} दिन पहले” is CLDR 47's",
+   "own past relative-time pattern for locale hi, for every unit field.",
+   "en.wiktionary.org, entry “पहले”: “previously, earlier, before”."
+  ],
+  "marker_since": [
+   "The same ablative postposition carries the “since” reading.",
+   "en.wiktionary.org, entry “से”."
+  ],
+  "marker_this": [
+   "इस is the oblique singular of the near demonstrative यह",
+   "(en.wiktionary.org, entry “इस”), and is the form a following noun",
+   "requires.  CLDR 47 uses exactly it for locale hi's 0 relative names",
+   "(“इस सप्ताह”, “इस माह”, “इस वर्ष”)."
+  ],
+  "marker_until": [
+   "तक “till, until”: en.wiktionary.org, entry “तक”, whose usage example is",
+   "“दो बजे तक काम करना है तुम्हें” (“you have to work till two o'clock”)."
+  ],
+  "marker_weekday_word": [
+   "को trails a weekday to mark the time at which something happens --",
+   "en.wiktionary.org, entry “को”, sense “in, at the time of”, worked example",
+   "“बुधवार को” (“on Wednesday”).  Inside a recurrence frame already opened by",
+   "हर (“हर सोमवार को” -- every Monday) the postposition is pure filler: हर has",
+   "already made the phrase recurring, and को adds nothing to the rule, so it is",
+   "swallowed into the match rather than left to strand in the remainder.",
+   "",
+   "Shipped as the SINGULAR day-word only.  The plural counterpart",
+   "(marker_recur_day_word) is what LICENSES a bare postposed weekday as",
+   "recurring, and Hindi has no such form: bare “सोमवार को” names one specific",
+   "Monday, not every Monday, and is read as a single date by the grammar engine."
+  ],
+  "month_1": [
+   "Unicode CLDR 47, locale hi, gregorian wide and abbreviated month names",
+   "(cldr-json 47.0.0, cldr-dates-full/main/hi/ca-gregorian.json)."
+  ],
+  "month_10": [
+   "Unicode CLDR 47, locale hi, gregorian wide and abbreviated month names",
+   "(cldr-json 47.0.0, cldr-dates-full/main/hi/ca-gregorian.json)."
+  ],
+  "month_11": [
+   "Unicode CLDR 47, locale hi, gregorian wide and abbreviated month names",
+   "(cldr-json 47.0.0, cldr-dates-full/main/hi/ca-gregorian.json)."
+  ],
+  "month_12": [
+   "Unicode CLDR 47, locale hi, gregorian wide and abbreviated month names",
+   "(cldr-json 47.0.0, cldr-dates-full/main/hi/ca-gregorian.json)."
+  ],
+  "month_2": [
+   "Unicode CLDR 47, locale hi, gregorian wide and abbreviated month names",
+   "(cldr-json 47.0.0, cldr-dates-full/main/hi/ca-gregorian.json).",
+   "फ़रवरी is written with the nukta (फ + U+093C); the nukta-less",
+   "spelling फरवरी is as common in ordinary Hindi typing, and names the",
+   "same month, so both ship."
+  ],
+  "month_3": [
+   "Unicode CLDR 47, locale hi, gregorian wide and abbreviated month names",
+   "(cldr-json 47.0.0, cldr-dates-full/main/hi/ca-gregorian.json)."
+  ],
+  "month_4": [
+   "Unicode CLDR 47, locale hi, gregorian wide and abbreviated month names",
+   "(cldr-json 47.0.0, cldr-dates-full/main/hi/ca-gregorian.json)."
+  ],
+  "month_5": [
+   "Unicode CLDR 47, locale hi, gregorian wide and abbreviated month names",
+   "(cldr-json 47.0.0, cldr-dates-full/main/hi/ca-gregorian.json)."
+  ],
+  "month_6": [
+   "Unicode CLDR 47, locale hi, gregorian wide and abbreviated month names",
+   "(cldr-json 47.0.0, cldr-dates-full/main/hi/ca-gregorian.json)."
+  ],
+  "month_7": [
+   "Unicode CLDR 47, locale hi, gregorian wide and abbreviated month names",
+   "(cldr-json 47.0.0, cldr-dates-full/main/hi/ca-gregorian.json)."
+  ],
+  "month_8": [
+   "Unicode CLDR 47, locale hi, gregorian wide and abbreviated month names",
+   "(cldr-json 47.0.0, cldr-dates-full/main/hi/ca-gregorian.json)."
+  ],
+  "month_9": [
+   "Unicode CLDR 47, locale hi, gregorian wide and abbreviated month names",
+   "(cldr-json 47.0.0, cldr-dates-full/main/hi/ca-gregorian.json)."
+  ],
+  "named_day_0": [
+   "आज “today”: en.wiktionary.org, entry “आज”; CLDR 47 gives it as locale",
+   "hi's relative-type-0 day name.",
+   "There is NO named_day file for any OTHER offset.  कल names BOTH",
+   "yesterday and tomorrow and परसों BOTH the day before yesterday and the",
+   "day after tomorrow -- CLDR 47 maps locale hi's relative-type--1 and",
+   "relative-type-1 to the same word कल, and its -2 and +2 to the same word",
+   "परसों, and en.wiktionary lists both senses under each entry.  Only the",
+   "verb's tense separates them, which this engine does not read, so the",
+   "words are refused rather than guessed at a direction."
+  ],
+  "scope_unit_century": [
+   "Declension: en.wiktionary.org, entry “सदी” (feminine ī-stem: सदी / सदियाँ / सदियों).  A noun counted by a",
+   "numeral stands in the OBLIQUE case, so the oblique forms are unit",
+   "surfaces in their own right.",
+   "शताब्दी and शती are the Sanskritic doublets en.wiktionary lists as its",
+   "synonyms, both feminine ī-stems taking the same endings."
+  ],
+  "scope_unit_decade": [
+   "दशक: en.wiktionary.org, entry “दशक” (“decade, decennium”), masculine",
+   "consonant stem."
+  ],
+  "scope_unit_millennium": [
+   "सहस्राब्दी: en.wiktionary.org, entry “सहस्राब्दी” (“millennium”),",
+   "feminine ī-stem, declining like सदी."
+  ],
+  "season_fall": [
+   "पतझड़ “autumn, fall”: en.wiktionary.org, entry “पतझड़”.  शरद is the",
+   "Sanskritic doublet, glossed “autumn, fall, the autumnal season”."
+  ],
+  "season_spring": [
+   "बसंत “spring (season)”: en.wiktionary.org, entry “बसंत”; वसंत is the",
+   "alternative spelling that entry names."
+  ],
+  "season_summer": [
+   "गर्मी “hot months; summer”: en.wiktionary.org, entry “गर्मी”, feminine",
+   "ī-stem, so the plural गर्मियाँ / गर्मियों is the usual name of the season.",
+   "ग्रीष्म is the Sanskritic doublet, glossed “summer, the hot season”."
+  ],
+  "season_winter": [
+   "सर्दी “winter, the cold season”: en.wiktionary.org, entry “सर्दी”,",
+   "feminine ī-stem, so the plural सर्दियाँ / सर्दियों is the usual name of",
+   "the season.  शीत is the Sanskritic doublet, glossed “winter, the cold",
+   "season”."
+  ],
+  "special_weekend": [
+   "सप्ताहांत “weekend”: en.wiktionary.org, entry “सप्ताहांत”."
+  ],
+  "unit1_century": [
+   "Direct and oblique singular are identical for a feminine ī-stem."
+  ],
+  "unit1_day": [
+   "Direct and oblique singular are identical for a consonant stem."
+  ],
+  "unit1_decade": [
+   "Direct and oblique singular are identical for a consonant stem."
+  ],
+  "unit1_hour": [
+   "Direct singular, plus the oblique singular a postposition governs."
+  ],
+  "unit1_millennium": [
+   "Direct and oblique singular are identical for a feminine ī-stem."
+  ],
+  "unit1_minute": [
+   "Direct and oblique singular are identical for a consonant stem."
+  ],
+  "unit1_month": [
+   "Direct singular, plus the oblique singular a postposition governs."
+  ],
+  "unit1_second": [
+   "The invariant loanword has one form."
+  ],
+  "unit1_week": [
+   "Direct singular, plus the oblique singular a postposition governs."
+  ],
+  "unit1_year": [
+   "Direct and oblique singular are identical for a consonant stem."
+  ],
+  "unit_century": [
+   "Declension: en.wiktionary.org, entry “सदी” (feminine ī-stem: सदी / सदियाँ / सदियों).  A noun counted by a",
+   "numeral stands in the OBLIQUE case, so the oblique forms are unit",
+   "surfaces in their own right.",
+   "शताब्दी and शती are the Sanskritic doublets en.wiktionary lists as its",
+   "synonyms, both feminine ī-stems taking the same endings."
+  ],
+  "unit_day": [
+   "Declension: en.wiktionary.org, entry “दिन” (masculine consonant stem: दिन / दिन / दिनों).  A noun counted by a",
+   "numeral stands in the OBLIQUE case, so the oblique forms are unit",
+   "surfaces in their own right."
+  ],
+  "unit_decade": [
+   "दशक: en.wiktionary.org, entry “दशक” (“decade, decennium”), masculine",
+   "consonant stem."
+  ],
+  "unit_hour": [
+   "Declension: en.wiktionary.org, entry “घंटा” (masculine ā-stem: घंटा / घंटे / घंटों).  A noun counted by a",
+   "numeral stands in the OBLIQUE case, so the oblique forms are unit",
+   "surfaces in their own right.",
+   "CLDR 47 writes the counted form oblique in its own patterns (“{0} घंटे में”)."
+  ],
+  "unit_millennium": [
+   "सहस्राब्दी: en.wiktionary.org, entry “सहस्राब्दी” (“millennium”),",
+   "feminine ī-stem, declining like सदी."
+  ],
+  "unit_minute": [
+   "मिनट: Unicode CLDR 47, locale hi, minute displayName and relative-time",
+   "patterns; en.wiktionary.org, entry “मिनट” (masculine consonant stem, so",
+   "the oblique singular is identical to the direct)."
+  ],
+  "unit_month": [
+   "Declension: en.wiktionary.org, entry “महीना” (masculine ā-stem: महीना / महीने / महीनों).  A noun counted by a",
+   "numeral stands in the OBLIQUE case, so the oblique forms are unit",
+   "surfaces in their own right.",
+   "माह is the form CLDR 47 uses for the month field's displayName and",
+   "relative-time patterns; मास is the Sanskritic doublet en.wiktionary",
+   "glosses “a month”.  Both are masculine consonant stems."
+  ],
+  "unit_second": [
+   "सेकंड: Unicode CLDR 47, locale hi, the second field's relative-time",
+   "patterns (“{0} सेकंड में”, “{0} सेकंड पहले”) and its displayName."
+  ],
+  "unit_week": [
+   "Declension: en.wiktionary.org, entry “हफ़्ता” (masculine ā-stem: हफ़्ता / हफ़्ते / हफ़्तों).  A noun counted by a",
+   "numeral stands in the OBLIQUE case, so the oblique forms are unit",
+   "surfaces in their own right.",
+   "सप्ताह is the formal doublet (masculine consonant stem, invariant in the",
+   "singular); en.wiktionary lists each as the other's synonym, and CLDR 47",
+   "uses सप्ताह in the week field.  हफ्ता is the nukta-less spelling."
+  ],
+  "unit_year": [
+   "साल and वर्ष both gloss “year” at en.wiktionary.org, which lists them as",
+   "synonyms; CLDR 47 uses वर्ष for the year field.  बरस is the third",
+   "attested word (en.wiktionary, entry “बरस”, with the oblique plural",
+   "बरसों shown in its own usage example).  All three are masculine",
+   "consonant stems, whose oblique plural is -ओं."
+  ],
+  "weekday_0": [
+   "Unicode CLDR 47, locale hi, gregorian wide weekday names",
+   "(cldr-json 47.0.0, cldr-dates-full/main/hi/ca-gregorian.json).",
+   "Sense confirmed at en.wiktionary.org, entry “सोमवार”."
+  ],
+  "weekday_1": [
+   "Unicode CLDR 47, locale hi, gregorian wide weekday names",
+   "(cldr-json 47.0.0, cldr-dates-full/main/hi/ca-gregorian.json).",
+   "Sense confirmed at en.wiktionary.org, entry “मंगलवार”."
+  ],
+  "weekday_2": [
+   "Unicode CLDR 47, locale hi, gregorian wide weekday names",
+   "(cldr-json 47.0.0, cldr-dates-full/main/hi/ca-gregorian.json).",
+   "Sense confirmed at en.wiktionary.org, entry “बुधवार”."
+  ],
+  "weekday_3": [
+   "Unicode CLDR 47, locale hi, gregorian wide weekday names",
+   "(cldr-json 47.0.0, cldr-dates-full/main/hi/ca-gregorian.json).",
+   "Sense confirmed at en.wiktionary.org, entry “गुरुवार”."
+  ],
+  "weekday_4": [
+   "Unicode CLDR 47, locale hi, gregorian wide weekday names",
+   "(cldr-json 47.0.0, cldr-dates-full/main/hi/ca-gregorian.json).",
+   "Sense confirmed at en.wiktionary.org, entry “शुक्रवार”."
+  ],
+  "weekday_5": [
+   "Unicode CLDR 47, locale hi, gregorian wide weekday names",
+   "(cldr-json 47.0.0, cldr-dates-full/main/hi/ca-gregorian.json).",
+   "Sense confirmed at en.wiktionary.org, entry “शनिवार”."
+  ],
+  "weekday_6": [
+   "Unicode CLDR 47, locale hi, gregorian wide weekday names",
+   "(cldr-json 47.0.0, cldr-dates-full/main/hi/ca-gregorian.json).",
+   "Sense confirmed at en.wiktionary.org, entry “रविवार”.",
+   "इतवार is the everyday colloquial name for the same day; en.wiktionary",
+   "glosses it 'Sunday' and lists रविवार as its synonym."
+  ],
+  "weekday_abbr_0": [
+   "Unicode CLDR 47, locale hi, gregorian abbreviated weekday names",
+   "(cldr-json 47.0.0, cldr-dates-full/main/hi/ca-gregorian.json).",
+   "Sense confirmed at en.wiktionary.org, entry “सोम”.",
+   "The abbreviation is the bare planet name, which is an ordinary word in",
+   "its own right (गुरु 'teacher', शुक्र 'Venus'), so it binds only the",
+   "marker-ed weekday orders and never a bare weekday on its own."
+  ],
+  "weekday_abbr_1": [
+   "Unicode CLDR 47, locale hi, gregorian abbreviated weekday names",
+   "(cldr-json 47.0.0, cldr-dates-full/main/hi/ca-gregorian.json).",
+   "Sense confirmed at en.wiktionary.org, entry “मंगल”.",
+   "The abbreviation is the bare planet name, which is an ordinary word in",
+   "its own right (गुरु 'teacher', शुक्र 'Venus'), so it binds only the",
+   "marker-ed weekday orders and never a bare weekday on its own."
+  ],
+  "weekday_abbr_2": [
+   "Unicode CLDR 47, locale hi, gregorian abbreviated weekday names",
+   "(cldr-json 47.0.0, cldr-dates-full/main/hi/ca-gregorian.json).",
+   "Sense confirmed at en.wiktionary.org, entry “बुध”.",
+   "The abbreviation is the bare planet name, which is an ordinary word in",
+   "its own right (गुरु 'teacher', शुक्र 'Venus'), so it binds only the",
+   "marker-ed weekday orders and never a bare weekday on its own."
+  ],
+  "weekday_abbr_3": [
+   "Unicode CLDR 47, locale hi, gregorian abbreviated weekday names",
+   "(cldr-json 47.0.0, cldr-dates-full/main/hi/ca-gregorian.json).",
+   "Sense confirmed at en.wiktionary.org, entry “गुरु”.",
+   "The abbreviation is the bare planet name, which is an ordinary word in",
+   "its own right (गुरु 'teacher', शुक्र 'Venus'), so it binds only the",
+   "marker-ed weekday orders and never a bare weekday on its own."
+  ],
+  "weekday_abbr_4": [
+   "Unicode CLDR 47, locale hi, gregorian abbreviated weekday names",
+   "(cldr-json 47.0.0, cldr-dates-full/main/hi/ca-gregorian.json).",
+   "Sense confirmed at en.wiktionary.org, entry “शुक्र”.",
+   "The abbreviation is the bare planet name, which is an ordinary word in",
+   "its own right (गुरु 'teacher', शुक्र 'Venus'), so it binds only the",
+   "marker-ed weekday orders and never a bare weekday on its own."
+  ],
+  "weekday_abbr_5": [
+   "Unicode CLDR 47, locale hi, gregorian abbreviated weekday names",
+   "(cldr-json 47.0.0, cldr-dates-full/main/hi/ca-gregorian.json).",
+   "Sense confirmed at en.wiktionary.org, entry “शनि”.",
+   "The abbreviation is the bare planet name, which is an ordinary word in",
+   "its own right (गुरु 'teacher', शुक्र 'Venus'), so it binds only the",
+   "marker-ed weekday orders and never a bare weekday on its own."
+  ],
+  "weekday_abbr_6": [
+   "Unicode CLDR 47, locale hi, gregorian abbreviated weekday names",
+   "(cldr-json 47.0.0, cldr-dates-full/main/hi/ca-gregorian.json).",
+   "Sense confirmed at en.wiktionary.org, entry “रवि”.",
+   "The abbreviation is the bare planet name, which is an ordinary word in",
+   "its own right (गुरु 'teacher', शुक्र 'Venus'), so it binds only the",
+   "marker-ed weekday orders and never a bare weekday on its own."
+  ]
+ }
+}

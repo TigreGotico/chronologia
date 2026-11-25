@@ -1,9 +1,8 @@
-"""Loader: filename-encoded slot values and lang.json facts."""
+"""Loader: base-name-encoded slot values, vocab.json and lang.json facts."""
 import json
 
 import pytest
 from engine_helpers import load_zz
-from ovos_spec_tools import LocaleResources
 
 from chronologia.extract import load_lang_spec
 
@@ -51,7 +50,7 @@ def test_json_facts_loaded():
     assert "relative_offset" in spec.orders and spec.hook is None
 
 
-# -- calendar-month vocab (month_<calendar>_<n>.voc) -----------------------
+# -- calendar-month vocab (month_<calendar>_<n>) -----------------------
 
 def test_calendar_months_parsed_and_keyed_by_calendar():
     cm = load_zz().calendar_months
@@ -63,69 +62,73 @@ def test_gregorian_months_unaffected_by_calendar_months():
     assert load_zz().months["zjun"] == 6
 
 
-def _write_locale(root, files, cfg=None):
+def _write_locale(root, words, cfg=None, format_version=1):
     d = root / "xx"
     d.mkdir()
-    for name, body in files.items():
-        (d / name).write_text(body, encoding="utf-8")
+    (d / "vocab.json").write_text(
+        json.dumps({"format_version": format_version, "words": words}),
+        encoding="utf-8")
     (d / "lang.json").write_text(json.dumps(cfg or {}), encoding="utf-8")
     return str(root)
 
 
 def test_unknown_calendar_key_is_a_load_error(tmp_path):
-    root = _write_locale(tmp_path, {"month_klingon_1.voc": "qeng\n"})
+    root = _write_locale(tmp_path, {"month_klingon_1": ["qeng"]})
     with pytest.raises(ValueError, match="unknown calendar"):
         load_lang_spec("xx", root)
 
 
 def test_cross_calendar_surface_collision_is_a_load_error(tmp_path):
     root = _write_locale(tmp_path, {
-        "month_islamic_civil_9.voc": "clash\n",
-        "month_hebrew_7.voc": "clash\n"})
+        "month_islamic_civil_9": ["clash"],
+        "month_hebrew_7": ["clash"]})
     with pytest.raises(ValueError, match="claimed by both calendars"):
         load_lang_spec("xx", root)
 
 
 def test_gregorian_month_out_of_range_is_a_load_error(tmp_path):
-    root = _write_locale(tmp_path, {"month_13.voc": "zmonth\n"})
+    root = _write_locale(tmp_path, {"month_13": ["zmonth"]})
     with pytest.raises(ValueError, match="month number 13 out of range 1..12"):
         load_lang_spec("xx", root)
 
 
 def test_weekday_out_of_range_is_a_load_error(tmp_path):
-    root = _write_locale(tmp_path, {"weekday_7.voc": "zday\n"})
+    root = _write_locale(tmp_path, {"weekday_7": ["zday"]})
     with pytest.raises(ValueError, match="weekday index 7 out of range 0..6"):
         load_lang_spec("xx", root)
 
 
 def test_calendar_month_out_of_range_is_a_load_error(tmp_path):
     # hebrew has 13 months; month 14 is impossible and must fail loudly.
-    root = _write_locale(tmp_path, {"month_hebrew_14.voc": "zadar\n"})
+    root = _write_locale(tmp_path, {"month_hebrew_14": ["zadar"]})
     with pytest.raises(ValueError, match="out of range 1..13"):
         load_lang_spec("xx", root)
 
 
 def test_calendar_month_at_upper_bound_loads(tmp_path):
     # hebrew month 13 (Adar II) is legitimate and must NOT be rejected.
-    root = _write_locale(tmp_path, {"month_hebrew_13.voc": "zadar2\n"})
+    root = _write_locale(tmp_path, {"month_hebrew_13": ["zadar2"]})
     spec = load_lang_spec("xx", root)
     assert spec.calendar_months["hebrew"]["zadar2"] == 13
 
 
-def test_one_locale_tree_is_read_once_for_every_load(tmp_path, monkeypatch):
-    root = _write_locale(tmp_path, {"month_6.voc": "zjun\n"})
-    (tmp_path / "yy").mkdir()
-    (tmp_path / "yy" / "month_7.voc").write_text("yjul\n", encoding="utf-8")
-    (tmp_path / "yy" / "lang.json").write_text("{}", encoding="utf-8")
-    built = []
-    real_init = LocaleResources.__init__
+def test_unsupported_vocab_format_version_is_a_load_error(tmp_path):
+    root = _write_locale(tmp_path, {"month_6": ["zjun"]}, format_version=2)
+    with pytest.raises(ValueError, match="format_version 2 is not supported"):
+        load_lang_spec("xx", root)
 
-    def counting_init(self, *args, **kwargs):
-        built.append(args)
-        real_init(self, *args, **kwargs)
 
-    monkeypatch.setattr(LocaleResources, "__init__", counting_init)
-    for _ in range(3):
-        assert load_lang_spec("xx", root).months == {"zjun": 6}
-        assert load_lang_spec("yy", root).months == {"yjul": 7}
-    assert len(built) == 1
+@pytest.mark.parametrize("version", [True, 1.0])
+def test_vocab_format_version_must_be_the_integer_one(tmp_path, version):
+    root = _write_locale(tmp_path, {"month_6": ["zjun"]}, format_version=version)
+    with pytest.raises(ValueError, match="is not supported"):
+        load_lang_spec("xx", root)
+
+
+def test_repeated_vocab_key_is_a_load_error(tmp_path):
+    root = _write_locale(tmp_path, {"month_6": ["zjun"]})
+    (tmp_path / "xx" / "vocab.json").write_text(
+        '{"format_version": 1, "words": {"month_6": ["zjun"], "month_6": ["zjul"]}}',
+        encoding="utf-8")
+    with pytest.raises(ValueError, match=r"repeated key.*month_6"):
+        load_lang_spec("xx", root)

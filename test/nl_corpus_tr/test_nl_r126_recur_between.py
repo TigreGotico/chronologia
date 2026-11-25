@@ -16,7 +16,7 @@ arasında" -> remainder "ile 17 arasında" rather than "").
 
 The fix mirrors #677's own convention: ``BYHOUR`` pins to the range's
 left/start endpoint, the whole clause is consumed, and the marker vocab
-(``marker_between_post.voc``) is reused unchanged from the single-span fix.
+(``marker_between_post``) is reused unchanged from the single-span fix.
 """
 from datetime import datetime
 
@@ -31,7 +31,7 @@ _A = datetime(2026, 8, 12, 12, 0)
 @pytest.mark.parametrize("text,rrule,remainder", [
     # the defect as reported.
     ("her gün saat 9 ile 17 arasında", "FREQ=DAILY;BYHOUR=9", ""),
-    # "arası" is the short synonym marker_between_post.voc also carries.
+    # "arası" is the short synonym marker_between_post also carries.
     ("her gün saat 9 ile 17 arası", "FREQ=DAILY;BYHOUR=9", ""),
     # swapped order: BYHOUR pins to whichever number comes FIRST in text.
     ("her gün saat 17 ile 9 arasında", "FREQ=DAILY;BYHOUR=17", ""),

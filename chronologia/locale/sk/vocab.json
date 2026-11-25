@@ -1,0 +1,788 @@
+{
+ "format_version": 1,
+ "words": {
+  "clock_fraction_15": [
+   "štvrť"
+  ],
+  "clock_fraction_30": [
+   "pol"
+  ],
+  "clock_fraction_45": [
+   "trištvrte",
+   "trištvrť"
+  ],
+  "clock_landmark_0": [
+   "polnoc"
+  ],
+  "clock_landmark_720": [
+   "poludnie"
+  ],
+  "clock_meridiem_am": [
+   "dopoludnia",
+   "ráno"
+  ],
+  "clock_meridiem_pm": [
+   "podvečer",
+   "poobede",
+   "popoludní",
+   "večer"
+  ],
+  "clock_zone_0": [
+   "gmt",
+   "utc"
+  ],
+  "daypart_afternoon_sk": [
+   "popoludní"
+  ],
+  "daypart_evening_sk": [
+   "večer"
+  ],
+  "daypart_morning_sk": [
+   "ráno"
+  ],
+  "marker_ad": [
+   "n. l.",
+   "n.l.",
+   "nášho letopočtu",
+   "po kr.",
+   "po kristovi"
+  ],
+  "marker_after": [
+   "po"
+  ],
+  "marker_and": [
+   "a"
+  ],
+  "marker_at": [
+   "o",
+   "v",
+   "vo"
+  ],
+  "marker_bc": [
+   "p. n. l.",
+   "pr. n. l.",
+   "pred kr.",
+   "pred kristom",
+   "pred n. l.",
+   "pred naším letopočtom"
+  ],
+  "marker_before": [
+   "pred"
+  ],
+  "marker_between": [
+   "medzi"
+  ],
+  "marker_business": [
+   "pracovné",
+   "pracovný",
+   "pracovných"
+  ],
+  "marker_during": [
+   "v",
+   "vo"
+  ],
+  "marker_every": [
+   "každé",
+   "každú",
+   "každý"
+  ],
+  "marker_for_date": [
+   "na"
+  ],
+  "marker_freq_daily": [
+   "denne"
+  ],
+  "marker_freq_monthly": [
+   "mesačne"
+  ],
+  "marker_freq_weekly": [
+   "týždenne"
+  ],
+  "marker_freq_yearly": [
+   "ročne"
+  ],
+  "marker_from": [
+   "od"
+  ],
+  "marker_future": [
+   "cez",
+   "o",
+   "za"
+  ],
+  "marker_half": [
+   "pol"
+  ],
+  "marker_in": [
+   "cez",
+   "o",
+   "za"
+  ],
+  "marker_indef": [
+   "jeden",
+   "jedna"
+  ],
+  "marker_last": [
+   "minulej",
+   "minulom",
+   "minulou",
+   "minulá",
+   "minulé",
+   "minulého",
+   "minulému",
+   "minulú",
+   "minulý",
+   "minulých",
+   "minulým",
+   "minulými",
+   "poslednej",
+   "poslednom",
+   "poslednou",
+   "posledná",
+   "posledné",
+   "posledného",
+   "poslednému",
+   "poslednú",
+   "posledný",
+   "posledných",
+   "posledným"
+  ],
+  "marker_na": [
+   "na"
+  ],
+  "marker_next": [
+   "budúca",
+   "budúce",
+   "budúceho",
+   "budúcej",
+   "budúcemu",
+   "budúci",
+   "budúcich",
+   "budúcim",
+   "budúcimi",
+   "budúcom",
+   "budúcou",
+   "budúcu",
+   "nasledujúca",
+   "nasledujúce",
+   "nasledujúceho",
+   "nasledujúcej",
+   "nasledujúcemu",
+   "nasledujúci",
+   "nasledujúcich",
+   "nasledujúcim",
+   "nasledujúcom",
+   "nasledujúcou",
+   "nasledujúcu"
+  ],
+  "marker_oclock": [
+   "hodine",
+   "hodín"
+  ],
+  "marker_of": [
+   "v",
+   "vo"
+  ],
+  "marker_ordlast": [
+   "poslednej",
+   "poslednom",
+   "poslednou",
+   "posledná",
+   "posledné",
+   "posledného",
+   "poslednému",
+   "poslednú",
+   "posledný",
+   "posledných",
+   "posledným",
+   "poslednými"
+  ],
+  "marker_past": [
+   "pred"
+  ],
+  "marker_q": [
+   "q"
+  ],
+  "marker_quarter_word": [
+   "kvartál",
+   "štvrťrok",
+   "štvrťroka"
+  ],
+  "marker_recur_for": [
+   "počas"
+  ],
+  "marker_since": [
+   "od"
+  ],
+  "marker_this": [
+   "tejto",
+   "tento",
+   "tieto",
+   "tohto",
+   "tomto",
+   "tomuto",
+   "toto",
+   "touto",
+   "táto",
+   "túto",
+   "týchto",
+   "týmito",
+   "týmto"
+  ],
+  "marker_to": [
+   "do"
+  ],
+  "marker_until": [
+   "do"
+  ],
+  "marker_week_num": [
+   "týždeň",
+   "týždňa"
+  ],
+  "marker_weekof": [
+   "týždeň od",
+   "týždeň okolo",
+   "týždeň s"
+  ],
+  "marker_year_word": [
+   "rok",
+   "roku"
+  ],
+  "month_1": [
+   "jan",
+   "január",
+   "januára",
+   "januári",
+   "januárom"
+  ],
+  "month_10": [
+   "okt",
+   "október",
+   "októbra",
+   "októbri",
+   "októbrom"
+  ],
+  "month_11": [
+   "nov",
+   "november",
+   "novembra",
+   "novembri",
+   "novembrom"
+  ],
+  "month_12": [
+   "dec",
+   "december",
+   "decembra",
+   "decembri",
+   "decembrom"
+  ],
+  "month_2": [
+   "feb",
+   "február",
+   "februára",
+   "februári",
+   "februárom"
+  ],
+  "month_3": [
+   "mar",
+   "marca",
+   "marci",
+   "marcom",
+   "marec"
+  ],
+  "month_4": [
+   "apr",
+   "apríl",
+   "apríla",
+   "apríli",
+   "aprílom"
+  ],
+  "month_5": [
+   "máj",
+   "mája",
+   "máji",
+   "májom"
+  ],
+  "month_6": [
+   "jún",
+   "júna",
+   "júni",
+   "júnom"
+  ],
+  "month_7": [
+   "júl",
+   "júla",
+   "júli",
+   "júlom"
+  ],
+  "month_8": [
+   "aug",
+   "august",
+   "augusta",
+   "auguste",
+   "augustom"
+  ],
+  "month_9": [
+   "sep",
+   "september",
+   "septembra",
+   "septembri",
+   "septembrom"
+  ],
+  "named_day_-1": [
+   "včera"
+  ],
+  "named_day_-2": [
+   "predvčerom"
+  ],
+  "named_day_0": [
+   "dnes"
+  ],
+  "named_day_1": [
+   "zajtra"
+  ],
+  "named_day_2": [
+   "pozajtra"
+  ],
+  "period_part_early": [
+   "začiatku",
+   "začiatok"
+  ],
+  "period_part_late": [
+   "konca",
+   "koniec"
+  ],
+  "period_part_mid": [
+   "polovica",
+   "polovice",
+   "stred"
+  ],
+  "scale_1000": [
+   "tisíc",
+   "tisíce"
+  ],
+  "scope_unit_century": [
+   "storočie",
+   "storočí"
+  ],
+  "scope_unit_decade": [
+   "desaťročie"
+  ],
+  "season_fall": [
+   "jeseni",
+   "jeseň"
+  ],
+  "season_spring": [
+   "jar",
+   "jari"
+  ],
+  "season_summer": [
+   "lete",
+   "leto"
+  ],
+  "season_winter": [
+   "zima",
+   "zime"
+  ],
+  "special_weekend": [
+   "vikend",
+   "víkend"
+  ],
+  "unit1_century": [
+   "storočie"
+  ],
+  "unit1_day": [
+   "deň",
+   "dňa",
+   "dňom"
+  ],
+  "unit1_decade": [
+   "desaťročie"
+  ],
+  "unit1_hour": [
+   "hodina",
+   "hodinou",
+   "hodinu"
+  ],
+  "unit1_minute": [
+   "minúta",
+   "minútou",
+   "minútu"
+  ],
+  "unit1_month": [
+   "mesiac",
+   "mesiaca",
+   "mesiaci"
+  ],
+  "unit1_second": [
+   "sekunda",
+   "sekundou",
+   "sekundu"
+  ],
+  "unit1_week": [
+   "týždeň",
+   "týždňa"
+  ],
+  "unit1_year": [
+   "rok",
+   "roka",
+   "rokom",
+   "roku"
+  ],
+  "unit_century": [
+   "storočia",
+   "storočie"
+  ],
+  "unit_day": [
+   "deň",
+   "dni",
+   "dní",
+   "dňa",
+   "dňami",
+   "dňoch",
+   "dňom"
+  ],
+  "unit_decade": [
+   "desaťročia",
+   "desaťročie"
+  ],
+  "unit_hour": [
+   "hodina",
+   "hodinou",
+   "hodinu",
+   "hodiny",
+   "hodinách",
+   "hodín"
+  ],
+  "unit_minute": [
+   "minút",
+   "minúta",
+   "minútach",
+   "minútou",
+   "minútu",
+   "minúty"
+  ],
+  "unit_month": [
+   "mesiac",
+   "mesiaca",
+   "mesiacami",
+   "mesiace",
+   "mesiaci",
+   "mesiacmi",
+   "mesiacoch",
+   "mesiacov"
+  ],
+  "unit_second": [
+   "sekunda",
+   "sekundou",
+   "sekundu",
+   "sekundy",
+   "sekundách",
+   "sekúnd"
+  ],
+  "unit_week": [
+   "týždeň",
+   "týždne",
+   "týždni",
+   "týždňa",
+   "týždňami",
+   "týždňoch",
+   "týždňov"
+  ],
+  "unit_year": [
+   "rok",
+   "roka",
+   "rokami",
+   "rokmi",
+   "rokoch",
+   "rokom",
+   "rokov",
+   "roku",
+   "roky"
+  ],
+  "weekday_0": [
+   "pondelka",
+   "pondelok"
+  ],
+  "weekday_1": [
+   "utorka",
+   "utorok"
+  ],
+  "weekday_2": [
+   "streda",
+   "stredu",
+   "stredy"
+  ],
+  "weekday_3": [
+   "štvrtka",
+   "štvrtok"
+  ],
+  "weekday_4": [
+   "piatku",
+   "piatok"
+  ],
+  "weekday_5": [
+   "sobota",
+   "sobotu",
+   "soboty"
+  ],
+  "weekday_6": [
+   "nedele",
+   "nedeľa",
+   "nedeľu"
+  ]
+ },
+ "sources": {
+  "clock_fraction_15": [
+   "Slovak QUARTER, counting toward the coming hour: \"štvrť na deväť\" == 08:15",
+   "(bare_quarter_to + toward_hour_12h; the \"na\" is the toward connector, see",
+   "marker_na.voc).  Citation: Slovník súčasného slovenského jazyka (JULS SAV,",
+   "slovnik.juls.savba.sk), s.v. \"štvrť\": \"štvrť na osem\" == 7.15 h."
+  ],
+  "clock_fraction_30": [
+   "Slovak toward-hour HALF: \"pol deviatej\" == half of the ninth == 08:30",
+   "(bare_half_to + toward_hour_12h).  As in Czech, the half names the coming",
+   "hour with a genitive-feminine ordinal agreeing with elided \"hodiny\", and",
+   "takes no connector.  Citation: Slovník súčasného slovenského jazyka (JULS",
+   "SAV, slovnik.juls.savba.sk), s.v. \"pol\": \"pol siedmej\" glossed as 6.30 h."
+  ],
+  "clock_fraction_45": [
+   "Slovak THREE QUARTERS toward the coming hour: \"trištvrte na deväť\" == 08:45",
+   "(bare_quarter_to + toward_hour_12h; \"na\" is the toward connector, see",
+   "marker_na.voc).  The same three-quarter form exists in South/East German",
+   "(\"dreiviertel neun\", de/clock_fraction_45.voc).",
+   "Citation: Slovník súčasného slovenského jazyka (JULS SAV,",
+   "slovnik.juls.savba.sk), s.v. \"trištvrte\": \"trištvrte na osem\" == 7.45 h."
+  ],
+  "daypart_afternoon_sk": [
+   "Band boundaries: Unicode CLDR 47 Day Period Rules, locale sk",
+   "(https://www.unicode.org/cldr/charts/47/supplemental/day_periods.html),",
+   "transcribed in chronologia/dayparts.py as the afternoon band.",
+   "Surface: adverb 'in the afternoon' -- the deictic form these phrases use.",
+   "CLDR names the band with the nominative noun 'popoludnie'; the adverb",
+   "is its locative singular, which is the form these phrases use.",
+   "Source: Wiktionary, popoludnie (Slovak), declension table, locative",
+   "singular 'popoludní' -- https://en.wiktionary.org/wiki/popoludnie#Slovak"
+  ],
+  "daypart_evening_sk": [
+   "Band boundaries: Unicode CLDR 47 Day Period Rules, locale sk",
+   "(https://www.unicode.org/cldr/charts/47/supplemental/day_periods.html),",
+   "transcribed in chronologia/dayparts.py as the evening band.",
+   "Surface: adverb 'in the evening' -- the deictic form these phrases use.",
+   "Source: Wiktionary, večer — https://en.wiktionary.org/wiki/večer#Slovak"
+  ],
+  "daypart_morning_sk": [
+   "Band boundaries: Unicode CLDR 47 Day Period Rules, locale sk",
+   "(https://www.unicode.org/cldr/charts/47/supplemental/day_periods.html),",
+   "transcribed in chronologia/dayparts.py as the morning band.",
+   "Surface: adverb 'in the morning' -- the deictic form these phrases use.",
+   "Source: the CLDR chart linked above -- the sk row spells morning1",
+   "'ráno', this surface exactly.  Neither Wiktionary carries a Slovak",
+   "'ráno' (the English entry has a Czech section only, and Wikislovník",
+   "has no page), so CLDR is the closest thing to a per-word source here."
+  ],
+  "marker_ad": [
+   "The same entry gives the other half: \"nášho letopočtu ... skr. n. l.\"",
+   "(https://slovnik.juls.savba.sk/?w=letopočet), with \"po Kr.\" (po Kristovi)",
+   "as the Christian counterpart."
+  ],
+  "marker_bc": [
+   "Slovník súčasného slovenského jazyka spells out the idiom under",
+   "\"letopočet\": \"pred naším letopočtom ... skr. pred n. l.\"",
+   "(https://slovnik.juls.savba.sk/?w=letopočet). The shorter \"pr. n. l.\" and",
+   "\"p. n. l.\" circulate alongside it, and \"pred Kr.\" (pred Kristom) is the",
+   "Christian pair the same entry glosses."
+  ],
+  "marker_during": [
+   "Locative \"v\"/\"vo\" governing a month (\"v januari\").",
+   "Source: en.wiktionary.org, entry \"v\" (Slovak), \"in\"."
+  ],
+  "marker_for_date": [
+   "\"na\" + accusative marks the time a thing is meant for: \"na zajtra\", \"na piatok\".",
+   "Source: sk.wiktionary.org, entry \"na\": \"(s akuzatívom alebo lokálom)",
+   "vyjadruje čas\" (Na Vianoce chcem korčule)."
+  ],
+  "marker_last": [
+   "Slovak \"last/previous\" determiner, the full adjectival paradigm (vzor \"pekný\").",
+   "The locative \"v minulom týždni\" and the genitive \"minulého roka\" are the",
+   "ordinary spoken forms.  Jazykovedný ústav Ľ. Štúra SAV, Slovníkový portál --",
+   "Morfológia slovenského jazyka, skloňovanie prídavných mien.",
+   "https://slovnik.juls.savba.sk/?w=minul%C3%BD"
+  ],
+  "marker_na": [
+   "Slovak toward-hour connector \"na\" (\"onto\"): the fraction names how far the",
+   "clock has advanced INTO the hour that is coming, so the hour spoken after",
+   "\"na\" is the NEXT one -- \"štvrť na deväť\" == a quarter onto the ninth ==",
+   "08:15, \"trištvrte na deväť\" == three quarters onto the ninth == 08:45.",
+   "The same construction is spelled with \"na\" in Belarusian and Ukrainian",
+   "(see be/marker_na.voc, uk/marker_na.voc).",
+   "Citation: Slovník súčasného slovenského jazyka (Jazykovedný ústav Ľ. Štúra",
+   "SAV, slovnik.juls.savba.sk), s.v. \"štvrť\": \"štvrť na osem\" glossed as",
+   "7.15 h -- a worked numeric example naming the COMING hour."
+  ],
+  "marker_next": [
+   "Slovak \"next/following\" determiner, the full adjectival paradigm.  \"budúci\"",
+   "is the soft (vzor \"cudzí\") stem, \"nasledujúci\" likewise.  Jazykovedný ústav",
+   "Ľ. Štúra SAV, Morfológia slovenského jazyka.",
+   "https://slovnik.juls.savba.sk/?w=bud%C3%BAci"
+  ],
+  "marker_ordlast": [
+   "Slovak \"last\" ordinal determiner, the adjective \"posledný\" in full concord",
+   "with the scoped weekday.  \"posledný piatok v júni\" = last Friday of June.",
+   "Adjectival paradigm vzor \"pekný\" (Jazykovedný ústav Ľ. Štúra SAV,",
+   "Morfológia slovenského jazyka / KSSJ).  https://slovnik.juls.savba.sk/"
+  ],
+  "marker_this": [
+   "Slovak \"this\" demonstrative, the full pronominal paradigm.  \"v tomto týždni\"",
+   "is locative, the ordinary form.  Jazykovedný ústav Ľ. Štúra SAV, Morfológia",
+   "slovenského jazyka, skloňovanie zámen ukazovacích.",
+   "https://slovnik.juls.savba.sk/?w=tento"
+  ],
+  "month_1": [
+   "Unicode CLDR 47, locale sk, cldr-dates-full/main/sk/ca-gregorian.json.",
+   "months.format.abbreviated and months.stand-alone.abbreviated are identical;",
+   "CLDR ships the trailing dot as part of the surface, but the tokenizer strips",
+   "a trailing dot before matching, so the bare form covers both spellings."
+  ],
+  "month_10": [
+   "Unicode CLDR 47, locale sk, cldr-dates-full/main/sk/ca-gregorian.json.",
+   "months.format.abbreviated and months.stand-alone.abbreviated are identical;",
+   "CLDR ships the trailing dot as part of the surface, but the tokenizer strips",
+   "a trailing dot before matching, so the bare form covers both spellings."
+  ],
+  "month_11": [
+   "Unicode CLDR 47, locale sk, cldr-dates-full/main/sk/ca-gregorian.json.",
+   "months.format.abbreviated and months.stand-alone.abbreviated are identical;",
+   "CLDR ships the trailing dot as part of the surface, but the tokenizer strips",
+   "a trailing dot before matching, so the bare form covers both spellings."
+  ],
+  "month_12": [
+   "Unicode CLDR 47, locale sk, cldr-dates-full/main/sk/ca-gregorian.json.",
+   "months.format.abbreviated and months.stand-alone.abbreviated are identical;",
+   "CLDR ships the trailing dot as part of the surface, but the tokenizer strips",
+   "a trailing dot before matching, so the bare form covers both spellings."
+  ],
+  "month_2": [
+   "Unicode CLDR 47, locale sk, cldr-dates-full/main/sk/ca-gregorian.json.",
+   "months.format.abbreviated and months.stand-alone.abbreviated are identical;",
+   "CLDR ships the trailing dot as part of the surface, but the tokenizer strips",
+   "a trailing dot before matching, so the bare form covers both spellings."
+  ],
+  "month_3": [
+   "Unicode CLDR 47, locale sk, cldr-dates-full/main/sk/ca-gregorian.json.",
+   "months.format.abbreviated and months.stand-alone.abbreviated are identical;",
+   "CLDR ships the trailing dot as part of the surface, but the tokenizer strips",
+   "a trailing dot before matching, so the bare form covers both spellings."
+  ],
+  "month_4": [
+   "Unicode CLDR 47, locale sk, cldr-dates-full/main/sk/ca-gregorian.json.",
+   "months.format.abbreviated and months.stand-alone.abbreviated are identical;",
+   "CLDR ships the trailing dot as part of the surface, but the tokenizer strips",
+   "a trailing dot before matching, so the bare form covers both spellings."
+  ],
+  "month_5": [
+   "Unicode CLDR 47, locale sk, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/sk/ca-gregorian.json): months.format.wide,",
+   "months.stand-alone.wide, months.format.abbreviated,",
+   "months.stand-alone.abbreviated.  Not covered by any of those charts, and so",
+   "unattested here: \"májom\", \"máji\"."
+  ],
+  "month_6": [
+   "Unicode CLDR 47, locale sk, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/sk/ca-gregorian.json): months.format.wide,",
+   "months.stand-alone.wide, months.format.abbreviated,",
+   "months.stand-alone.abbreviated.  Not covered by any of those charts, and so",
+   "unattested here: \"júnom\", \"júni\"."
+  ],
+  "month_7": [
+   "Unicode CLDR 47, locale sk, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/sk/ca-gregorian.json): months.format.wide,",
+   "months.stand-alone.wide, months.format.abbreviated,",
+   "months.stand-alone.abbreviated.  Not covered by any of those charts, and so",
+   "unattested here: \"júlom\", \"júli\"."
+  ],
+  "month_8": [
+   "Unicode CLDR 47, locale sk, cldr-dates-full/main/sk/ca-gregorian.json.",
+   "months.format.abbreviated and months.stand-alone.abbreviated are identical;",
+   "CLDR ships the trailing dot as part of the surface, but the tokenizer strips",
+   "a trailing dot before matching, so the bare form covers both spellings."
+  ],
+  "month_9": [
+   "Unicode CLDR 47, locale sk, cldr-dates-full/main/sk/ca-gregorian.json.",
+   "months.format.abbreviated and months.stand-alone.abbreviated are identical;",
+   "CLDR ships the trailing dot as part of the surface, but the tokenizer strips",
+   "a trailing dot before matching, so the bare form covers both spellings."
+  ],
+  "scope_unit_century": [
+   "Slovak \"century\".  After the \"v\"/\"vo\" preposition the noun stands in the",
+   "locative -- \"v 20. storočí\" -- so listing the nominative alone left the noun",
+   "stranded and the ordinal was read as a clock hour instead.  The locative is",
+   "spelled like the genitive plural (\"päť storočí\" = five centuries), so the",
+   "order that binds it requires the written ordinal dot -- the only thing that",
+   "tells \"v 20. storočí\" from \"v 20 storočí\", twenty centuries.",
+   "Wikislovník, storočie, skloňovanie (lokál sg. \"storočí\"):",
+   "https://sk.wiktionary.org/wiki/storočie"
+  ],
+  "unit1_second": [
+   "Slovak \"sekunda\" singular surfaces: nominative, accusative and",
+   "instrumental.  Declension: en.wiktionary.org."
+  ],
+  "unit_second": [
+   "Slovak \"sekunda\", full first-declension paradigm, matching the depth of",
+   "unit_minute.voc: nominative singular after 1, nominative plural after 2-4,",
+   "genitive plural after 5+, plus the accusative and instrumental the",
+   "prepositions \"o\" and \"pred\" impose.",
+   "Unicode CLDR 47, locale sk, cldr-units-full/main/sk/units.json,",
+   "duration-second: one \"sekunda\", few/many \"sekundy\", other \"sekúnd\".",
+   "Declension: en.wiktionary.org, https://en.wiktionary.org/wiki/sekunda"
+  ],
+  "unit_year": [
+   "Slovak \"rok\".  The genitive singular has the two attested variants \"roka\" and",
+   "\"roku\", and the locative \"v minulom roku\" needs the latter -- it was missing,",
+   "so the ordinary \"last year\" phrasing failed.  Jazykovedný ústav Ľ. Štúra SAV,",
+   "Morfológia slovenského jazyka.",
+   "https://slovnik.juls.savba.sk/?w=rok"
+  ],
+  "weekday_0": [
+   "Unicode CLDR 47, locale sk, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/sk/ca-gregorian.json): days.format.wide,",
+   "days.stand-alone.wide.  Not covered by any of those charts, and so",
+   "unattested here: \"pondelka\"."
+  ],
+  "weekday_1": [
+   "Unicode CLDR 47, locale sk, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/sk/ca-gregorian.json): days.format.wide,",
+   "days.stand-alone.wide.  Not covered by any of those charts, and so",
+   "unattested here: \"utorka\"."
+  ],
+  "weekday_2": [
+   "Unicode CLDR 47, locale sk, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/sk/ca-gregorian.json): days.format.wide,",
+   "days.stand-alone.wide.  Not covered by any of those charts, and so",
+   "unattested here: \"stredu\", \"stredy\"."
+  ],
+  "weekday_3": [
+   "Unicode CLDR 47, locale sk, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/sk/ca-gregorian.json): days.format.wide,",
+   "days.stand-alone.wide.  Not covered by any of those charts, and so",
+   "unattested here: \"štvrtka\"."
+  ],
+  "weekday_4": [
+   "Unicode CLDR 47, locale sk, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/sk/ca-gregorian.json): days.format.wide,",
+   "days.stand-alone.wide.  Not covered by any of those charts, and so",
+   "unattested here: \"piatku\"."
+  ],
+  "weekday_5": [
+   "Unicode CLDR 47, locale sk, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/sk/ca-gregorian.json): days.format.wide,",
+   "days.stand-alone.wide.  Not covered by any of those charts, and so",
+   "unattested here: \"sobotu\", \"soboty\"."
+  ],
+  "weekday_6": [
+   "Unicode CLDR 47, locale sk, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/sk/ca-gregorian.json): days.format.wide,",
+   "days.stand-alone.wide.  Not covered by any of those charts, and so",
+   "unattested here: \"nedeľu\", \"nedele\"."
+  ]
+ }
+}

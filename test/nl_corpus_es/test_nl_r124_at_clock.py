@@ -5,7 +5,7 @@ the ``extract_timespan`` path.
 
 es's ``clock_time`` grammar's bare-CLOCK order ("CLOCK MERIDIEM? ZONE?")
 has no leading ``at?`` slot, unlike the HOUR-based orders in the same
-construction.  ``marker_at.voc`` for es already contains both "a" and
+construction.  ``marker_at`` for es already contains both "a" and
 "las" as separate marker tokens (each combined article word), so an
 ``at?`` slot at the head of the CLOCK order consumes the whole two-word
 phrase.  The fix adds a mirrored ``at? CLOCK MERIDIEM? ZONE?`` order.

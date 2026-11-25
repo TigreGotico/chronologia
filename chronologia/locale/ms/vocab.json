@@ -1,0 +1,491 @@
+{
+ "format_version": 1,
+ "words": {
+  "clock_fraction_30": [
+   "setengah"
+  ],
+  "clock_landmark_0": [
+   "tengah malam"
+  ],
+  "clock_landmark_720": [
+   "tengah hari"
+  ],
+  "clock_meridiem_am": [
+   "pagi"
+  ],
+  "clock_meridiem_night": [
+   "malam"
+  ],
+  "clock_meridiem_pm": [
+   "petang"
+  ],
+  "clock_zone_0": [
+   "gmt",
+   "utc"
+  ],
+  "daypart_evening_ms": [
+   "petang"
+  ],
+  "daypart_morning_ms": [
+   "pagi"
+  ],
+  "daypart_night_ms": [
+   "malam"
+  ],
+  "marker_ad": [
+   "m"
+  ],
+  "marker_after": [
+   "selepas"
+  ],
+  "marker_and": [
+   "dan"
+  ],
+  "marker_at": [
+   "jam",
+   "pukul"
+  ],
+  "marker_bc": [
+   "sm"
+  ],
+  "marker_before": [
+   "sebelum"
+  ],
+  "marker_between": [
+   "antara"
+  ],
+  "marker_business": [
+   "bekerja",
+   "kerja"
+  ],
+  "marker_every": [
+   "setiap",
+   "tiap"
+  ],
+  "marker_freq_daily": [
+   "harian"
+  ],
+  "marker_freq_monthly": [
+   "bulanan"
+  ],
+  "marker_freq_weekly": [
+   "mingguan"
+  ],
+  "marker_freq_yearly": [
+   "tahunan"
+  ],
+  "marker_from": [
+   "dari",
+   "daripada"
+  ],
+  "marker_future": [
+   "dalam",
+   "lagi"
+  ],
+  "marker_half": [
+   "separuh",
+   "setengah"
+  ],
+  "marker_last": [
+   "lalu",
+   "lepas"
+  ],
+  "marker_next": [
+   "depan"
+  ],
+  "marker_ordinal_prefix": [
+   "ke"
+  ],
+  "marker_past": [
+   "lalu",
+   "lepas",
+   "yang lalu"
+  ],
+  "marker_q": [
+   "q"
+  ],
+  "marker_quarter_word": [
+   "kuartal",
+   "suku"
+  ],
+  "marker_recur_for": [
+   "selama"
+  ],
+  "marker_since": [
+   "sejak"
+  ],
+  "marker_this": [
+   "ini"
+  ],
+  "marker_until": [
+   "hingga",
+   "sampai",
+   "sehingga"
+  ],
+  "marker_week_num": [
+   "minggu"
+  ],
+  "marker_weekof": [
+   "minggu"
+  ],
+  "month_1": [
+   "januari"
+  ],
+  "month_10": [
+   "oktober"
+  ],
+  "month_11": [
+   "november"
+  ],
+  "month_12": [
+   "disember"
+  ],
+  "month_2": [
+   "februari"
+  ],
+  "month_3": [
+   "mac"
+  ],
+  "month_4": [
+   "april"
+  ],
+  "month_5": [
+   "mei"
+  ],
+  "month_6": [
+   "jun"
+  ],
+  "month_7": [
+   "julai"
+  ],
+  "month_8": [
+   "ogos"
+  ],
+  "month_9": [
+   "september"
+  ],
+  "months": [
+   "april",
+   "disember",
+   "februari",
+   "januari",
+   "julai",
+   "jun",
+   "mac",
+   "mei",
+   "november",
+   "ogos",
+   "oktober",
+   "september"
+  ],
+  "named_day_-1": [
+   "semalam"
+  ],
+  "named_day_-2": [
+   "kelmarin dulu"
+  ],
+  "named_day_0": [
+   "hari ini"
+  ],
+  "named_day_1": [
+   "esok"
+  ],
+  "named_day_2": [
+   "lusa"
+  ],
+  "period_part_early": [
+   "awal"
+  ],
+  "period_part_late": [
+   "akhir",
+   "hujung"
+  ],
+  "period_part_mid": [
+   "pertengahan"
+  ],
+  "scale_1000": [
+   "ribu"
+  ],
+  "scope_unit_century": [
+   "abad",
+   "kurun"
+  ],
+  "scope_unit_decade": [
+   "dasawarsa",
+   "dekad"
+  ],
+  "season_fall": [
+   "musim gugur",
+   "musim luruh",
+   "musim rontok"
+  ],
+  "season_spring": [
+   "musim bunga",
+   "musim semi"
+  ],
+  "season_summer": [
+   "musim panas"
+  ],
+  "season_winter": [
+   "musim dingin",
+   "musim sejuk"
+  ],
+  "special_weekend": [
+   "hujung minggu"
+  ],
+  "unit_century": [
+   "abad",
+   "kurun"
+  ],
+  "unit_day": [
+   "hari"
+  ],
+  "unit_decade": [
+   "dasawarsa",
+   "dekad"
+  ],
+  "unit_hour": [
+   "jam"
+  ],
+  "unit_minute": [
+   "minit"
+  ],
+  "unit_month": [
+   "bulan"
+  ],
+  "unit_second": [
+   "saat"
+  ],
+  "unit_week": [
+   "minggu"
+  ],
+  "unit_year": [
+   "tahun"
+  ],
+  "weekday_0": [
+   "hari isnin",
+   "isnin"
+  ],
+  "weekday_1": [
+   "hari selasa",
+   "selasa"
+  ],
+  "weekday_2": [
+   "hari rabu",
+   "rabu"
+  ],
+  "weekday_3": [
+   "hari khamis",
+   "khamis"
+  ],
+  "weekday_4": [
+   "hari jumaat",
+   "jumaat"
+  ],
+  "weekday_5": [
+   "hari sabtu",
+   "sabtu"
+  ],
+  "weekday_6": [
+   "ahad",
+   "hari ahad",
+   "hari minggu"
+  ]
+ },
+ "sources": {
+  "clock_fraction_30": [
+   "Malay toward-the-hour half: \"setengah <H>\" == the half *before* hour H,",
+   "i.e. (H-1):30 -- \"setengah tiga\" / \"pukul setengah tiga\" == 02:30 (half toward",
+   "three), NOT 03:30. This is the German-style toward-hour reading, corroborated",
+   "across Malay usage. Kamus Dewan (DBP) gives \"setengah jam\" == 30 minutes (half",
+   "an hour); the toward-hour clock reading (\"setengah tiga\" == 02:30) is",
+   "corroborated across Malay usage sources -- a DBP-canonical clock-reading",
+   "passage was not obtained, stated honestly. The quarter (suku/seperempat) is",
+   "deliberately omitted: its direction is UNCONFIRMED (documented follow-up), so",
+   "only the unambiguous half is added."
+  ],
+  "clock_meridiem_night": [
+   "The NIGHT daypart is a midnight-crossing BAND in colloquial clock usage,",
+   "not a uniform +12 PM shift: \"pukul satu malam\" (one at night) is 01:00,",
+   "\"pukul sebelas malam\" (eleven at night) is 23:00, twelve is midnight",
+   "00:00.  Small hours 1..5 stay AM, evening hours 6..11 are PM, twelve is",
+   "midnight (band-split in resolver _clock_hms).  Evening \"malam\" opens at",
+   "19:00 (CLDR ms night [19:00, 00:00), transcribed in chronologia/",
+   "dayparts.py); the small hours read as \"malam\" colloquially.  Source:",
+   "Wiktionary, malam (https://en.wiktionary.org/wiki/malam#Malay)."
+  ],
+  "daypart_evening_ms": [
+   "Band boundaries: Unicode CLDR 47 Day Period Rules, locale ms",
+   "(https://www.unicode.org/cldr/charts/47/supplemental/day_periods.html),",
+   "transcribed in chronologia/dayparts.py as the evening band.",
+   "Surface: noun 'late afternoon/evening' -- the deictic form these phrases use.",
+   "Source: Wiktionary, petang — https://en.wiktionary.org/wiki/petang"
+  ],
+  "daypart_morning_ms": [
+   "Band boundaries: Unicode CLDR 47 Day Period Rules, locale ms",
+   "(https://www.unicode.org/cldr/charts/47/supplemental/day_periods.html),",
+   "transcribed in chronologia/dayparts.py as the morning band.",
+   "Surface: noun 'morning' -- the deictic form these phrases use.",
+   "Source: Wiktionary, pagi — https://en.wiktionary.org/wiki/pagi#Malay"
+  ],
+  "daypart_night_ms": [
+   "Band boundaries: Unicode CLDR 47 Day Period Rules, locale ms",
+   "(https://www.unicode.org/cldr/charts/47/supplemental/day_periods.html),",
+   "transcribed in chronologia/dayparts.py as the night band.",
+   "Surface: noun 'night' -- the deictic form these phrases use.",
+   "Source: Wiktionary, malam — https://en.wiktionary.org/wiki/malam#Malay"
+  ],
+  "marker_after": [
+   "Malay \"after\" -- refused per the bare-direction veto (no open-ended-future",
+   "representation; mirrors Spanish \"después\"/English \"after\").",
+   "\"selepas\": Kamus Dewan (DBP) s.v. \"lepas\" -- sesudah, sehabis (waktu)."
+  ],
+  "marker_before": [
+   "Malay \"before\" -- opens the bare-before open-range binding (mirrors",
+   "Spanish \"antes\"/English \"before\"): \"sebelum 2020\" -> [now, 2020's start).",
+   "\"sebelum\": Kamus Dewan (DBP) s.v. \"sebelum\" -- lebih dahulu (waktunya)",
+   "  drpd; menyatakan waktu yang mendahului sesuatu."
+  ],
+  "marker_between": [
+   "Malay range \"between\" framing (\"antara A dan B\"). Pairs with marker_and",
+   "(\"dan\").",
+   "\"antara\": Kamus Dewan (DBP) s.v. \"antara\" -- di celah-celah (dua waktu,",
+   "  tempat atau jumlah)."
+  ],
+  "marker_from": [
+   "Malay range \"from\" lead -- opens a bounded interval (\"dari A hingga B\").",
+   "\"dari\"/\"daripada\": Kamus Dewan (DBP) s.v. \"dari\", \"daripada\" -- menyatakan",
+   "  asal atau titik permulaan (waktu, tempat)."
+  ],
+  "marker_ordinal_prefix": [
+   "\"ke-\" makes a numeral ordinal (\"abad ke-20\", \"bulan kelima\").  A hyphen is",
+   "required before digits and omitted before a spelled numeral; the tokenizer",
+   "splits the hyphenated form into this prefix plus the numeral.",
+   "en.wiktionary.org, https://en.wiktionary.org/wiki/ke-."
+  ],
+  "month_1": [
+   "Unicode CLDR 47, locale ms, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/ms/ca-gregorian.json): months.format.wide,",
+   "months.stand-alone.wide."
+  ],
+  "month_10": [
+   "Unicode CLDR 47, locale ms, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/ms/ca-gregorian.json): months.format.wide,",
+   "months.stand-alone.wide."
+  ],
+  "month_11": [
+   "Unicode CLDR 47, locale ms, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/ms/ca-gregorian.json): months.format.wide,",
+   "months.stand-alone.wide."
+  ],
+  "month_12": [
+   "Unicode CLDR 47, locale ms, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/ms/ca-gregorian.json): months.format.wide,",
+   "months.stand-alone.wide."
+  ],
+  "month_2": [
+   "Unicode CLDR 47, locale ms, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/ms/ca-gregorian.json): months.format.wide,",
+   "months.stand-alone.wide."
+  ],
+  "month_3": [
+   "Unicode CLDR 47, locale ms, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/ms/ca-gregorian.json): months.format.wide,",
+   "months.stand-alone.wide, months.format.abbreviated,",
+   "months.stand-alone.abbreviated."
+  ],
+  "month_4": [
+   "Unicode CLDR 47, locale ms, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/ms/ca-gregorian.json): months.format.wide,",
+   "months.stand-alone.wide."
+  ],
+  "month_5": [
+   "Unicode CLDR 47, locale ms, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/ms/ca-gregorian.json): months.format.wide,",
+   "months.stand-alone.wide, months.format.abbreviated,",
+   "months.stand-alone.abbreviated."
+  ],
+  "month_6": [
+   "Unicode CLDR 47, locale ms, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/ms/ca-gregorian.json): months.format.wide,",
+   "months.stand-alone.wide, months.format.abbreviated,",
+   "months.stand-alone.abbreviated."
+  ],
+  "month_7": [
+   "Unicode CLDR 47, locale ms, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/ms/ca-gregorian.json): months.format.wide,",
+   "months.stand-alone.wide."
+  ],
+  "month_8": [
+   "Unicode CLDR 47, locale ms, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/ms/ca-gregorian.json): months.format.wide,",
+   "months.stand-alone.wide."
+  ],
+  "month_9": [
+   "Unicode CLDR 47, locale ms, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/ms/ca-gregorian.json): months.format.wide,",
+   "months.stand-alone.wide."
+  ],
+  "scope_unit_century": [
+   "Kamus Dewan (Dewan Bahasa dan Pustaka): \"abad\" and \"kurun\" both gloss to",
+   "\"century\" in Malay grammar. Malay nouns do not inflect for number, so no",
+   "separate plural surface."
+  ],
+  "scope_unit_decade": [
+   "Kamus Dewan: \"dekad\" (an English loan) is the standard Malay word for a",
+   "ten-year period (\"dekad\" = period of ten years, 10 dekad = 1 abad).",
+   "\"dasawarsa\" (Javanese-derived: dasa \"ten\" + warsa \"year\") is a documented",
+   "alternative also listed."
+  ],
+  "unit_century": [
+   "Kamus Dewan (Dewan Bahasa dan Pustaka): \"abad\" and \"kurun\" both gloss to",
+   "\"century\" in Malay grammar. Malay nouns do not inflect for number, so no",
+   "separate plural surface."
+  ],
+  "unit_decade": [
+   "Kamus Dewan: \"dekad\" (an English loan) is the standard Malay word for a",
+   "ten-year period (\"dekad\" = period of ten years, 10 dekad = 1 abad).",
+   "\"dasawarsa\" (Javanese-derived: dasa \"ten\" + warsa \"year\") is a documented",
+   "alternative also listed."
+  ],
+  "unit_second": [
+   "Unicode CLDR 47, locale ms, cldr-units-full/main/ms/units.json,",
+   "duration-second: the single form \"saat\" -- Malay has no count plural, as",
+   "unit_minute.voc's \"minit\" already shows."
+  ],
+  "weekday_0": [
+   "Malay names a weekday with the classifier \"hari\" in front of it: Kamus Dewan",
+   "defines Isnin as \"hari kedua dlm seminggu, selepas hari Ahad\" and Ahad as",
+   "\"hari pertama dlm seminggu selepas hari Sabtu, hari minggu\", spelling the",
+   "classifier out every time (Kamus Dewan Edisi Keempat, Dewan Bahasa dan",
+   "Pustaka).  Listing the classifier form as a surface is what keeps \"setiap",
+   "hari Isnin\" from being read as \"setiap hari\" (every day) with the weekday",
+   "discarded; bare \"setiap hari\" still means daily, because both readings are",
+   "real."
+  ],
+  "weekday_1": [
+   "The classifier form \"hari <day>\" is one name (Kamus Dewan, s.v. the day",
+   "name); see weekday_0.voc for why it is listed."
+  ],
+  "weekday_2": [
+   "The classifier form \"hari <day>\" is one name (Kamus Dewan, s.v. the day",
+   "name); see weekday_0.voc for why it is listed."
+  ],
+  "weekday_3": [
+   "The classifier form \"hari <day>\" is one name (Kamus Dewan, s.v. the day",
+   "name); see weekday_0.voc for why it is listed."
+  ],
+  "weekday_4": [
+   "The classifier form \"hari <day>\" is one name (Kamus Dewan, s.v. the day",
+   "name); see weekday_0.voc for why it is listed."
+  ],
+  "weekday_5": [
+   "The classifier form \"hari <day>\" is one name (Kamus Dewan, s.v. the day",
+   "name); see weekday_0.voc for why it is listed."
+  ],
+  "weekday_6": [
+   "The classifier form \"hari <day>\" is one name (Kamus Dewan, s.v. the day",
+   "name); see weekday_0.voc for why it is listed."
+  ]
+ }
+}

@@ -511,7 +511,7 @@ def _compound_unit_at(tokens, j, spec):
             # own is the idiomatic filler that closes a year/month/week
             # count, not a genuine extra day -- a real "+1 day" offset uses
             # the nominative "dan", never this genitive-plural surface
-            # (``marker_day_filler.voc``).  Folding it here duplicated the
+            # (``marker_day_filler``).  Folding it here duplicated the
             # count ("godinu dana" landed a year AND a day on).  A genuine
             # counted-days offset ("tri dana") never reaches this function:
             # its own NUM sits in the PRIMARY relative_offset match.
@@ -805,7 +805,7 @@ def apply_anchored_offset(tokens, resolved: List[Pair],
     """
     after = spec.connectors.get("after", frozenset())
     before = spec.connectors.get("before", frozenset())
-    # ``marker_offset_after.voc`` supplies per-locale "after"-synonyms that
+    # ``marker_offset_after`` supplies per-locale "after"-synonyms that
     # apply ONLY to this offset-WITH-explicit-anchor shape ("2 weeks from
     # june 1st" == "2 weeks after june 1st").  It is a deliberate opt-in
     # vocab, NOT the locale's generic "from" connector: in many locales the

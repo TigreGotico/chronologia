@@ -1,0 +1,397 @@
+{
+ "format_version": 1,
+ "words": {
+  "clock_landmark_0": [
+   "gecə yarısı"
+  ],
+  "clock_landmark_720": [
+   "günorta"
+  ],
+  "clock_meridiem_am": [
+   "səhər"
+  ],
+  "clock_meridiem_night": [
+   "gecə"
+  ],
+  "clock_meridiem_pm": [
+   "axşam"
+  ],
+  "clock_zone_0": [
+   "gmt",
+   "utc"
+  ],
+  "marker_ad": [
+   "bizim era",
+   "bizim eranın"
+  ],
+  "marker_and": [
+   "və"
+  ],
+  "marker_at": [
+   "saat"
+  ],
+  "marker_bc": [
+   "eramızdan əvvəl"
+  ],
+  "marker_business": [
+   "işgünləri",
+   "işgünü"
+  ],
+  "marker_every": [
+   "hər"
+  ],
+  "marker_freq_daily": [
+   "gündəlik"
+  ],
+  "marker_freq_monthly": [
+   "aylıq"
+  ],
+  "marker_freq_weekly": [
+   "həftəlik"
+  ],
+  "marker_freq_yearly": [
+   "illik"
+  ],
+  "marker_future": [
+   "sonra"
+  ],
+  "marker_half": [
+   "yarım"
+  ],
+  "marker_last": [
+   "keçən",
+   "ötən"
+  ],
+  "marker_next": [
+   "gələn",
+   "növbəti"
+  ],
+  "marker_past": [
+   "qabaq",
+   "öncə",
+   "əvvəl"
+  ],
+  "marker_q": [
+   "q"
+  ],
+  "marker_quarter_word": [
+   "rüb"
+  ],
+  "marker_this": [
+   "bu"
+  ],
+  "marker_until": [
+   "qədər"
+  ],
+  "marker_week_num": [
+   "həftə"
+  ],
+  "month_1": [
+   "yanvar"
+  ],
+  "month_10": [
+   "oktyabr"
+  ],
+  "month_11": [
+   "noyabr"
+  ],
+  "month_12": [
+   "dekabr"
+  ],
+  "month_2": [
+   "fevral"
+  ],
+  "month_3": [
+   "mart"
+  ],
+  "month_4": [
+   "aprel"
+  ],
+  "month_5": [
+   "may"
+  ],
+  "month_6": [
+   "iyun"
+  ],
+  "month_7": [
+   "iyul"
+  ],
+  "month_8": [
+   "avqust"
+  ],
+  "month_9": [
+   "sentyabr"
+  ],
+  "months": [
+   "aprel",
+   "avqust",
+   "dekabr",
+   "fevral",
+   "iyul",
+   "iyun",
+   "mart",
+   "may",
+   "noyabr",
+   "oktyabr",
+   "sentyabr",
+   "yanvar"
+  ],
+  "named_day_-1": [
+   "dünən"
+  ],
+  "named_day_-2": [
+   "srağagün"
+  ],
+  "named_day_0": [
+   "bu gün",
+   "bugün"
+  ],
+  "named_day_1": [
+   "sabah"
+  ],
+  "named_day_2": [
+   "birigün",
+   "o biri gün",
+   "o birisi gün"
+  ],
+  "period_part_early": [
+   "başında",
+   "əvvəlində"
+  ],
+  "period_part_late": [
+   "axırında",
+   "son",
+   "sonunda"
+  ],
+  "period_part_mid": [
+   "orta",
+   "ortalarında",
+   "ortasında"
+  ],
+  "scale_1000": [
+   "min"
+  ],
+  "scope_unit_century": [
+   "əsr",
+   "əsrlər"
+  ],
+  "scope_unit_decade": [
+   "onillik",
+   "onilliklər"
+  ],
+  "season_fall": [
+   "payız"
+  ],
+  "season_spring": [
+   "bahar",
+   "yaz"
+  ],
+  "season_summer": [
+   "yay"
+  ],
+  "season_winter": [
+   "qış"
+  ],
+  "special_weekend": [
+   "həftə sonu",
+   "həftəsonu"
+  ],
+  "unit_century": [
+   "əsr",
+   "əsrlər"
+  ],
+  "unit_day": [
+   "gün"
+  ],
+  "unit_decade": [
+   "onillik",
+   "onilliklər"
+  ],
+  "unit_hour": [
+   "saat"
+  ],
+  "unit_minute": [
+   "dəqiqə"
+  ],
+  "unit_month": [
+   "ay"
+  ],
+  "unit_second": [
+   "saniyə"
+  ],
+  "unit_week": [
+   "həftə"
+  ],
+  "unit_year": [
+   "il"
+  ],
+  "weekday_0": [
+   "bazar ertəsi"
+  ],
+  "weekday_1": [
+   "çərşənbə axşamı"
+  ],
+  "weekday_2": [
+   "çərşənbə"
+  ],
+  "weekday_3": [
+   "cümə axşamı"
+  ],
+  "weekday_4": [
+   "cümə"
+  ],
+  "weekday_5": [
+   "şənbə"
+  ],
+  "weekday_6": [
+   "bazar"
+  ]
+ },
+ "sources": {
+  "clock_meridiem_night": [
+   "\"gecə\" (night) scopes the clock to the NIGHT band, which crosses midnight --",
+   "it is NOT a uniform +12 PM shift.  \"gecə saat üçdə\" is three at night 03:00",
+   "(small hours, AM), while \"gecə saat doqquz\" is nine at night 21:00 (late",
+   "evening, PM); \"gecə saat on iki\" is midnight 00:00.  The resolver applies the",
+   "midnight-crossing band-split (small hours 1..5 -> AM, evening 6..11 -> PM,",
+   "twelve -> midnight).  (Azərbaycan dilinin izahlı lüğəti, s.v. \"gecə\".)"
+  ],
+  "clock_meridiem_pm": [
+   "Azerbaijani leads with the daypart adverbial exactly as Turkish does:",
+   "\"axşam saat səkkizdə\" is the ordinary way to say eight in the evening. The",
+   "explanatory dictionary glosses \"saat\" as vaxt, çağ, an, zaman and",
+   "illustrates it with \"axşam saatlarında\" -- the daypart word standing before",
+   "the hour noun (Azərbaycan dilinin izahlı lüğəti, s.v. \"saat\")."
+  ],
+  "month_1": [
+   "Unicode CLDR 47, locale az, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/az/ca-gregorian.json): months.format.wide,",
+   "months.stand-alone.wide."
+  ],
+  "month_10": [
+   "Unicode CLDR 47, locale az, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/az/ca-gregorian.json): months.format.wide,",
+   "months.stand-alone.wide."
+  ],
+  "month_11": [
+   "Unicode CLDR 47, locale az, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/az/ca-gregorian.json): months.format.wide,",
+   "months.stand-alone.wide."
+  ],
+  "month_12": [
+   "Unicode CLDR 47, locale az, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/az/ca-gregorian.json): months.format.wide,",
+   "months.stand-alone.wide."
+  ],
+  "month_2": [
+   "Unicode CLDR 47, locale az, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/az/ca-gregorian.json): months.format.wide,",
+   "months.stand-alone.wide."
+  ],
+  "month_3": [
+   "Unicode CLDR 47, locale az, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/az/ca-gregorian.json): months.format.wide,",
+   "months.stand-alone.wide."
+  ],
+  "month_4": [
+   "Unicode CLDR 47, locale az, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/az/ca-gregorian.json): months.format.wide,",
+   "months.stand-alone.wide."
+  ],
+  "month_5": [
+   "Unicode CLDR 47, locale az, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/az/ca-gregorian.json): months.format.wide,",
+   "months.stand-alone.wide, months.format.abbreviated,",
+   "months.stand-alone.abbreviated."
+  ],
+  "month_6": [
+   "Unicode CLDR 47, locale az, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/az/ca-gregorian.json): months.format.wide,",
+   "months.stand-alone.wide."
+  ],
+  "month_7": [
+   "Unicode CLDR 47, locale az, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/az/ca-gregorian.json): months.format.wide,",
+   "months.stand-alone.wide."
+  ],
+  "month_8": [
+   "Unicode CLDR 47, locale az, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/az/ca-gregorian.json): months.format.wide,",
+   "months.stand-alone.wide."
+  ],
+  "month_9": [
+   "Unicode CLDR 47, locale az, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/az/ca-gregorian.json): months.format.wide,",
+   "months.stand-alone.wide."
+  ],
+  "named_day_2": [
+   "az.wiktionary, entry \"gün\": \"Biri gün (o birisi gün) -- sabahdan sonrakı",
+   "gün\" (the day after tomorrow).  The fused spelling is the one that runs in",
+   "literary prose: az.wikisource has \"sabah-birigün ərə gedərsən\" (Şamdan bəy)",
+   "and \"sabah yox, birigün züvvarlar çıxırlar\" (Danabaş kəndinin əhvalatları).",
+   "The bare spaced \"biri gün\" is deliberately NOT listed -- it collides with",
+   "the ordinary \"biri\" + a gün- word (\"başçılardan biri günah işlədərək\",",
+   "\"heç biri günümüzə\"), which the fused and the \"o ...\" forms cannot."
+  ],
+  "scope_unit_century": [
+   "Wiktionary \"esr\" (en.wiktionary.org/wiki/%C9%99sr): Azerbaijani for",
+   "\"century\" (also \"age, epoch, era\"), an Arabic loan. Plural takes the",
+   "front-vowel suffix -lər (vowel harmony with e)."
+  ],
+  "scope_unit_decade": [
+   "Wiktionary \"il\" (en.wiktionary.org/wiki/il): \"onillik\" listed as the",
+   "Azerbaijani derived term for \"decade\" (on = ten, il = year, -lik nominal",
+   "suffix). Plural takes the front-vowel suffix -lər."
+  ],
+  "unit_century": [
+   "Wiktionary \"esr\" (en.wiktionary.org/wiki/%C9%99sr): Azerbaijani for",
+   "\"century\" (also \"age, epoch, era\"), an Arabic loan. Plural takes the",
+   "front-vowel suffix -lər (vowel harmony with e)."
+  ],
+  "unit_decade": [
+   "Wiktionary \"il\" (en.wiktionary.org/wiki/il): \"onillik\" listed as the",
+   "Azerbaijani derived term for \"decade\" (on = ten, il = year, -lik nominal",
+   "suffix). Plural takes the front-vowel suffix -lər."
+  ],
+  "unit_second": [
+   "Unicode CLDR 47, locale az, cldr-units-full/main/az/units.json,",
+   "duration-second: one and other are both \"saniyə\" -- Azerbaijani leaves a",
+   "counted noun in the singular, as unit_minute.voc's \"dəqiqə\" already does."
+  ],
+  "weekday_0": [
+   "Unicode CLDR 47, locale az, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/az/ca-gregorian.json): days.format.wide,",
+   "days.stand-alone.wide."
+  ],
+  "weekday_1": [
+   "Unicode CLDR 47, locale az, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/az/ca-gregorian.json): days.format.wide,",
+   "days.stand-alone.wide."
+  ],
+  "weekday_2": [
+   "Unicode CLDR 47, locale az, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/az/ca-gregorian.json): days.format.wide,",
+   "days.stand-alone.wide."
+  ],
+  "weekday_3": [
+   "Unicode CLDR 47, locale az, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/az/ca-gregorian.json): days.format.wide,",
+   "days.stand-alone.wide."
+  ],
+  "weekday_4": [
+   "Unicode CLDR 47, locale az, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/az/ca-gregorian.json): days.format.wide,",
+   "days.stand-alone.wide."
+  ],
+  "weekday_5": [
+   "Unicode CLDR 47, locale az, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/az/ca-gregorian.json): days.format.wide,",
+   "days.stand-alone.wide."
+  ],
+  "weekday_6": [
+   "Unicode CLDR 47, locale az, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/az/ca-gregorian.json): days.format.wide,",
+   "days.stand-alone.wide."
+  ]
+ }
+}

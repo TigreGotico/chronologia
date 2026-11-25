@@ -1,17 +1,17 @@
 # -*- coding: utf-8 -*-
 """R171 (fr) -- the weekly frequency adverb "hebdomadairement" had NO
 registered surface at all: unlike ``chronologia/locale/fr/`` which ships
-``marker_freq_daily.voc`` (quotidiennement), ``marker_freq_monthly.voc``
-(mensuellement) and ``marker_freq_yearly.voc`` (annuellement), there was no
-``marker_freq_weekly.voc`` file, so ``ctx.freq`` (built by ``_freq_map`` in
+``marker_freq_daily`` (quotidiennement), ``marker_freq_monthly``
+(mensuellement) and ``marker_freq_yearly`` (annuellement), there was no
+``marker_freq_weekly`` file, so ``ctx.freq`` (built by ``_freq_map`` in
 chronologia/extract/nseries.py from the ``freq_weekly`` connector key) never
 contained "hebdomadairement" and :func:`_recur_freq_word` silently refused
 the whole phrase -- while en/de/es all ship the sibling weekly adverb
 ("weekly", "woechentlich"/"wöchentlich", "semanalmente") and read it fine.
 
-FIX: added ``chronologia/locale/fr/marker_freq_weekly.voc`` containing
-"hebdomadairement" -- a pure data addition (the ``.voc`` glob loader already
-wires any ``marker_freq_weekly.voc`` file to the ``freq_weekly`` connector
+FIX: added ``chronologia/locale/fr/marker_freq_weekly`` containing
+"hebdomadairement" -- a pure data addition (the vocabulary loader already
+wires any ``marker_freq_weekly`` file to the ``freq_weekly`` connector
 key), no code change.
 
 "mensuellement le lundi" stranding "le lundi" is a KNOWN, separate defect

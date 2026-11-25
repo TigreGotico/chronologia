@@ -5,7 +5,7 @@ this repo (chronologia) carries its own oc locale.
 
 Covers: the native "day before yesterday" forms that were previously
 shadowed by the French-calque "abansièr" ('ièr' silently won and returned
-yesterday); the native "last/previous" surfaces in marker_last.voc; the
+yesterday); the native "last/previous" surfaces in marker_last; the
 afternoon meridiem multiword surfaces; the night clock band; and the two
 spelling variants of the digit 8 ("uèit"/"uòch"), which the numtag Occitan
 lexicon lists as units of value 8.
@@ -88,7 +88,7 @@ def test_afternoon_meridiem_shifts_hour_plus_12(text):
     ("a las dos de la nuèch", 2),
 ])
 def test_night_band_surfaces(text, hour):
-    # NIGHT is a midnight-crossing band (see clock_meridiem_night.voc): a
+    # NIGHT is a midnight-crossing band (see clock_meridiem_night): a
     # spoken hour 6..11 shifts +12 into the evening, matching es/ca/an.
     assert start(text) == AstroDate(2017, 6, 27 if hour >= 12 else 28, hour, 0)
 

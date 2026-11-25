@@ -1,0 +1,816 @@
+{
+ "format_version": 1,
+ "words": {
+  "clock_fraction_30": [
+   "pus"
+  ],
+  "clock_landmark_0": [
+   "pusnakts",
+   "pusnaktī"
+  ],
+  "clock_landmark_720": [
+   "pusdienlaikā"
+  ],
+  "daypart_afternoon_lv": [
+   "pēcpusdiena",
+   "pēcpusdienā"
+  ],
+  "daypart_evening_lv": [
+   "vakars",
+   "vakarā"
+  ],
+  "daypart_morning_lv": [
+   "rīts",
+   "rītā"
+  ],
+  "daypart_night_lv": [
+   "nakts",
+   "naktī"
+  ],
+  "marker_after": [
+   "pēc"
+  ],
+  "marker_and": [
+   "un"
+  ],
+  "marker_before": [
+   "pirms"
+  ],
+  "marker_between": [
+   "starp"
+  ],
+  "marker_every": [
+   "katra",
+   "katras",
+   "katri",
+   "katriem",
+   "katrs",
+   "katru",
+   "katrā",
+   "katrām"
+  ],
+  "marker_from": [
+   "no"
+  ],
+  "marker_future": [
+   "pēc"
+  ],
+  "marker_half": [
+   "puse",
+   "puses",
+   "pusi",
+   "pusē"
+  ],
+  "marker_last": [
+   "pagājušajā"
+  ],
+  "marker_next": [
+   "nākamais",
+   "nākamajai",
+   "nākamajam",
+   "nākamajiem",
+   "nākamajos",
+   "nākamajā",
+   "nākamajām",
+   "nākamajās",
+   "nākamie",
+   "nākamo",
+   "nākamā",
+   "nākamās"
+  ],
+  "marker_past": [
+   "pirms"
+  ],
+  "marker_since": [
+   "no"
+  ],
+  "marker_this": [
+   "šai",
+   "šajos",
+   "šajā",
+   "šajās",
+   "šie",
+   "šiem",
+   "šim",
+   "šinī",
+   "šis",
+   "šo",
+   "šā",
+   "šām",
+   "šās",
+   "šī",
+   "šīm",
+   "šīs"
+  ],
+  "marker_to": [
+   "līdz"
+  ],
+  "marker_until": [
+   "līdz"
+  ],
+  "marker_year_word": [
+   "gada",
+   "gads",
+   "gadā"
+  ],
+  "month_1": [
+   "janv.",
+   "janvāris",
+   "janvārī"
+  ],
+  "month_10": [
+   "okt.",
+   "oktobris",
+   "oktobrī"
+  ],
+  "month_11": [
+   "nov.",
+   "novembris",
+   "novembrī"
+  ],
+  "month_12": [
+   "dec.",
+   "decembris",
+   "decembrī"
+  ],
+  "month_2": [
+   "febr.",
+   "februāris",
+   "februārī"
+  ],
+  "month_3": [
+   "marts",
+   "martā"
+  ],
+  "month_4": [
+   "apr.",
+   "aprīlis",
+   "aprīlī"
+  ],
+  "month_5": [
+   "maijs",
+   "maijā"
+  ],
+  "month_6": [
+   "jūn.",
+   "jūnijs",
+   "jūnijā"
+  ],
+  "month_7": [
+   "jūl.",
+   "jūlijs",
+   "jūlijā"
+  ],
+  "month_8": [
+   "aug.",
+   "augusts",
+   "augustā"
+  ],
+  "month_9": [
+   "sept.",
+   "septembris",
+   "septembrī"
+  ],
+  "named_day_-1": [
+   "vakar"
+  ],
+  "named_day_-2": [
+   "aizvakar"
+  ],
+  "named_day_0": [
+   "šodien"
+  ],
+  "named_day_1": [
+   "rīt"
+  ],
+  "named_day_2": [
+   "parīt"
+  ],
+  "scope_unit_century": [
+   "gadsimta",
+   "gadsimts",
+   "gadsimtu",
+   "gadsimtā"
+  ],
+  "scope_unit_decade": [
+   "desmitgade",
+   "desmitgades",
+   "desmitgadi",
+   "desmitgadē"
+  ],
+  "season_fall": [
+   "rudens",
+   "rudenī"
+  ],
+  "season_spring": [
+   "pavasara",
+   "pavasaris",
+   "pavasarī"
+  ],
+  "season_summer": [
+   "vasara",
+   "vasaras",
+   "vasarā"
+  ],
+  "season_winter": [
+   "ziema",
+   "ziemas",
+   "ziemā"
+  ],
+  "unit1_century": [
+   "gadsimta",
+   "gadsimts",
+   "gadsimtu",
+   "gadsimtā"
+  ],
+  "unit1_day": [
+   "diena",
+   "dienas",
+   "dienu",
+   "dienā"
+  ],
+  "unit1_decade": [
+   "desmitgade",
+   "desmitgades",
+   "desmitgadi",
+   "desmitgadē"
+  ],
+  "unit1_hour": [
+   "stunda",
+   "stundas",
+   "stundu",
+   "stundā"
+  ],
+  "unit1_minute": [
+   "minūte",
+   "minūtes",
+   "minūti",
+   "minūtē"
+  ],
+  "unit1_month": [
+   "mēnesi",
+   "mēnesis",
+   "mēnesī",
+   "mēneša"
+  ],
+  "unit1_second": [
+   "sekunde",
+   "sekundes",
+   "sekundi",
+   "sekundē"
+  ],
+  "unit1_week": [
+   "nedēļa",
+   "nedēļas",
+   "nedēļu",
+   "nedēļā"
+  ],
+  "unit1_year": [
+   "gada",
+   "gads",
+   "gadu",
+   "gadā"
+  ],
+  "unit_century": [
+   "gadsimta",
+   "gadsimti",
+   "gadsimtiem",
+   "gadsimts",
+   "gadsimtu",
+   "gadsimtus",
+   "gadsimtā"
+  ],
+  "unit_day": [
+   "diena",
+   "dienas",
+   "dienu",
+   "dienā",
+   "dienām"
+  ],
+  "unit_decade": [
+   "desmitgade",
+   "desmitgades",
+   "desmitgadi",
+   "desmitgadē",
+   "desmitgadēm",
+   "desmitgažu"
+  ],
+  "unit_hour": [
+   "stunda",
+   "stundas",
+   "stundu",
+   "stundā",
+   "stundām"
+  ],
+  "unit_minute": [
+   "minūte",
+   "minūtes",
+   "minūti",
+   "minūtē",
+   "minūtēm",
+   "minūšu"
+  ],
+  "unit_month": [
+   "mēnesi",
+   "mēnesis",
+   "mēnesī",
+   "mēneša",
+   "mēneši",
+   "mēnešiem",
+   "mēnešu",
+   "mēnešus"
+  ],
+  "unit_second": [
+   "sekunde",
+   "sekundes",
+   "sekundi",
+   "sekundē",
+   "sekundēm",
+   "sekunžu"
+  ],
+  "unit_week": [
+   "nedēļa",
+   "nedēļas",
+   "nedēļu",
+   "nedēļā",
+   "nedēļām"
+  ],
+  "unit_year": [
+   "gada",
+   "gadi",
+   "gadiem",
+   "gads",
+   "gadu",
+   "gadus",
+   "gadā"
+  ],
+  "weekday_0": [
+   "pirmdien",
+   "pirmdiena",
+   "pirmdienu",
+   "pirmdienā"
+  ],
+  "weekday_1": [
+   "otrdiena",
+   "otrdienu",
+   "otrdienā"
+  ],
+  "weekday_2": [
+   "trešdiena",
+   "trešdienu",
+   "trešdienā"
+  ],
+  "weekday_3": [
+   "ceturtdiena",
+   "ceturtdienu",
+   "ceturtdienā"
+  ],
+  "weekday_4": [
+   "piektdiena",
+   "piektdienu",
+   "piektdienā"
+  ],
+  "weekday_5": [
+   "sestdiena",
+   "sestdienu",
+   "sestdienā"
+  ],
+  "weekday_6": [
+   "svētdiena",
+   "svētdienu",
+   "svētdienā"
+  ],
+  "weekday_abbr_0": [
+   "pirmd."
+  ],
+  "weekday_abbr_1": [
+   "otrd."
+  ],
+  "weekday_abbr_2": [
+   "trešd."
+  ],
+  "weekday_abbr_3": [
+   "ceturtd."
+  ],
+  "weekday_abbr_4": [
+   "piektd."
+  ],
+  "weekday_abbr_5": [
+   "sestd."
+  ],
+  "weekday_abbr_6": [
+   "svētd."
+  ]
+ },
+ "sources": {
+  "clock_fraction_30": [
+   "The spoken half hour names the COMING hour: \"pusčetri\" (half toward",
+   "four) is 03:30 and \"pusastoņi\" is 07:30 -- hence bare_half_to +",
+   "toward_hour_12h.  Latvian writes the prefix fused onto the hour cardinal, so",
+   "chronologia/extract/numfold_latvian.py splits the word and this file binds the",
+   "prefix it leaves behind.  Source: pronuncia.io, \"How to Tell Time and Dates in",
+   "Latvian for English Speakers\"."
+  ],
+  "clock_landmark_0": [
+   "Midnight.  Surface: Unicode CLDR 47 day-period chart, locale lv,",
+   "dayPeriod \"midnight\"; declension from en.wiktionary.org,",
+   "https://en.wiktionary.org/wiki/pusnakts"
+  ],
+  "clock_landmark_720": [
+   "Noon.  Surface: Unicode CLDR 47 day-period chart, locale lv,",
+   "dayPeriod \"noon\" (\"pusdienlaikā\").  Only the locative CLDR gives ships: the",
+   "nominative of this compound is in no dictionary consulted."
+  ],
+  "daypart_afternoon_lv": [
+   "Band boundaries: Unicode CLDR 47 day-period chart, locale lv, transcribed",
+   "in chronologia/dayparts.py.  Surfaces: the noun in the nominative plus the",
+   "locative the adverbial phrase uses; declension from en.wiktionary.org, https://en.wiktionary.org/wiki/p%C4%93cpusdiena."
+  ],
+  "daypart_evening_lv": [
+   "Band boundaries: Unicode CLDR 47 day-period chart, locale lv, transcribed",
+   "in chronologia/dayparts.py.  Surfaces: the noun in the nominative plus the",
+   "locative the adverbial phrase uses; declension from en.wiktionary.org, https://en.wiktionary.org/wiki/vakars."
+  ],
+  "daypart_morning_lv": [
+   "Band boundaries: Unicode CLDR 47 day-period chart, locale lv, transcribed",
+   "in chronologia/dayparts.py.  Surfaces: the noun in the nominative plus the",
+   "locative the adverbial phrase uses; declension from en.wiktionary.org, https://en.wiktionary.org/wiki/r%C4%ABts."
+  ],
+  "daypart_night_lv": [
+   "Band boundaries: Unicode CLDR 47 day-period chart, locale lv, transcribed",
+   "in chronologia/dayparts.py.  Surfaces: the noun in the nominative plus the",
+   "locative the adverbial phrase uses; declension from en.wiktionary.org, https://en.wiktionary.org/wiki/nakts."
+  ],
+  "marker_after": [
+   "Temporal \"after\".  Source: en.wiktionary.org, https://en.wiktionary.org/wiki/p%C4%93c"
+  ],
+  "marker_and": [
+   "Coordinating \"and\".  Source: en.wiktionary.org, https://en.wiktionary.org/wiki/un"
+  ],
+  "marker_before": [
+   "Temporal \"before\".  Source: en.wiktionary.org, https://en.wiktionary.org/wiki/pirms"
+  ],
+  "marker_between": [
+   "\"starp\" + accusative = between.  Source: en.wiktionary.org, https://en.wiktionary.org/wiki/starp"
+  ],
+  "marker_every": [
+   "Distributive \"katrs\" = every (\"katru nedēļu\").",
+   "Declension: en.wiktionary.org, https://en.wiktionary.org/wiki/katrs"
+  ],
+  "marker_from": [
+   "\"no\" + genitive = from (\"skaitīt no viens līdz desmit\").",
+   "Source: en.wiktionary.org, https://en.wiktionary.org/wiki/no"
+  ],
+  "marker_future": [
+   "\"pēc\" + dative marks a forward offset (\"pēc trim dienām\" = in three",
+   "days).  Source: en.wiktionary.org, https://en.wiktionary.org/wiki/p%C4%93c;",
+   "Unicode CLDR 47 dateFields, locale lv, relativeTime future patterns."
+  ],
+  "marker_half": [
+   "\"puse\" (half) as the period noun of \"first/second half of <year>\".",
+   "Declension: en.wiktionary.org, https://en.wiktionary.org/wiki/puse"
+  ],
+  "marker_last": [
+   "\"pagājušajā\" (last, past) as the backward determiner: the locative",
+   "definite form of the phrase Unicode CLDR 47 dateFields, locale lv, gives for",
+   "relative-type--1 (\"pagājušajā nedēļā\", \"pagājušajā gadā\").  Only that form",
+   "ships -- the participle has no dictionary declension table to transcribe, and",
+   "the remaining cells would be guesses."
+  ],
+  "marker_next": [
+   "\"nākamais\" (next) as the forward determiner; the locative is the",
+   "ordinary \"during next <unit>\" form (\"nākamajā nedēļā\").  Definite declension:",
+   "en.wiktionary.org, https://en.wiktionary.org/wiki/n%C4%81kamais; the locative",
+   "phrase is Unicode CLDR 47 dateFields, locale lv, relative-type-1."
+  ],
+  "marker_past": [
+   "\"pirms\" + dative marks a past offset (\"pirms diviem gadiem\" = two",
+   "years ago).  Source: en.wiktionary.org, https://en.wiktionary.org/wiki/pirms",
+   "(adverb, \"ago\", with that worked example)."
+  ],
+  "marker_since": [
+   "\"no\" introduces the start of an open period.",
+   "Source: en.wiktionary.org, https://en.wiktionary.org/wiki/no"
+  ],
+  "marker_this": [
+   "Demonstrative \"šis\" (this); the locative is the ordinary \"during this",
+   "<unit>\" form (\"šajā nedēļā\").  Declension: en.wiktionary.org,",
+   "https://en.wiktionary.org/wiki/%C5%A1is; the locative phrase is Unicode CLDR 47",
+   "dateFields, locale lv, relative-type-0."
+  ],
+  "marker_to": [
+   "\"līdz\" + dative closes a range (\"no jūnija līdz augustam\").",
+   "Source: en.wiktionary.org, https://en.wiktionary.org/wiki/l%C4%ABdz"
+  ],
+  "marker_until": [
+   "\"līdz\" = until / up to.  Source: en.wiktionary.org, https://en.wiktionary.org/wiki/l%C4%ABdz"
+  ],
+  "marker_year_word": [
+   "\"gada\", the genitive that heads the Latvian dateline (\"2017. gada",
+   "29. maijs\"), and the locative of the same noun (\"2017. gadā\").",
+   "Declension: en.wiktionary.org, https://en.wiktionary.org/wiki/gads"
+  ],
+  "month_1": [
+   "Nominative and abbreviated names: Unicode CLDR 47, locale lv, gregorian",
+   "calendar month names.  The locative is the form the sentence-embedded date",
+   "takes (\"3. maijā\" = on May 3rd); declension from en.wiktionary.org."
+  ],
+  "month_10": [
+   "Nominative and abbreviated names: Unicode CLDR 47, locale lv, gregorian",
+   "calendar month names.  The locative is the form the sentence-embedded date",
+   "takes (\"3. maijā\" = on May 3rd); declension from en.wiktionary.org."
+  ],
+  "month_11": [
+   "Nominative and abbreviated names: Unicode CLDR 47, locale lv, gregorian",
+   "calendar month names.  The locative is the form the sentence-embedded date",
+   "takes (\"3. maijā\" = on May 3rd); declension from en.wiktionary.org."
+  ],
+  "month_12": [
+   "Nominative and abbreviated names: Unicode CLDR 47, locale lv, gregorian",
+   "calendar month names.  The locative is the form the sentence-embedded date",
+   "takes (\"3. maijā\" = on May 3rd); declension from en.wiktionary.org."
+  ],
+  "month_2": [
+   "Nominative and abbreviated names: Unicode CLDR 47, locale lv, gregorian",
+   "calendar month names.  The locative is the form the sentence-embedded date",
+   "takes (\"3. maijā\" = on May 3rd); declension from en.wiktionary.org."
+  ],
+  "month_3": [
+   "Nominative and abbreviated names: Unicode CLDR 47, locale lv, gregorian",
+   "calendar month names.  The locative is the form the sentence-embedded date",
+   "takes (\"3. maijā\" = on May 3rd); declension from en.wiktionary.org."
+  ],
+  "month_4": [
+   "Nominative and abbreviated names: Unicode CLDR 47, locale lv, gregorian",
+   "calendar month names.  The locative is the form the sentence-embedded date",
+   "takes (\"3. maijā\" = on May 3rd); declension from en.wiktionary.org."
+  ],
+  "month_5": [
+   "Nominative and abbreviated names: Unicode CLDR 47, locale lv, gregorian",
+   "calendar month names.  The locative is the form the sentence-embedded date",
+   "takes (\"3. maijā\" = on May 3rd); declension from en.wiktionary.org."
+  ],
+  "month_6": [
+   "Nominative and abbreviated names: Unicode CLDR 47, locale lv, gregorian",
+   "calendar month names.  The locative is the form the sentence-embedded date",
+   "takes (\"3. maijā\" = on May 3rd); declension from en.wiktionary.org."
+  ],
+  "month_7": [
+   "Nominative and abbreviated names: Unicode CLDR 47, locale lv, gregorian",
+   "calendar month names.  The locative is the form the sentence-embedded date",
+   "takes (\"3. maijā\" = on May 3rd); declension from en.wiktionary.org."
+  ],
+  "month_8": [
+   "Nominative and abbreviated names: Unicode CLDR 47, locale lv, gregorian",
+   "calendar month names.  The locative is the form the sentence-embedded date",
+   "takes (\"3. maijā\" = on May 3rd); declension from en.wiktionary.org."
+  ],
+  "month_9": [
+   "Nominative and abbreviated names: Unicode CLDR 47, locale lv, gregorian",
+   "calendar month names.  The locative is the form the sentence-embedded date",
+   "takes (\"3. maijā\" = on May 3rd); declension from en.wiktionary.org."
+  ],
+  "named_day_-1": [
+   "Adverb \"yesterday\".  Source: en.wiktionary.org, https://en.wiktionary.org/wiki/vakar"
+  ],
+  "named_day_-2": [
+   "Adverb \"the day before yesterday\".  Source: en.wiktionary.org,",
+   "https://en.wiktionary.org/wiki/aizvakar"
+  ],
+  "named_day_0": [
+   "Adverb \"today\".  Source: en.wiktionary.org, https://en.wiktionary.org/wiki/%C5%A1odien"
+  ],
+  "named_day_1": [
+   "Adverb \"tomorrow\".  Source: en.wiktionary.org, https://en.wiktionary.org/wiki/par%C4%ABt (etymology: pa- + rīt \"tomorrow\")."
+  ],
+  "named_day_2": [
+   "Adverb \"the day after tomorrow\".  Source: en.wiktionary.org,",
+   "https://en.wiktionary.org/wiki/par%C4%ABt"
+  ],
+  "scope_unit_century": [
+   "The period noun in its scoping use.  Declension: en.wiktionary.org."
+  ],
+  "scope_unit_decade": [
+   "The period noun in its scoping use.  Declension: en.wiktionary.org."
+  ],
+  "season_fall": [
+   "Declension: en.wiktionary.org, https://en.wiktionary.org/wiki/rudens.  The locative is",
+   "the adverbial \"in <season>\" form."
+  ],
+  "season_spring": [
+   "Declension: en.wiktionary.org, https://en.wiktionary.org/wiki/pavasaris.  The locative is",
+   "the adverbial \"in <season>\" form (\"pavasarī\" = in spring)."
+  ],
+  "season_summer": [
+   "Declension: en.wiktionary.org, https://en.wiktionary.org/wiki/vasara.  The locative is",
+   "the adverbial \"in <season>\" form."
+  ],
+  "season_winter": [
+   "Declension: en.wiktionary.org, https://en.wiktionary.org/wiki/ziema.  The locative is",
+   "the adverbial \"in <season>\" form."
+  ],
+  "unit1_century": [
+   "Singular of the unit noun: nominative, genitive, accusative and the",
+   "locative that carries the adverbial \"this/last/next <unit>\" phrase",
+   "(\"pagājušajā nedēļā\").  Declension: en.wiktionary.org."
+  ],
+  "unit1_day": [
+   "Singular of the unit noun: nominative, genitive, accusative and the",
+   "locative that carries the adverbial \"this/last/next <unit>\" phrase",
+   "(\"pagājušajā nedēļā\").  Declension: en.wiktionary.org."
+  ],
+  "unit1_decade": [
+   "Singular of the unit noun: nominative, genitive, accusative and the",
+   "locative that carries the adverbial \"this/last/next <unit>\" phrase",
+   "(\"pagājušajā nedēļā\").  Declension: en.wiktionary.org."
+  ],
+  "unit1_hour": [
+   "Singular of the unit noun: nominative, genitive, accusative and the",
+   "locative that carries the adverbial \"this/last/next <unit>\" phrase",
+   "(\"pagājušajā nedēļā\").  Declension: en.wiktionary.org."
+  ],
+  "unit1_minute": [
+   "Singular of the unit noun: nominative, genitive, accusative and the",
+   "locative that carries the adverbial \"this/last/next <unit>\" phrase",
+   "(\"pagājušajā nedēļā\").  Declension: en.wiktionary.org."
+  ],
+  "unit1_month": [
+   "Singular of the unit noun: nominative, genitive, accusative and the",
+   "locative that carries the adverbial \"this/last/next <unit>\" phrase",
+   "(\"pagājušajā nedēļā\").  Declension: en.wiktionary.org."
+  ],
+  "unit1_second": [
+   "Singular of the unit noun: nominative, genitive, accusative and the",
+   "locative that carries the adverbial \"this/last/next <unit>\" phrase.",
+   "Declension: en.wiktionary.org."
+  ],
+  "unit1_week": [
+   "Singular of the unit noun: nominative, genitive, accusative and the",
+   "locative that carries the adverbial \"this/last/next <unit>\" phrase",
+   "(\"pagājušajā nedēļā\").  Declension: en.wiktionary.org."
+  ],
+  "unit1_year": [
+   "Singular of the unit noun: nominative, genitive, accusative and the",
+   "locative that carries the adverbial \"this/last/next <unit>\" phrase",
+   "(\"pagājušajā nedēļā\").  Declension: en.wiktionary.org."
+  ],
+  "unit_century": [
+   "Declension: en.wiktionary.org.  A counted noun surfaces in more than one",
+   "form here.  After \"pirms\"/\"pēc\" it is the genitive singular when the numeral",
+   "ends in 1 (and is not 11) and the dative plural otherwise (\"pirms gada\",",
+   "\"pirms 11 gadiem\").  A bare count admits two registers -- formal genitive",
+   "plural after 11-19 and the round tens, colloquial nominative -- and both ship,",
+   "because nothing in the input says which register the writer used."
+  ],
+  "unit_day": [
+   "Declension: en.wiktionary.org.  A counted noun surfaces in more than one",
+   "form here.  After \"pirms\"/\"pēc\" it is the genitive singular when the numeral",
+   "ends in 1 (and is not 11) and the dative plural otherwise (\"pirms gada\",",
+   "\"pirms 11 gadiem\").  A bare count admits two registers -- formal genitive",
+   "plural after 11-19 and the round tens, colloquial nominative -- and both ship,",
+   "because nothing in the input says which register the writer used."
+  ],
+  "unit_decade": [
+   "Declension: en.wiktionary.org.  A counted noun surfaces in more than one",
+   "form here.  After \"pirms\"/\"pēc\" it is the genitive singular when the numeral",
+   "ends in 1 (and is not 11) and the dative plural otherwise (\"pirms gada\",",
+   "\"pirms 11 gadiem\").  A bare count admits two registers -- formal genitive",
+   "plural after 11-19 and the round tens, colloquial nominative -- and both ship,",
+   "because nothing in the input says which register the writer used."
+  ],
+  "unit_hour": [
+   "Declension: en.wiktionary.org.  A counted noun surfaces in more than one",
+   "form here.  After \"pirms\"/\"pēc\" it is the genitive singular when the numeral",
+   "ends in 1 (and is not 11) and the dative plural otherwise (\"pirms gada\",",
+   "\"pirms 11 gadiem\").  A bare count admits two registers -- formal genitive",
+   "plural after 11-19 and the round tens, colloquial nominative -- and both ship,",
+   "because nothing in the input says which register the writer used."
+  ],
+  "unit_minute": [
+   "Declension: en.wiktionary.org.  A counted noun surfaces in more than one",
+   "form here.  After \"pirms\"/\"pēc\" it is the genitive singular when the numeral",
+   "ends in 1 (and is not 11) and the dative plural otherwise (\"pirms gada\",",
+   "\"pirms 11 gadiem\").  A bare count admits two registers -- formal genitive",
+   "plural after 11-19 and the round tens, colloquial nominative -- and both ship,",
+   "because nothing in the input says which register the writer used."
+  ],
+  "unit_month": [
+   "Declension: en.wiktionary.org.  A counted noun surfaces in more than one",
+   "form here.  After \"pirms\"/\"pēc\" it is the genitive singular when the numeral",
+   "ends in 1 (and is not 11) and the dative plural otherwise (\"pirms gada\",",
+   "\"pirms 11 gadiem\").  A bare count admits two registers -- formal genitive",
+   "plural after 11-19 and the round tens, colloquial nominative -- and both ship,",
+   "because nothing in the input says which register the writer used."
+  ],
+  "unit_second": [
+   "Declension: en.wiktionary.org.  A counted noun surfaces in more than one",
+   "form here.  After \"pirms\"/\"pēc\" it is the genitive singular when the numeral",
+   "ends in 1 (and is not 11) and the dative plural otherwise (\"pirms sekundes\",",
+   "\"pirms 11 sekundēm\").  A bare count admits two registers -- formal genitive",
+   "plural after 11-19 and the round tens, colloquial nominative -- and both ship,",
+   "because nothing in the input says which register the writer used.",
+   "Unicode CLDR 47, locale lv, cldr-units-full/main/lv/units.json,",
+   "duration-second: one \"sekunde\", other \"sekundes\", zero \"sekunžu\"."
+  ],
+  "unit_week": [
+   "Declension: en.wiktionary.org.  A counted noun surfaces in more than one",
+   "form here.  After \"pirms\"/\"pēc\" it is the genitive singular when the numeral",
+   "ends in 1 (and is not 11) and the dative plural otherwise (\"pirms gada\",",
+   "\"pirms 11 gadiem\").  A bare count admits two registers -- formal genitive",
+   "plural after 11-19 and the round tens, colloquial nominative -- and both ship,",
+   "because nothing in the input says which register the writer used."
+  ],
+  "unit_year": [
+   "Declension: en.wiktionary.org.  A counted noun surfaces in more than one",
+   "form here.  After \"pirms\"/\"pēc\" it is the genitive singular when the numeral",
+   "ends in 1 (and is not 11) and the dative plural otherwise (\"pirms gada\",",
+   "\"pirms 11 gadiem\").  A bare count admits two registers -- formal genitive",
+   "plural after 11-19 and the round tens, colloquial nominative -- and both ship,",
+   "because nothing in the input says which register the writer used."
+  ],
+  "weekday_0": [
+   "Nominative and abbreviated names: Unicode CLDR 47, locale lv, gregorian",
+   "wide and abbreviated weekday names.  The locative is the adverbial \"on",
+   "<weekday>\" form (\"sanāksme ir pirmdienā\"); genitive and accusative from the",
+   "en.wiktionary.org declension table.  The short adverbial \"pirmdien\" ships",
+   "for MONDAY ONLY, the one value attested in running text; the parallel forms",
+   "for the other six days are a regular pattern nothing sources, so they are",
+   "left out rather than invented."
+  ],
+  "weekday_1": [
+   "Nominative and abbreviated names: Unicode CLDR 47, locale lv, gregorian",
+   "wide and abbreviated weekday names.  The locative is the adverbial \"on",
+   "<weekday>\" form (\"sanāksme ir pirmdienā\"); genitive and accusative from the",
+   "en.wiktionary.org declension table.  The short adverbial \"pirmdien\" ships",
+   "for MONDAY ONLY, the one value attested in running text; the parallel forms",
+   "for the other six days are a regular pattern nothing sources, so they are",
+   "left out rather than invented."
+  ],
+  "weekday_2": [
+   "Nominative and abbreviated names: Unicode CLDR 47, locale lv, gregorian",
+   "wide and abbreviated weekday names.  The locative is the adverbial \"on",
+   "<weekday>\" form (\"sanāksme ir pirmdienā\"); genitive and accusative from the",
+   "en.wiktionary.org declension table.  The short adverbial \"pirmdien\" ships",
+   "for MONDAY ONLY, the one value attested in running text; the parallel forms",
+   "for the other six days are a regular pattern nothing sources, so they are",
+   "left out rather than invented."
+  ],
+  "weekday_3": [
+   "Nominative and abbreviated names: Unicode CLDR 47, locale lv, gregorian",
+   "wide and abbreviated weekday names.  The locative is the adverbial \"on",
+   "<weekday>\" form (\"sanāksme ir pirmdienā\"); genitive and accusative from the",
+   "en.wiktionary.org declension table.  The short adverbial \"pirmdien\" ships",
+   "for MONDAY ONLY, the one value attested in running text; the parallel forms",
+   "for the other six days are a regular pattern nothing sources, so they are",
+   "left out rather than invented."
+  ],
+  "weekday_4": [
+   "Nominative and abbreviated names: Unicode CLDR 47, locale lv, gregorian",
+   "wide and abbreviated weekday names.  The locative is the adverbial \"on",
+   "<weekday>\" form (\"sanāksme ir pirmdienā\"); genitive and accusative from the",
+   "en.wiktionary.org declension table.  The short adverbial \"pirmdien\" ships",
+   "for MONDAY ONLY, the one value attested in running text; the parallel forms",
+   "for the other six days are a regular pattern nothing sources, so they are",
+   "left out rather than invented."
+  ],
+  "weekday_5": [
+   "Nominative and abbreviated names: Unicode CLDR 47, locale lv, gregorian",
+   "wide and abbreviated weekday names.  The locative is the adverbial \"on",
+   "<weekday>\" form (\"sanāksme ir pirmdienā\"); genitive and accusative from the",
+   "en.wiktionary.org declension table.  The short adverbial \"pirmdien\" ships",
+   "for MONDAY ONLY, the one value attested in running text; the parallel forms",
+   "for the other six days are a regular pattern nothing sources, so they are",
+   "left out rather than invented."
+  ],
+  "weekday_6": [
+   "Nominative and abbreviated names: Unicode CLDR 47, locale lv, gregorian",
+   "wide and abbreviated weekday names.  The locative is the adverbial \"on",
+   "<weekday>\" form (\"sanāksme ir pirmdienā\"); genitive and accusative from the",
+   "en.wiktionary.org declension table.  The short adverbial \"pirmdien\" ships",
+   "for MONDAY ONLY, the one value attested in running text; the parallel forms",
+   "for the other six days are a regular pattern nothing sources, so they are",
+   "left out rather than invented."
+  ],
+  "weekday_abbr_0": [
+   "Abbreviated weekday names: Unicode CLDR 47, locale lv."
+  ],
+  "weekday_abbr_1": [
+   "Abbreviated weekday names: Unicode CLDR 47, locale lv."
+  ],
+  "weekday_abbr_2": [
+   "Abbreviated weekday names: Unicode CLDR 47, locale lv."
+  ],
+  "weekday_abbr_3": [
+   "Abbreviated weekday names: Unicode CLDR 47, locale lv."
+  ],
+  "weekday_abbr_4": [
+   "Abbreviated weekday names: Unicode CLDR 47, locale lv."
+  ],
+  "weekday_abbr_5": [
+   "Abbreviated weekday names: Unicode CLDR 47, locale lv."
+  ],
+  "weekday_abbr_6": [
+   "Abbreviated weekday names: Unicode CLDR 47, locale lv."
+  ]
+ }
+}

@@ -13,7 +13,7 @@ Deviations from the design doc (recorded here as the doc requires):
   surface->sign, ...).  A bare ``frozenset`` of surface forms cannot carry
   the month number, day offset or direction sign a slot needs; those
   values are facts encoded via the loader's filename convention
-  (``month_6.voc``, ``named_day_+1.voc``, ``marker_past.voc``), so no
+  (``month_6``, ``named_day_+1``, ``marker_past``), so no
   behaviour leaks into the JSON.  See ``loader.py``.
 * ``Resolution.value`` is a :class:`~chronologia.astrodate.DateSpan`
   (endpoints are always ``AstroDate``); the ``DateTimeResolution`` is derived
@@ -358,7 +358,7 @@ class LangSpec:
     rel_markers: Mapping[str, int]      # surface -> week offset (next=1,...)
     connectors: Mapping[str, frozenset]  # connector name -> surface forms
     # calendar key -> (surface -> month number) for non-Gregorian calendars;
-    # fed by the ``month_<calendar>_<n>.voc`` filename convention.  A surface
+    # fed by the ``month_<calendar>_<n>`` filename convention.  A surface
     # is unique across calendars within a language (loader enforces).
     calendar_months: Mapping[str, Mapping[str, int]]
     lemmas: Mapping[str, str]
@@ -463,12 +463,12 @@ class LangSpec:
     # table lives in cycles.DAY_SUBDIVISIONS (French decimal time: 10h/100m/100s)
     day_subdivision: Optional[str] = None
     # regnal era surface -> (sequence key, segment name), from the
-    # regnal_<seqkey>_<segname>.voc filename convention (Japanese nengō)
+    # regnal_<seqkey>_<segname> filename convention (Japanese nengō)
     regnal_names: Mapping[str, Tuple[str, str]] = field(default_factory=dict)
     # Roman calendar-anchor surface -> anchor name (kalends/nones/ides)
     roman_anchors: Mapping[str, str] = field(default_factory=dict)
     # Athenian eponymous-archon surface -> archon key (chronologia.archons.ARCHONS),
-    # from the archon_<key>.voc filename convention
+    # from the archon_<key> filename convention
     archon_names: Mapping[str, str] = field(default_factory=dict)
     # deep-time / era vocab (facts from the filename convention)
     # named-period surface -> chronologia PERIODS key (geological/archaeological)
@@ -492,18 +492,18 @@ class LangSpec:
     clock_landmarks: Mapping[str, int] = field(default_factory=dict)
     # daypart surface -> canonical day-part name ("morning", "night"); the band
     # itself lives in chronologia.dayparts (CLDR-cited), keyed by that name.
-    # Facts from the ``daypart_<name>.voc`` filename convention.
+    # Facts from the ``daypart_<name>`` filename convention.
     dayparts: Mapping[str, str] = field(default_factory=dict)
     # deictic daypart selector surface -> "past"/"future": a marker that picks
     # the nearest past/future occurrence of a time-of-day band rather than a
     # fixed day offset (Indonesian "tadi"/"nanti").  Facts from the
-    # ``marker_daypart_past.voc``/``marker_daypart_future.voc`` filenames.
+    # ``marker_daypart_past``/``marker_daypart_future`` filenames.
     daypart_deictics: Mapping[str, str] = field(default_factory=dict)
     # bare daypart surfaces that are lexically fused with TODAY ("tonight",
     # "vanavond") -- unlike a plain band word ("night", "avond"), the future-
     # roll decision on a composed clock reading must not run for these; the
     # civil day is always the anchor's own day.  Facts from the
-    # ``marker_dayparttoday.voc`` filename.
+    # ``marker_dayparttoday`` filename.
     daypart_today_words: FrozenSet[str] = field(default_factory=frozenset)
     # quantifier surface -> count ("a" -> 1, "couple" -> 2, "half" -> 0.5)
     quantifiers: Mapping[str, float] = field(default_factory=dict)
@@ -537,7 +537,7 @@ class LangSpec:
     counted_noun: FrozenSet[str] = field(default_factory=frozenset)
     upcoming: FrozenSet[str] = field(default_factory=frozenset)
     # the words that join two alarm hours that share one later meridiem, from
-    # ``marker_alarm_joiner.voc``
+    # ``marker_alarm_joiner``
     alarm_joiners: FrozenSet[str] = field(default_factory=frozenset)
     # holiday_ref surface -> well-known holiday key ("christmas", "easter");
     # derived at load time from the holidays engine's i18n tables (native
@@ -547,10 +547,10 @@ class LangSpec:
     holiday_sources: Mapping[str, str] = field(default_factory=dict)
     # clock timezone surface -> base UTC offset in minutes ("utc"/"gmt" -> 0);
     # a trailing signed offset on the surface token ("utc+2") is added at
-    # resolve time.  Facts from the ``clock_zone_<minutes>.voc`` convention.
+    # resolve time.  Facts from the ``clock_zone_<minutes>`` convention.
     clock_zones: Mapping[str, int] = field(default_factory=dict)
     # country/region-name surface -> jurisdiction code ("portugal" -> "PT"),
-    # from the ``jurisdiction_<code>.voc`` convention. Per-locale opt-in vocab
+    # from the ``jurisdiction_<code>`` convention. Per-locale opt-in vocab
     # covering only the jurisdictions that locale names; empty for a locale
     # that has not declared any, in which case "every holiday in <X>" simply
     # never matches (never a shared cross-locale list).

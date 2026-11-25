@@ -1,0 +1,483 @@
+{
+ "format_version": 1,
+ "words": {
+  "daypart_alfajiri_sw": [
+   "alfajiri"
+  ],
+  "daypart_asubuhi_sw": [
+   "asubuhi"
+  ],
+  "daypart_jioni_sw": [
+   "jioni"
+  ],
+  "daypart_mchana_sw": [
+   "mchana"
+  ],
+  "daypart_usiku_sw": [
+   "usiku"
+  ],
+  "marker_after": [
+   "baada ya"
+  ],
+  "marker_and": [
+   "na"
+  ],
+  "marker_at": [
+   "katika",
+   "mnamo"
+  ],
+  "marker_before": [
+   "kabla ya"
+  ],
+  "marker_between": [
+   "kati ya"
+  ],
+  "marker_daypart_counted_ambiguous": [
+   "saa"
+  ],
+  "marker_every": [
+   "kila"
+  ],
+  "marker_from": [
+   "kutoka",
+   "tangu"
+  ],
+  "marker_future": [
+   "baada ya"
+  ],
+  "marker_last": [
+   "iliyopita",
+   "uliopita",
+   "zilizopita"
+  ],
+  "marker_next": [
+   "ijayo",
+   "ujao"
+  ],
+  "marker_past": [
+   "iliyopita",
+   "uliopita",
+   "zilizopita"
+  ],
+  "marker_since": [
+   "tangu"
+  ],
+  "marker_this": [
+   "hii",
+   "huu"
+  ],
+  "marker_until": [
+   "hadi",
+   "mpaka"
+  ],
+  "marker_year_plural": [
+   "miaka"
+  ],
+  "month_1": [
+   "jan",
+   "januari"
+  ],
+  "month_10": [
+   "okt",
+   "oktoba"
+  ],
+  "month_11": [
+   "nov",
+   "novemba"
+  ],
+  "month_12": [
+   "des",
+   "desemba"
+  ],
+  "month_2": [
+   "feb",
+   "februari"
+  ],
+  "month_3": [
+   "mac",
+   "machi"
+  ],
+  "month_4": [
+   "apr",
+   "aprili"
+  ],
+  "month_5": [
+   "mei"
+  ],
+  "month_6": [
+   "jun",
+   "juni"
+  ],
+  "month_7": [
+   "jul",
+   "julai"
+  ],
+  "month_8": [
+   "ago",
+   "agosti"
+  ],
+  "month_9": [
+   "sep",
+   "septemba"
+  ],
+  "named_day_-1": [
+   "jana"
+  ],
+  "named_day_-2": [
+   "juzi"
+  ],
+  "named_day_0": [
+   "leo"
+  ],
+  "named_day_1": [
+   "kesho"
+  ],
+  "named_day_2": [
+   "kesho kutwa"
+  ],
+  "unit1_day": [
+   "siku"
+  ],
+  "unit1_hour": [
+   "saa"
+  ],
+  "unit1_minute": [
+   "dakika"
+  ],
+  "unit1_month": [
+   "mwezi"
+  ],
+  "unit1_second": [
+   "sekunde"
+  ],
+  "unit1_week": [
+   "wiki"
+  ],
+  "unit1_year": [
+   "mwaka"
+  ],
+  "unit_day": [
+   "siku"
+  ],
+  "unit_hour": [
+   "saa"
+  ],
+  "unit_minute": [
+   "dakika"
+  ],
+  "unit_month": [
+   "miezi",
+   "mwezi"
+  ],
+  "unit_second": [
+   "sekunde"
+  ],
+  "unit_week": [
+   "wiki"
+  ],
+  "unit_year": [
+   "miaka",
+   "mwaka"
+  ],
+  "weekday_0": [
+   "jumatatu"
+  ],
+  "weekday_1": [
+   "jumanne"
+  ],
+  "weekday_2": [
+   "jumatano"
+  ],
+  "weekday_3": [
+   "alhamisi"
+  ],
+  "weekday_4": [
+   "ijumaa"
+  ],
+  "weekday_5": [
+   "jumamosi"
+  ],
+  "weekday_6": [
+   "jumapili"
+  ]
+ },
+ "sources": {
+  "daypart_alfajiri_sw": [
+   "Band boundaries: Unicode CLDR 47 Day Period Rules, locale sw",
+   "(cldr/common/supplemental/dayPeriods.xml), transcribed in",
+   "chronologia/dayparts.py as the alfajiri (morning1, 04:00-07:00) band."
+  ],
+  "daypart_asubuhi_sw": [
+   "Band boundaries: Unicode CLDR 47 Day Period Rules, locale sw",
+   "(cldr/common/supplemental/dayPeriods.xml), transcribed in",
+   "chronologia/dayparts.py as the asubuhi (morning2, 07:00-12:00) band."
+  ],
+  "daypart_jioni_sw": [
+   "Band boundaries: Unicode CLDR 47 Day Period Rules, locale sw",
+   "(cldr/common/supplemental/dayPeriods.xml), transcribed in",
+   "chronologia/dayparts.py as the jioni (evening1, 16:00-19:00) band."
+  ],
+  "daypart_mchana_sw": [
+   "Band boundaries: Unicode CLDR 47 Day Period Rules, locale sw",
+   "(cldr/common/supplemental/dayPeriods.xml), transcribed in",
+   "chronologia/dayparts.py as the mchana (afternoon1, 12:00-16:00) band."
+  ],
+  "daypart_usiku_sw": [
+   "Band boundaries: Unicode CLDR 47 Day Period Rules, locale sw",
+   "(cldr/common/supplemental/dayPeriods.xml), transcribed in",
+   "chronologia/dayparts.py as the usiku (night1, 19:00-04:00) band."
+  ],
+  "marker_after": [
+   "Unicode CLDR 47, cldr-json cldr-dates-full/main/sw/dateFields.json, whose",
+   "\"in N units\" pattern is built on this preposition."
+  ],
+  "marker_and": [
+   "na joins the bounds of a between-range, and inside a numeral it joins a tens",
+   "word to its unit (\"ishirini na tano\" = 25; en.wiktionary.org,",
+   "Module:number_list/data/sw)."
+  ],
+  "marker_at": [
+   "katika and mnamo both introduce a point in time (\"in\", \"on\")."
+  ],
+  "marker_before": [
+   "Temporal precedence, the mirror of baada ya."
+  ],
+  "marker_between": [
+   "kati ya X na Y -- the two bounds are joined by na."
+  ],
+  "marker_daypart_counted_ambiguous": [
+   "saa names the hour of the day, and this locale refuses to read that hour:",
+   "the traditional count runs from sunrise, so \"saa tatu\" is 09:00 to one",
+   "writer and 03:00 to another, and both conventions occur in written Swahili",
+   "(see unit_hour.voc).  A counted saa standing beside a day-part word must",
+   "therefore veto the band as well, because the band alone is not the answer to",
+   "the question that was asked: \"saa moja asubuhi\" names one hour inside the",
+   "morning, and returning the whole 07:00-12:00 morning would hand a caller who",
+   "asked for an hour a five-hour span, with the hour they asked about dropped",
+   "into the remainder.  Declining the band is not the same as asserting either",
+   "clock reading, which stays unavailable.",
+   "",
+   "The bare band is untouched: \"usiku\" and \"kesho usiku\" still answer, because",
+   "neither names an hour."
+  ],
+  "marker_every": [
+   "kila, the distributive determiner (\"kila Jumatatu\" = every Monday)."
+  ],
+  "marker_from": [
+   "The opening half of a range, closed by hadi/mpaka."
+  ],
+  "marker_future": [
+   "Unicode CLDR 47, cldr-json cldr-dates-full/main/sw/dateFields.json.  Every",
+   "future relative-time pattern is \"baada ya <unit> {0}\" -- literally \"after\",",
+   "the same preposition that introduces a plain succession."
+  ],
+  "marker_last": [
+   "Unicode CLDR 47, cldr-json cldr-dates-full/main/sw/dateFields.json.",
+   "relative-type--1 per unit, and the relative pronoun agrees with the noun",
+   "class of the unit it follows: \"mwaka uliopita\" and \"mwezi uliopita\" take the",
+   "class 3/4 form, while \"wiki iliyopita\" and every weekday -- \"Jumatatu",
+   "iliyopita\" -- take the class 9/10 form.  zilizopita is the class 9/10 plural,",
+   "the shape CLDR counts with above one (\"wiki {0} zilizopita\").",
+   "",
+   "All three ship together because a marker slot is matched by surface: which",
+   "one is grammatical is decided by the noun the writer already chose, and a",
+   "writer who chose it correctly must be read."
+  ],
+  "marker_next": [
+   "Unicode CLDR 47, cldr-json cldr-dates-full/main/sw/dateFields.json.",
+   "relative-type-1: \"mwaka ujao\" / \"mwezi ujao\" for class 3/4, \"wiki ijayo\" and",
+   "\"<weekday> ijayo\" for class 9/10."
+  ],
+  "marker_past": [
+   "Unicode CLDR 47, cldr-json cldr-dates-full/main/sw/dateFields.json.  The past",
+   "relative-time pattern is the unit noun, the count, and the same agreeing",
+   "relative pronoun the bare last/this/next phrases use -- \"miaka {0} iliyopita\"",
+   "= N years ago, \"mwaka {0} uliopita\" = one year ago, \"wiki {0} zilizopita\".",
+   "So \"ago\" is not a separate word in Swahili: the marker that says \"last week\"",
+   "says \"N weeks ago\" as well, and both surfaces sets are the same three."
+  ],
+  "marker_since": [
+   "tangu is the past-anchored half of the from/since pair: it opens a stretch",
+   "reaching from a point already gone up to now.  kutoka, the forward \"from\",",
+   "stays in marker_from where it opens a closed range against hadi/mpaka."
+  ],
+  "marker_this": [
+   "Unicode CLDR 47, cldr-json cldr-dates-full/main/sw/dateFields.json.",
+   "relative-type-0: \"mwaka huu\" / \"mwezi huu\" for class 3/4, \"wiki hii\" / \"saa",
+   "hii\" / \"dakika hii\" and \"<weekday> hii\" for class 9/10."
+  ],
+  "marker_until": [
+   "Reaching a point in time: the closing half of the \"kutoka X hadi Y\" range."
+  ],
+  "marker_year_plural": [
+   "The plural of \"mwaka\" (year, class 3).  A count of years takes the plural",
+   "(\"miaka 980\"); the singular names a year (\"mwaka 980\").",
+   "Source: en.wiktionary.org, \"mwaka\", Swahili noun: plural \"miaka\", class 4."
+  ],
+  "month_1": [
+   "Unicode CLDR 47, cldr-json cldr-dates-full/main/sw/ca-gregorian.json.",
+   "months.format.wide and months.format.abbreviated."
+  ],
+  "month_10": [
+   "Unicode CLDR 47, cldr-json cldr-dates-full/main/sw/ca-gregorian.json.",
+   "months.format.wide and months.format.abbreviated."
+  ],
+  "month_11": [
+   "Unicode CLDR 47, cldr-json cldr-dates-full/main/sw/ca-gregorian.json.",
+   "months.format.wide and months.format.abbreviated."
+  ],
+  "month_12": [
+   "Unicode CLDR 47, cldr-json cldr-dates-full/main/sw/ca-gregorian.json.",
+   "months.format.wide and months.format.abbreviated."
+  ],
+  "month_2": [
+   "Unicode CLDR 47, cldr-json cldr-dates-full/main/sw/ca-gregorian.json.",
+   "months.format.wide and months.format.abbreviated."
+  ],
+  "month_3": [
+   "Unicode CLDR 47, cldr-json cldr-dates-full/main/sw/ca-gregorian.json.",
+   "months.format.wide and months.format.abbreviated."
+  ],
+  "month_4": [
+   "Unicode CLDR 47, cldr-json cldr-dates-full/main/sw/ca-gregorian.json.",
+   "months.format.wide and months.format.abbreviated."
+  ],
+  "month_5": [
+   "Unicode CLDR 47, cldr-json cldr-dates-full/main/sw/ca-gregorian.json.",
+   "months.format.wide and months.format.abbreviated (both spell mei)."
+  ],
+  "month_6": [
+   "Unicode CLDR 47, cldr-json cldr-dates-full/main/sw/ca-gregorian.json.",
+   "months.format.wide and months.format.abbreviated."
+  ],
+  "month_7": [
+   "Unicode CLDR 47, cldr-json cldr-dates-full/main/sw/ca-gregorian.json.",
+   "months.format.wide and months.format.abbreviated."
+  ],
+  "month_8": [
+   "Unicode CLDR 47, cldr-json cldr-dates-full/main/sw/ca-gregorian.json.",
+   "months.format.wide and months.format.abbreviated."
+  ],
+  "month_9": [
+   "Unicode CLDR 47, cldr-json cldr-dates-full/main/sw/ca-gregorian.json.",
+   "months.format.wide and months.format.abbreviated."
+  ],
+  "named_day_-1": [
+   "Unicode CLDR 47, cldr-json cldr-dates-full/main/sw/dateFields.json.  day",
+   "relative-type--1."
+  ],
+  "named_day_-2": [
+   "Unicode CLDR 47, cldr-json cldr-dates-full/main/sw/dateFields.json.  day",
+   "relative-type--2."
+  ],
+  "named_day_0": [
+   "Unicode CLDR 47, cldr-json cldr-dates-full/main/sw/dateFields.json.  day",
+   "relative-type-0."
+  ],
+  "named_day_1": [
+   "Unicode CLDR 47, cldr-json cldr-dates-full/main/sw/dateFields.json.  day",
+   "relative-type-1."
+  ],
+  "named_day_2": [
+   "Unicode CLDR 47, cldr-json cldr-dates-full/main/sw/dateFields.json.  day",
+   "relative-type-2.  Two words, glued back together by the multiword merge."
+  ],
+  "unit1_second": [
+   "Class 9/10 nouns do not change for number, so the singular is the same word."
+  ],
+  "unit_day": [
+   "Unicode CLDR 47, cldr-json cldr-dates-full/main/sw/dateFields.json.  \"siku",
+   "{0} iliyopita\" / \"siku {0} zilizopita\" -- class 9/10, invariant for number."
+  ],
+  "unit_hour": [
+   "Unicode CLDR 47, cldr-json cldr-dates-full/main/sw/dateFields.json.  \"saa",
+   "{0} iliyopita\" / \"saa {0} zilizopita\" / \"baada ya saa {0}\" -- class 9/10,",
+   "invariant for number.",
+   "",
+   "saa is a DURATION here and only a duration.  The same word names the hour of",
+   "the day, and that reading is deliberately not shipped: Swahili's traditional",
+   "clock counts the hours from sunrise, so \"saa tatu\" is 09:00 to one writer and",
+   "03:00 to another, and nothing in the phrase says which.  See",
+   "test/nl_corpus_sw/test_sw_refusals.py for the pinned refusal, and lang.json",
+   "for the clock grammar that admits the digital literal only."
+  ],
+  "unit_minute": [
+   "Unicode CLDR 47, cldr-json cldr-dates-full/main/sw/dateFields.json.  \"dakika",
+   "{0} iliyopita\" / \"dakika {0} zilizopita\" -- class 9/10, invariant for number."
+  ],
+  "unit_month": [
+   "Unicode CLDR 47, cldr-json cldr-dates-full/main/sw/dateFields.json.  \"mwezi",
+   "{0} uliopita\" in the singular and \"miezi {0} iliyopita\" in the plural: mwezi",
+   "is class 3/4, so unlike the N-class units it DOES change shape for number,",
+   "and the plural miezi is what a count above one stands beside."
+  ],
+  "unit_second": [
+   "Unicode CLDR 47, cldr-json cldr-dates-full/main/sw/dateFields.json.  The",
+   "second field counts with one surface in both plural categories (\"Sekunde {0}",
+   "iliyopita\", \"Sekunde {0} zilizopita\"): sekunde is class 9/10 and invariant,",
+   "so the noun carries no count and the count lives in the numeral alone."
+  ],
+  "unit_week": [
+   "Unicode CLDR 47, cldr-json cldr-dates-full/main/sw/dateFields.json.  The week",
+   "field's displayName is wiki and it counts with the same surface in both",
+   "plural categories (\"wiki {0} zilizopita\") -- class 9/10, invariant.",
+   "",
+   "juma (class 5/6, plural majuma) is the other word for a week and is the",
+   "source of the Juma- weekday names, but no source consulted gives its",
+   "class-5/6 last/this/next agreement forms, so it ships nowhere: wiki already",
+   "carries every week reading CLDR states."
+  ],
+  "unit_year": [
+   "Unicode CLDR 47, cldr-json cldr-dates-full/main/sw/dateFields.json.  \"mwaka",
+   "{0} uliopita\" in the singular and \"miaka {0} iliyopita\" in the plural --",
+   "class 3/4, like mwezi."
+  ],
+  "weekday_0": [
+   "Unicode CLDR 47, cldr-json cldr-dates-full/main/sw/ca-gregorian.json.",
+   "days.format.wide; the abbreviated forms are the same strings.",
+   "The Juma- series counts from Jumamosi (Saturday), so the numeral inside a",
+   "name is two short of the Monday-first index this file is numbered by.",
+   "Jumatatu is juma + tatu (three): the third day of the cycle."
+  ],
+  "weekday_1": [
+   "Unicode CLDR 47, cldr-json cldr-dates-full/main/sw/ca-gregorian.json.",
+   "days.format.wide; the abbreviated forms are the same strings.",
+   "The Juma- series counts from Jumamosi (Saturday), so the numeral inside a",
+   "name is two short of the Monday-first index this file is numbered by.",
+   "Jumanne is juma + nne (four)."
+  ],
+  "weekday_2": [
+   "Unicode CLDR 47, cldr-json cldr-dates-full/main/sw/ca-gregorian.json.",
+   "days.format.wide; the abbreviated forms are the same strings.",
+   "The Juma- series counts from Jumamosi (Saturday), so the numeral inside a",
+   "name is two short of the Monday-first index this file is numbered by.",
+   "Jumatano is juma + tano (five)."
+  ],
+  "weekday_3": [
+   "Unicode CLDR 47, cldr-json cldr-dates-full/main/sw/ca-gregorian.json.",
+   "days.format.wide; the abbreviated forms are the same strings.",
+   "Alhamisi breaks the Juma- series: it is the Arabic al-khamis."
+  ],
+  "weekday_4": [
+   "Unicode CLDR 47, cldr-json cldr-dates-full/main/sw/ca-gregorian.json.",
+   "days.format.wide; the abbreviated forms are the same strings.",
+   "Ijumaa is the Arabic jum'a, the congregational Friday -- the word Swahili's",
+   "own name for a week, juma, is borrowed from."
+  ],
+  "weekday_5": [
+   "Unicode CLDR 47, cldr-json cldr-dates-full/main/sw/ca-gregorian.json.",
+   "days.format.wide; the abbreviated forms are the same strings.",
+   "The Juma- series counts from Jumamosi (Saturday), so the numeral inside a",
+   "name is two short of the Monday-first index this file is numbered by.",
+   "Jumamosi is juma + mosi (one): Saturday opens the cycle."
+  ],
+  "weekday_6": [
+   "Unicode CLDR 47, cldr-json cldr-dates-full/main/sw/ca-gregorian.json.",
+   "days.format.wide; the abbreviated forms are the same strings.",
+   "The Juma- series counts from Jumamosi (Saturday), so the numeral inside a",
+   "name is two short of the Monday-first index this file is numbered by.",
+   "Jumapili is juma + pili (two), which is why Sunday, not Monday, is the",
+   "day whose name carries the numeral two."
+  ]
+ }
+}

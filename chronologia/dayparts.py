@@ -40,7 +40,7 @@ Languages that the deictic ``daypart_ref`` grammar reads ("this morning",
 "yesterday evening") are collapsed into the four-band vocabulary ``morning``,
 ``afternoon``, ``evening``, ``night``.  A band whose only surface is multi-word
 (Czech ``v noci``, Polish ``po południu``, Turkish ``öğleden sonra``) ships its
-boundaries but no ``daypart_*.voc`` yet.  Bands English has no word for
+boundaries but no ``daypart_*`` yet.  Bands English has no word for
 (``Vormittag``, ``förmiddag``, ``migdia``) keep their own names.
 
 :func:`lookup` falls back from a language to the global default: ``morning``
@@ -169,7 +169,7 @@ _DEFAULTS: List[DayPart] = [
 # row's start, the last row of the day closing at 24:00, and a name occupying
 # both the first and last rows joined into one midnight-crossing band.  The
 # names are the language's own words, ASCII-folded so they can be a registry
-# key and a ``daypart_<key>.voc`` filename; the accented spellings live in the
+# key and a ``daypart_<key>`` filename; the accented spellings live in the
 # vocabulary files, which is where surfaces belong.
 _LANGUAGES: List[DayPart] = [
     # es: one "tarde" covers English afternoon *and* early evening, and the
@@ -238,7 +238,7 @@ _LANGUAGES: List[DayPart] = [
     # co-official in Fryslan (Netherlands) and follows the same clock-of-day
     # convention as Dutch, so the boundaries are nl's; the surfaces are Frisian
     # (Frysk Wurdboek, Fryske Akademy).  Band names are ASCII (as elsewhere);
-    # the Frisian surfaces carry the diacritics in the .voc files.
+    # the Frisian surfaces carry the diacritics in vocab.json.
     _p("nacht", (0, 0), (6, 0), "fy", _FY_NL_SHARED),
     _p("moarns", (6, 0), (12, 0), "fy", _FY_NL_SHARED),
     _p("middeis", (12, 0), (18, 0), "fy", _FY_NL_SHARED),
@@ -289,7 +289,7 @@ _LANGUAGES: List[DayPart] = [
     # midnight-crossing band where the chart splits it at 00:00).  The band
     # boundaries are always shipped even where no single-token deictic surface
     # exists for a band (a band with a multi-word surface -- Czech "v noci",
-    # Polish "po poludniu" -- carries no ``daypart_*.voc`` yet).
+    # Polish "po poludniu" -- carries no ``daypart_*`` yet).
     # uk: evening runs to midnight, night is the small hours (like ru).
     _p("morning", (4, 0), (12, 0), "uk", _cldr("uk")),
     _p("afternoon", (12, 0), (18, 0), "uk", _cldr("uk")),
@@ -353,7 +353,7 @@ _LANGUAGES: List[DayPart] = [
     # long band from 19:00 round to dawn.  The noon and midnight points CLDR
     # also lists are spelled "saa sita za mchana" and "saa sita za usiku" --
     # sunrise-anchored clock readings -- and are NOT shipped as landmarks; see
-    # the Swahili clock refusal in locale/sw/unit_hour.voc.
+    # the Swahili clock refusal in locale/sw/unit_hour.
     _p("usiku", (19, 0), (4, 0), "sw", _cldr("sw")),
     _p("alfajiri", (4, 0), (7, 0), "sw", _cldr("sw")),
     _p("asubuhi", (7, 0), (12, 0), "sw", _cldr("sw")),

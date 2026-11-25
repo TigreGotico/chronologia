@@ -30,7 +30,7 @@ def test_rel_span_ca(text, s, e):
 # Article-NUM-marker order ("les 3 properes/pròximes setmanes"), same
 # mechanism as fr's postposed marker (R71 fix/r71-fr-rel-span), unioned onto
 # the base marker-first order.  "properes" (proper/propera/propers/properes)
-# is added to marker_next.voc alongside the existing pròxim/pròxima family --
+# is added to marker_next alongside the existing pròxim/pròxima family --
 # both are attested Catalan synonyms for "next".
 @pytest.mark.parametrize("text,s,e", [
     ("les 3 properes setmanes", AstroDate(2024, 6, 15), AstroDate(2024, 7, 6)),

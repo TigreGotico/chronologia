@@ -1,4 +1,4 @@
-"""The "at" preposition ("u", marker_at.voc) in front of a bare weekday.
+"""The "at" preposition ("u", marker_at) in front of a bare weekday.
 
 "u nedjelju" names the same Sunday as the bare weekday alone; "u" is not
 part of the answer and must be consumed by the match, not left stranded

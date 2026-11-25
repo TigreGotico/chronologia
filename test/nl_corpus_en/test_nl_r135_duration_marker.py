@@ -6,7 +6,7 @@ duration is temporal glue, not leftover text.
 the remainder -- true of every locale whose duration marker sits directly
 before the count ("for"/"für"/"durante"/"pendant"/"per"/"przez"...). The
 marker is consumed from the SAME ``recur_for`` connector vocabulary
-(``marker_recur_for.voc``) already used by the recurrence grammar's own
+(``marker_recur_for``) already used by the recurrence grammar's own
 "every monday *for* 3 weeks" bound and by :mod:`chronologia.extract.timespan`
 for its trailing "... for <duration>" clock extension (R119) -- one marker
 family, not a parallel one.

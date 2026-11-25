@@ -70,7 +70,7 @@ def _date_words(lang: str) -> Callable[[Tuple[Token, ...]], Claims]:
     vocabulary = locale_words(lang, "")
     prepositions = _CLOCK_PREPOSITION.get(lang, ())
     ending = _ORDINAL_HOUR_ENDING.get(lang)
-    toward = fractions | locale_words(lang, "marker_na.voc")
+    toward = fractions | locale_words(lang, "marker_na.")
 
     def claims(tokens: Tuple[Token, ...]) -> Claims:
         claimed: Set[int] = set()
@@ -194,8 +194,8 @@ def make_fold(lang: str, pre: Optional[Fold] = None,
 
 # -- Russian ---------------------------------------------------------------
 # The genitive units that "пол" (half) joins into one word: "полчаса" is half
-# an hour, "полминуты", "полдня", "полнедели" (unit_hour.voc, unit_minute.voc,
-# unit_day.voc, unit_week.voc).  The split gives the two words of the spaced
+# an hour, "полминуты", "полдня", "полнедели" (unit_hour, unit_minute,
+# unit_day, unit_week).  The split gives the two words of the spaced
 # spelling "пол часа", which the grammar reads.
 _RU_HALF_UNITS = frozenset({"часа", "минуты", "дня", "недели"})
 

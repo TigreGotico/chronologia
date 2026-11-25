@@ -16,7 +16,7 @@ see: docs/index.md, docs/getting-started.md, AGENTS.md, CONTRIBUTING.md
 pip install chronologia
 ```
 
-You need Python 3.11 or newer. The calendar code uses only the standard library. The reading of phrases needs two small helpers that `pip` installs with the package. **numtag** reads the numbers of 40 of the 61 languages. The table in [docs/languages/index.md](docs/languages/index.md) lists them and names the reader of each other language. **ovos-spec-tools** loads the vocabulary of each language. The `test` extra adds the test and benchmark tools.
+You need Python 3.11 or newer. The calendar code uses only the standard library. The reading of phrases needs one small helper that `pip` installs with the package. **numtag** reads the numbers of 40 of the 61 languages. The table in [docs/languages/index.md](docs/languages/index.md) lists them and names the reader of each other language. The `test` extra adds the test and benchmark tools.
 
 One call turns a phrase into a span of time:
 
@@ -163,7 +163,6 @@ Where no citable source exists, the library refuses and documents the gap. Each 
 
 - **[ovos-date-parser](https://github.com/OpenVoiceOS/ovos-date-parser)** is the voice-facing layer. It builds on chronologia and adds what an assistant needs: saying a date aloud and session handling.
 - **[numtag](https://github.com/TigreGotico/numtag)** finds every number in a text. It returns typed mentions with their spans and exact values. chronologia reads the numbers of 40 languages through it.
-- **[ovos-spec-tools](https://github.com/OpenVoiceOS/ovos-spec-tools)** implements the OVOS formal specifications (template expander, locale loader, dialog renderer, language matcher, linter). chronologia loads its vocabulary files through it.
 
 ## License
 

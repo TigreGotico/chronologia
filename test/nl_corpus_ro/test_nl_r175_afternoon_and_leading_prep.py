@@ -4,8 +4,8 @@
 1. "luni dupa-amiaza" (afternoon) anchored noon as a POINT instead of the
    afternoon BAND, because the tokenizer splits the hyphen and the bare
    remaining word "amiaza" is ALSO this locale's word for noon
-   (``clock_landmark_720.voc``). Fixed by shipping
-   ``daypart_dupa_amiaza_ro.voc`` so the hyphen-split, loader-reglued surface
+   (``clock_landmark_720``). Fixed by shipping
+   ``daypart_dupa_amiaza_ro`` so the hyphen-split, loader-reglued surface
    binds the band (``chronologia/dayparts.py``, ``[12:00, 18:00)``, CLDR 47
    ro) before the bare "amiaza" noon reading can claim half of it -- exactly
    the fix French "après-midi" already got in
@@ -17,7 +17,7 @@
    English "every" and Spanish "cada" do -- "în" is the idiomatic connector
    Romanian adds and carries no meaning of its own). Fixed in
    ``chronologia/extract/nseries.py``'s ``_recur_every`` weekday branch by
-   absorbing an immediately-leading ``marker_in.voc`` token. Scoped to the
+   absorbing an immediately-leading ``marker_in`` token. Scoped to the
    plain "<in> fiecare <weekday>" frame only -- "în fiecare zi de luni" goes
    through the DAILY unit branch instead and is deliberately left unread here
    (a separate, native-review-pending FREQ question, not this defect).

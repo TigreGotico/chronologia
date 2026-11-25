@@ -4,7 +4,7 @@
 "an alarm for 7" and "a reminder for 9" name a time of day, and the hour takes
 the next of its two twelve-hour readings (ruling 17).  "a table for 4", "wait
 for 10" and "for 10 minutes" name no time, and "alarm for 10 minutes" is a
-length.  The nouns are listed per locale in ``marker_alarm_at.voc``.
+length.  The nouns are listed per locale in ``marker_alarm_at``.
 
 Every expected instant is worked out by hand from the anchor, Tuesday
 2026-11-17 08:00: 10 comes at 10:00, 9 at 09:00, and 7 has passed so it is the

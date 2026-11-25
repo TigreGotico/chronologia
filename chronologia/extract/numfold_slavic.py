@@ -82,7 +82,7 @@ def _compose(*passes: Callable) -> Callable:
 # Serbo-Croatian/Numbers (https://en.wiktionary.org/wiki/Appendix:Serbo-Croatian/Numbers),
 # so this closed Latin-script table stands in for the model.  Every entry is
 # doubled onto Cyrillic by the deterministic, digraph-aware transliteration
-# (Gajica -> Vukovica) that every sr .voc surface in this locale also goes
+# (Gajica -> Vukovica) that every sr vocabulary surface in this locale also goes
 # through -- the same "one closed list, both scripts" mechanism, rather than
 # new engine machinery for script handling.  V1 covers 0-99 plus the bare
 # hundred: the day/duration range the sr NL corpus exercises.
@@ -106,7 +106,7 @@ _SR_ONES = {"jedan": 1, "jedna": 1, "jedno": 1, "dva": 2, "dve": 2, "tri": 3,
             "četiri": 4, "pet": 5, "šest": 6, "sedam": 7, "osam": 8,
             "devet": 9}
 # "petnaest" (15) is deliberately absent: it is the clock's literal FRACTION
-# terminal (clock_fraction_15.voc, alongside "četvrt") in "petnaest do sedam"
+# terminal (clock_fraction_15, alongside "četvrt") in "petnaest do sedam"
 # == 6:45, and folding it to a digit here would strand that reading -- a
 # spelled "petnaest <unit>" duration is out of scope for v1 (write the digit
 # "15" instead).
@@ -118,7 +118,7 @@ _SR_TENS = {"dvadeset": 20, "trideset": 30, "četrdeset": 40, "pedeset": 50,
             "devedeset": 90}
 _SR_HUNDRED = {"sto": 100}
 # "pola"/"četvrt" are deliberately NOT in this run set: they are the clock's
-# literal FRACTION terminal (clock_fraction_15.voc/clock_fraction_30.voc),
+# literal FRACTION terminal (clock_fraction_15/clock_fraction_30),
 # and folding them into a cardinal run here would fuse an adjacent HOUR
 # ("pola četiri") into one wrong NUM instead of leaving FRACTION and HOUR as
 # two slots.

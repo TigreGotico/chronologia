@@ -24,7 +24,7 @@ Three passes compose into :data:`fold_hi`, in this order:
 
 Hindi nouns counted by a numeral take the OBLIQUE case, which for the -आ stems
 is a plain -ए ("दो घंटे", "तीन हफ़्ते"); that is a fact of the noun and lives in
-the ``unit_*.voc`` surfaces, not here.
+the ``unit_*`` surfaces, not here.
 """
 from __future__ import annotations
 

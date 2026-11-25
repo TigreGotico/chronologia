@@ -1,4 +1,4 @@
-"""The "at" preposition ("w", marker_at.voc) in front of a bare weekday.
+"""The "at" preposition ("w", marker_at) in front of a bare weekday.
 
 "w niedzielę" names the same Sunday as the bare weekday alone; "w" is not
 part of the answer and must be consumed by the match, not left stranded

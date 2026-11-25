@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 """The two-word Basque "ago" marker ``orain dela``.
 
-``chronologia/locale/eu/marker_ago.voc`` ships two surfaces, ``duela`` and
+``chronologia/locale/eu/marker_ago`` ships two surfaces, ``duela`` and
 ``orain dela``; both introduce (or, postposed, close) a deep-time distance
 and must read alike.  ``orain dela`` is also a two-word past-direction
 surface, so the token stream carries it as one glued token by the time the

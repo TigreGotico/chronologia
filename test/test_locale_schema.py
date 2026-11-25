@@ -1,4 +1,4 @@
-"""Schema + linter for the locale grammar (``lang.json`` + ``*.voc``).
+"""Schema + linter for the locale grammar (``lang.json`` + ``vocab.json``).
 
 Three layers:
 
@@ -9,17 +9,18 @@ Three layers:
   :func:`chronologia.extract.schema.validate` (structural + reachability),
   loudly, one parametrised case per locale;
 * **the linter** -- deeper data-quality checks reported as per-locale failures:
-  duplicate surfaces within a ``.voc``, surfaces that normalise to empty, and
+  duplicate surfaces within a vocabulary, surfaces that normalise to empty, and
   placeholder-English left in a non-English ``period_part_*`` file (the
-  early/mid/late bug class).
+  early/mid/late bug class);
+* **the vocabulary schema** -- every ``vocab.json`` validates against
+  ``locale/vocab.schema.json``.
 """
 import glob
 import json
 import os
-from pathlib import Path
 
+import jsonschema
 import pytest
-from ovos_spec_tools import LocaleResources, expand, read_resource_file
 
 from chronologia.extract.loader import LOCALE_DIR, load_lang_spec
 from chronologia.extract.schema import (KNOWN_GROUPS, SLOT_ALPHABET,
@@ -36,16 +37,15 @@ def _cfg(lang):
         return json.load(fh)
 
 
-def _voc_surfaces(lang, base, vocab_map):
-    """Expanded, lower-cased surfaces of ``<lang>/<base>.voc`` (empty if absent)."""
-    path = Path(LOCALE_DIR) / lang / (base + ".voc")
-    if not path.exists():
-        return []
-    out = []
-    for template in read_resource_file(path):
-        for sample in expand(template, vocab_map):
-            out.append(sample.lower())
-    return out
+def _words(lang):
+    """``vocab.json`` of ``lang``: base name -> surfaces."""
+    with open(os.path.join(LOCALE_DIR, lang, "vocab.json"), encoding="utf-8") as fh:
+        return json.load(fh)["words"]
+
+
+def _voc_surfaces(lang, base):
+    """Lower-cased surfaces of the vocabulary ``base`` of ``lang`` (empty if absent)."""
+    return [s.lower() for s in _words(lang).get(base, [])]
 
 
 # --------------------------------------------------------------------------- #
@@ -98,7 +98,7 @@ def test_unknown_top_level_key_is_flagged():
 
 def test_reachability_flags_missing_vocabulary():
     # en genuinely has no archon vocabulary competitor problem, but a locale
-    # declaring an archon order with no archon_*.voc is dead: build such a case
+    # declaring an archon order with no archon_* vocabulary is dead: build such a case
     spec = load_lang_spec("en")
     cfg = {"constructions": {"deep_time": {"orders": ["NUM SCALE year_word ago"]}}}
     from dataclasses import replace
@@ -147,7 +147,7 @@ def test_positions_unknown_position_is_flagged():
 
 
 def test_positions_reachability_flags_missing_marker_vocab():
-    # declaring until=affix without any marker_until.voc surface is dead data
+    # declaring until=affix without any marker_until surface is dead data
     spec = load_lang_spec("en")
     from dataclasses import replace
     stripped = replace(spec, connectors={k: v for k, v in spec.connectors.items()
@@ -190,41 +190,38 @@ def test_locale_validates(lang):
 
 @pytest.mark.parametrize("lang", LOCALES)
 def test_no_duplicate_or_empty_surfaces(lang):
-    vocab_map = LocaleResources(LOCALE_DIR).vocabularies(lang)
     defects = []
-    for path in sorted(glob.glob(os.path.join(LOCALE_DIR, lang, "*.voc"))):
-        base = os.path.basename(path)[:-len(".voc")]
-        surfaces = _voc_surfaces(lang, base, vocab_map)
+    for base in _words(lang):
+        surfaces = _voc_surfaces(lang, base)
         seen, dups = set(), set()
         for s in surfaces:
             (dups if s in seen else seen).add(s)
         if dups:
-            defects.append(f"{base}.voc duplicate surface(s): {sorted(dups)}")
+            defects.append(f"{base} duplicate surface(s): {sorted(dups)}")
         if any(not s.strip() for s in surfaces):
-            defects.append(f"{base}.voc has surface(s) normalising to empty")
+            defects.append(f"{base} has surface(s) normalising to empty")
     assert not defects, "\n".join(defects)
 
 
 @pytest.mark.parametrize("lang", [l for l in LOCALES if l != REFERENCE])
 def test_no_english_placeholder_period_parts(lang):
-    # the early/mid/late bug class: a non-English period_part_*.voc left byte-
+    # the early/mid/late bug class: a non-English period_part_* vocabulary left byte-
     # identical to English is almost never a real cognate set (unlike unit
     # abbreviations "min"/"sec", which legitimately coincide across languages,
     # so this heuristic is deliberately scoped to period_part_* only)
-    en_vocab = LocaleResources(LOCALE_DIR).vocabularies(REFERENCE)
-    vocab_map = LocaleResources(LOCALE_DIR).vocabularies(lang)
     suspects = []
-    for path in sorted(glob.glob(os.path.join(LOCALE_DIR, lang, "period_part_*.voc"))):
-        base = os.path.basename(path)[:-len(".voc")]
-        mine = set(_voc_surfaces(lang, base, vocab_map))
-        theirs = set(_voc_surfaces(REFERENCE, base, en_vocab))
+    for base in _words(lang):
+        if not base.startswith("period_part_"):
+            continue
+        mine = set(_voc_surfaces(lang, base))
+        theirs = set(_voc_surfaces(REFERENCE, base))
         if mine and theirs and mine == theirs:
-            suspects.append(f"{base}.voc identical to en: {sorted(mine)}")
+            suspects.append(f"{base} identical to en: {sorted(mine)}")
     assert not suspects, "\n".join(suspects)
 
 
 # --------------------------------------------------------------------------- #
-# regression probes -- de-duplicating a .voc must never drop its surface
+# regression probes -- de-duplicating a vocabulary must never drop its surface
 # (locks the surfaces whose files had duplicate lines removed)
 # --------------------------------------------------------------------------- #
 
@@ -246,9 +243,47 @@ def test_deduped_connectors_still_bind():
 
 
 def test_deduped_era_year_ref_surface_retained():
-    # era_year_ref.voc is read by the eras subsystem, not the span loader, so
-    # assert the surface survived the de-duplication at the file level
-    surfaces = {ln.strip().lower() for ln in
-                (Path(LOCALE_DIR) / "fr" / "era_year_ref.voc")
-                .read_text(encoding="utf-8").splitlines() if ln.strip()}
-    assert "l'an" in surfaces
+    # era_year_ref is read by the eras subsystem, not the span loader, so
+    # assert the surface survived the de-duplication in the vocabulary itself
+    assert "l'an" in _voc_surfaces("fr", "era_year_ref")
+
+
+# --------------------------------------------------------------------------- #
+# vocab.json -- every locale validates against locale/vocab.schema.json
+# --------------------------------------------------------------------------- #
+
+with open(os.path.join(LOCALE_DIR, "vocab.schema.json"), encoding="utf-8") as _fh:
+    VOCAB_SCHEMA = json.load(_fh)
+
+
+@pytest.mark.parametrize("lang", LOCALES)
+def test_vocab_json_matches_schema(lang):
+    with open(os.path.join(LOCALE_DIR, lang, "vocab.json"), encoding="utf-8") as fh:
+        jsonschema.validate(json.load(fh), VOCAB_SCHEMA)
+
+
+@pytest.mark.parametrize("lang", LOCALES)
+def test_vocab_json_is_sorted_and_deduplicated(lang):
+    words = _words(lang)
+    assert list(words) == sorted(words)
+    unsorted = [base for base, surfaces in words.items()
+                if surfaces != sorted(set(surfaces))]
+    assert not unsorted, f"not sorted or not unique: {unsorted}"
+
+
+@pytest.mark.parametrize("lang", LOCALES)
+def test_vocab_sources_name_vocabularies(lang):
+    with open(os.path.join(LOCALE_DIR, lang, "vocab.json"), encoding="utf-8") as fh:
+        document = json.load(fh)
+    assert set(document.get("sources", {})) <= set(document["words"])
+
+
+def test_vocab_schema_rejects_malformed_documents():
+    bad_version = {"format_version": 2, "words": {}}
+    empty_list = {"format_version": 1, "words": {"unit_day": []}}
+    duplicate = {"format_version": 1, "words": {"unit_day": ["day", "day"]}}
+    empty_source = {"format_version": 1, "words": {"unit_day": ["day"]},
+                    "sources": {"unit_day": []}}
+    for doc in (bad_version, empty_list, duplicate, empty_source):
+        with pytest.raises(jsonschema.ValidationError):
+            jsonschema.validate(doc, VOCAB_SCHEMA)

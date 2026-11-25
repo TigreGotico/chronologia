@@ -3,7 +3,7 @@
 "через тиждень" ("in a week") and "тиждень тому" ("a week ago") carry no
 numeral; Ukrainian has no article to fold to 1 the way English "a" does,
 so the bare unit itself must read as quantity one. The USG slot (schema
-"singular_units", from unit1_<unit>.voc) supplies only the noun's
+"singular_units", from unit1_<unit>) supplies only the noun's
 singular case surfaces, so the fold applies exactly when the surface is
 grammatically singular -- a bare PLURAL unit ("через тижні") is not an
 offset at all and stays a hard non-match. Values mirror the

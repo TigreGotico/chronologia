@@ -7,7 +7,7 @@ means "previous" and the preposition after it also means "in", so the phrase
 after the period is a place or an activity and the previous period stands
 (DWDS s.v. "letzt", 3: "eben erst vergangen, vorig", example "letztes Jahr,
 im letzten Sommer waren wir an der See", https://www.dwds.de/wb/letzt).
-Those locales ship no ``marker_ordlast_of.voc``.
+Those locales ship no ``marker_ordlast_of``.
 
 Inside the two locales that opt in, the "of" word must be the complement of
 the adjective.  en bare "last week" is the determiner "previous"

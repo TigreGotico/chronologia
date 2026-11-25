@@ -2,7 +2,7 @@
 """A day-offset ("N gün önce") followed by the "saat H" clock reading.
 
 "saat" is doubly loaded in Turkish: it is both the HOUR unit word
-(unit_hour.voc) and the clock's "at" preposition (marker_at.voc). Composed
+(unit_hour) and the clock's "at" preposition (marker_at). Composed
 with a leading digit ("saat 3") it reads as a clock; alone it is the bare
 "hour" of an offset ("2 saat önce" = 2 hours ago). Gold is independent
 ``timedelta``/``.replace(hour=...)`` arithmetic against the corpus anchor

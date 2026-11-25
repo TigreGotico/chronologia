@@ -1,0 +1,602 @@
+{
+ "format_version": 1,
+ "words": {
+  "clock_dir_to": [
+   "kém"
+  ],
+  "clock_fraction_30": [
+   "rưỡi"
+  ],
+  "clock_landmark_0": [
+   "nửa đêm"
+  ],
+  "clock_meridiem_am": [
+   "sáng"
+  ],
+  "clock_meridiem_night": [
+   "đêm"
+  ],
+  "clock_meridiem_pm": [
+   "chiều",
+   "trưa",
+   "tối"
+  ],
+  "daypart_afternoon_vi": [
+   "chiều"
+  ],
+  "daypart_evening_vi": [
+   "tối"
+  ],
+  "daypart_morning_vi": [
+   "sáng"
+  ],
+  "daypart_night_vi": [
+   "đêm"
+  ],
+  "marker_at": [
+   "giờ",
+   "lúc"
+  ],
+  "marker_bc": [
+   "tcn",
+   "trước công nguyên"
+  ],
+  "marker_day_word": [
+   "ngày"
+  ],
+  "marker_future": [
+   "sau"
+  ],
+  "marker_last": [
+   "trước"
+  ],
+  "marker_minute_word": [
+   "phút"
+  ],
+  "marker_next": [
+   "sau"
+  ],
+  "marker_ordinal_prefix": [
+   "thứ"
+  ],
+  "marker_past": [
+   "cách đây",
+   "trước"
+  ],
+  "marker_year_word": [
+   "năm"
+  ],
+  "month_1": [
+   "thg 1",
+   "tháng 1",
+   "tháng giêng",
+   "tháng một"
+  ],
+  "month_10": [
+   "thg 10",
+   "tháng 10",
+   "tháng mười"
+  ],
+  "month_11": [
+   "thg 11",
+   "tháng 11",
+   "tháng mười một"
+  ],
+  "month_12": [
+   "thg 12",
+   "tháng 12",
+   "tháng chạp",
+   "tháng mười hai"
+  ],
+  "month_2": [
+   "thg 2",
+   "tháng 2",
+   "tháng hai"
+  ],
+  "month_3": [
+   "thg 3",
+   "tháng 3",
+   "tháng ba"
+  ],
+  "month_4": [
+   "thg 4",
+   "tháng 4",
+   "tháng tư"
+  ],
+  "month_5": [
+   "thg 5",
+   "tháng 5",
+   "tháng năm"
+  ],
+  "month_6": [
+   "thg 6",
+   "tháng 6",
+   "tháng sáu"
+  ],
+  "month_7": [
+   "thg 7",
+   "tháng 7",
+   "tháng bảy"
+  ],
+  "month_8": [
+   "thg 8",
+   "tháng 8",
+   "tháng tám"
+  ],
+  "month_9": [
+   "thg 9",
+   "tháng 9",
+   "tháng chín"
+  ],
+  "named_day_-1": [
+   "hôm qua"
+  ],
+  "named_day_-2": [
+   "hôm kia"
+  ],
+  "named_day_0": [
+   "hôm nay"
+  ],
+  "named_day_1": [
+   "mai",
+   "ngày mai"
+  ],
+  "named_day_2": [
+   "ngày kia",
+   "ngày mốt"
+  ],
+  "scope_unit_century": [
+   "thế kỉ",
+   "thế kỷ"
+  ],
+  "scope_unit_decade": [
+   "thập kỉ",
+   "thập kỷ",
+   "thập niên"
+  ],
+  "season_fall": [
+   "mùa thu"
+  ],
+  "season_spring": [
+   "mùa xuân"
+  ],
+  "season_summer": [
+   "mùa hè",
+   "mùa hạ"
+  ],
+  "season_winter": [
+   "mùa đông"
+  ],
+  "special_weekend": [
+   "cuối tuần"
+  ],
+  "unit_century": [
+   "thế kỉ",
+   "thế kỷ"
+  ],
+  "unit_day": [
+   "ngày"
+  ],
+  "unit_decade": [
+   "thập kỉ",
+   "thập kỷ"
+  ],
+  "unit_hour": [
+   "giờ"
+  ],
+  "unit_millennium": [
+   "thiên niên kỉ",
+   "thiên niên kỷ"
+  ],
+  "unit_minute": [
+   "phút"
+  ],
+  "unit_month": [
+   "tháng"
+  ],
+  "unit_second": [
+   "giây"
+  ],
+  "unit_week": [
+   "tuần"
+  ],
+  "unit_year": [
+   "năm"
+  ],
+  "weekday_0": [
+   "thứ 2",
+   "thứ hai"
+  ],
+  "weekday_1": [
+   "thứ 3",
+   "thứ ba"
+  ],
+  "weekday_2": [
+   "thứ 4",
+   "thứ tư"
+  ],
+  "weekday_3": [
+   "thứ 5",
+   "thứ năm"
+  ],
+  "weekday_4": [
+   "thứ 6",
+   "thứ sáu"
+  ],
+  "weekday_5": [
+   "thứ 7",
+   "thứ bảy"
+  ],
+  "weekday_6": [
+   "chủ nhật"
+  ]
+ },
+ "sources": {
+  "clock_dir_to": [
+   "kém (\"less\") names the hour being APPROACHED and subtracts from it:",
+   "\"ba giờ kém mười\" is 02:50, ten to three.  Mirror image of rưỡi, which",
+   "counts forward from the hour it names; both idioms are in daily use and",
+   "neither direction can be made the locale's default.",
+   "en.wiktionary.org, https://en.wiktionary.org/wiki/k%C3%A9m and https://en.wiktionary.org/wiki/ph%C3%BAt",
+   "(\"4 giờ kém 5 phút\" == 5 to 4)."
+  ],
+  "clock_fraction_30": [
+   "rưỡi is \"and a half\", counted from the hour ALREADY NAMED -- the English",
+   "\"half past\" direction, not the Germanic toward-the-hour one: the",
+   "dictionary's own worked example is \"ba (giờ) rưỡi chiều\" == 3:30 PM.  It",
+   "attaches with or without giờ, hence the optional hour word in the order.",
+   "The same locale's kém counts the OTHER way (see clock_dir_to.voc); the",
+   "direction is a property of the word here, not of the language.",
+   "en.wiktionary.org, https://en.wiktionary.org/wiki/r%C6%B0%E1%BB%A1i."
+  ],
+  "clock_landmark_0": [
+   "en.wiktionary.org, https://en.wiktionary.org/wiki/n%E1%BB%ADa%20%C4%91%C3%AAm."
+  ],
+  "clock_meridiem_am": [
+   "sáng is the morning band, 04:00-12:00.",
+   "Source: Unicode CLDR, cldr-json cldr-dates-full/main/vi/ca-gregorian.json."
+  ],
+  "clock_meridiem_night": [
+   "đêm is the night BAND, 21:00 round to 04:00 -- it crosses midnight, so it",
+   "is not a flat twelve-hour shift: \"một giờ đêm\" is 01:00, not 13:00.",
+   "Source: Unicode CLDR, cldr-json cldr-dates-full/main/vi/ca-gregorian.json."
+  ],
+  "clock_meridiem_pm": [
+   "chiều is the afternoon band (12:00-18:00), tối the evening one",
+   "(18:00-21:00), and trưa the noon point; all three put the hour they",
+   "follow after midday.",
+   "Source: Unicode CLDR, cldr-json cldr-dates-full/main/vi/ca-gregorian.json."
+  ],
+  "daypart_afternoon_vi": [
+   "Source: Unicode CLDR, cldr-json cldr-dates-full/main/vi/ca-gregorian.json."
+  ],
+  "daypart_evening_vi": [
+   "Source: Unicode CLDR, cldr-json cldr-dates-full/main/vi/ca-gregorian.json."
+  ],
+  "daypart_morning_vi": [
+   "Source: Unicode CLDR, cldr-json cldr-dates-full/main/vi/ca-gregorian.json."
+  ],
+  "daypart_night_vi": [
+   "Source: Unicode CLDR, cldr-json cldr-dates-full/main/vi/ca-gregorian.json."
+  ],
+  "marker_at": [
+   "giờ marks the hour it follows (\"hai giờ\" == two o'clock); lúc points at",
+   "a definite time and precedes it (\"lúc hai giờ\").",
+   "en.wiktionary.org, https://en.wiktionary.org/wiki/gi%E1%BB%9D."
+  ],
+  "marker_bc": [
+   "trước Công Nguyên, \"before the common era\", listed among trước's derived",
+   "terms, with its usual abbreviation.  The bare \"cn\" is not admitted -- it",
+   "is also CLDR's abbreviation for Sunday.",
+   "en.wiktionary.org, https://en.wiktionary.org/wiki/tr%C6%B0%E1%BB%9Bc."
+  ],
+  "marker_day_word": [
+   "\"ngày 5 tháng 3\" -- the day noun introducing a day of the month.",
+   "en.wiktionary.org, https://en.wiktionary.org/wiki/ng%C3%A0y."
+  ],
+  "marker_future": [
+   "sau is \"after, later\", the antonym trước's own entry names, and trails",
+   "the duration the same way (\"ba ngày sau\").",
+   "en.wiktionary.org, https://en.wiktionary.org/wiki/sau."
+  ],
+  "marker_last": [
+   "The before/after prepositions double as the last/next period markers,",
+   "postposed to the unit noun: \"tuần trước\" is last week.",
+   "en.wiktionary.org, https://en.wiktionary.org/wiki/tr%C6%B0%E1%BB%9Bc."
+  ],
+  "marker_minute_word": [
+   "The minute noun closing a spoken clock (\"ba giờ kém mười lăm phút\").",
+   "en.wiktionary.org, https://en.wiktionary.org/wiki/ph%C3%BAt."
+  ],
+  "marker_next": [
+   "\"tuần sau\" is next week; sau's own entry glosses the adjective as",
+   "\"next, subsequent\" (\"lần sau\" == next time).",
+   "en.wiktionary.org, https://en.wiktionary.org/wiki/sau."
+  ],
+  "marker_ordinal_prefix": [
+   "\"thứ\" prefixes a numeral to make it an ordinal (\"thứ tám\" eighth).  The same",
+   "word names a weekday when the numeral is one word long (\"thứ hai\" Monday),",
+   "which is why it is optional wherever an ordinal is already unambiguous:",
+   "\"thế kỷ 20\" and \"thế kỷ thứ 20\" are the same twentieth century.",
+   "en.wiktionary.org, https://en.wiktionary.org/wiki/th%E1%BB%A9."
+  ],
+  "marker_past": [
+   "trước is \"before\" and \"ago\", trailing the duration it counts back over",
+   "(\"ba ngày trước\").  cách đây is the dedicated \"ago\" adverb and PRECEDES",
+   "the duration (\"cách đây ba ngày\"); both orders are declared, so the",
+   "marker's side of the count is a property of the word, not of the locale.",
+   "en.wiktionary.org, https://en.wiktionary.org/wiki/tr%C6%B0%E1%BB%9Bc and https://en.wiktionary.org/wiki/c%C3%A1ch%20%C4%91%C3%A2y."
+  ],
+  "marker_year_word": [
+   "\"năm 2024\" -- the year noun introducing a Gregorian year.",
+   "en.wiktionary.org, https://en.wiktionary.org/wiki/n%C4%83m."
+  ],
+  "month_1": [
+   "Months are numbered too -- tháng (\"month\") plus the number -- and CLDR",
+   "gives no lexical month names at all, only \"tháng 1\"..\"tháng 12\" wide",
+   "and \"thg 1\".. abbreviated.  The spelled numbering is the same",
+   "construction, and month four takes the positional substitute tư rather",
+   "than the cardinal bốn.",
+   "Source: Unicode CLDR, cldr-json cldr-dates-full/main/vi/ca-gregorian.json.",
+   "Spelled forms and the lunar-calendar alternates giêng (January) and chạp",
+   "(December): en.wiktionary.org, https://en.wiktionary.org/wiki/th%C3%A1ng."
+  ],
+  "month_10": [
+   "Months are numbered too -- tháng (\"month\") plus the number -- and CLDR",
+   "gives no lexical month names at all, only \"tháng 1\"..\"tháng 12\" wide",
+   "and \"thg 1\".. abbreviated.  The spelled numbering is the same",
+   "construction, and month four takes the positional substitute tư rather",
+   "than the cardinal bốn.",
+   "Source: Unicode CLDR, cldr-json cldr-dates-full/main/vi/ca-gregorian.json.",
+   "Spelled forms and the lunar-calendar alternates giêng (January) and chạp",
+   "(December): en.wiktionary.org, https://en.wiktionary.org/wiki/th%C3%A1ng."
+  ],
+  "month_11": [
+   "Months are numbered too -- tháng (\"month\") plus the number -- and CLDR",
+   "gives no lexical month names at all, only \"tháng 1\"..\"tháng 12\" wide",
+   "and \"thg 1\".. abbreviated.  The spelled numbering is the same",
+   "construction, and month four takes the positional substitute tư rather",
+   "than the cardinal bốn.",
+   "Source: Unicode CLDR, cldr-json cldr-dates-full/main/vi/ca-gregorian.json.",
+   "Spelled forms and the lunar-calendar alternates giêng (January) and chạp",
+   "(December): en.wiktionary.org, https://en.wiktionary.org/wiki/th%C3%A1ng."
+  ],
+  "month_12": [
+   "Months are numbered too -- tháng (\"month\") plus the number -- and CLDR",
+   "gives no lexical month names at all, only \"tháng 1\"..\"tháng 12\" wide",
+   "and \"thg 1\".. abbreviated.  The spelled numbering is the same",
+   "construction, and month four takes the positional substitute tư rather",
+   "than the cardinal bốn.",
+   "Source: Unicode CLDR, cldr-json cldr-dates-full/main/vi/ca-gregorian.json.",
+   "Spelled forms and the lunar-calendar alternates giêng (January) and chạp",
+   "(December): en.wiktionary.org, https://en.wiktionary.org/wiki/th%C3%A1ng."
+  ],
+  "month_2": [
+   "Months are numbered too -- tháng (\"month\") plus the number -- and CLDR",
+   "gives no lexical month names at all, only \"tháng 1\"..\"tháng 12\" wide",
+   "and \"thg 1\".. abbreviated.  The spelled numbering is the same",
+   "construction, and month four takes the positional substitute tư rather",
+   "than the cardinal bốn.",
+   "Source: Unicode CLDR, cldr-json cldr-dates-full/main/vi/ca-gregorian.json.",
+   "Spelled forms and the lunar-calendar alternates giêng (January) and chạp",
+   "(December): en.wiktionary.org, https://en.wiktionary.org/wiki/th%C3%A1ng."
+  ],
+  "month_3": [
+   "Months are numbered too -- tháng (\"month\") plus the number -- and CLDR",
+   "gives no lexical month names at all, only \"tháng 1\"..\"tháng 12\" wide",
+   "and \"thg 1\".. abbreviated.  The spelled numbering is the same",
+   "construction, and month four takes the positional substitute tư rather",
+   "than the cardinal bốn.",
+   "Source: Unicode CLDR, cldr-json cldr-dates-full/main/vi/ca-gregorian.json.",
+   "Spelled forms and the lunar-calendar alternates giêng (January) and chạp",
+   "(December): en.wiktionary.org, https://en.wiktionary.org/wiki/th%C3%A1ng."
+  ],
+  "month_4": [
+   "Months are numbered too -- tháng (\"month\") plus the number -- and CLDR",
+   "gives no lexical month names at all, only \"tháng 1\"..\"tháng 12\" wide",
+   "and \"thg 1\".. abbreviated.  The spelled numbering is the same",
+   "construction, and month four takes the positional substitute tư rather",
+   "than the cardinal bốn.",
+   "Source: Unicode CLDR, cldr-json cldr-dates-full/main/vi/ca-gregorian.json.",
+   "Spelled forms and the lunar-calendar alternates giêng (January) and chạp",
+   "(December): en.wiktionary.org, https://en.wiktionary.org/wiki/th%C3%A1ng."
+  ],
+  "month_5": [
+   "Months are numbered too -- tháng (\"month\") plus the number -- and CLDR",
+   "gives no lexical month names at all, only \"tháng 1\"..\"tháng 12\" wide",
+   "and \"thg 1\".. abbreviated.  The spelled numbering is the same",
+   "construction, and month four takes the positional substitute tư rather",
+   "than the cardinal bốn.",
+   "Source: Unicode CLDR, cldr-json cldr-dates-full/main/vi/ca-gregorian.json.",
+   "Spelled forms and the lunar-calendar alternates giêng (January) and chạp",
+   "(December): en.wiktionary.org, https://en.wiktionary.org/wiki/th%C3%A1ng."
+  ],
+  "month_6": [
+   "Months are numbered too -- tháng (\"month\") plus the number -- and CLDR",
+   "gives no lexical month names at all, only \"tháng 1\"..\"tháng 12\" wide",
+   "and \"thg 1\".. abbreviated.  The spelled numbering is the same",
+   "construction, and month four takes the positional substitute tư rather",
+   "than the cardinal bốn.",
+   "Source: Unicode CLDR, cldr-json cldr-dates-full/main/vi/ca-gregorian.json.",
+   "Spelled forms and the lunar-calendar alternates giêng (January) and chạp",
+   "(December): en.wiktionary.org, https://en.wiktionary.org/wiki/th%C3%A1ng."
+  ],
+  "month_7": [
+   "Months are numbered too -- tháng (\"month\") plus the number -- and CLDR",
+   "gives no lexical month names at all, only \"tháng 1\"..\"tháng 12\" wide",
+   "and \"thg 1\".. abbreviated.  The spelled numbering is the same",
+   "construction, and month four takes the positional substitute tư rather",
+   "than the cardinal bốn.",
+   "Source: Unicode CLDR, cldr-json cldr-dates-full/main/vi/ca-gregorian.json.",
+   "Spelled forms and the lunar-calendar alternates giêng (January) and chạp",
+   "(December): en.wiktionary.org, https://en.wiktionary.org/wiki/th%C3%A1ng."
+  ],
+  "month_8": [
+   "Months are numbered too -- tháng (\"month\") plus the number -- and CLDR",
+   "gives no lexical month names at all, only \"tháng 1\"..\"tháng 12\" wide",
+   "and \"thg 1\".. abbreviated.  The spelled numbering is the same",
+   "construction, and month four takes the positional substitute tư rather",
+   "than the cardinal bốn.",
+   "Source: Unicode CLDR, cldr-json cldr-dates-full/main/vi/ca-gregorian.json.",
+   "Spelled forms and the lunar-calendar alternates giêng (January) and chạp",
+   "(December): en.wiktionary.org, https://en.wiktionary.org/wiki/th%C3%A1ng."
+  ],
+  "month_9": [
+   "Months are numbered too -- tháng (\"month\") plus the number -- and CLDR",
+   "gives no lexical month names at all, only \"tháng 1\"..\"tháng 12\" wide",
+   "and \"thg 1\".. abbreviated.  The spelled numbering is the same",
+   "construction, and month four takes the positional substitute tư rather",
+   "than the cardinal bốn.",
+   "Source: Unicode CLDR, cldr-json cldr-dates-full/main/vi/ca-gregorian.json.",
+   "Spelled forms and the lunar-calendar alternates giêng (January) and chạp",
+   "(December): en.wiktionary.org, https://en.wiktionary.org/wiki/th%C3%A1ng."
+  ],
+  "named_day_-1": [
+   "en.wiktionary.org, https://en.wiktionary.org/wiki/h%C3%B4m%20qua."
+  ],
+  "named_day_-2": [
+   "hôm kia and ngày kia are a minimal pair pointing in OPPOSITE directions:",
+   "both close on kia, and only the head noun -- hôm for the past family,",
+   "ngày for the future one -- says which.  Matching on kia alone would put",
+   "the answer four days wrong.",
+   "en.wiktionary.org, https://en.wiktionary.org/wiki/h%C3%B4m%20kia (\"day before yesterday\",",
+   "with its own \"not to be confused with ngày kia\" note)."
+  ],
+  "named_day_0": [
+   "en.wiktionary.org, https://en.wiktionary.org/wiki/h%C3%B4m%20nay."
+  ],
+  "named_day_1": [
+   "ngày mai, with the colloquial short form mai.",
+   "en.wiktionary.org, https://en.wiktionary.org/wiki/ng%C3%A0y%20mai and https://en.wiktionary.org/wiki/mai."
+  ],
+  "named_day_2": [
+   "The future half of the hôm kia / ngày kia pair -- see named_day_-2.voc.",
+   "The southern ngày mốt is listed, but its bare short form mốt is not: on",
+   "its own mốt is the numeral one in a tens compound (hai mươi mốt == 21).",
+   "en.wiktionary.org, https://en.wiktionary.org/wiki/ng%C3%A0y%20kia."
+  ],
+  "scope_unit_century": [
+   "See unit_century.voc."
+  ],
+  "scope_unit_decade": [
+   "See unit_decade.voc.  \"thập niên\" is the collective head of the",
+   "decade-naming phrase (\"thập niên 80\") and is listed alongside them.",
+   "en.wiktionary.org, https://en.wiktionary.org/wiki/th%E1%BA%ADp%20ni%C3%AAn."
+  ],
+  "season_fall": [
+   "en.wiktionary.org, https://en.wiktionary.org/wiki/m%C3%B9a%20thu."
+  ],
+  "season_spring": [
+   "en.wiktionary.org, https://en.wiktionary.org/wiki/m%C3%B9a%20xu%C3%A2n."
+  ],
+  "season_summer": [
+   "mùa hè and its synonym mùa hạ.",
+   "en.wiktionary.org, https://en.wiktionary.org/wiki/m%C3%B9a%20h%C3%A8."
+  ],
+  "season_winter": [
+   "en.wiktionary.org, https://en.wiktionary.org/wiki/m%C3%B9a%20%C4%91%C3%B4ng."
+  ],
+  "special_weekend": [
+   "en.wiktionary.org, https://en.wiktionary.org/wiki/cu%E1%BB%91i%20tu%E1%BA%A7n."
+  ],
+  "unit_century": [
+   "Both spellings of the same Sino-Vietnamese compound.",
+   "en.wiktionary.org, https://en.wiktionary.org/wiki/th%E1%BA%BF%20k%E1%BB%89."
+  ],
+  "unit_day": [
+   "en.wiktionary.org, https://en.wiktionary.org/wiki/ng%C3%A0y."
+  ],
+  "unit_decade": [
+   "Both spellings of the same Sino-Vietnamese compound.",
+   "en.wiktionary.org, https://en.wiktionary.org/wiki/th%E1%BA%ADp%20k%E1%BB%B7."
+  ],
+  "unit_hour": [
+   "giờ is both the hour as a duration and the word that marks a point on",
+   "the clock (\"bốn giờ\" == four o'clock), exactly as Turkish saat is.",
+   "en.wiktionary.org, https://en.wiktionary.org/wiki/gi%E1%BB%9D."
+  ],
+  "unit_millennium": [
+   "Both spellings of the same Sino-Vietnamese compound.",
+   "en.wiktionary.org, https://en.wiktionary.org/wiki/thi%C3%AAn%20ni%C3%AAn%20k%E1%BB%B7."
+  ],
+  "unit_minute": [
+   "en.wiktionary.org, https://en.wiktionary.org/wiki/ph%C3%BAt."
+  ],
+  "unit_month": [
+   "en.wiktionary.org, https://en.wiktionary.org/wiki/th%C3%A1ng."
+  ],
+  "unit_second": [
+   "en.wiktionary.org, https://en.wiktionary.org/wiki/gi%C3%A2y."
+  ],
+  "unit_week": [
+   "en.wiktionary.org, https://en.wiktionary.org/wiki/tu%E1%BA%A7n."
+  ],
+  "unit_year": [
+   "năm is the noun \"year\" and, separately, the numeral five -- the same",
+   "spelling and the same tone.  The numeral fold never reads a bare năm",
+   "as five, so this reading is the only one it has.",
+   "en.wiktionary.org, https://en.wiktionary.org/wiki/n%C4%83m."
+  ],
+  "weekday_0": [
+   "Vietnamese weekdays are ORDINAL-NUMBERED: thứ (\"rank\") plus a number,",
+   "counting from Sunday, which is named instead (chủ nhật, \"lord's day\").",
+   "Monday is therefore \"rank two\".  CLDR spells the same construction two",
+   "ways -- wide \"Thứ Hai\", abbreviated \"Thứ 2\" -- and both are listed,",
+   "because they are one construction in two spellings, not a name and an",
+   "abbreviation of it.",
+   "Source: Unicode CLDR, cldr-json cldr-dates-full/main/vi/ca-gregorian.json."
+  ],
+  "weekday_1": [
+   "Vietnamese weekdays are ORDINAL-NUMBERED: thứ (\"rank\") plus a number,",
+   "counting from Sunday, which is named instead (chủ nhật, \"lord's day\").",
+   "Monday is therefore \"rank two\".  CLDR spells the same construction two",
+   "ways -- wide \"Thứ Hai\", abbreviated \"Thứ 2\" -- and both are listed,",
+   "because they are one construction in two spellings, not a name and an",
+   "abbreviation of it.",
+   "Source: Unicode CLDR, cldr-json cldr-dates-full/main/vi/ca-gregorian.json."
+  ],
+  "weekday_2": [
+   "Vietnamese weekdays are ORDINAL-NUMBERED: thứ (\"rank\") plus a number,",
+   "counting from Sunday, which is named instead (chủ nhật, \"lord's day\").",
+   "Monday is therefore \"rank two\".  CLDR spells the same construction two",
+   "ways -- wide \"Thứ Hai\", abbreviated \"Thứ 2\" -- and both are listed,",
+   "because they are one construction in two spellings, not a name and an",
+   "abbreviation of it.",
+   "Source: Unicode CLDR, cldr-json cldr-dates-full/main/vi/ca-gregorian.json."
+  ],
+  "weekday_3": [
+   "Vietnamese weekdays are ORDINAL-NUMBERED: thứ (\"rank\") plus a number,",
+   "counting from Sunday, which is named instead (chủ nhật, \"lord's day\").",
+   "Monday is therefore \"rank two\".  CLDR spells the same construction two",
+   "ways -- wide \"Thứ Hai\", abbreviated \"Thứ 2\" -- and both are listed,",
+   "because they are one construction in two spellings, not a name and an",
+   "abbreviation of it.",
+   "Source: Unicode CLDR, cldr-json cldr-dates-full/main/vi/ca-gregorian.json."
+  ],
+  "weekday_4": [
+   "Vietnamese weekdays are ORDINAL-NUMBERED: thứ (\"rank\") plus a number,",
+   "counting from Sunday, which is named instead (chủ nhật, \"lord's day\").",
+   "Monday is therefore \"rank two\".  CLDR spells the same construction two",
+   "ways -- wide \"Thứ Hai\", abbreviated \"Thứ 2\" -- and both are listed,",
+   "because they are one construction in two spellings, not a name and an",
+   "abbreviation of it.",
+   "Source: Unicode CLDR, cldr-json cldr-dates-full/main/vi/ca-gregorian.json."
+  ],
+  "weekday_5": [
+   "Vietnamese weekdays are ORDINAL-NUMBERED: thứ (\"rank\") plus a number,",
+   "counting from Sunday, which is named instead (chủ nhật, \"lord's day\").",
+   "Monday is therefore \"rank two\".  CLDR spells the same construction two",
+   "ways -- wide \"Thứ Hai\", abbreviated \"Thứ 2\" -- and both are listed,",
+   "because they are one construction in two spellings, not a name and an",
+   "abbreviation of it.",
+   "Source: Unicode CLDR, cldr-json cldr-dates-full/main/vi/ca-gregorian.json."
+  ],
+  "weekday_6": [
+   "Sunday is the one weekday that is not counted.  CLDR's abbreviation \"CN\"",
+   "is deliberately absent: bare \"cn\" is also the era abbreviation of Công",
+   "Nguyên (the common era), so admitting it would let an era marker resolve",
+   "to a day of the week.",
+   "Source: Unicode CLDR, cldr-json cldr-dates-full/main/vi/ca-gregorian.json."
+  ]
+ }
+}

@@ -8,13 +8,13 @@ verify: .venv/bin/python -c 'exec("import ast,io,re,sys,contextlib as c\np=sys.a
 see: docs/extraction.md, docs/languages/index.md
 -->
 
-**Who this is for:** you speak a language chronologia does not yet read well, and you would like it to. You do **not** need to be a programmer. Adding a language is mostly *editing small lists of words in plain text files*. Each file holds one idea, such as "the words my language uses for January" or "the words that mean *next*". If you can use a text editor and you know your language, you can do this.
+**Who this is for:** you speak a language chronologia does not yet read well, and you would like it to. You do **not** need to be a programmer. Adding a language is mostly *editing small lists of words in one plain text file*. Each list holds one idea, such as "the words my language uses for January" or "the words that mean *next*". If you can use a text editor and you know your language, you can do this.
 
-**What you will produce:** a folder, `chronologia/locale/<your-language-code>/`, holding those little word lists and one small settings file. When you are done, chronologia will understand phrases like *"next Friday"*, *"3 days ago"*, or *"5 June 2027"* written in your language.
+**What you will produce:** a folder, `chronologia/locale/<your-language-code>/`, holding one word-list file, `vocab.json`, and one small settings file. When you are done, chronologia will understand phrases like *"next Friday"*, *"3 days ago"*, or *"5 June 2027"* written in your language.
 
 **How long it takes:** a first, useful version, months, weekdays, and the common "next / last / in / ago" phrases, is an afternoon's work. You can stop there and it will be genuinely useful, then come back and add more later.
 
-**The one rule that matters most:** every word you add must come from a *real source*. A source is a dictionary, a grammar book or your own knowledge as a native speaker. Note the source in the file. This is how the project stays trustworthy. We come back to it near the end, but keep it in mind from the start.
+**The one rule that matters most:** every word you add must come from a *real source*. A source is a dictionary, a grammar book or your own knowledge as a native speaker. Note the source in `vocab.json`, next to the words. This is how the project stays trustworthy. We come back to it near the end, but keep it in mind from the start.
 
 > Already a developer and just want the terse reference? The
 > ["How a language works"](extraction.md) section of the extraction guide is the
@@ -37,54 +37,67 @@ chronologia/
 
 The folder name is your language's short **code**, the standard two-letter (or three-letter) ISO 639 code. English is `en`, Malay is `ms`, German is `de`, Kabyle is `kab`. If you are not sure of yours, search "ISO 639 code" plus your language's name.
 
-Inside that folder is a **pile of small text files**. Almost all of them end in `.voc` (short for *vocabulary*). Each `.voc` file is a list of the words your language uses for **one single idea**. There is one more file, `lang.json`, which holds a few settings. That is the whole locale. Here is a real, small one, Kabyle:
+Inside that folder are two files. `vocab.json` holds the words your language uses: one list of words for each **single idea**, such as January or "next". `lang.json` holds a few settings. That is the whole locale. Here is a real, small one, Kabyle:
 
 ```text
 chronologia/locale/kab/
-├── lang.json          ← the settings file (one per language)
-├── month_1.voc        ← words for January
-├── month_2.voc        ← words for February
-│   … (through month_12.voc)
-├── weekday_0.voc      ← words for Monday
-│   … (through weekday_6.voc)
-├── unit_day.voc       ← words meaning "day"
-├── unit_week.voc      ← words meaning "week"
-├── named_day_0.voc    ← words meaning "today"
-├── named_day_1.voc    ← words meaning "tomorrow"
-├── named_day_-1.voc   ← words meaning "yesterday"
-└── marker_and.voc     ← the connecting word "and"
+├── lang.json      ← the settings file (one per language)
+└── vocab.json     ← the word lists (one per language)
 ```
 
-Nothing about *how dates work* lives in these files. The clever part, knowing that "3 days ago" means subtract three days, is shared code that every language reuses. Your files only supply **the words**. That is why no programming is needed: you are translating a vocabulary, not writing logic.
+Inside `vocab.json` the words sit under the name of the idea they belong to:
+
+```json
+{
+ "format_version": 1,
+ "words": {
+  "month_1": ["..."],
+  "weekday_0": ["..."],
+  "unit_day": ["..."],
+  "named_day_0": ["..."],
+  "named_day_-1": ["..."],
+  "marker_and": ["..."]
+ }
+}
+```
+
+The names are `month_1` for January, `weekday_0` for Monday, `unit_day` for "day", `named_day_0` for "today", `named_day_-1` for "yesterday" and `marker_and` for the connecting word "and". The `...` stands for the words of the language.
+
+Nothing about *how dates work* lives in these files. The clever part, knowing that "3 days ago" means subtract three days, is shared code that every language reuses. Your file only supplies **the words**. That is why no programming is needed: you are translating a vocabulary, not writing logic.
 
 ---
 
-## The `.voc` file explained
+## The `vocab.json` file explained
 
-A `.voc` file is the simplest thing imaginable: **one phrase per line**. Here is the real English file for January, `en/month_1.voc`:
+`vocab.json` is the simplest thing imaginable: **one list of words for each idea**. Here is the real English entry for January:
 
-```text
-january
-jan
-ianuariis
+```json
+"month_1": [
+ "ianuariis",
+ "jan",
+ "january"
+]
 ```
 
 These are three surfaces that all mean the first month. A **surface** is "a way of writing the word". The three are the full name, the common abbreviation and an old Latin form. When someone writes any of these, chronologia knows they mean month 1.
 
-The rules for a `.voc` file are short:
+The rules for `vocab.json` are short:
 
-- **One surface per line**. If your language writes January two ways, put both, each on its own line.
-- **Lowercase**. Write everything in lowercase. chronologia lowercases the text it reads before matching. So `January` and `january` are the same to it. Writing lowercase keeps the files tidy and consistent.
-- **Multi-word surfaces are fine**. A phrase like `hari ini` (Malay for "today") or `day after tomorrow` goes on one line, spaces and all.
-- **Lines starting with `#` are comments**. They are notes for humans and are ignored by chronologia. This is where you write your **source** (more on that below). For example:
+- **One surface per list item**. If your language writes January two ways, put both.
+- **Sorted and unique**. List the surfaces in alphabetical order, each once, and list the names under `words` in alphabetical order too. A test checks this.
+- **Lowercase**. Write everything in lowercase. chronologia lowercases the text it reads before matching. So `January` and `january` are the same to it.
+- **Every form in full**. The file holds no shorthand such as `(a|b)`. If two spellings differ by one letter, write both.
+- **Multi-word surfaces are fine**. A phrase like `hari ini` (Malay for "today") or `day after tomorrow` is one item, spaces and all.
+- **The file has a version**. `"format_version": 1` stays at the top. The loader refuses any other version.
+- **Sources in `sources`**. JSON has no comments. You write your **source** under the same name in the `sources` object, as one or more lines of text (more on that below).
 
-```text
-# Month names from the Dewan Bahasa dan Pustaka standard dictionary.
-# Confirmed by a native speaker (your name here), 2026.
-januari
+That is genuinely all there is to `vocab.json`. The *name* of each list tells chronologia which idea the words belong to, `month_1` for January, `weekday_0` for Monday, and so on. The next sections give you the exact list of names to create.
+
+A test checks every `vocab.json` against the schema `chronologia/locale/vocab.schema.json`:
+
+```bash
+PYTEST_DISABLE_PLUGIN_AUTOLOAD=1 python -m pytest test/test_locale_schema.py -q
 ```
-
-That is genuinely all there is to a `.voc` file. The *name* of the file tells chronologia which idea the words belong to, `month_1.voc` for January, `weekday_0.voc` for Monday, and so on. The next sections give you the exact list of file names to create.
 
 ---
 
@@ -92,76 +105,76 @@ That is genuinely all there is to a `.voc` file. The *name* of the file tells ch
 
 Start here. This tier gives you a language that can already read months, weekdays, "today / tomorrow / yesterday", and "in N days / N days ago". It is a real, shippable language on its own.
 
-Create the folder `chronologia/locale/<your code>/` and, inside it, these files. The **left column is the exact file name**. The name is not decoration. It is how chronologia knows what the words mean, so copy it exactly.
+Create the folder `chronologia/locale/<your code>/` and, inside it, a `vocab.json` with these lists. The **left column is the exact name of the list**. The name is not decoration. It is how chronologia knows what the words mean, so copy it exactly.
 
-### Months (12 files)
+### Months (12 lists)
 
-| File | Put in it |
+| Name | Put in it |
 |---|---|
-| `month_1.voc` | your words for January |
-| `month_2.voc` | February |
+| `month_1` | your words for January |
+| `month_2` | February |
 | … | … |
-| `month_12.voc` | December |
+| `month_12` | December |
 
-One file per month, numbered 1 to 12. Each holds the month's name (and any common short form) in your language, one per line.
+One list per month, numbered 1 to 12. Each holds the month's name (and any common short form) in your language.
 
-### Weekdays (7 files)
+### Weekdays (7 lists)
 
-| File | Put in it |
+| Name | Put in it |
 |---|---|
-| `weekday_0.voc` | Monday |
-| `weekday_1.voc` | Tuesday |
+| `weekday_0` | Monday |
+| `weekday_1` | Tuesday |
 | … | … |
-| `weekday_6.voc` | Sunday |
+| `weekday_6` | Sunday |
 
-Note the numbering: **Monday is 0**, Sunday is 6. (This matches the way most of the world's calendars count, and chronologia's shared code. If your culture starts the week on Sunday, do not worry. That is a *setting* that you flip in `lang.json`, not a change to these file names.)
+Note the numbering: **Monday is 0**, Sunday is 6. (This matches the way most of the world's calendars count, and chronologia's shared code. If your culture starts the week on Sunday, do not worry. That is a *setting* that you flip in `lang.json`, not a change to these names.)
 
 ### The unit words (the "day / week / month / year" nouns)
 
-| File | Put in it |
+| Name | Put in it |
 |---|---|
-| `unit_day.voc` | your word(s) for "day" |
-| `unit_week.voc` | "week" |
-| `unit_month.voc` | "month" (the noun, e.g. in "3 months ago") |
-| `unit_year.voc` | "year" |
-| `unit_hour.voc` | "hour" |
-| `unit_minute.voc` | "minute" |
+| `unit_day` | your word(s) for "day" |
+| `unit_week` | "week" |
+| `unit_month` | "month" (the noun, e.g. in "3 months ago") |
+| `unit_year` | "year" |
+| `unit_hour` | "hour" |
+| `unit_minute` | "minute" |
 
 These are the nouns that appear in phrases like "3 **days** ago" or "in 2 **weeks**".
 
 ### The direction markers (this is what makes "ago" vs "in" work)
 
-| File | Put in it |
+| Name | Put in it |
 |---|---|
-| `marker_past.voc` | the word that points **backwards** in time, English "ago" |
-| `marker_future.voc` | the word that points **forwards**, English "in" / "hence" |
+| `marker_past` | the word that points **backwards** in time, English "ago" |
+| `marker_future` | the word that points **forwards**, English "in" / "hence" |
 
 These two are important and subtle, so here is why they matter. chronologia never guesses direction. In "3 days ago", the word *ago* is what tells it to subtract. You list here whatever word your language uses for that, and the shared code does the rest. Malay uses `lepas` for the past and `lagi` for the future. You do not write any "subtract" logic. You just name the word.
 
 ### The "next / last / this" markers
 
-| File | Put in it |
+| Name | Put in it |
 |---|---|
-| `marker_next.voc` | "next" (as in "next Friday", "next week") |
-| `marker_last.voc` | "last" (as in "last Tuesday") |
-| `marker_this.voc` | "this" (as in "this week") |
+| `marker_next` | "next" (as in "next Friday", "next week") |
+| `marker_last` | "last" (as in "last Tuesday") |
+| `marker_this` | "this" (as in "this week") |
 
 ### The named days (today / tomorrow / yesterday)
 
-These are single words that name a day by how far it is from *today*. The number in the file name is that offset in days: `0` is today, `1` is tomorrow, `-1` is yesterday.
+These are single words that name a day by how far it is from *today*. The number in the name is that offset in days: `0` is today, `1` is tomorrow, `-1` is yesterday.
 
-| File | Put in it |
+| Name | Put in it |
 |---|---|
-| `named_day_0.voc` | "today" |
-| `named_day_1.voc` | "tomorrow" |
-| `named_day_-1.voc` | "yesterday" |
-| `named_day_2.voc` | (optional) "the day after tomorrow", if your language has one word for it |
+| `named_day_0` | "today" |
+| `named_day_1` | "tomorrow" |
+| `named_day_-1` | "yesterday" |
+| `named_day_2` | (optional) "the day after tomorrow", if your language has one word for it |
 
 ### The settings file `lang.json`
 
 Finally, one small settings file. The gentlest way to make it is to **copy an existing one and edit it**. A good starting point is Malay (`ms/lang.json`). It is compact and covers the common cases. `lang.json` is explained in its own section below. For Tier 1 you can copy Malay's and change very little.
 
-That's Tier 1. With those files in place, chronologia can already read months, weekdays, "today/tomorrow/yesterday", relative offsets, and simple calendar dates in your language.
+That's Tier 1. With those lists in place, chronologia can already read months, weekdays, "today/tomorrow/yesterday", relative offsets, and simple calendar dates in your language.
 
 > **A note on numbers**. In "3 days ago", the `3` is a *digit*. Chronologia
 > reads digits directly in every language, no setup needed. If you also want it
@@ -177,24 +190,24 @@ Once dates work, you can teach clock times and parts of the day. These are optio
 
 ### Clock landmarks and dayparts
 
-| File | Put in it |
+| Name | Put in it |
 |---|---|
-| `clock_landmark_0.voc` | "midnight" (0 minutes past midnight) |
-| `clock_landmark_720.voc` | "noon" / "midday" (720 minutes = 12:00) |
-| `daypart_morning.voc` | words for the morning band |
-| `daypart_evening.voc` | words for the evening band |
-| `daypart_night.voc` | words for the night band |
+| `clock_landmark_0` | "midnight" (0 minutes past midnight) |
+| `clock_landmark_720` | "noon" / "midday" (720 minutes = 12:00) |
+| `daypart_morning` | words for the morning band |
+| `daypart_evening` | words for the evening band |
+| `daypart_night` | words for the night band |
 
-A **landmark** is a named clock instant. The number in the file name is the minutes past midnight. A **daypart** names a stretch of the day.
+A **landmark** is a named clock instant. The number in the name is the minutes past midnight. A **daypart** names a stretch of the day.
 
 Here is the part that surprises people: **the hours are not the same in every language. You must not assume English's**. Spanish runs one *tarde* from noon until eight in the evening, across what English splits into afternoon and evening. German has six bands, and *Nachmittag* does not start at noon. Swedish and Norwegian have a *förmiddag* / *formiddag*, a late-morning band English cannot name in one word at all. So the bands are **data**, listed per language in `chronologia/dayparts.py`, and your job is to say what your language's bands actually are.
 
 Two steps, then:
 
 1. **Find your language's bands**. The `chronologia/dayparts.py` file holds the known bands. Each comes from the [Unicode CLDR day-period chart](https://www.unicode.org/cldr/charts/47/supplemental/day_periods.html), which lists them for many languages. If yours is there, add its rows the same way, citing the chart. If it is not, use your national dictionary or language academy and cite that instead. If you cannot find a source, leave the band out. An honest gap is much better than invented hours.
-2. **Name the `.voc` file after the band**. A band that belongs to one language is registered under a key like `tarde_es` or `kveld_nb`, and the file is `daypart_tarde_es.voc`. Only a band shared by every language, English's plain `morning`, `afternoon`, `evening`, `night`, uses the bare name.
+2. **Name the list after the band**. A band that belongs to one language is registered under a key like `tarde_es` or `kveld_nb`, and the list is `daypart_tarde_es`. Only a band shared by every language, English's plain `morning`, `afternoon`, `evening`, `night`, uses the bare name.
 
-Two traps worth knowing before you write the files:
+Two traps worth knowing before you write the lists:
 
 - **One word per surface**. A day-part surface has to be a single token. So a hyphenated or two-word name (French *après-midi*, Romanian *după-amiază*) cannot be listed. The tokenizer splits it. Those bands stay registered without vocabulary rather than being faked.
 - **Watch for a word that already means something else**. Your day-part word may also be your word for *tomorrow* (Spanish *mañana*, German *morgen*) or for *noon* (Dutch *middag*). If you list it plainly, you break the reading that people mean. See the licensing note below.
@@ -225,14 +238,14 @@ Here is the interesting part. Many languages say things like "half nine" or "qua
 
 First, the fraction words:
 
-| File | Put in it |
+| Name | Put in it |
 |---|---|
-| `clock_fraction_30.voc` | your word for the "half" fraction |
-| `clock_fraction_15.voc` | your word for the "quarter" fraction |
-| `clock_dir_past.voc` | the word meaning "past" (e.g. "half **past** nine") |
-| `clock_dir_to.voc` | the word meaning "to" / "before" (e.g. "quarter **to** ten") |
+| `clock_fraction_30` | your word for the "half" fraction |
+| `clock_fraction_15` | your word for the "quarter" fraction |
+| `clock_dir_past` | the word meaning "past" (e.g. "half **past** nine") |
+| `clock_dir_to` | the word meaning "to" / "before" (e.g. "quarter **to** ten") |
 
-An order slot `CLOCKDIR` binds a word from either direction file. The slot `CLOCKTO` binds only a word from `clock_dir_to.voc`. Use `CLOCKTO` in an order that puts the minutes before the hour, such as Portuguese `MINUTE CLOCKTO article? HOUR` ("dez **para** as três", 14:50). With `CLOCKDIR` there, the past word also binds, and "três **e** dez" gets a second reading as 10:03.
+An order slot `CLOCKDIR` binds a word from either direction list. The slot `CLOCKTO` binds only a word from `clock_dir_to`. Use `CLOCKTO` in an order that puts the minutes before the hour, such as Portuguese `MINUTE CLOCKTO article? HOUR` ("dez **para** as três", 14:50). With `CLOCKDIR` there, the past word also binds, and "três **e** dez" gets a second reading as 10:03.
 
 When the direction word is *spoken* ("half **past** nine"), there is no ambiguity. The flags below only decide what a **bare** fraction, one with *no* direction word, means in your language:
 
@@ -249,11 +262,11 @@ Pick the one that matches how *your* language actually speaks. If none applies, 
 
 In some languages the word before a clock hour also introduces a counted group: English "wave at 5 people", Spanish "a las 3 vecinas" (to the three neighbours), Dutch "om 3 mensen" (about three people). Two optional files let chronologia tell the two apart. Leave them out if your language has no such clash.
 
-| File | Put in it |
+| Name | Put in it |
 |---|---|
-| `marker_at_counts.voc` | the clock prepositions that also introduce a counted group ("at", "a", "om") |
-| `marker_counted_noun.voc` | nouns that count people or things a clock never takes ("people", "vecinas", "mensen"), singular and plural, each gender |
-| `marker_participle_aux.voc` | forms of the auxiliary that a word with a season reading follows as a past participle (fr "avoir" before "été") |
+| `marker_at_counts` | the clock prepositions that also introduce a counted group ("at", "a", "om") |
+| `marker_counted_noun` | nouns that count people or things a clock never takes ("people", "vecinas", "mensen"), singular and plural, each gender |
+| `marker_participle_aux` | forms of the auxiliary that a word with a season reading follows as a past participle (fr "avoir" before "été") |
 
 A bare hour behind one of those prepositions and directly before one of those nouns is read as a count. Any other word after the hour, a verb included, leaves the clock as it is ("a las 8 llegamos" is 08:00). Cite a dictionary entry that shows the class of each noun in the file header, and keep the fetched page with your audit.
 
@@ -271,9 +284,9 @@ The named hour is the one being *approached*, so the reading is `(hour − 1) + 
 
 This is a different *shape*, not a flag: it needs its own word list and its own construction order.
 
-| File | Put in it |
+| Name | Put in it |
 |---|---|
-| `marker_quarters.voc` | your word for "quarter(s)" in this counting sense, all inflections (Catalan: `quart`, `quarts`) |
+| `marker_quarters` | your word for "quarter(s)" in this counting sense, all inflections (Catalan: `quart`, `quarts`) |
 
 Then add the order to `clock_time` in `lang.json`, before the other clock orders:
 
@@ -287,14 +300,14 @@ Then add the order to `clock_time` in `lang.json`, before the other clock orders
 
 ## Tier 3, the rich stuff
 
-When the basics are solid, chronologia can read much more, each backed by its own `.voc` files and construction orders. You don't need any of this to contribute something useful, but here's where to look:
+When the basics are solid, chronologia can read much more, each backed by its own vocabulary lists and construction orders. You don't need any of this to contribute something useful, but here's where to look:
 
-- **Seasons**: `season_spring.voc`, `season_summer.voc`, … (plus a `hemisphere` setting in `lang.json` for southern-hemisphere languages).
-- **Eras**: "44 BC", "1492 AD": `marker_bc.voc`, `marker_ad.voc`.
-- **Weekends**: `special_weekend.voc` (and the `weekend_start` setting for languages whose weekend is Friday-Saturday).
+- **Seasons**: `season_spring`, `season_summer`, … (plus a `hemisphere` setting in `lang.json` for southern-hemisphere languages).
+- **Eras**: "44 BC", "1492 AD": `marker_bc`, `marker_ad`.
+- **Weekends**: `special_weekend` (and the `weekend_start` setting for languages whose weekend is Friday-Saturday).
 - **Quarters, ISO weeks, decades, fuzzy periods** ("early 90s"), see the constructions in an existing full language like `en/lang.json`.
 - **Holidays**: you do **not** list these by hand. Holiday names come automatically from the shared holidays engine once your language code is known to it. See [civil-holidays.md](civil-holidays.md).
-- **Non-Gregorian calendars** (Islamic, Hebrew, …), use `month_<calendar>_<n>.voc`, e.g. `month_islamic_civil_9.voc` for Ramadan. See [calendars.md](calendars.md) for the calendar names.
+- **Non-Gregorian calendars** (Islamic, Hebrew, …), use `month_<calendar>_<n>`, e.g. `month_islamic_civil_9` for Ramadan. See [calendars.md](calendars.md) for the calendar names.
 
 The best way to learn Tier 3 is to open a mature language (`en`, `de`, `pt`) and copy the pattern for the one feature you want.
 
@@ -306,45 +319,45 @@ A locale that stops at Tier 3 can read a single date. But it does not read a *re
 
 ### The `every` / `other` markers
 
-| File | Put in it |
+| Name | Put in it |
 |---|---|
-| `marker_every.voc` | "every" / "each" (as in "every Friday", "every 2 weeks") |
-| `marker_recur_other.voc` | "other" / "alternate" (as in "every **other** week") |
+| `marker_every` | "every" / "each" (as in "every Friday", "every 2 weeks") |
+| `marker_recur_other` | "other" / "alternate" (as in "every **other** week") |
 
 ### The frequency adverbs
 
 Some recurrences are said as a single adverb rather than "every + unit":
 
-| File | Put in it |
+| Name | Put in it |
 |---|---|
-| `marker_freq_daily.voc` | "daily" |
-| `marker_freq_weekly.voc` | "weekly" |
-| `marker_freq_monthly.voc` | "monthly" |
-| `marker_freq_yearly.voc` | "yearly" / "annually" |
-| `marker_freq_biweekly.voc` | "biweekly" / "fortnightly", read as *every two weeks*, the more common sense (Merriam-Webster's usage note), not "twice a week" |
-| `marker_freq_quarterly.voc` | "quarterly". Every three months |
+| `marker_freq_daily` | "daily" |
+| `marker_freq_weekly` | "weekly" |
+| `marker_freq_monthly` | "monthly" |
+| `marker_freq_yearly` | "yearly" / "annually" |
+| `marker_freq_biweekly` | "biweekly" / "fortnightly", read as *every two weeks*, the more common sense (Merriam-Webster's usage note), not "twice a week" |
+| `marker_freq_quarterly` | "quarterly". Every three months |
 
 ### The recurrence-specific markers
 
-| File | Put in it |
+| Name | Put in it |
 |---|---|
-| `marker_recur_once.voc` | "once" (as in "once a week") |
-| `marker_recur_per.voc` | "per" (as in "twice per month") |
-| `marker_recur_for.voc` | "for" (as in "every Monday **for** 6 weeks", bounds the rule with a `COUNT`) |
-| `marker_until.voc` | "until" / "till" (as in "every Friday **until** June", bounds the rule with an `UNTIL`) |
-| `marker_weekday.voc` | the class noun "weekday(s)" (as in "every weekday", distinct from any one named weekday) |
-| `marker_weekday_count.voc` | the plural forms of the class noun that name a count ("5 weekdays of the month"), never an ordinal |
-| `marker_recur_habitual.voc` | (optional) a habitual preposition some languages use instead of "every" before a weekday, Portuguese marks it with `à` / `às` / `ao` / `aos` ("**à** segunda" = "on Mondays, habitually") |
+| `marker_recur_once` | "once" (as in "once a week") |
+| `marker_recur_per` | "per" (as in "twice per month") |
+| `marker_recur_for` | "for" (as in "every Monday **for** 6 weeks", bounds the rule with a `COUNT`) |
+| `marker_until` | "until" / "till" (as in "every Friday **until** June", bounds the rule with an `UNTIL`) |
+| `marker_weekday` | the class noun "weekday(s)" (as in "every weekday", distinct from any one named weekday) |
+| `marker_weekday_count` | the plural forms of the class noun that name a count ("5 weekdays of the month"), never an ordinal |
+| `marker_recur_habitual` | (optional) a habitual preposition some languages use instead of "every" before a weekday, Portuguese marks it with `à` / `às` / `ao` / `aos` ("**à** segunda" = "on Mondays, habitually") |
 
-`special_weekend.voc` (Tier 3) and the weekday and month files (Tier 1) do double duty here. "Every weekend", "every Friday" and "the third Tuesday of November" all resolve through the weekday and month vocabulary that you already wrote. There is nothing to add for those.
+`special_weekend` (Tier 3) and the weekday and month lists (Tier 1) do double duty here. "Every weekend", "every Friday" and "the third Tuesday of November" all resolve through the weekday and month vocabulary that you already wrote. There is nothing to add for those.
 
-With these files in place, chronologia reads these phrases in your language: "every Friday", "every other week", "daily", "once a week on Monday" and "the last Monday of May". It also reads the bounded forms "every Monday for 6 weeks" and "every Friday until June". Each resolves to the `Recurrence` object that [recurrence.md](recurrence.md) describes. Read that page to see what the rule looks like once your words are folded onto it.
+With these lists in place, chronologia reads these phrases in your language: "every Friday", "every other week", "daily", "once a week on Monday" and "the last Monday of May". It also reads the bounded forms "every Monday for 6 weeks" and "every Friday until June". Each resolves to the `Recurrence` object that [recurrence.md](recurrence.md) describes. Read that page to see what the rule looks like once your words are folded onto it.
 
 ---
 
 ## `lang.json` explained gently
 
-`lang.json` is the one non-`.voc` file. It is a small **settings** file that tells chronologia which sentence shapes your language uses and a few calendar conventions. You will almost always start by copying an existing one.
+`lang.json` is the file that holds no words. It is a small **settings** file that tells chronologia which sentence shapes your language uses and a few calendar conventions. You will almost always start by copying an existing one.
 
 It has four parts worth understanding:
 
@@ -354,7 +367,7 @@ The flag `dotted_date` reads the continental numeric date "15.06.2020" as one da
 
 **2. `constructions`**: this is the heart of it. A **construction** is a *recipe* for one kind of date phrase, and each recipe lists the **word order** your language uses. An order is a short sequence of **slots** and **connector words**. A slot is an uppercase name for "a thing that goes here".
 
-A connector word is lowercase and matches a `.voc` file. Read the uppercase names as placeholders. For example, from Malay:
+A connector word is lowercase and matches a list in `vocab.json`. Read the uppercase names as placeholders. For example, from Malay:
 
 ```text
 "calendar_date": {
@@ -425,9 +438,9 @@ Most locales are **unverified but internally consistent**: their expected values
 
 A locale becomes verified when a speaker of it signs the corpus off. The reviewer is named where that has happened, with something a reader can go and check. Danish has one: @andlo, whose native review of the open questions in `docs/languages/da.md` is issues #887 and #888. Every other locale waits for a reader. Until a reader checks it, its corpus shows that the engine is self-consistent. It does not show that the engine understands the language.
 
-Being a reviewer for a locale elsewhere in the organisation is not a record here. The name goes on this page when the person has read these files and said so where it can be cited.
+Being a reviewer for a locale elsewhere in the organisation is not a record here. The name goes on this page when the person has read these lists and said so where it can be cited.
 
-This is why the vocabulary comment convention above asks for a name and not a verdict: "confirmed by a native speaker" is a claim about a person, and only a person can make it. No automated check, corpus frequency count or model reading may be written up as a native review. A speaker outranks every signal the project owns, which is precisely what makes the word worth protecting.
+This is why the citation rule below asks for a name and not a verdict: "confirmed by a native speaker" is a claim about a person, and only a person can make it. No automated check, corpus frequency count or model reading may be written up as a native review. A speaker outranks every signal the project owns, which is precisely what makes the word worth protecting.
 
 Two things make it approachable:
 
@@ -474,24 +487,32 @@ A green run, no failures, means your language works. That's the moment you're ai
 
 Here is the rule the project cares about most, and the reason for it.
 
-Every word you add must trace to a **real source**. This holds for a month name, a marker and a season word. A real source is a dictionary, a published grammar, a language authority or your own confirmation as a native speaker. And you *write that source down*, as a `#` comment at the top of the `.voc` file.
+Every word you add must trace to a **real source**. This holds for a month name, a marker and a season word. A real source is a dictionary, a published grammar, a language authority or your own confirmation as a native speaker. And you *write that source down*, in the `sources` object of `vocab.json`, under the name of the list it supports.
 
 **Why.** chronologia is used to read dates people wrote, in dozens of languages its maintainers cannot all speak. The only thing that makes a Kabyle or Tagalog month list trustworthy to someone who doesn't speak it is a **source they can check**. A citation turns "someone typed this in" into "this is documented." That is the difference between data people can rely on and data they cannot.
 
-**How**. Put one or two comment lines at the top of the file:
+**How**. Add the name of the list to the `sources` object, with one or two lines of text:
 
-```text
-# Month names from the Dewan Bahasa dan Pustaka standard dictionary (2015 ed.).
-# https://prpm.dbp.gov.my/
-januari
+```json
+"sources": {
+ "month_1": [
+  "Month names from the Dewan Bahasa dan Pustaka standard dictionary (2015 ed.).",
+  "https://prpm.dbp.gov.my/"
+ ]
+}
 ```
+
+Every name in `sources` must also be a name in `words`. A test checks this.
 
 **A native speaker's confirmation counts**: you are a valid source for your own language. Just say so plainly:
 
-```text
-# Colloquial forms confirmed by a native speaker, 2026.
-# Standard forms cross-checked against Wiktionary.
-esok
+```json
+"sources": {
+ "named_day_1": [
+  "Colloquial forms confirmed by a native speaker.",
+  "Standard forms cross-checked against Wiktionary."
+ ]
+}
 ```
 
 The goal is not bureaucracy. It's that the next person, maintainer or contributor, can see *where this came from* and trust it.
@@ -502,20 +523,21 @@ The goal is not bureaucracy. It's that the next person, maintainer or contributo
 
 Sooner or later you will reach a construction your language does not have, or has in a way your sources cannot agree on. Leaving it out is a correct outcome. A locale that ships fewer constructions honestly is worth more than one that ships them all by guessing. Nobody will ask you to fill every file.
 
-The three shapes this takes are all normal. Your language may simply lack the concept. Maltese has no word for the day before yesterday, so it ships no `named_day_-2.voc` and that phrase returns nothing. A word may have a form about which your sources contradict each other. Serbian *nedelja* is Sunday in one dictionary and the week in another, in the very case that "last" and "next" use.
+The three shapes this takes are all normal. Your language may simply lack the concept. Maltese has no word for the day before yesterday, so it ships no `named_day_-2` and that phrase returns nothing. A word may have a form about which your sources contradict each other. Serbian *nedelja* is Sunday in one dictionary and the week in another, in the very case that "last" and "next" use.
 
 So that word answers neither, and the unambiguous *sedmica* carries the week reading. Or the reference data may define no boundaries for something that another language pins down. Several locales ship no day-period bands at all, and invent no clock times for "morning".
 
 The one thing that is never acceptable is a form you made up because the neighbouring language has one. That produces a confident wrong answer, which the caller cannot detect and cannot argue with.
 
-**Pin the refusal, don't just omit it**. An empty gap looks identical to an oversight, and the next contributor will helpfully fill it. Two habits prevent that. Write the reason as a `#` header comment in the nearest related file, the file that *does* ship. Name the source you consulted and what it failed to establish:
+**Pin the refusal, don't just omit it**. An empty gap looks identical to an oversight, and the next contributor will helpfully fill it. Two habits prevent that. Write the reason in `sources`, under the nearest list that *does* ship. Name the source you consulted and what it failed to establish:
 
-```text
-# pitgħada, "the day after tomorrow", with its attested variant bitgħada.
-# There is no named_day_-2 file: Maltese has no sourced word for the day
-# before yesterday, CLDR carries no relative-type--2 field for mt, and none
-# is invented here.  en.wiktionary.org, pitgħada.
-pitgħada
+```json
+"named_day_2": [
+ "pitgħada, \"the day after tomorrow\", with its attested variant bitgħada.",
+ "There is no named_day_-2 list: Maltese has no sourced word for the day",
+ "before yesterday, CLDR carries no relative-type--2 field for mt, and none",
+ "is invented here.  en.wiktionary.org, pitgħada."
+]
 ```
 
 Then assert the refusal in your corpus, the same way you assert the readings that work. Some locales keep a dedicated `test_<code>_refusals.py` module for exactly this:
@@ -540,7 +562,7 @@ You don't need to be a git expert. The gentle version:
 
 1. **Fork** the repository on GitHub (a "fork" is your own copy) using the Fork button.
 2. **Create a branch** with a clear name like `add-language-<your code>`.
-3. **Add your files**: the `chronologia/locale/<your code>/` folder and the `test/nl_corpus_<your code>/` folder.
+3. **Add your files**: `vocab.json` and `lang.json` in the `chronologia/locale/<your code>/` folder and the `test/nl_corpus_<your code>/` folder.
 4. **Run the tests** for your language (the command above) and make sure they're green.
 5. **Open a pull request** back to the project, describing the language you added and citing your sources.
 
@@ -550,29 +572,32 @@ If any of that is unfamiliar, say so in an issue first. The maintainers prefer t
 
 ## A worked mini-example: adding one month spelling
 
-Let's walk the smallest possible change end to end, so you can see the whole loop. Suppose Malay already works, but you notice that April is missing a common spelling your region uses, and you want to add it.
+Let's walk the smallest possible change end to end, so you can see the whole loop. Suppose Malay already works, but you notice that April is missing the common short spelling `apr`, and you want to add it.
 
-**Step 1, find the file**. April is month 4, so the file is `chronologia/locale/ms/month_4.voc`. Open it in a text editor.
+**Step 1, find the list**. April is month 4, so the list is `month_4` in `chronologia/locale/ms/vocab.json`. Open the file in a text editor.
 
-**Step 2, add the surface and its source**. Add your spelling on its own line, lowercase, and note where it comes from:
+**Step 2, add the surface**. Add your spelling to the list, lowercase and in alphabetical order. Here the new spelling is `apr`:
 
-```text
-# Standard month name from Dewan Bahasa dan Pustaka.
-# Regional spelling confirmed by a native speaker, 2026.
-april
+```json
+"month_4": [
+ "apr",
+ "april"
+]
 ```
+
+Note where the spelling comes from in the lines under `month_4` in `sources`.
 
 **Step 3, add a test that proves it reads**. Open the Malay calendar test, `test/nl_corpus_ms/test_nl_calendar.py`. Add a case that uses the spelling you add in a full date, with the date you know it means.
 
-**Step 4, run it**. From the top of the repo:
+**Step 4, run it**. From the top of the repo, run the corpus and the vocabulary schema test:
 
 ```bash
-PYTEST_DISABLE_PLUGIN_AUTOLOAD=1 python -m pytest test/nl_corpus_ms/ -q
+PYTEST_DISABLE_PLUGIN_AUTOLOAD=1 python -m pytest test/nl_corpus_ms/ test/test_locale_schema.py -q
 ```
 
 **Step 5, see green**. No failures means chronologia reads your spelling and still reads everything it read before. You're done: commit and open a pull request.
 
-That five-step loop is the whole rhythm of contributing a language. The steps are *find the file, add the word with a source, add a test, run it, see green*. It is the same loop for one spelling and for a whole locale.
+That five-step loop is the whole rhythm of contributing a language. The steps are *find the list, add the word with a source, add a test, run it, see green*. It is the same loop for one spelling and for a whole locale.
 
 ---
 

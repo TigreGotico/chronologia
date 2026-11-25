@@ -4,7 +4,7 @@
 ``calendar_date`` order let a marker precede a bare MONTH, so the marker fell
 out of the match.  The base grammar now carries one marker-prefixed order
 ("during MONTH DAY? YEAR?") and each locale supplies the locative preposition
-in ``marker_during.voc``.
+in ``marker_during``.
 
 The span never moves -- every phrase below is asserted equal to the bare-month
 reading of the same month, and to the January after the anchor, January 2027,
@@ -94,7 +94,7 @@ def test_offset_and_postposed_markers_stay_out(lang, phrase, marker):
                                          ("sv", "i jul"), ("sv", "under jul")])
 def test_scandinavian_jul_stays_christmas(lang, phrase):
     # "jul" is both Christmas and the July abbreviation these locales ship in
-    # month_7.voc.  They therefore opt out of the marker-prefixed month order:
+    # month_7.  They therefore opt out of the marker-prefixed month order:
     # with it, "i jul" would parse as the month and silently displace the
     # holiday.
     r = extract_timespan(phrase, lang, _REF)

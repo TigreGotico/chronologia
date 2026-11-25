@@ -18,7 +18,7 @@ pip install chronologia
 
 That is everything. You need Python 3.11 or newer. The reckoning core is pure standard library. The natural-language layer needs two small pure-Python helpers.
 
-The package **numtag** reads the numbers of 40 of the 61 languages. [The language table](languages/index.md) lists them. The package **ovos-spec-tools** loads each language's vocabulary. Nothing here ever talks to the internet.
+The package **numtag** reads the numbers of 40 of the 61 languages. [The language table](languages/index.md) lists them. Nothing here ever talks to the internet.
 
 ## Your first extraction (60 seconds)
 

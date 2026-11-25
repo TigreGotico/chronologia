@@ -1,0 +1,842 @@
+{
+ "format_version": 1,
+ "words": {
+  "clock_dir_past": [
+   "over"
+  ],
+  "clock_dir_to": [
+   "i"
+  ],
+  "clock_fraction_15": [
+   "kvart"
+  ],
+  "clock_fraction_30": [
+   "halv"
+  ],
+  "clock_landmark_0": [
+   "midnat"
+  ],
+  "clock_landmark_720": [
+   "middag"
+  ],
+  "clock_meridiem_am": [
+   "formiddagen",
+   "morgenen"
+  ],
+  "clock_meridiem_night": [
+   "natten"
+  ],
+  "clock_meridiem_pm": [
+   "aftenen",
+   "eftermiddagen"
+  ],
+  "clock_zone_0": [
+   "gmt",
+   "utc"
+  ],
+  "daypart_aften_da": [
+   "aften",
+   "aftenen"
+  ],
+  "daypart_eftermiddag_da": [
+   "eftermiddag",
+   "eftermiddagen"
+  ],
+  "daypart_formiddag_da": [
+   "formiddag",
+   "formiddagen"
+  ],
+  "daypart_morgen_da": [
+   "morgenen"
+  ],
+  "daypart_nat_da": [
+   "nat",
+   "natten"
+  ],
+  "marker_ad": [
+   "e. kr.",
+   "e.kr.",
+   "efter kristus"
+  ],
+  "marker_after": [
+   "efter"
+  ],
+  "marker_ago": [
+   "siden"
+  ],
+  "marker_and": [
+   "og",
+   "til"
+  ],
+  "marker_article": [
+   "de",
+   "den",
+   "det"
+  ],
+  "marker_article_noun": [
+   "timer"
+  ],
+  "marker_at": [
+   "kl",
+   "klokken"
+  ],
+  "marker_bc": [
+   "f. kr.",
+   "f.kr.",
+   "før kristus"
+  ],
+  "marker_before": [
+   "for",
+   "før"
+  ],
+  "marker_between": [
+   "mellem"
+  ],
+  "marker_bp": [
+   "bp"
+  ],
+  "marker_business": [
+   "arbejdsdag",
+   "arbejdsdage",
+   "hverdag",
+   "hverdage"
+  ],
+  "marker_date_lead": [
+   "på"
+  ],
+  "marker_during": [
+   "under"
+  ],
+  "marker_every": [
+   "hver",
+   "hvert"
+  ],
+  "marker_freq_daily": [
+   "dagligt"
+  ],
+  "marker_freq_monthly": [
+   "månedligt"
+  ],
+  "marker_freq_weekly": [
+   "ugentligt"
+  ],
+  "marker_freq_yearly": [
+   "årligt"
+  ],
+  "marker_from": [
+   "fra"
+  ],
+  "marker_future": [
+   "om"
+  ],
+  "marker_half": [
+   "halvdel",
+   "halvdelen"
+  ],
+  "marker_in": [
+   "om"
+  ],
+  "marker_indef": [
+   "en",
+   "et"
+  ],
+  "marker_last": [
+   "forrige",
+   "sidste"
+  ],
+  "marker_month_word": [
+   "måned",
+   "måneden"
+  ],
+  "marker_new": [
+   "ny"
+  ],
+  "marker_next": [
+   "kommende",
+   "næste"
+  ],
+  "marker_of": [
+   "af",
+   "i"
+  ],
+  "marker_ordlast": [
+   "sidste"
+  ],
+  "marker_past": [
+   "siden"
+  ],
+  "marker_present": [
+   "idag",
+   "nu"
+  ],
+  "marker_q": [
+   "q"
+  ],
+  "marker_quarter_word": [
+   "kvartal",
+   "kvartaler",
+   "kvartalet"
+  ],
+  "marker_recur_for": [
+   "i"
+  ],
+  "marker_since": [
+   "siden"
+  ],
+  "marker_this": [
+   "denne",
+   "dette"
+  ],
+  "marker_to": [
+   "til"
+  ],
+  "marker_until": [
+   "indtil",
+   "til"
+  ],
+  "marker_week_num": [
+   "uge",
+   "uger"
+  ],
+  "marker_weekof": [
+   "ugen den",
+   "ugen med",
+   "ugen omkring"
+  ],
+  "marker_year_word": [
+   "år",
+   "året"
+  ],
+  "month_1": [
+   "jan",
+   "januar"
+  ],
+  "month_10": [
+   "okt",
+   "oktober"
+  ],
+  "month_11": [
+   "nov",
+   "november"
+  ],
+  "month_12": [
+   "dec",
+   "december"
+  ],
+  "month_2": [
+   "feb",
+   "februar"
+  ],
+  "month_3": [
+   "mar",
+   "marts"
+  ],
+  "month_4": [
+   "apr",
+   "april"
+  ],
+  "month_5": [
+   "maj"
+  ],
+  "month_6": [
+   "jun",
+   "juni"
+  ],
+  "month_7": [
+   "jul",
+   "juli"
+  ],
+  "month_8": [
+   "aug",
+   "august"
+  ],
+  "month_9": [
+   "sep",
+   "september"
+  ],
+  "months": [
+   "april",
+   "august",
+   "december",
+   "februar",
+   "januar",
+   "juli",
+   "juni",
+   "maj",
+   "marts",
+   "november",
+   "oktober",
+   "september"
+  ],
+  "named_day_-1": [
+   "går",
+   "i går",
+   "igår"
+  ],
+  "named_day_-2": [
+   "forgårs",
+   "i forgårs",
+   "iforgårs"
+  ],
+  "named_day_0": [
+   "i dag",
+   "idag"
+  ],
+  "named_day_1": [
+   "i morgen",
+   "imorgen",
+   "morgen"
+  ],
+  "named_day_2": [
+   "i overmorgen",
+   "iovermorgen",
+   "overmorgen"
+  ],
+  "ordinal_suffixes": [
+   "."
+  ],
+  "period_archean": [
+   "arkæikum"
+  ],
+  "period_bronze_age_gb": [
+   "bronzealderen"
+  ],
+  "period_cambrian": [
+   "kambrium"
+  ],
+  "period_carboniferous": [
+   "karbon"
+  ],
+  "period_cenozoic": [
+   "kænozoikum"
+  ],
+  "period_cretaceous": [
+   "kridt"
+  ],
+  "period_devonian": [
+   "devon"
+  ],
+  "period_eocene": [
+   "eocæn"
+  ],
+  "period_holocene": [
+   "holocæn"
+  ],
+  "period_iron_age_gb": [
+   "jernalderen"
+  ],
+  "period_jurassic": [
+   "jura"
+  ],
+  "period_mesozoic": [
+   "mesozoikum"
+  ],
+  "period_miocene": [
+   "miocæn"
+  ],
+  "period_neogene": [
+   "neogen"
+  ],
+  "period_neolithic_gb": [
+   "neolitikum",
+   "stenalderen"
+  ],
+  "period_oligocene": [
+   "oligocæn"
+  ],
+  "period_ordovician": [
+   "ordovicium"
+  ],
+  "period_paleocene": [
+   "paleocæn"
+  ],
+  "period_paleogene": [
+   "paleogen"
+  ],
+  "period_paleozoic": [
+   "paleozoikum"
+  ],
+  "period_part_early": [
+   "begyndelsen",
+   "tidlig",
+   "tidlige"
+  ],
+  "period_part_late": [
+   "sen",
+   "sene",
+   "slutningen"
+  ],
+  "period_part_mid": [
+   "midt",
+   "midten"
+  ],
+  "period_permian": [
+   "perm"
+  ],
+  "period_phanerozoic": [
+   "fanerozoikum"
+  ],
+  "period_pleistocene": [
+   "pleistocæn"
+  ],
+  "period_pliocene": [
+   "pliocæn"
+  ],
+  "period_proterozoic": [
+   "proterozoikum"
+  ],
+  "period_quaternary": [
+   "kvartær"
+  ],
+  "period_silurian": [
+   "silur"
+  ],
+  "period_triassic": [
+   "trias"
+  ],
+  "scale_1000": [
+   "tusind"
+  ],
+  "scale_1000000": [
+   "million",
+   "millioner"
+  ],
+  "scale_1000000000": [
+   "milliard",
+   "milliarder"
+  ],
+  "scope_unit_century": [
+   "århundrede",
+   "århundreder",
+   "århundredet"
+  ],
+  "scope_unit_decade": [
+   "årti",
+   "årtiet"
+  ],
+  "scope_unit_millennium": [
+   "årtusinde",
+   "årtusindet"
+  ],
+  "season_fall": [
+   "efterår",
+   "efteråret"
+  ],
+  "season_spring": [
+   "forår",
+   "foråret"
+  ],
+  "season_summer": [
+   "sommer",
+   "sommeren"
+  ],
+  "season_winter": [
+   "vinter",
+   "vinteren"
+  ],
+  "special_weekend": [
+   "weekend",
+   "weekenden"
+  ],
+  "unit1_century": [
+   "århundrede",
+   "århundredet"
+  ],
+  "unit1_day": [
+   "dag"
+  ],
+  "unit1_decade": [
+   "årti",
+   "årtiet"
+  ],
+  "unit1_hour": [
+   "time"
+  ],
+  "unit1_millennium": [
+   "årtusinde",
+   "årtusindet"
+  ],
+  "unit1_minute": [
+   "minut"
+  ],
+  "unit1_month": [
+   "måned",
+   "måneden"
+  ],
+  "unit1_second": [
+   "sekund"
+  ],
+  "unit1_week": [
+   "uge",
+   "ugen"
+  ],
+  "unit1_year": [
+   "år",
+   "året"
+  ],
+  "unit_century": [
+   "århundrede",
+   "århundreder",
+   "århundredet"
+  ],
+  "unit_day": [
+   "dag",
+   "dage"
+  ],
+  "unit_decade": [
+   "årti",
+   "årtier",
+   "årtiet"
+  ],
+  "unit_hour": [
+   "time",
+   "timer"
+  ],
+  "unit_millennium": [
+   "årtusinde",
+   "årtusinder",
+   "årtusindet"
+  ],
+  "unit_minute": [
+   "minut",
+   "minutter"
+  ],
+  "unit_month": [
+   "måned",
+   "måneden",
+   "måneder"
+  ],
+  "unit_second": [
+   "sekund",
+   "sekunder"
+  ],
+  "unit_week": [
+   "uge",
+   "ugen",
+   "uger"
+  ],
+  "unit_year": [
+   "år",
+   "året"
+  ],
+  "weekday_0": [
+   "mandag"
+  ],
+  "weekday_1": [
+   "tirsdag"
+  ],
+  "weekday_2": [
+   "onsdag"
+  ],
+  "weekday_3": [
+   "torsdag"
+  ],
+  "weekday_4": [
+   "fredag"
+  ],
+  "weekday_5": [
+   "lørdag"
+  ],
+  "weekday_6": [
+   "søndag"
+  ],
+  "weekday_abbr_0": [
+   "man"
+  ],
+  "weekday_abbr_1": [
+   "tir"
+  ],
+  "weekday_abbr_2": [
+   "ons"
+  ],
+  "weekday_abbr_3": [
+   "tor"
+  ],
+  "weekday_abbr_4": [
+   "fre"
+  ],
+  "weekday_abbr_5": [
+   "lør"
+  ],
+  "weekday_abbr_6": [
+   "søn"
+  ]
+ },
+ "sources": {
+  "clock_meridiem_am": [
+   "Postposed morning daypart words that keep a bare 12-hour clock reading in",
+   "the AM half (meridiem offset 0), the am counterpart of",
+   "clock_meridiem_pm.voc.  \"klokken ni om formiddagen\" == 09:00; only the noon",
+   "edge is rewritten (12 -> 0).  Bands: Unicode CLDR 47 Day Period Rules,",
+   "locale da -- morgen [05:00, 10:00) and formiddag [10:00, 12:00) are the am",
+   "half.  (\"natten\" is NOT here: the night daypart crosses midnight -- see",
+   "clock_meridiem_night.voc.)"
+  ],
+  "clock_meridiem_night": [
+   "The NIGHT daypart is a midnight-crossing BAND, not the morning/night AM",
+   "half it was previously grouped in: \"klokken tre om natten\" (three at night)",
+   "is 03:00 but \"klokken elleve om natten\" (eleven at night) is 23:00, and",
+   "twelve is midnight 00:00.  Small hours 1..5 stay AM, late-night hours 6..11",
+   "are PM, twelve is midnight (the band-split lives in the resolver",
+   "_clock_hms).  The AM ceiling follows the CLDR da nat band [00:00, 05:00)",
+   "transcribed for da in chronologia/dayparts.py."
+  ],
+  "clock_meridiem_pm": [
+   "Postposed daypart words that put a bare 12-hour clock reading into the",
+   "afternoon/evening half (meridiem offset +12), exactly as the de locale's",
+   "\"nachmittags\"/\"abends\" already do.  Danish trails these definite surfaces",
+   "after the \"om\" particle (\"kvart over tre om eftermiddagen\" == 15:15,",
+   "\"klokken otte om aftenen\" == 20:00).",
+   "Bands: Unicode CLDR 47 Day Period Rules, locale da -- eftermiddag",
+   "[12:00, 18:00) and aften [18:00, 24:00) are the pm half."
+  ],
+  "daypart_aften_da": [
+   "Band boundaries: Unicode CLDR 47 Day Period Rules, locale da",
+   "(https://www.unicode.org/cldr/charts/47/supplemental/day_periods.html),",
+   "transcribed in chronologia/dayparts.py as [18:00, 24:00).",
+   "Sources: Den Danske Ordbog (https://ordnet.dk/ddo/ordbog/formiddag),",
+   "which gives formiddag as \"den del af dagen der ligger mellem morgen og",
+   "middag, ca. mellem kl. 9 og 12\". The dictionary's approximate 9 is the",
+   "chart's 10; the chart is followed, being the machine-readable source",
+   "every other language here is transcribed from."
+  ],
+  "daypart_eftermiddag_da": [
+   "Band boundaries: Unicode CLDR 47 Day Period Rules, locale da",
+   "(https://www.unicode.org/cldr/charts/47/supplemental/day_periods.html),",
+   "transcribed in chronologia/dayparts.py as [12:00, 18:00).",
+   "Sources: Den Danske Ordbog (https://ordnet.dk/ddo/ordbog/formiddag),",
+   "which gives formiddag as \"den del af dagen der ligger mellem morgen og",
+   "middag, ca. mellem kl. 9 og 12\". The dictionary's approximate 9 is the",
+   "chart's 10; the chart is followed, being the machine-readable source",
+   "every other language here is transcribed from."
+  ],
+  "daypart_formiddag_da": [
+   "Band boundaries: Unicode CLDR 47 Day Period Rules, locale da",
+   "(https://www.unicode.org/cldr/charts/47/supplemental/day_periods.html),",
+   "transcribed in chronologia/dayparts.py as [10:00, 12:00).",
+   "Sources: Den Danske Ordbog (https://ordnet.dk/ddo/ordbog/formiddag),",
+   "which gives formiddag as \"den del af dagen der ligger mellem morgen og",
+   "middag, ca. mellem kl. 9 og 12\". The dictionary's approximate 9 is the",
+   "chart's 10; the chart is followed, being the machine-readable source",
+   "every other language here is transcribed from."
+  ],
+  "daypart_morgen_da": [
+   "Band boundaries: Unicode CLDR 47 Day Period Rules, locale da",
+   "(https://www.unicode.org/cldr/charts/47/supplemental/day_periods.html),",
+   "transcribed in chronologia/dayparts.py as [05:00, 10:00).",
+   "",
+   "Resolved by native review (docs/languages/da.md, \"Open questions\").",
+   "Only the DEFINITE form ships here, deliberately excluding the bare",
+   "\"morgen\" that sibling dayparts (aften/aftenen, nat/natten) both ship --",
+   "bare \"morgen\" is the relative-day word for \"tomorrow\" (\"i morgen\"), and",
+   "registering it as a daypart surface too would collide with that reading",
+   "on every sentence. \"morgenen\" never appears in the tomorrow idiom (\"i",
+   "morgen\" is always the bare form), so it carries no such ambiguity. The",
+   "same surface is already used safely as a meridiem marker in",
+   "clock_meridiem_am.voc (\"klokken ni om morgenen\" == 09:00)."
+  ],
+  "daypart_nat_da": [
+   "Band boundaries: Unicode CLDR 47 Day Period Rules, locale da",
+   "(https://www.unicode.org/cldr/charts/47/supplemental/day_periods.html),",
+   "transcribed in chronologia/dayparts.py as [00:00, 05:00).",
+   "Sources: Den Danske Ordbog (https://ordnet.dk/ddo/ordbog/formiddag),",
+   "which gives formiddag as \"den del af dagen der ligger mellem morgen og",
+   "middag, ca. mellem kl. 9 og 12\". The dictionary's approximate 9 is the",
+   "chart's 10; the chart is followed, being the machine-readable source",
+   "every other language here is transcribed from."
+  ],
+  "marker_article_noun": [
+   "Unit surfaces that are also a noun the indefinite article \"en\" takes, so",
+   "\"en <word>\" names that noun and not a count of one unit.",
+   "\"timer\" is the plural of \"time\" (hour) and also the common-gender loan noun",
+   "\"timer\" (a device), with the definite form \"timeren\" and the plural",
+   "\"timere\": Wiktionary, da \"timer\" (https://en.wiktionary.org/wiki/timer)."
+  ],
+  "marker_date_lead": [
+   "Words that open a date or a clock time and belong to it.",
+   "Each word is shown opening a time or date phrase on the page named in brackets,",
+   "saved under knowledge/wiki/audits/chronologia/parity-fixes/marker-strand/sources/ in the workspace.",
+   "på: da.Wiktionary \"på\": \"En tidsmæssig angivelse: Det sker på tirsdag\" [dawikt-på.wikitext.txt]"
+  ],
+  "marker_ordlast": [
+   "Danish \"last\" ordinal determiner.  \"sidste mandag i maj\".",
+   "Den Danske Ordbog, \"sidste\"."
+  ],
+  "month_1": [
+   "Unicode CLDR 47, locale da, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/da/ca-gregorian.json): months.format.wide,",
+   "months.stand-alone.wide, months.format.abbreviated,",
+   "months.stand-alone.abbreviated.  CLDR spells the abbreviations with a",
+   "trailing period; the surfaces here drop it."
+  ],
+  "month_10": [
+   "Unicode CLDR 47, locale da, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/da/ca-gregorian.json): months.format.wide,",
+   "months.stand-alone.wide, months.format.abbreviated,",
+   "months.stand-alone.abbreviated.  CLDR spells the abbreviations with a",
+   "trailing period; the surfaces here drop it."
+  ],
+  "month_11": [
+   "Unicode CLDR 47, locale da, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/da/ca-gregorian.json): months.format.wide,",
+   "months.stand-alone.wide, months.format.abbreviated,",
+   "months.stand-alone.abbreviated.  CLDR spells the abbreviations with a",
+   "trailing period; the surfaces here drop it."
+  ],
+  "month_12": [
+   "Unicode CLDR 47, locale da, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/da/ca-gregorian.json): months.format.wide,",
+   "months.stand-alone.wide, months.format.abbreviated,",
+   "months.stand-alone.abbreviated.  CLDR spells the abbreviations with a",
+   "trailing period; the surfaces here drop it."
+  ],
+  "month_2": [
+   "Unicode CLDR 47, locale da, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/da/ca-gregorian.json): months.format.wide,",
+   "months.stand-alone.wide, months.format.abbreviated,",
+   "months.stand-alone.abbreviated.  CLDR spells the abbreviations with a",
+   "trailing period; the surfaces here drop it."
+  ],
+  "month_3": [
+   "Unicode CLDR 47, locale da, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/da/ca-gregorian.json): months.format.wide,",
+   "months.stand-alone.wide, months.format.abbreviated,",
+   "months.stand-alone.abbreviated.  CLDR spells the abbreviations with a",
+   "trailing period; the surfaces here drop it."
+  ],
+  "month_4": [
+   "Unicode CLDR 47, locale da, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/da/ca-gregorian.json): months.format.wide,",
+   "months.stand-alone.wide, months.format.abbreviated,",
+   "months.stand-alone.abbreviated.  CLDR spells the abbreviations with a",
+   "trailing period; the surfaces here drop it."
+  ],
+  "month_5": [
+   "Unicode CLDR 47, locale da, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/da/ca-gregorian.json): months.format.wide,",
+   "months.stand-alone.wide, months.format.abbreviated,",
+   "months.stand-alone.abbreviated."
+  ],
+  "month_6": [
+   "Unicode CLDR 47, locale da, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/da/ca-gregorian.json): months.format.wide,",
+   "months.stand-alone.wide, months.format.abbreviated,",
+   "months.stand-alone.abbreviated.  CLDR spells the abbreviations with a",
+   "trailing period; the surfaces here drop it."
+  ],
+  "month_7": [
+   "Unicode CLDR 47, locale da, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/da/ca-gregorian.json): months.format.wide,",
+   "months.stand-alone.wide, months.format.abbreviated,",
+   "months.stand-alone.abbreviated.  CLDR spells the abbreviations with a",
+   "trailing period; the surfaces here drop it."
+  ],
+  "month_8": [
+   "Unicode CLDR 47, locale da, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/da/ca-gregorian.json): months.format.wide,",
+   "months.stand-alone.wide, months.format.abbreviated,",
+   "months.stand-alone.abbreviated.  CLDR spells the abbreviations with a",
+   "trailing period; the surfaces here drop it."
+  ],
+  "month_9": [
+   "Unicode CLDR 47, locale da, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/da/ca-gregorian.json): months.format.wide,",
+   "months.stand-alone.wide, months.format.abbreviated,",
+   "months.stand-alone.abbreviated.  CLDR spells the abbreviations with a",
+   "trailing period; the surfaces here drop it."
+  ],
+  "named_day_-1": [
+   "Unicode CLDR 47, locale da, cldr-dates-full/main/da/dateFields.json.",
+   "day.relative-type--1."
+  ],
+  "named_day_-2": [
+   "Unicode CLDR 47, locale da, cldr-dates-full/main/da/dateFields.json.",
+   "day.relative-type--2."
+  ],
+  "named_day_0": [
+   "Unicode CLDR 47, locale da, cldr-dates-full/main/da/dateFields.json.",
+   "day.relative-type-0."
+  ],
+  "named_day_1": [
+   "Unicode CLDR 47, locale da, cldr-dates-full/main/da/dateFields.json.",
+   "day.relative-type-1."
+  ],
+  "named_day_2": [
+   "Unicode CLDR 47, locale da, cldr-dates-full/main/da/dateFields.json.",
+   "day.relative-type-2."
+  ],
+  "unit1_second": [
+   "Unicode CLDR 47, locale da, cldr-units-full/main/da/units.json,",
+   "duration-second, unitPattern-count-one \"sekund\"."
+  ],
+  "unit_second": [
+   "Unicode CLDR 47, locale da, cldr-units-full/main/da/units.json,",
+   "duration-second: one \"sekund\", other \"sekunder\"."
+  ],
+  "weekday_0": [
+   "Unicode CLDR 47, locale da, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/da/ca-gregorian.json): days.format.wide,",
+   "days.stand-alone.wide."
+  ],
+  "weekday_1": [
+   "Unicode CLDR 47, locale da, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/da/ca-gregorian.json): days.format.wide,",
+   "days.stand-alone.wide."
+  ],
+  "weekday_2": [
+   "Unicode CLDR 47, locale da, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/da/ca-gregorian.json): days.format.wide,",
+   "days.stand-alone.wide."
+  ],
+  "weekday_3": [
+   "Unicode CLDR 47, locale da, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/da/ca-gregorian.json): days.format.wide,",
+   "days.stand-alone.wide."
+  ],
+  "weekday_4": [
+   "Unicode CLDR 47, locale da, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/da/ca-gregorian.json): days.format.wide,",
+   "days.stand-alone.wide."
+  ],
+  "weekday_5": [
+   "Unicode CLDR 47, locale da, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/da/ca-gregorian.json): days.format.wide,",
+   "days.stand-alone.wide."
+  ],
+  "weekday_6": [
+   "Unicode CLDR 47, locale da, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/da/ca-gregorian.json): days.format.wide,",
+   "days.stand-alone.wide."
+  ],
+  "weekday_abbr_0": [
+   "Unicode CLDR 47, locale da, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/da/ca-gregorian.json): days.format.abbreviated,",
+   "days.stand-alone.abbreviated.  CLDR spells the abbreviations with a trailing",
+   "period; the surfaces here drop it."
+  ],
+  "weekday_abbr_2": [
+   "Unicode CLDR 47, locale da, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/da/ca-gregorian.json): days.format.abbreviated,",
+   "days.stand-alone.abbreviated.  CLDR spells the abbreviations with a trailing",
+   "period; the surfaces here drop it."
+  ],
+  "weekday_abbr_4": [
+   "Unicode CLDR 47, locale da, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/da/ca-gregorian.json): days.format.abbreviated,",
+   "days.stand-alone.abbreviated.  CLDR spells the abbreviations with a trailing",
+   "period; the surfaces here drop it."
+  ],
+  "weekday_abbr_5": [
+   "Unicode CLDR 47, locale da, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/da/ca-gregorian.json): days.format.abbreviated,",
+   "days.stand-alone.abbreviated.  CLDR spells the abbreviations with a trailing",
+   "period; the surfaces here drop it."
+  ],
+  "weekday_abbr_6": [
+   "Unicode CLDR 47, locale da, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/da/ca-gregorian.json): days.format.abbreviated,",
+   "days.stand-alone.abbreviated.  CLDR spells the abbreviations with a trailing",
+   "period; the surfaces here drop it."
+  ]
+ }
+}

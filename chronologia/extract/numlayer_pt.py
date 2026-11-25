@@ -9,33 +9,24 @@ its mention.  Every other mention folds to its number.
 """
 from __future__ import annotations
 
-import os
 from dataclasses import replace
+from functools import partial
 from typing import Dict, FrozenSet, Set, Tuple
 
 from numtag import Kind
 
 from chronologia.extract.model import Token
-from chronologia.extract.numfold_romance import (_LOCALE_ROOT,
-                                                 _collapse_h_clock, _glue)
+from chronologia.extract.numfold_romance import _collapse_h_clock, _glue
 from chronologia.extract.numfold_engine import reindex
 from chronologia.extract.numlayer import (CountWords, counts_things,
-                                          fold_mentions, voc_file_words,
+                                          fold_mentions, locale_words,
                                           mark_counts, mention_number,
                                           scale_factor, scale_factors,
+                                          vocabulary,
                                           withhold_split_counts)
 
 
-def _voc(*prefixes: str) -> FrozenSet[str]:
-    """The pt surfaces of every ``locale/pt/<prefix>*.voc`` file."""
-    folder = os.path.join(_LOCALE_ROOT, "pt")
-    out = set()
-    for name in os.listdir(folder):
-        if name.startswith(prefixes) and name.endswith(".voc"):
-            with open(os.path.join(folder, name), encoding="utf-8") as fh:
-                out.update(line.strip().lower() for line in fh
-                           if line.strip() and not line.startswith("#"))
-    return frozenset(out)
+_voc = partial(locale_words, "pt")
 
 
 #: The feminine ordinals that are also weekday names, singular and plural:
@@ -94,8 +85,8 @@ _MONTHS = _voc("month_")
 _COUNT_WORDS = CountWords(
     scales=_SCALES, cues=_YEAR_CUES | _voc("marker_since"), months=_MONTHS,
     units=_UNITS, currencies=_voc("currency"),
-    codes=voc_file_words("pt", "currency_code.voc"),
-    qualifiers=voc_file_words("pt", "currency_qualifier.voc"),
+    codes=frozenset(vocabulary("pt")["currency_code"]),
+    qualifiers=frozenset(vocabulary("pt")["currency_qualifier"]),
     ranges={"desde": _voc("marker_until"), "de": _voc("marker_to")},
     amounts={"entre": _voc("marker_and")})
 

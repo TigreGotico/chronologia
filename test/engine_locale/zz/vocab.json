@@ -1,0 +1,250 @@
+{
+ "format_version": 1,
+ "words": {
+  "clock_dir_past": [
+   "zpast"
+  ],
+  "clock_dir_to": [
+   "zto"
+  ],
+  "clock_fraction_15": [
+   "zquarter"
+  ],
+  "clock_fraction_30": [
+   "zhalf"
+  ],
+  "clock_meridiem_am": [
+   "zam"
+  ],
+  "clock_meridiem_pm": [
+   "zpm"
+  ],
+  "cycle_nundinal_0": [
+   "znuna"
+  ],
+  "cycle_nundinal_3": [
+   "znund"
+  ],
+  "cycle_republican_decade_0": [
+   "zprimidi"
+  ],
+  "cycle_republican_decade_4": [
+   "zquintidi"
+  ],
+  "cycle_republican_decade_9": [
+   "zdecadi"
+  ],
+  "cycle_week_0": [
+   "zwkmon"
+  ],
+  "cycle_week_2": [
+   "zwkwed"
+  ],
+  "cycle_week_6": [
+   "zwksun"
+  ],
+  "marker_ad": [
+   "zad"
+  ],
+  "marker_article": [
+   "zthe"
+  ],
+  "marker_at": [
+   "zat"
+  ],
+  "marker_consulship": [
+   "zconsulship"
+  ],
+  "marker_dhour": [
+   "zdheure"
+  ],
+  "marker_dmin": [
+   "zdmin"
+  ],
+  "marker_dsec": [
+   "zdsec"
+  ],
+  "marker_future": [
+   "zhence",
+   "zin"
+  ],
+  "marker_last": [
+   "zlast"
+  ],
+  "marker_next": [
+   "znext"
+  ],
+  "marker_oclock": [
+   "zoclock"
+  ],
+  "marker_of": [
+   "zof"
+  ],
+  "marker_ordlast": [
+   "zlast"
+  ],
+  "marker_past": [
+   "zago"
+  ],
+  "marker_pridie": [
+   "zpridie"
+  ],
+  "marker_this": [
+   "zthis"
+  ],
+  "marker_year_word": [
+   "zyr"
+  ],
+  "month_1": [
+   "zan"
+  ],
+  "month_10": [
+   "zoct"
+  ],
+  "month_11": [
+   "znov"
+  ],
+  "month_12": [
+   "zdec"
+  ],
+  "month_2": [
+   "zeb"
+  ],
+  "month_3": [
+   "zmar"
+  ],
+  "month_4": [
+   "zap"
+  ],
+  "month_5": [
+   "zmay"
+  ],
+  "month_6": [
+   "zjun"
+  ],
+  "month_7": [
+   "zul"
+  ],
+  "month_8": [
+   "zaug"
+  ],
+  "month_9": [
+   "zep"
+  ],
+  "month_islamic_civil_1": [
+   "zmuh"
+  ],
+  "month_islamic_civil_12": [
+   "zdhu"
+  ],
+  "month_islamic_civil_8": [
+   "zshab"
+  ],
+  "month_islamic_civil_9": [
+   "zram"
+  ],
+  "named_day_-1": [
+   "zyester"
+  ],
+  "named_day_0": [
+   "ztoday"
+  ],
+  "named_day_1": [
+   "zmorrow"
+  ],
+  "named_day_2": [
+   "zovermorrow"
+  ],
+  "regnal_consuls_caesar_bibulus": [
+   "zcaesarbibulus"
+  ],
+  "regnal_consuls_cicero_hybrida": [
+   "zcicero"
+  ],
+  "regnal_consuls_vespasian_titus": [
+   "zvespasian"
+  ],
+  "regnal_nengo_heisei": [
+   "zheisei"
+  ],
+  "regnal_nengo_meiji": [
+   "zmeiji"
+  ],
+  "regnal_nengo_reiwa": [
+   "zreiwa"
+  ],
+  "regnal_nengo_showa": [
+   "zshowa"
+  ],
+  "regnal_nengo_taisho": [
+   "ztaisho"
+  ],
+  "roman_anchor_ides": [
+   "zid"
+  ],
+  "roman_anchor_kalends": [
+   "zkal"
+  ],
+  "roman_anchor_nones": [
+   "znon"
+  ],
+  "scope_unit_century": [
+   "zcentury"
+  ],
+  "scope_unit_decade": [
+   "zdecade"
+  ],
+  "scope_unit_millennium": [
+   "zmillennium"
+  ],
+  "season_fall": [
+   "zfall"
+  ],
+  "season_spring": [
+   "zspring"
+  ],
+  "season_summer": [
+   "zsummer"
+  ],
+  "season_winter": [
+   "zwinter"
+  ],
+  "unit_day": [
+   "zday",
+   "zdays"
+  ],
+  "unit_month": [
+   "zmonth",
+   "zmonths"
+  ],
+  "unit_week": [
+   "zweek",
+   "zweeks"
+  ],
+  "unit_year": [
+   "zyear",
+   "zyears"
+  ],
+  "weekday_0": [
+   "zmon"
+  ],
+  "weekday_1": [
+   "ztue"
+  ],
+  "weekday_2": [
+   "zwed"
+  ],
+  "weekday_3": [
+   "zthu"
+  ],
+  "weekday_4": [
+   "zfri"
+  ],
+  "weekday_5": [
+   "zsat"
+  ],
+  "weekday_6": [
+   "zsun"
+  ]
+ }
+}

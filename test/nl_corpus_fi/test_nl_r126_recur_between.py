@@ -18,7 +18,7 @@ to match.
 
 The fix mirrors #677's own convention: ``BYHOUR`` pins to the range's
 left/start endpoint, the whole clause is consumed (empty remainder), and
-the marker vocab (``marker_between_post.voc``) is reused unchanged from the
+the marker vocab (``marker_between_post``) is reused unchanged from the
 single-span fix.
 """
 from datetime import datetime
@@ -34,7 +34,7 @@ _A = datetime(2026, 8, 12, 12, 0)
 @pytest.mark.parametrize("text,rrule,remainder", [
     # the defect as reported.
     ("joka päivä klo 9 ja 17 välillä", "FREQ=DAILY;BYHOUR=9", ""),
-    # "välisenä aikana" is the multi-word synonym marker_between_post.voc
+    # "välisenä aikana" is the multi-word synonym marker_between_post
     # also carries.
     ("joka päivä klo 9 ja 17 välisenä aikana", "FREQ=DAILY;BYHOUR=9", ""),
     # swapped order: BYHOUR pins to whichever number comes FIRST in text.

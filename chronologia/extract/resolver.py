@@ -3059,7 +3059,7 @@ class Resolver:
           "gmt-5:30") -- the acronym's base offset (0 for UTC/GMT) plus the tail.
         * a curated set of common, **unambiguous** zone abbreviations
           ("est", "cet", "jst", ...) whose fixed offset lives in the
-          ``clock_zone_<minutes>.voc`` tables.  These are deliberately a
+          ``clock_zone_<minutes>`` tables.  These are deliberately a
           simplification: FIXED offsets, NOT DST-aware IANA zones, and the
           curated set excludes genuinely ambiguous abbreviations (IST, ACST,
           CST-as-China, ...), which stay in the remainder rather than guess.

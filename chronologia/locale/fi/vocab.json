@@ -1,0 +1,669 @@
+{
+ "format_version": 1,
+ "words": {
+  "clock_dir_past": [
+   "yli"
+  ],
+  "clock_dir_to": [
+   "vailla",
+   "vaille"
+  ],
+  "clock_fraction_15": [
+   "vartin",
+   "vartti",
+   "varttia"
+  ],
+  "clock_fraction_30": [
+   "puoli"
+  ],
+  "clock_landmark_0": [
+   "keskiyö",
+   "keskiyöllä"
+  ],
+  "clock_landmark_720": [
+   "keskipäivä",
+   "keskipäivällä",
+   "puolenpäivän"
+  ],
+  "clock_meridiem_am": [
+   "aamulla",
+   "aamupäivällä",
+   "ap."
+  ],
+  "clock_meridiem_night": [
+   "yöllä"
+  ],
+  "clock_meridiem_pm": [
+   "illalla",
+   "iltapäivällä",
+   "ip."
+  ],
+  "clock_zone_0": [
+   "gmt",
+   "utc"
+  ],
+  "daypart_aamu_fi": [
+   "aamulla"
+  ],
+  "daypart_aamupaiva_fi": [
+   "aamupäivällä"
+  ],
+  "daypart_ilta_fi": [
+   "illalla"
+  ],
+  "daypart_iltapaiva_fi": [
+   "iltapäivällä"
+  ],
+  "daypart_yo_fi": [
+   "yöllä"
+  ],
+  "marker_ad": [
+   "j.kr.",
+   "jaa.",
+   "jkr.",
+   "jälkeen kristuksen"
+  ],
+  "marker_after": [
+   "jälkeen"
+  ],
+  "marker_ago": [
+   "sitten"
+  ],
+  "marker_and": [
+   "ja"
+  ],
+  "marker_at": [
+   "kello",
+   "klo"
+  ],
+  "marker_bc": [
+   "e.kr.",
+   "eaa.",
+   "ekr.",
+   "ennen kristusta"
+  ],
+  "marker_before": [
+   "ennen"
+  ],
+  "marker_between": [
+   "välillä"
+  ],
+  "marker_between_post": [
+   "välillä",
+   "välisenä aikana"
+  ],
+  "marker_business": [
+   "arkipäivä",
+   "arkipäivän",
+   "arkipäivää",
+   "työpäivä",
+   "työpäivän",
+   "työpäivää"
+  ],
+  "marker_during": [
+   "aikana"
+  ],
+  "marker_every": [
+   "joka",
+   "jokainen"
+  ],
+  "marker_freq_daily": [
+   "päivittäin"
+  ],
+  "marker_freq_monthly": [
+   "kuukausittain"
+  ],
+  "marker_freq_weekly": [
+   "viikoittain"
+  ],
+  "marker_freq_yearly": [
+   "vuosittain"
+  ],
+  "marker_from": [
+   "alkaen"
+  ],
+  "marker_future": [
+   "kuluttua",
+   "päähän",
+   "päästä"
+  ],
+  "marker_half": [
+   "puolisko"
+  ],
+  "marker_hours": [
+   "tuntia"
+  ],
+  "marker_in": [
+   "kuluttua",
+   "päästä"
+  ],
+  "marker_indef": [
+   "yhden",
+   "yksi"
+  ],
+  "marker_last": [
+   "edellinen",
+   "edellisenä",
+   "mennyt",
+   "viime"
+  ],
+  "marker_month_word": [
+   "kuukausi"
+  ],
+  "marker_next": [
+   "ensi",
+   "seuraava",
+   "seuraavana",
+   "tuleva",
+   "tulevana"
+  ],
+  "marker_oclock": [
+   "kello",
+   "klo"
+  ],
+  "marker_past": [
+   "sitten"
+  ],
+  "marker_present": [
+   "nyt"
+  ],
+  "marker_q": [
+   "q"
+  ],
+  "marker_quarter_word": [
+   "neljänneksellä",
+   "neljänneksenä",
+   "neljännes",
+   "neljännesvuonna",
+   "vuosineljänneksellä",
+   "vuosineljännes"
+  ],
+  "marker_this": [
+   "tällä",
+   "tämä",
+   "tänä",
+   "tässä"
+  ],
+  "marker_to": [
+   "asti",
+   "saakka"
+  ],
+  "marker_until": [
+   "asti",
+   "saakka"
+  ],
+  "marker_week_num": [
+   "viikko",
+   "viikolla",
+   "viikon"
+  ],
+  "marker_weekof": [
+   "viikko",
+   "viikolla"
+  ],
+  "marker_year_word": [
+   "vuoden",
+   "vuonna",
+   "vuosi",
+   "vuotta"
+  ],
+  "month_1": [
+   "tammikuu",
+   "tammikuun",
+   "tammikuussa",
+   "tammikuuta"
+  ],
+  "month_10": [
+   "lokakuu",
+   "lokakuun",
+   "lokakuussa",
+   "lokakuuta"
+  ],
+  "month_11": [
+   "marraskuu",
+   "marraskuun",
+   "marraskuussa",
+   "marraskuuta"
+  ],
+  "month_12": [
+   "joulukuu",
+   "joulukuun",
+   "joulukuussa",
+   "joulukuuta"
+  ],
+  "month_2": [
+   "helmikuu",
+   "helmikuun",
+   "helmikuussa",
+   "helmikuuta"
+  ],
+  "month_3": [
+   "maaliskuu",
+   "maaliskuun",
+   "maaliskuussa",
+   "maaliskuuta"
+  ],
+  "month_4": [
+   "huhtikuu",
+   "huhtikuun",
+   "huhtikuussa",
+   "huhtikuuta"
+  ],
+  "month_5": [
+   "toukokuu",
+   "toukokuun",
+   "toukokuussa",
+   "toukokuuta"
+  ],
+  "month_6": [
+   "kesäkuu",
+   "kesäkuun",
+   "kesäkuussa",
+   "kesäkuuta"
+  ],
+  "month_7": [
+   "heinäkuu",
+   "heinäkuun",
+   "heinäkuussa",
+   "heinäkuuta"
+  ],
+  "month_8": [
+   "elokuu",
+   "elokuun",
+   "elokuussa",
+   "elokuuta"
+  ],
+  "month_9": [
+   "syyskuu",
+   "syyskuun",
+   "syyskuussa",
+   "syyskuuta"
+  ],
+  "named_day_-1": [
+   "eilen"
+  ],
+  "named_day_-2": [
+   "toissa päivänä",
+   "toissapäivänä"
+  ],
+  "named_day_0": [
+   "tänään"
+  ],
+  "named_day_1": [
+   "huomenna"
+  ],
+  "named_day_2": [
+   "ylihuomenna"
+  ],
+  "period_part_early": [
+   "alku",
+   "alkupuolella",
+   "alkupuoli",
+   "alussa"
+  ],
+  "period_part_late": [
+   "loppu",
+   "loppupuolella",
+   "loppupuoli",
+   "lopussa"
+  ],
+  "period_part_mid": [
+   "keskivaihe",
+   "keskivaiheilla",
+   "puoliväli",
+   "puolivälissä"
+  ],
+  "scale_1000": [
+   "tuhat",
+   "tuhatta"
+  ],
+  "scale_1000000": [
+   "miljoona",
+   "miljoonaa"
+  ],
+  "scale_1000000000": [
+   "miljardi",
+   "miljardia"
+  ],
+  "scope_unit_century": [
+   "vuosisadan",
+   "vuosisata"
+  ],
+  "scope_unit_decade": [
+   "vuosikymmen"
+  ],
+  "scope_unit_millennium": [
+   "vuosituhat"
+  ],
+  "season_fall": [
+   "syksy",
+   "syksyllä"
+  ],
+  "season_spring": [
+   "kevät",
+   "keväällä"
+  ],
+  "season_summer": [
+   "kesä",
+   "kesällä"
+  ],
+  "season_winter": [
+   "talvella",
+   "talvi"
+  ],
+  "special_weekend": [
+   "viikonloppu",
+   "viikonloppuna"
+  ],
+  "unit_century": [
+   "vuosisadan",
+   "vuosisata",
+   "vuosisataa"
+  ],
+  "unit_day": [
+   "päivä",
+   "päiväksi",
+   "päivän",
+   "päivää"
+  ],
+  "unit_decade": [
+   "vuosikymmen",
+   "vuosikymmentä"
+  ],
+  "unit_hour": [
+   "tunnin",
+   "tunti",
+   "tuntia"
+  ],
+  "unit_millennium": [
+   "vuosituhannen",
+   "vuosituhat"
+  ],
+  "unit_minute": [
+   "minuutin",
+   "minuutti",
+   "minuuttia"
+  ],
+  "unit_month": [
+   "kuukauden",
+   "kuukausi",
+   "kuukautta",
+   "kuussa"
+  ],
+  "unit_second": [
+   "sekunnin",
+   "sekunti",
+   "sekuntia"
+  ],
+  "unit_week": [
+   "viikko",
+   "viikkoa",
+   "viikolla",
+   "viikon"
+  ],
+  "unit_year": [
+   "vuoden",
+   "vuonna",
+   "vuosi",
+   "vuotta"
+  ],
+  "weekday_0": [
+   "maanantai",
+   "maanantaina"
+  ],
+  "weekday_1": [
+   "tiistai",
+   "tiistaina"
+  ],
+  "weekday_2": [
+   "keskiviikko",
+   "keskiviikkona"
+  ],
+  "weekday_3": [
+   "torstai",
+   "torstaina"
+  ],
+  "weekday_4": [
+   "perjantai",
+   "perjantaina"
+  ],
+  "weekday_5": [
+   "lauantai",
+   "lauantaina"
+  ],
+  "weekday_6": [
+   "sunnuntai",
+   "sunnuntaina"
+  ]
+ },
+ "sources": {
+  "clock_fraction_15": [
+   "The quarter in the \"N yli/vaille HOUR\" clock frame.  \"yli\" governs either the",
+   "genitive or the partitive (\"vartin yli kuusi\" ~ \"varttia yli kuusi\" = 6.15),",
+   "\"vaille\" always the partitive (\"varttia vaille kaksi\" = 1.45).",
+   "Wiktionary (en), \"yli\", Finnish postposition, temporal sense and usage notes."
+  ],
+  "clock_meridiem_am": [
+   "aamulla \"in the morning\": Finnish postposes the day-part word after the",
+   "clock (\"kello 9 aamulla\"), where it names the AM side of a 12-hour hour",
+   "rather than a band of its own -- the same double duty aamupäivällä already",
+   "does here and in daypart_aamu_fi.voc, which cites the surface."
+  ],
+  "clock_meridiem_night": [
+   "yöllä \"at night\".  The Finnish night band crosses midnight (CLDR 47 fi",
+   "night1, 23:00-05:00), so the hour under it is the small-hours one: \"kello 3",
+   "yöllä\" is 03:00, not 15:00.  Cited in daypart_yo_fi.voc."
+  ],
+  "clock_meridiem_pm": [
+   "illalla \"in the evening\": the postposed day-part word on a clock (\"kello 9",
+   "illalla\" == 21:00) names the PM side, the mirror of aamulla above.  Cited in",
+   "daypart_ilta_fi.voc."
+  ],
+  "daypart_aamu_fi": [
+   "Band boundaries: Unicode CLDR 47 Day Period Rules, locale fi",
+   "(https://www.unicode.org/cldr/charts/47/supplemental/day_periods.html),",
+   "transcribed in chronologia/dayparts.py as aamu [05:00, 10:00)",
+   "(CLDR morning1).",
+   "Surface: aamulla, the adessive of aamu \"morning\" -- the form a speaker",
+   "uses adverbially; the bare nominative aamu is the citation form and is",
+   "deliberately NOT shipped.",
+   "Source: Wiktionary, \"aamulla\": Finnish adverb, glossed \"at morning\", and",
+   "the adessive singular of \"aamu\".",
+   "https://en.wiktionary.org/wiki/aamulla",
+   "CLDR 47 fi names this period \"aamulla\" in the format-wide day periods,",
+   "confirming the adessive is the surface, not the nominative."
+  ],
+  "daypart_aamupaiva_fi": [
+   "Band boundaries: Unicode CLDR 47 Day Period Rules, locale fi",
+   "(https://www.unicode.org/cldr/charts/47/supplemental/day_periods.html),",
+   "transcribed in chronologia/dayparts.py as aamupaiva [10:00, 12:00)",
+   "(CLDR morning2).",
+   "Surface: aamupäivällä, the adessive of aamupäivä \"forenoon\" (the stretch",
+   "between mid-morning and noon, which Finnish names separately from aamu --",
+   "see the five-band note in chronologia/dayparts.py).",
+   "Source: Wiktionary, \"aamupäivällä\": adessive singular of \"aamupäivä\".",
+   "https://en.wiktionary.org/wiki/aamup%C3%A4iv%C3%A4ll%C3%A4",
+   "CLDR 47 fi names this period \"aamupäivällä\" in the format-wide day periods.",
+   "The same surface is the am meridiem (clock_meridiem_am.voc): the band lies",
+   "wholly before noon, so both readings agree."
+  ],
+  "daypart_ilta_fi": [
+   "Band boundaries: Unicode CLDR 47 Day Period Rules, locale fi",
+   "(https://www.unicode.org/cldr/charts/47/supplemental/day_periods.html),",
+   "transcribed in chronologia/dayparts.py as ilta [18:00, 23:00)",
+   "(CLDR evening1).",
+   "Surface: illalla, the adessive of ilta \"evening\" (the stem loses its t:",
+   "ilta -> illa-).",
+   "Source: Wiktionary, \"illalla\": Finnish adverb, glossed \"in the evening\",",
+   "and the adessive singular of \"ilta\".",
+   "https://en.wiktionary.org/wiki/illalla",
+   "CLDR 47 fi names this period \"illalla\" in the format-wide day periods."
+  ],
+  "daypart_iltapaiva_fi": [
+   "Band boundaries: Unicode CLDR 47 Day Period Rules, locale fi",
+   "(https://www.unicode.org/cldr/charts/47/supplemental/day_periods.html),",
+   "transcribed in chronologia/dayparts.py as iltapaiva [12:00, 18:00)",
+   "(CLDR afternoon1).",
+   "Surface: iltapäivällä, the adessive of iltapäivä \"afternoon\".",
+   "Source: Wiktionary, \"iltapäivällä\": adessive singular of \"iltapäivä\".",
+   "https://en.wiktionary.org/wiki/iltap%C3%A4iv%C3%A4ll%C3%A4",
+   "CLDR 47 fi names this period \"iltapäivällä\" in the format-wide day periods.",
+   "The same surface is the pm meridiem (clock_meridiem_pm.voc)."
+  ],
+  "daypart_yo_fi": [
+   "Band boundaries: Unicode CLDR 47 Day Period Rules, locale fi",
+   "(https://www.unicode.org/cldr/charts/47/supplemental/day_periods.html),",
+   "transcribed in chronologia/dayparts.py as yo [23:00, 05:00)",
+   "(CLDR night1, one midnight-crossing band).",
+   "Surface: yöllä, the adessive of yö \"night\".",
+   "Source: Wiktionary, \"yöllä\": Finnish adverb, glossed \"at night\", and the",
+   "adessive singular of \"yö\".",
+   "https://en.wiktionary.org/wiki/y%C3%B6ll%C3%A4",
+   "CLDR 47 fi names this period \"yöllä\" in the format-wide day periods."
+  ],
+  "marker_quarter_word": [
+   "CLDR 47 names the quarter two ways in the relative phrases -- the long",
+   "\"neljännesvuonna\" and the short \"neljänneksenä\", both essive:",
+   "\"viime neljännesvuonna\", \"viime neljänneksenä\"",
+   "(cldr-dates-full/main/fi/dateFields.json, quarter and quarter-short",
+   "relative-type--1/0/1)."
+  ],
+  "marker_this": [
+   "The demonstrative agrees in case with the unit noun it modifies, so the",
+   "relative-period phrases need the inessive and adessive beside the essive.",
+   "CLDR 47 attests all three for fi: \"tänä vuonna\", \"tässä kuussa\",",
+   "\"tällä viikolla\" (cldr-dates-full/main/fi/dateFields.json,",
+   "year/month/week relative-type-0)."
+  ],
+  "month_1": [
+   "Unicode CLDR 47, locale fi, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/fi/ca-gregorian.json): months.format.wide,",
+   "months.stand-alone.wide.  Not covered by any of those charts, and so",
+   "unattested here: \"tammikuun\", \"tammikuussa\"."
+  ],
+  "month_10": [
+   "Unicode CLDR 47, locale fi, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/fi/ca-gregorian.json): months.format.wide,",
+   "months.stand-alone.wide.  Not covered by any of those charts, and so",
+   "unattested here: \"lokakuun\", \"lokakuussa\"."
+  ],
+  "month_11": [
+   "Unicode CLDR 47, locale fi, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/fi/ca-gregorian.json): months.format.wide,",
+   "months.stand-alone.wide.  Not covered by any of those charts, and so",
+   "unattested here: \"marraskuun\", \"marraskuussa\"."
+  ],
+  "month_12": [
+   "Unicode CLDR 47, locale fi, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/fi/ca-gregorian.json): months.format.wide,",
+   "months.stand-alone.wide.  Not covered by any of those charts, and so",
+   "unattested here: \"joulukuun\", \"joulukuussa\"."
+  ],
+  "month_2": [
+   "Unicode CLDR 47, locale fi, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/fi/ca-gregorian.json): months.format.wide,",
+   "months.stand-alone.wide.  Not covered by any of those charts, and so",
+   "unattested here: \"helmikuun\", \"helmikuussa\"."
+  ],
+  "month_3": [
+   "Unicode CLDR 47, locale fi, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/fi/ca-gregorian.json): months.format.wide,",
+   "months.stand-alone.wide.  Not covered by any of those charts, and so",
+   "unattested here: \"maaliskuun\", \"maaliskuussa\"."
+  ],
+  "month_4": [
+   "Unicode CLDR 47, locale fi, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/fi/ca-gregorian.json): months.format.wide,",
+   "months.stand-alone.wide.  Not covered by any of those charts, and so",
+   "unattested here: \"huhtikuun\", \"huhtikuussa\"."
+  ],
+  "month_5": [
+   "Unicode CLDR 47, locale fi, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/fi/ca-gregorian.json): months.format.wide,",
+   "months.stand-alone.wide.  Not covered by any of those charts, and so",
+   "unattested here: \"toukokuun\", \"toukokuussa\"."
+  ],
+  "month_6": [
+   "Unicode CLDR 47, locale fi, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/fi/ca-gregorian.json): months.format.wide,",
+   "months.stand-alone.wide.  Not covered by any of those charts, and so",
+   "unattested here: \"kesäkuun\", \"kesäkuussa\"."
+  ],
+  "month_7": [
+   "Unicode CLDR 47, locale fi, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/fi/ca-gregorian.json): months.format.wide,",
+   "months.stand-alone.wide.  Not covered by any of those charts, and so",
+   "unattested here: \"heinäkuun\", \"heinäkuussa\"."
+  ],
+  "month_8": [
+   "Unicode CLDR 47, locale fi, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/fi/ca-gregorian.json): months.format.wide,",
+   "months.stand-alone.wide.  Not covered by any of those charts, and so",
+   "unattested here: \"elokuun\", \"elokuussa\"."
+  ],
+  "month_9": [
+   "Unicode CLDR 47, locale fi, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/fi/ca-gregorian.json): months.format.wide,",
+   "months.stand-alone.wide.  Not covered by any of those charts, and so",
+   "unattested here: \"syyskuun\", \"syyskuussa\"."
+  ],
+  "named_day_-2": [
+   "CLDR 47 writes the day before yesterday as two words, \"toissa päivänä\"",
+   "(cldr-dates-full/main/fi/dateFields.json, day relative-type--2); the",
+   "abbreviation \"toissap.\" beside it shows the same phrase written solid."
+  ],
+  "unit_month": [
+   "\"kuussa\" is the inessive of \"kuu\", the short month noun the relative-month",
+   "phrases use rather than \"kuukausi\". CLDR 47 gives \"viime kuussa\",",
+   "\"tässä kuussa\", \"ensi kuussa\" for the fi month field",
+   "(cldr-dates-full/main/fi/dateFields.json, month relative-type--1/0/1)."
+  ],
+  "unit_week": [
+   "The adessive \"viikolla\" is the case the ordinary relative-week phrases put",
+   "the noun in, and it is what CLDR 47 gives for the fi week field:",
+   "\"viime viikolla\", \"tällä viikolla\", \"ensi viikolla\"",
+   "(cldr-dates-full/main/fi/dateFields.json, week relative-type--1/0/1)."
+  ],
+  "unit_year": [
+   "The essive \"vuonna\" is the case the relative-year phrases take: CLDR 47",
+   "gives \"viime vuonna\", \"tänä vuonna\", \"ensi vuonna\" for the fi year field",
+   "(cldr-dates-full/main/fi/dateFields.json, year relative-type--1/0/1)."
+  ],
+  "weekday_0": [
+   "Unicode CLDR 47, locale fi, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/fi/ca-gregorian.json): days.format.wide,",
+   "days.stand-alone.wide."
+  ],
+  "weekday_1": [
+   "Unicode CLDR 47, locale fi, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/fi/ca-gregorian.json): days.format.wide,",
+   "days.stand-alone.wide."
+  ],
+  "weekday_2": [
+   "Unicode CLDR 47, locale fi, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/fi/ca-gregorian.json): days.format.wide,",
+   "days.stand-alone.wide."
+  ],
+  "weekday_3": [
+   "Unicode CLDR 47, locale fi, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/fi/ca-gregorian.json): days.format.wide,",
+   "days.stand-alone.wide."
+  ],
+  "weekday_4": [
+   "Unicode CLDR 47, locale fi, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/fi/ca-gregorian.json): days.format.wide,",
+   "days.stand-alone.wide."
+  ],
+  "weekday_5": [
+   "Unicode CLDR 47, locale fi, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/fi/ca-gregorian.json): days.format.wide,",
+   "days.stand-alone.wide."
+  ],
+  "weekday_6": [
+   "Unicode CLDR 47, locale fi, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/fi/ca-gregorian.json): days.format.wide,",
+   "days.stand-alone.wide.  Not covered by any of those charts, and so",
+   "unattested here: \"sunnuntaina\"."
+  ]
+ }
+}

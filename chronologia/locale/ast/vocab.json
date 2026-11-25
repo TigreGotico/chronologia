@@ -1,0 +1,1008 @@
+{
+ "format_version": 1,
+ "words": {
+  "clock_dir_past": [
+   "y",
+   "ya"
+  ],
+  "clock_dir_to": [
+   "menos"
+  ],
+  "clock_fraction_15": [
+   "cuartu"
+  ],
+  "clock_fraction_30": [
+   "media",
+   "mediu"
+  ],
+  "clock_landmark_0": [
+   "medianueche"
+  ],
+  "clock_landmark_720": [
+   "mediudia",
+   "mediudía"
+  ],
+  "clock_meridiem_am": [
+   "manana",
+   "mañana"
+  ],
+  "clock_meridiem_night": [
+   "nueche"
+  ],
+  "clock_meridiem_pm": [
+   "tarde"
+  ],
+  "clock_zone_0": [
+   "gmt",
+   "utc"
+  ],
+  "daypart_morning": [
+   "manana",
+   "mañana"
+  ],
+  "decade_word_20": [
+   "vente",
+   "venti"
+  ],
+  "decade_word_30": [
+   "trenta"
+  ],
+  "decade_word_40": [
+   "cuarenta"
+  ],
+  "decade_word_50": [
+   "cincuenta"
+  ],
+  "decade_word_60": [
+   "sesenta"
+  ],
+  "decade_word_70": [
+   "setenta"
+  ],
+  "decade_word_80": [
+   "ochenta"
+  ],
+  "decade_word_90": [
+   "noventa"
+  ],
+  "era_ad_prefix": [
+   "ddc",
+   "dempués de cristu"
+  ],
+  "era_ad_suffix": [
+   "ddc",
+   "de la nuesa era",
+   "dempués de cristu",
+   "despues de cristu"
+  ],
+  "era_anno_mundi_prefix": [
+   "anno mundi"
+  ],
+  "era_anno_mundi_suffix": [
+   "anno mundi"
+  ],
+  "era_bc_suffix": [
+   "adc",
+   "antes de cristu",
+   "enantes de cristu",
+   "enantes de la nuesa era"
+  ],
+  "era_bp_suffix": [
+   "años enantes del presente",
+   "b.p.",
+   "bp"
+  ],
+  "era_holocene_prefix": [
+   "era holocena",
+   "era humana"
+  ],
+  "era_holocene_suffix": [
+   "era holocena",
+   "era humana"
+  ],
+  "era_julian_prefix": [
+   "julian day",
+   "julian day number"
+  ],
+  "era_unix_prefix": [
+   "tiempu unix"
+  ],
+  "era_year_ref": [
+   "añu",
+   "l añu",
+   "l'añu",
+   "nel añu"
+  ],
+  "marker_ad": [
+   "ddc"
+  ],
+  "marker_after": [
+   "dempués",
+   "despues"
+  ],
+  "marker_ago": [
+   "fai",
+   "hai"
+  ],
+  "marker_and": [
+   "y",
+   "ya"
+  ],
+  "marker_article": [
+   "a la",
+   "al",
+   "de la",
+   "del",
+   "el",
+   "esta",
+   "esti",
+   "l",
+   "la",
+   "les",
+   "los",
+   "un",
+   "una"
+  ],
+  "marker_at": [
+   "a",
+   "a la",
+   "a les"
+  ],
+  "marker_at_counts": [
+   "a"
+  ],
+  "marker_bc": [
+   "adc"
+  ],
+  "marker_before": [
+   "antes",
+   "enantes"
+  ],
+  "marker_between": [
+   "ente",
+   "entre"
+  ],
+  "marker_bp": [
+   "bp"
+  ],
+  "marker_consulship": [
+   "consuláu"
+  ],
+  "marker_counted_noun": [
+   "amigos",
+   "amigues",
+   "asientos",
+   "cuartos",
+   "neñes",
+   "neños",
+   "persona",
+   "persones",
+   "rapazos",
+   "xugadores"
+  ],
+  "marker_day_early": [
+   "ceo"
+  ],
+  "marker_dayframe": [
+   "pela"
+  ],
+  "marker_daypart_after_day": [
+   "d",
+   "de",
+   "del"
+  ],
+  "marker_during": [
+   "durante"
+  ],
+  "marker_every": [
+   "cada",
+   "toles",
+   "tolos"
+  ],
+  "marker_freq_daily": [
+   "diariamente"
+  ],
+  "marker_freq_monthly": [
+   "mensualmente"
+  ],
+  "marker_freq_weekly": [
+   "selmanalmente"
+  ],
+  "marker_freq_yearly": [
+   "añalmente"
+  ],
+  "marker_from": [
+   "de",
+   "del",
+   "dende",
+   "ente"
+  ],
+  "marker_future": [
+   "dientro",
+   "en"
+  ],
+  "marker_half": [
+   "media",
+   "mediu"
+  ],
+  "marker_hebrew": [
+   "hebréu",
+   "xudíu"
+  ],
+  "marker_hours": [
+   "hores"
+  ],
+  "marker_in": [
+   "en"
+  ],
+  "marker_indef": [
+   "un",
+   "una"
+  ],
+  "marker_last": [
+   "anterior",
+   "pasada",
+   "pasao",
+   "pasáu"
+  ],
+  "marker_month_word": [
+   "mes",
+   "meses"
+  ],
+  "marker_new": [
+   "nueva",
+   "nuevu"
+  ],
+  "marker_next": [
+   "quevien",
+   "siguiente",
+   "viniente"
+  ],
+  "marker_oclock": [
+   "hora",
+   "hores"
+  ],
+  "marker_of": [
+   "d",
+   "de",
+   "del"
+  ],
+  "marker_ordlast": [
+   "ultima",
+   "última",
+   "últimu"
+  ],
+  "marker_past": [
+   "atras",
+   "atrás",
+   "fai",
+   "hai"
+  ],
+  "marker_plural": [
+   "es",
+   "s"
+  ],
+  "marker_present": [
+   "güei",
+   "presente"
+  ],
+  "marker_pridie": [
+   "pridie"
+  ],
+  "marker_q": [
+   "q",
+   "t"
+  ],
+  "marker_quarter_word": [
+   "trimestre",
+   "trimestres"
+  ],
+  "marker_recur_for": [
+   "durante",
+   "por"
+  ],
+  "marker_sharp": [
+   "en puntu"
+  ],
+  "marker_since": [
+   "dende",
+   "desde"
+  ],
+  "marker_this": [
+   "esta",
+   "este",
+   "esti"
+  ],
+  "marker_to": [
+   "a",
+   "al",
+   "hasta"
+  ],
+  "marker_until": [
+   "fasta",
+   "hasta",
+   "hasta el",
+   "hasta la"
+  ],
+  "marker_week_num": [
+   "selmana",
+   "selmanes",
+   "semana",
+   "semanas"
+  ],
+  "marker_weekof": [
+   "la selmana de",
+   "la selmana del",
+   "selmana de",
+   "selmana del"
+  ],
+  "marker_year_word": [
+   "anos",
+   "anu",
+   "años",
+   "añu"
+  ],
+  "month_1": [
+   "xin",
+   "xineru"
+  ],
+  "month_10": [
+   "och",
+   "ochobre"
+  ],
+  "month_11": [
+   "nov",
+   "noviembre",
+   "payares"
+  ],
+  "month_12": [
+   "avientu",
+   "dic",
+   "diciembre"
+  ],
+  "month_2": [
+   "feb",
+   "febreru"
+  ],
+  "month_3": [
+   "mar",
+   "marzu"
+  ],
+  "month_4": [
+   "abr",
+   "abril"
+  ],
+  "month_5": [
+   "mayu"
+  ],
+  "month_6": [
+   "xunu"
+  ],
+  "month_7": [
+   "xunetu"
+  ],
+  "month_8": [
+   "ago",
+   "agostu"
+  ],
+  "month_9": [
+   "set",
+   "setiembre"
+  ],
+  "month_french_republican_1": [
+   "vendemiaire"
+  ],
+  "month_french_republican_10": [
+   "messidor"
+  ],
+  "month_french_republican_11": [
+   "thermidor"
+  ],
+  "month_french_republican_12": [
+   "fructidor"
+  ],
+  "month_french_republican_2": [
+   "brumaire"
+  ],
+  "month_french_republican_3": [
+   "frimaire"
+  ],
+  "month_french_republican_4": [
+   "nivose"
+  ],
+  "month_french_republican_5": [
+   "pluviose"
+  ],
+  "month_french_republican_6": [
+   "ventose"
+  ],
+  "month_french_republican_7": [
+   "germinal"
+  ],
+  "month_french_republican_8": [
+   "floreal"
+  ],
+  "month_french_republican_9": [
+   "prairial"
+  ],
+  "month_hebrew_1": [
+   "nisan"
+  ],
+  "month_hebrew_10": [
+   "tevet"
+  ],
+  "month_hebrew_11": [
+   "shevat"
+  ],
+  "month_hebrew_12": [
+   "adar"
+  ],
+  "month_hebrew_13": [
+   "adar 2",
+   "adar b",
+   "adar bet",
+   "adar ii",
+   "adar sheni",
+   "adarbet"
+  ],
+  "month_hebrew_2": [
+   "iyar"
+  ],
+  "month_hebrew_3": [
+   "sivan"
+  ],
+  "month_hebrew_4": [
+   "tammuz"
+  ],
+  "month_hebrew_5": [
+   "av"
+  ],
+  "month_hebrew_6": [
+   "elul"
+  ],
+  "month_hebrew_7": [
+   "tishrei",
+   "tishri"
+  ],
+  "month_hebrew_8": [
+   "cheshvan",
+   "heshvan"
+  ],
+  "month_hebrew_9": [
+   "kislev"
+  ],
+  "month_islamic_civil_1": [
+   "muharram"
+  ],
+  "month_islamic_civil_10": [
+   "shawwal"
+  ],
+  "month_islamic_civil_11": [
+   "dhualqadah"
+  ],
+  "month_islamic_civil_12": [
+   "dhualhijjah"
+  ],
+  "month_islamic_civil_2": [
+   "safar"
+  ],
+  "month_islamic_civil_3": [
+   "rabi al-awwal",
+   "rabialawwal"
+  ],
+  "month_islamic_civil_4": [
+   "rabi al-thani",
+   "rabialthani"
+  ],
+  "month_islamic_civil_5": [
+   "jumadaalawwal"
+  ],
+  "month_islamic_civil_6": [
+   "jumadaalthani"
+  ],
+  "month_islamic_civil_7": [
+   "rajab"
+  ],
+  "month_islamic_civil_8": [
+   "shaaban",
+   "shaban"
+  ],
+  "month_islamic_civil_9": [
+   "ramadan",
+   "ramzan"
+  ],
+  "named_day_-1": [
+   "ayer",
+   "ayeri"
+  ],
+  "named_day_-2": [
+   "antateyer",
+   "antatyeri",
+   "antayeri"
+  ],
+  "named_day_0": [
+   "guei",
+   "güei"
+  ],
+  "named_day_1": [
+   "manana",
+   "mañana"
+  ],
+  "named_day_2": [
+   "pasao mañana",
+   "pasáu mañana",
+   "trasmañana"
+  ],
+  "period_archean": [
+   "archean"
+  ],
+  "period_bronze_age_gb": [
+   "bronze age"
+  ],
+  "period_cambrian": [
+   "cambrian"
+  ],
+  "period_carboniferous": [
+   "carboniferous"
+  ],
+  "period_cenozoic": [
+   "cenozoic"
+  ],
+  "period_cretaceous": [
+   "cretaceous"
+  ],
+  "period_devonian": [
+   "devonian"
+  ],
+  "period_eocene": [
+   "eocene"
+  ],
+  "period_holocene": [
+   "holocene"
+  ],
+  "period_iron_age_gb": [
+   "iron age"
+  ],
+  "period_jurassic": [
+   "jurassic"
+  ],
+  "period_mesozoic": [
+   "mesozoic"
+  ],
+  "period_miocene": [
+   "miocene"
+  ],
+  "period_neogene": [
+   "neogene"
+  ],
+  "period_neolithic_gb": [
+   "neolithic"
+  ],
+  "period_oligocene": [
+   "oligocene"
+  ],
+  "period_ordovician": [
+   "ordovician"
+  ],
+  "period_paleocene": [
+   "paleocene"
+  ],
+  "period_paleogene": [
+   "paleogene"
+  ],
+  "period_paleozoic": [
+   "paleozoic"
+  ],
+  "period_part_early": [
+   "aniciu",
+   "entamu",
+   "principios",
+   "principiu"
+  ],
+  "period_part_late": [
+   "fin",
+   "final",
+   "finales"
+  ],
+  "period_part_mid": [
+   "mediaos",
+   "mediáu",
+   "metá"
+  ],
+  "period_permian": [
+   "permian"
+  ],
+  "period_phanerozoic": [
+   "phanerozoic"
+  ],
+  "period_pleistocene": [
+   "pleistocene"
+  ],
+  "period_pliocene": [
+   "pliocene"
+  ],
+  "period_proterozoic": [
+   "proterozoic"
+  ],
+  "period_quaternary": [
+   "quaternary"
+  ],
+  "period_silurian": [
+   "silurian"
+  ],
+  "period_triassic": [
+   "triassic"
+  ],
+  "regnal_nengo_heisei": [
+   "heisei"
+  ],
+  "regnal_nengo_meiji": [
+   "meiji"
+  ],
+  "regnal_nengo_reiwa": [
+   "reiwa"
+  ],
+  "regnal_nengo_showa": [
+   "showa"
+  ],
+  "regnal_nengo_taisho": [
+   "taisho"
+  ],
+  "roman_anchor_ides": [
+   "ides",
+   "idibus",
+   "idus"
+  ],
+  "roman_anchor_kalends": [
+   "calendes",
+   "calends",
+   "kalendis",
+   "kalends"
+  ],
+  "roman_anchor_nones": [
+   "nones",
+   "nonis"
+  ],
+  "scale_1000": [
+   "mil"
+  ],
+  "scale_1000000": [
+   "millones",
+   "millón"
+  ],
+  "scale_1000000000": [
+   "millardos",
+   "millardu"
+  ],
+  "scope_unit_century": [
+   "sieglos",
+   "sieglu"
+  ],
+  "scope_unit_decade": [
+   "decada",
+   "decades",
+   "década",
+   "décades"
+  ],
+  "scope_unit_millennium": [
+   "milenios",
+   "mileniu"
+  ],
+  "season_fall": [
+   "otoñu",
+   "seronda"
+  ],
+  "season_spring": [
+   "primavera"
+  ],
+  "season_summer": [
+   "branu",
+   "veranu"
+  ],
+  "season_winter": [
+   "iviernu"
+  ],
+  "special_weekend": [
+   "fin de selmana",
+   "findeselmana",
+   "weekend"
+  ],
+  "unit1_century": [
+   "sieglu"
+  ],
+  "unit1_day": [
+   "dia",
+   "día"
+  ],
+  "unit1_decade": [
+   "decada",
+   "década"
+  ],
+  "unit1_hour": [
+   "hora"
+  ],
+  "unit1_millennium": [
+   "mileniu"
+  ],
+  "unit1_minute": [
+   "min",
+   "minutu"
+  ],
+  "unit1_month": [
+   "mes"
+  ],
+  "unit1_second": [
+   "seg",
+   "segundu"
+  ],
+  "unit1_week": [
+   "selmana"
+  ],
+  "unit1_year": [
+   "anu",
+   "añu"
+  ],
+  "unit_century": [
+   "sieglos",
+   "sieglu"
+  ],
+  "unit_day": [
+   "dia",
+   "dies",
+   "día",
+   "díes"
+  ],
+  "unit_decade": [
+   "decada",
+   "decades",
+   "década",
+   "décades"
+  ],
+  "unit_hour": [
+   "hora",
+   "hores"
+  ],
+  "unit_millennium": [
+   "milenios",
+   "mileniu"
+  ],
+  "unit_minute": [
+   "min",
+   "minutos",
+   "minutu"
+  ],
+  "unit_month": [
+   "mes",
+   "meses"
+  ],
+  "unit_second": [
+   "seg",
+   "segs",
+   "segundos",
+   "segundu"
+  ],
+  "unit_week": [
+   "selmana",
+   "selmanes"
+  ],
+  "unit_year": [
+   "anos",
+   "anu",
+   "años",
+   "añu"
+  ],
+  "weekday_0": [
+   "llunes"
+  ],
+  "weekday_1": [
+   "martes"
+  ],
+  "weekday_2": [
+   "miercoles",
+   "miércoles"
+  ],
+  "weekday_3": [
+   "xueves"
+  ],
+  "weekday_4": [
+   "vienres"
+  ],
+  "weekday_5": [
+   "sabadu",
+   "sábadu"
+  ],
+  "weekday_6": [
+   "domingu"
+  ]
+ },
+ "sources": {
+  "clock_meridiem_night": [
+   "The NIGHT daypart is a midnight-crossing BAND in colloquial clock usage,",
+   "not a uniform +12 PM shift: \"la una de la nueche\" is 01:00, \"les diez de",
+   "la nueche\" is 22:00, twelve is midnight 00:00.  Small hours 1..5 stay AM,",
+   "evening hours 6..11 are PM, twelve is midnight (band-split in resolver",
+   "_clock_hms).  AST is Ibero-Romance and shares the same madrugada band",
+   "[00:00, 06:00) as es/ca/pt (chronologia/dayparts.py); the 5|6 cut is",
+   "inherited from the RAE/DIEC/Priberam-cited boundary for the sibling",
+   "Ibero-Romance locales (see chronologia/locale/es/clock_meridiem_night.voc)",
+   "pending native confirmation for Asturian (tracked in issue #266)."
+  ],
+  "daypart_morning": [
+   "\"la mañana\" is the morning: DALLA s.v. \"mañana, la\": \"Parte [del día] que va",
+   "dende l'amanecida hasta'l meudía.\"  The adverb \"mañana\" is tomorrow (DALLA",
+   "s.v. \"mañana\": \"Nel día que sigue al de güei\"), so the morning reading needs",
+   "a demonstrative, an article, \"de\" (DALLA: \"|| De mañana, na parte del día que",
+   "va dende l'amanecida hasta'l meudía\") or \"pela\" before it.  No CLDR",
+   "day-period rules exist for ast; the band is the library default morning,",
+   "[06:00, 12:00)."
+  ],
+  "marker_at_counts": [
+   "Clock prepositions that also introduce a counted group: a bare hour behind one",
+   "is doubtful only right before a word of marker_counted_noun.voc.  Attested in",
+   "the parity acceptance rows; no dictionary source checked, a native reviewer is to confirm."
+  ],
+  "marker_counted_noun": [
+   "Nouns that count people or things a clock never takes: a bare hour behind a",
+   "clock preposition and directly before one of them is a count (\"wave at 5",
+   "people\").  Each word is quoted from its Wiktionary Noun entry",
+   "(https://en.wiktionary.org/wiki/<word>); the fetched pages are kept with the audit.",
+   "persona: Noun. \"person\"",
+   "persones: Noun. \"plural of persona\"",
+   "neños: Noun. \"plural of neñu\"",
+   "neñes: Noun. \"plural of neña\"",
+   "amigos: Noun. \"form of amigu\"",
+   "amigues: Noun. \"plural of amiga\"",
+   "rapazos: Noun. \"plural of rapaz\"",
+   "xugadores: Noun. \"plural of xugador\"",
+   "asientos: Noun. \"plural of asientu\"",
+   "cuartos: Noun. \"plural of cuartu\""
+  ],
+  "marker_day_early": [
+   "A day word followed by \"ceo\" names the first hours of that day: \"mañana",
+   "ceo\" is tomorrow morning.  DALLA s.v. \"ceo\": \"Nes primeres hores del día.",
+   "Los periódicos repártense ceo.\"  Without a day word it names no date."
+  ],
+  "marker_dayframe": [
+   "\"per\" with the article frames a part of the day.  DALLA s.v. \"per\":",
+   "\"allugamientu nel tiempu: Vémonos pela mañana\"; s.v. \"pel, pela, pelo\":",
+   "\"contr. de la preposición per y l'artículu\"."
+  ],
+  "marker_daypart_after_day": [
+   "\"de\" opens the morning only right after a day: \"el llunes de mañana\",",
+   "\"mañana de mañana\".  DALLA lists \"De mañana, na parte del día que va dende",
+   "l'amanecida hasta'l meudía\" (s.v. \"mañana, la\").  The adverb \"mañana\" is",
+   "\"Nel día que sigue al de güei\" (s.v. \"mañana\"), and that is its reading in",
+   "\"a partir de mañana\" and \"el día de mañana\": tomorrow."
+  ],
+  "marker_past": [
+   "\"atrás\" closing a counted length is the postposed past marker, beside the",
+   "preposed \"hai\"/\"fai\": ast.wikipedia has \"10,000 años atrás\" (Pleistocenu),",
+   "\"sieglos atrás\" (Malí) and \"meses atrás\" (Israel).  Portuguese lists the",
+   "same pair in this file."
+  ],
+  "marker_sharp": [
+   "The exact hour, trailing the clock: DALLA s.v. \"puntu\", \"|| En puntu, a la",
+   "hora exauta. 2 Exauta [una hora].\""
+  ],
+  "month_1": [
+   "Unicode CLDR 47, locale ast, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/ast/ca-gregorian.json): months.stand-alone.wide,",
+   "months.format.abbreviated, months.stand-alone.abbreviated."
+  ],
+  "month_10": [
+   "Unicode CLDR 47, locale ast, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/ast/ca-gregorian.json): months.stand-alone.wide,",
+   "months.format.abbreviated, months.stand-alone.abbreviated."
+  ],
+  "month_11": [
+   "Unicode CLDR 47, locale ast, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/ast/ca-gregorian.json): months.stand-alone.wide.  Not",
+   "covered by any of those charts, and so unattested here: \"noviembre\", \"nov\"."
+  ],
+  "month_12": [
+   "Unicode CLDR 47, locale ast, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/ast/ca-gregorian.json): months.stand-alone.wide.  Not",
+   "covered by any of those charts, and so unattested here: \"diciembre\", \"dic\"."
+  ],
+  "month_2": [
+   "Unicode CLDR 47, locale ast, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/ast/ca-gregorian.json): months.stand-alone.wide,",
+   "months.format.abbreviated, months.stand-alone.abbreviated."
+  ],
+  "month_3": [
+   "Unicode CLDR 47, locale ast, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/ast/ca-gregorian.json): months.stand-alone.wide,",
+   "months.format.abbreviated, months.stand-alone.abbreviated."
+  ],
+  "month_4": [
+   "Unicode CLDR 47, locale ast, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/ast/ca-gregorian.json): months.stand-alone.wide,",
+   "months.format.abbreviated, months.stand-alone.abbreviated."
+  ],
+  "month_5": [
+   "Unicode CLDR 47, locale ast, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/ast/ca-gregorian.json): months.stand-alone.wide."
+  ],
+  "month_6": [
+   "Unicode CLDR 47, locale ast, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/ast/ca-gregorian.json): months.stand-alone.wide."
+  ],
+  "month_7": [
+   "Unicode CLDR 47, locale ast, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/ast/ca-gregorian.json): months.stand-alone.wide."
+  ],
+  "month_8": [
+   "Unicode CLDR 47, locale ast, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/ast/ca-gregorian.json): months.stand-alone.wide,",
+   "months.format.abbreviated, months.stand-alone.abbreviated."
+  ],
+  "month_9": [
+   "Unicode CLDR 47, locale ast, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/ast/ca-gregorian.json): months.stand-alone.wide,",
+   "months.format.abbreviated, months.stand-alone.abbreviated."
+  ],
+  "roman_anchor_ides": [
+   "Asturian vernacular forms added; Latin classical forms retained.",
+   "Source: Wikipedia \"Calendariu romanu\" (ast):",
+   "  \"Calendes ... Nones ... Idus\".",
+   "  https://ast.wikipedia.org/wiki/Calendariu_romanu"
+  ],
+  "roman_anchor_kalends": [
+   "Asturian vernacular forms added; Latin classical forms retained.",
+   "Source: Wikipedia \"Calendariu romanu\" (ast):",
+   "  \"Calendes ... Nones ... Idus\".",
+   "  https://ast.wikipedia.org/wiki/Calendariu_romanu"
+  ],
+  "roman_anchor_nones": [
+   "Asturian vernacular forms added; Latin classical forms retained.",
+   "Source: Wikipedia \"Calendariu romanu\" (ast):",
+   "  \"Calendes ... Nones ... Idus\".",
+   "  https://ast.wikipedia.org/wiki/Calendariu_romanu"
+  ],
+  "unit1_second": [
+   "Unicode CLDR 47, locale ast, cldr-units-full/main/ast/units.json,",
+   "duration-second, unitPattern-count-one \"segundu\" (short \"seg\")."
+  ],
+  "unit_second": [
+   "Unicode CLDR 47, locale ast, cldr-units-full/main/ast/units.json,",
+   "duration-second: one \"segundu\", other \"segundos\", short \"seg\"/\"segs\"."
+  ],
+  "weekday_0": [
+   "Unicode CLDR 47, locale ast, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/ast/ca-gregorian.json): days.format.wide,",
+   "days.stand-alone.wide."
+  ],
+  "weekday_1": [
+   "Unicode CLDR 47, locale ast, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/ast/ca-gregorian.json): days.format.wide,",
+   "days.stand-alone.wide."
+  ],
+  "weekday_2": [
+   "Unicode CLDR 47, locale ast, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/ast/ca-gregorian.json): days.format.wide,",
+   "days.stand-alone.wide.  Not covered by any of those charts, and so",
+   "unattested here: \"miercoles\"."
+  ],
+  "weekday_3": [
+   "Unicode CLDR 47, locale ast, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/ast/ca-gregorian.json): days.format.wide,",
+   "days.stand-alone.wide."
+  ],
+  "weekday_4": [
+   "Unicode CLDR 47, locale ast, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/ast/ca-gregorian.json): days.format.wide,",
+   "days.stand-alone.wide."
+  ],
+  "weekday_5": [
+   "Unicode CLDR 47, locale ast, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/ast/ca-gregorian.json): days.format.wide,",
+   "days.stand-alone.wide.  Not covered by any of those charts, and so",
+   "unattested here: \"sabadu\"."
+  ],
+  "weekday_6": [
+   "Unicode CLDR 47, locale ast, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/ast/ca-gregorian.json): days.format.wide,",
+   "days.stand-alone.wide."
+  ]
+ }
+}

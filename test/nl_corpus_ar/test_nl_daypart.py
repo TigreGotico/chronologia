@@ -32,7 +32,7 @@ def test_ar_daypart(text, date, h0):
 def test_ar_morning_uses_ar_band_not_default():
     # Adversarial: CLDR ar morning starts at 03:00, chronologia's default
     # (lang=None) morning starts at 06:00. A loader that mis-keys the ar
-    # surfaces (drops the _ar suffix from the daypart_*.voc filename) falls
+    # surfaces (drops the _ar suffix from the daypart_* filename) falls
     # through to the default band and this would wrongly read 06:00.
     s = _s("هذا الصباح")
     assert s.start_datetime.hour == 3

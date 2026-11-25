@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 """All seven Kabyle weekdays, bare -> next occurrence, or today.
 
-Extends test_bare_weekday.py (which sampled two) to the full weekday_*.voc
+Extends test_bare_weekday.py (which sampled two) to the full weekday_*
 table. When the anchor already is that weekday the span is the anchor day. Day-wide span; gold from independent arithmetic against
 anchor Tue 2017-06-27.
 """

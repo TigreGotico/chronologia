@@ -36,6 +36,6 @@ def test_plural_count_of_month_is_nomatch(text):
     # A bare plural count ("the two days of June") must not be fabricated into an
     # ordinal ("June 2") -- the scoped-ordinal plural-unit veto rejects it,
     # exactly as the English "the two days of June" does.  Regression: German
-    # shipped no unit1_<kind>.voc, so its derived plural_units held only genitive
+    # shipped no unit1_<kind>, so its derived plural_units held only genitive
     # SINGULARS (jahres/monats) and the veto never fired, inventing June 2.
     nomatch(text)

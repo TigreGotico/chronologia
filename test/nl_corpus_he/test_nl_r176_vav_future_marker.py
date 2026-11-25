@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 """R176: the curated vav-strip stems (``_HE_VAV_STEMS`` in
 :mod:`chronologia.extract.numlayer_semitic`) omitted בעוד (in/within,
-``marker_future.voc``), the forward-direction sibling of the already-curated
+``marker_future``), the forward-direction sibling of the already-curated
 לפני (before/ago). A vav-prefixed future offset ("ובעוד יומיים", and-in-
 two-days) dropped the whole mention instead of resolving like its bare
 sibling "בעוד יומיים".

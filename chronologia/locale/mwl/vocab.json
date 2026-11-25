@@ -1,0 +1,356 @@
+{
+ "format_version": 1,
+ "words": {
+  "clock_dir_past": [
+   "e"
+  ],
+  "clock_dir_to": [
+   "menos"
+  ],
+  "clock_fraction_15": [
+   "quarto"
+  ],
+  "clock_fraction_30": [
+   "meia",
+   "meio"
+  ],
+  "clock_zone_0": [
+   "gmt",
+   "utc"
+  ],
+  "marker_ad": [
+   "dc"
+  ],
+  "marker_after": [
+   "apuis",
+   "depuis",
+   "dpuis"
+  ],
+  "marker_and": [
+   "e",
+   "i"
+  ],
+  "marker_article": [
+   "l",
+   "la",
+   "las",
+   "lo",
+   "ls"
+  ],
+  "marker_at": [
+   "a",
+   "a las",
+   "à"
+  ],
+  "marker_bc": [
+   "ac"
+  ],
+  "marker_before": [
+   "antes"
+  ],
+  "marker_business": [
+   "laboral",
+   "laborales"
+  ],
+  "marker_every": [
+   "cada",
+   "todas",
+   "todos"
+  ],
+  "marker_freq_daily": [
+   "diariamente"
+  ],
+  "marker_freq_monthly": [
+   "mensalmente"
+  ],
+  "marker_freq_weekly": [
+   "sumanalmente"
+  ],
+  "marker_freq_yearly": [
+   "anualmente"
+  ],
+  "marker_from": [
+   "a partir de"
+  ],
+  "marker_future": [
+   "an",
+   "dentro",
+   "déntro"
+  ],
+  "marker_half": [
+   "meia",
+   "meio"
+  ],
+  "marker_in": [
+   "an",
+   "na",
+   "ne"
+  ],
+  "marker_last": [
+   "passada",
+   "passado",
+   "redadeira",
+   "redadeiro"
+  ],
+  "marker_next": [
+   "prossima",
+   "prossimo",
+   "próssima",
+   "próssimo",
+   "que ben"
+  ],
+  "marker_of": [
+   "de"
+  ],
+  "marker_past": [
+   "atras",
+   "atrás",
+   "fai",
+   "hai"
+  ],
+  "marker_present": [
+   "agora"
+  ],
+  "marker_q": [
+   "q",
+   "t"
+  ],
+  "marker_quarter_word": [
+   "trimestre",
+   "trimestres"
+  ],
+  "marker_recur_for": [
+   "durante",
+   "por"
+  ],
+  "marker_since": [
+   "desde",
+   "zde"
+  ],
+  "marker_this": [
+   "esta",
+   "este",
+   "nesta",
+   "neste"
+  ],
+  "marker_until": [
+   "ata",
+   "ate",
+   "até"
+  ],
+  "marker_week_num": [
+   "sumana",
+   "sumanas"
+  ],
+  "marker_weekof": [
+   "la sumana de",
+   "sumana de"
+  ],
+  "marker_year_plural": [
+   "anhos"
+  ],
+  "marker_year_word": [
+   "anho",
+   "anhos"
+  ],
+  "month_1": [
+   "janeiro"
+  ],
+  "month_10": [
+   "outubre"
+  ],
+  "month_11": [
+   "nobembre"
+  ],
+  "month_12": [
+   "dezembre"
+  ],
+  "month_2": [
+   "febreiro"
+  ],
+  "month_3": [
+   "márcio"
+  ],
+  "month_4": [
+   "abril"
+  ],
+  "month_5": [
+   "maio"
+  ],
+  "month_6": [
+   "júnio"
+  ],
+  "month_7": [
+   "júlio"
+  ],
+  "month_8": [
+   "agosto"
+  ],
+  "month_9": [
+   "setembre"
+  ],
+  "months": [
+   "abril",
+   "agosto",
+   "dezembre",
+   "febreiro",
+   "janeiro",
+   "júlio",
+   "júnio",
+   "maio",
+   "márcio",
+   "nobembre",
+   "outubre",
+   "setembre"
+  ],
+  "named_day_-1": [
+   "onte"
+  ],
+  "named_day_-2": [
+   "trasdonte"
+  ],
+  "named_day_0": [
+   "hoije"
+  ],
+  "named_day_1": [
+   "manhana"
+  ],
+  "period_part_early": [
+   "ampecos",
+   "ampeço",
+   "ampeços",
+   "percipios",
+   "percípio",
+   "percípios"
+  ],
+  "period_part_late": [
+   "fin",
+   "final",
+   "finales"
+  ],
+  "period_part_mid": [
+   "meados",
+   "meio"
+  ],
+  "scale_1000": [
+   "mil"
+  ],
+  "scope_unit_century": [
+   "seclo",
+   "seclos"
+  ],
+  "scope_unit_decade": [
+   "decada",
+   "decadas",
+   "década",
+   "décadas"
+  ],
+  "season_fall": [
+   "outonho"
+  ],
+  "season_spring": [
+   "primabera"
+  ],
+  "season_summer": [
+   "berano"
+  ],
+  "season_winter": [
+   "ambierno"
+  ],
+  "unit_century": [
+   "seclo",
+   "seclos"
+  ],
+  "unit_day": [
+   "die",
+   "dies"
+  ],
+  "unit_decade": [
+   "decada",
+   "decadas",
+   "década",
+   "décadas"
+  ],
+  "unit_hour": [
+   "hora",
+   "horas"
+  ],
+  "unit_minute": [
+   "minuto",
+   "minutos"
+  ],
+  "unit_month": [
+   "meses",
+   "més"
+  ],
+  "unit_week": [
+   "sumana",
+   "sumanas"
+  ],
+  "unit_year": [
+   "anho",
+   "anhos"
+  ],
+  "weekday_0": [
+   "segunda feira"
+  ],
+  "weekday_1": [
+   "terça feira"
+  ],
+  "weekday_2": [
+   "quarta feira"
+  ],
+  "weekday_3": [
+   "quinta feira"
+  ],
+  "weekday_4": [
+   "sesta feira"
+  ],
+  "weekday_5": [
+   "sábado"
+  ],
+  "weekday_6": [
+   "demingo"
+  ]
+ },
+ "sources": {
+  "marker_year_plural": [
+   "The plural year noun that frames a decade (\"ls anhos 80\"); the singular",
+   "\"anho\" names a single year and must not reach the decade slot.",
+   "Sources: Wiktionary, s.v. \"anho\" (https://en.wiktionary.org/wiki/anho),",
+   "Mirandese noun: \"anho m (plural anhos)\"; and the decade surface in",
+   "running text on the Biquipedia -- \"nun eirie para alhá de ls anhos 80 de",
+   "l seclo XX\" (mwl.wikipedia.org/wiki/Lhéngua_mirandesa)."
+  ],
+  "scope_unit_century": [
+   "\"seclo\" is the Mirandese word for \"century\", attested in native running",
+   "text on the Mirandese Wikipedia (Biquipédia), e.g. the article title",
+   "\"Seclo XX\" (mwl.wikipedia.org/wiki/Seclo_XX). Plural \"seclos\" follows the",
+   "regular -o -> -os pattern already used across this locale's other",
+   "unit_*.voc files."
+  ],
+  "scope_unit_decade": [
+   "\"decada\" (also written with the Portuguese-style accent \"década\") is",
+   "attested in native running text on the Mirandese Wikipedia (Biquipédia),",
+   "e.g. category titles \"Catadorie:Década de 1850\" and \"Catadorie:Década de",
+   "2000\" (mwl.wikipedia.org). Both spellings are listed since Mirandese",
+   "orthography does not consistently mark this accent (mirrors the pt",
+   "unit_decade.voc accented/unaccented pair)."
+  ],
+  "unit_century": [
+   "\"seclo\" is the Mirandese word for \"century\", attested in native running",
+   "text on the Mirandese Wikipedia (Biquipédia), e.g. the article title",
+   "\"Seclo XX\" (mwl.wikipedia.org/wiki/Seclo_XX). Plural \"seclos\" follows the",
+   "regular -o -> -os pattern already used across this locale's other",
+   "unit_*.voc files."
+  ],
+  "unit_decade": [
+   "\"decada\" (also written with the Portuguese-style accent \"década\") is",
+   "attested in native running text on the Mirandese Wikipedia (Biquipédia),",
+   "e.g. category titles \"Catadorie:Década de 1850\" and \"Catadorie:Década de",
+   "2000\" (mwl.wikipedia.org). Both spellings are listed since Mirandese",
+   "orthography does not consistently mark this accent (mirrors the pt",
+   "unit_decade.voc accented/unaccented pair)."
+  ]
+ }
+}

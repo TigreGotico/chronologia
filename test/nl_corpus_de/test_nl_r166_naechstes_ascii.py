@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 """R166: German ASCII-umlaut fallback for "nächst-" (next) was inconsistent.
 
-``marker_next.voc`` shipped umlaut "nächster"/"nächstes" without their ASCII
+``marker_next`` shipped umlaut "nächster"/"nächstes" without their ASCII
 twins "naechster"/"naechstes", while "nächste"/"nächsten" did have theirs
 ("naechste"/"naechsten"). "naechstes quartal"/"naechstes jahr" therefore
 refused to parse, and "naechster sommer" silently mis-bound (the marker

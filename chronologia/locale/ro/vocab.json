@@ -1,0 +1,1055 @@
+{
+ "format_version": 1,
+ "words": {
+  "clock_dir_past": [
+   "si",
+   "și"
+  ],
+  "clock_dir_to": [
+   "fara",
+   "fără"
+  ],
+  "clock_fraction_15": [
+   "sfert"
+  ],
+  "clock_fraction_30": [
+   "jumatate",
+   "jumătate"
+  ],
+  "clock_landmark_0": [
+   "miezulnoptii"
+  ],
+  "clock_landmark_720": [
+   "amiaza",
+   "amiază",
+   "pranz",
+   "prânz"
+  ],
+  "clock_meridiem_am": [
+   "dimineata",
+   "dimineața"
+  ],
+  "clock_meridiem_pm": [
+   "seara"
+  ],
+  "clock_zone_0": [
+   "gmt",
+   "utc"
+  ],
+  "daypart_dimineata_ro": [
+   "dimineata",
+   "dimineața",
+   "dimineață"
+  ],
+  "daypart_dupa_amiaza_ro": [
+   "dupa-amiaza",
+   "după-amiaza",
+   "după-amiază"
+  ],
+  "daypart_noapte_ro": [
+   "noapte",
+   "noaptea"
+  ],
+  "daypart_seara_ro": [
+   "seara",
+   "seară"
+  ],
+  "decade_word_20": [
+   "douazeci",
+   "douăzeci"
+  ],
+  "decade_word_30": [
+   "treizeci"
+  ],
+  "decade_word_40": [
+   "patruzeci"
+  ],
+  "decade_word_50": [
+   "cincizeci"
+  ],
+  "decade_word_60": [
+   "saizeci",
+   "șaizeci"
+  ],
+  "decade_word_70": [
+   "saptezeci",
+   "șaptezeci"
+  ],
+  "decade_word_80": [
+   "optzeci"
+  ],
+  "decade_word_90": [
+   "nouazeci",
+   "nouăzeci"
+  ],
+  "era_ad_prefix": [
+   "d.hr.",
+   "dupa hristos",
+   "după hristos"
+  ],
+  "era_ad_suffix": [
+   "d. hr.",
+   "d.hr.",
+   "dhr",
+   "dupa hristos",
+   "după hristos"
+  ],
+  "era_anno_mundi_prefix": [
+   "anno mundi"
+  ],
+  "era_anno_mundi_suffix": [
+   "anno mundi"
+  ],
+  "era_bc_suffix": [
+   "i.hr.",
+   "ihr",
+   "inainte de hristos",
+   "î. hr.",
+   "î.hr.",
+   "înainte de hristos"
+  ],
+  "era_bp_suffix": [
+   "ani inainte de prezent",
+   "ani înainte de prezent",
+   "b.p.",
+   "bp"
+  ],
+  "era_holocene_prefix": [
+   "era holocena",
+   "era holocenă",
+   "era umana",
+   "era umană"
+  ],
+  "era_holocene_suffix": [
+   "era holocena",
+   "era holocenă",
+   "era umana",
+   "era umană"
+  ],
+  "era_julian_prefix": [
+   "julian day",
+   "julian day number"
+  ],
+  "era_unix_prefix": [
+   "epoca unix",
+   "timp unix"
+  ],
+  "era_year_ref": [
+   "anul",
+   "in anul",
+   "în anul"
+  ],
+  "marker_ad": [
+   "dhr"
+  ],
+  "marker_after": [
+   "dupa",
+   "după"
+  ],
+  "marker_ago": [
+   "acum"
+  ],
+  "marker_and": [
+   "si",
+   "și"
+  ],
+  "marker_article": [
+   "a",
+   "ai",
+   "al",
+   "ale",
+   "cea",
+   "cel",
+   "l",
+   "o",
+   "un"
+  ],
+  "marker_at": [
+   "la"
+  ],
+  "marker_bc": [
+   "ihr"
+  ],
+  "marker_before": [
+   "inainte",
+   "înainte"
+  ],
+  "marker_between": [
+   "intre",
+   "între"
+  ],
+  "marker_bp": [
+   "bp"
+  ],
+  "marker_consulship": [
+   "consulat"
+  ],
+  "marker_date_lead": [
+   "pe"
+  ],
+  "marker_during": [
+   "in",
+   "in timpul",
+   "în",
+   "în timpul"
+  ],
+  "marker_every": [
+   "fiecare"
+  ],
+  "marker_freq_daily": [
+   "zilnic"
+  ],
+  "marker_freq_monthly": [
+   "lunar"
+  ],
+  "marker_freq_weekly": [
+   "saptamanal",
+   "săptămânal"
+  ],
+  "marker_freq_yearly": [
+   "anual"
+  ],
+  "marker_from": [
+   "de la",
+   "din",
+   "dintre"
+  ],
+  "marker_future": [
+   "in",
+   "peste",
+   "în"
+  ],
+  "marker_half": [
+   "jumatate",
+   "jumătate"
+  ],
+  "marker_hebrew": [
+   "ebraic",
+   "evreiesc"
+  ],
+  "marker_hours": [
+   "ore"
+  ],
+  "marker_in": [
+   "in",
+   "în"
+  ],
+  "marker_indef": [
+   "o",
+   "un"
+  ],
+  "marker_last": [
+   "trecut",
+   "trecuta",
+   "trecută"
+  ],
+  "marker_month_word": [
+   "luna",
+   "luni",
+   "lunii",
+   "lună"
+  ],
+  "marker_new": [
+   "nou",
+   "noua",
+   "nouă"
+  ],
+  "marker_next": [
+   "viitoare",
+   "viitor"
+  ],
+  "marker_oclock": [
+   "ora",
+   "ore"
+  ],
+  "marker_of": [
+   "a",
+   "ai",
+   "al",
+   "ale",
+   "de",
+   "din",
+   "lui"
+  ],
+  "marker_offset_lead": [
+   "cu"
+  ],
+  "marker_ordlast": [
+   "ultim",
+   "ultima",
+   "ultimul"
+  ],
+  "marker_past": [
+   "acum"
+  ],
+  "marker_plural": [
+   "e",
+   "i",
+   "le"
+  ],
+  "marker_present": [
+   "azi",
+   "prezent"
+  ],
+  "marker_pridie": [
+   "pridie"
+  ],
+  "marker_q": [
+   "q",
+   "t"
+  ],
+  "marker_quarter_word": [
+   "trimestre",
+   "trimestru",
+   "trimestrul"
+  ],
+  "marker_recur_for": [
+   "timp de",
+   "vreme de"
+  ],
+  "marker_since": [
+   "de la",
+   "din",
+   "începând cu"
+  ],
+  "marker_this": [
+   "aceasta",
+   "această",
+   "acest",
+   "acesta"
+  ],
+  "marker_to": [
+   "la",
+   "pana in",
+   "pana la",
+   "până la",
+   "până în"
+  ],
+  "marker_until": [
+   "pana",
+   "pana in",
+   "pana la",
+   "până",
+   "până la",
+   "până în"
+  ],
+  "marker_week_num": [
+   "saptamana",
+   "saptamani",
+   "săptămâna",
+   "săptămâni",
+   "săptămână"
+  ],
+  "marker_weekof": [
+   "saptamana de",
+   "saptamana din",
+   "săptămâna de",
+   "săptămâna din"
+  ],
+  "marker_year_plural": [
+   "ani",
+   "anii"
+  ],
+  "marker_year_word": [
+   "an",
+   "ani",
+   "anul"
+  ],
+  "month_1": [
+   "ian",
+   "ianuarie"
+  ],
+  "month_10": [
+   "oct",
+   "octombrie"
+  ],
+  "month_11": [
+   "noi",
+   "noiembrie"
+  ],
+  "month_12": [
+   "dec",
+   "decembrie"
+  ],
+  "month_2": [
+   "feb",
+   "februarie"
+  ],
+  "month_3": [
+   "mar",
+   "martie"
+  ],
+  "month_4": [
+   "apr",
+   "aprilie"
+  ],
+  "month_5": [
+   "mai"
+  ],
+  "month_6": [
+   "iun",
+   "iunie"
+  ],
+  "month_7": [
+   "iul",
+   "iulie"
+  ],
+  "month_8": [
+   "aug",
+   "august"
+  ],
+  "month_9": [
+   "sep",
+   "septembrie"
+  ],
+  "month_french_republican_1": [
+   "vendemiaire"
+  ],
+  "month_french_republican_10": [
+   "messidor"
+  ],
+  "month_french_republican_11": [
+   "thermidor"
+  ],
+  "month_french_republican_12": [
+   "fructidor"
+  ],
+  "month_french_republican_2": [
+   "brumaire"
+  ],
+  "month_french_republican_3": [
+   "frimaire"
+  ],
+  "month_french_republican_4": [
+   "nivose"
+  ],
+  "month_french_republican_5": [
+   "pluviose"
+  ],
+  "month_french_republican_6": [
+   "ventose"
+  ],
+  "month_french_republican_7": [
+   "germinal"
+  ],
+  "month_french_republican_8": [
+   "floreal"
+  ],
+  "month_french_republican_9": [
+   "prairial"
+  ],
+  "month_hebrew_1": [
+   "nisan"
+  ],
+  "month_hebrew_10": [
+   "tevet"
+  ],
+  "month_hebrew_11": [
+   "shevat"
+  ],
+  "month_hebrew_12": [
+   "adar"
+  ],
+  "month_hebrew_13": [
+   "adar 2",
+   "adar b",
+   "adar bet",
+   "adar ii",
+   "adar sheni",
+   "adarbet"
+  ],
+  "month_hebrew_2": [
+   "iyar"
+  ],
+  "month_hebrew_3": [
+   "sivan"
+  ],
+  "month_hebrew_4": [
+   "tammuz"
+  ],
+  "month_hebrew_5": [
+   "av"
+  ],
+  "month_hebrew_6": [
+   "elul"
+  ],
+  "month_hebrew_7": [
+   "tishrei",
+   "tishri"
+  ],
+  "month_hebrew_8": [
+   "cheshvan",
+   "heshvan"
+  ],
+  "month_hebrew_9": [
+   "kislev"
+  ],
+  "month_islamic_civil_1": [
+   "muharram"
+  ],
+  "month_islamic_civil_10": [
+   "shawwal"
+  ],
+  "month_islamic_civil_11": [
+   "dhualqadah"
+  ],
+  "month_islamic_civil_12": [
+   "dhualhijjah"
+  ],
+  "month_islamic_civil_2": [
+   "safar"
+  ],
+  "month_islamic_civil_3": [
+   "rabi al-awwal",
+   "rabialawwal"
+  ],
+  "month_islamic_civil_4": [
+   "rabi al-thani",
+   "rabialthani"
+  ],
+  "month_islamic_civil_5": [
+   "jumadaalawwal"
+  ],
+  "month_islamic_civil_6": [
+   "jumadaalthani"
+  ],
+  "month_islamic_civil_7": [
+   "rajab"
+  ],
+  "month_islamic_civil_8": [
+   "shaaban",
+   "shaban"
+  ],
+  "month_islamic_civil_9": [
+   "ramadan",
+   "ramzan"
+  ],
+  "named_day_-1": [
+   "ieri"
+  ],
+  "named_day_-2": [
+   "alaltaieri",
+   "alaltăieri"
+  ],
+  "named_day_0": [
+   "astazi",
+   "astăzi",
+   "azi"
+  ],
+  "named_day_1": [
+   "maine",
+   "mâine"
+  ],
+  "named_day_2": [
+   "poimaine",
+   "poimâine"
+  ],
+  "period_archean": [
+   "archean"
+  ],
+  "period_bronze_age_gb": [
+   "bronze age"
+  ],
+  "period_cambrian": [
+   "cambrian"
+  ],
+  "period_carboniferous": [
+   "carboniferous"
+  ],
+  "period_cenozoic": [
+   "cenozoic"
+  ],
+  "period_cretaceous": [
+   "cretaceous"
+  ],
+  "period_devonian": [
+   "devonian"
+  ],
+  "period_eocene": [
+   "eocene"
+  ],
+  "period_holocene": [
+   "holocene"
+  ],
+  "period_iron_age_gb": [
+   "iron age"
+  ],
+  "period_jurassic": [
+   "jurassic"
+  ],
+  "period_mesozoic": [
+   "mesozoic"
+  ],
+  "period_miocene": [
+   "miocene"
+  ],
+  "period_neogene": [
+   "neogene"
+  ],
+  "period_neolithic_gb": [
+   "neolithic"
+  ],
+  "period_oligocene": [
+   "oligocene"
+  ],
+  "period_ordovician": [
+   "ordovician"
+  ],
+  "period_paleocene": [
+   "paleocene"
+  ],
+  "period_paleogene": [
+   "paleogene"
+  ],
+  "period_paleozoic": [
+   "paleozoic"
+  ],
+  "period_part_early": [
+   "inceput",
+   "început",
+   "începutul"
+  ],
+  "period_part_late": [
+   "final",
+   "sfarsit",
+   "sfârșit",
+   "sfârșitul"
+  ],
+  "period_part_mid": [
+   "mijloacul",
+   "mijloc",
+   "mijlocul"
+  ],
+  "period_permian": [
+   "permian"
+  ],
+  "period_phanerozoic": [
+   "phanerozoic"
+  ],
+  "period_pleistocene": [
+   "pleistocene"
+  ],
+  "period_pliocene": [
+   "pliocene"
+  ],
+  "period_proterozoic": [
+   "proterozoic"
+  ],
+  "period_quaternary": [
+   "quaternary"
+  ],
+  "period_silurian": [
+   "silurian"
+  ],
+  "period_triassic": [
+   "triassic"
+  ],
+  "regnal_nengo_heisei": [
+   "heisei"
+  ],
+  "regnal_nengo_meiji": [
+   "meiji"
+  ],
+  "regnal_nengo_reiwa": [
+   "reiwa"
+  ],
+  "regnal_nengo_showa": [
+   "showa"
+  ],
+  "regnal_nengo_taisho": [
+   "taisho"
+  ],
+  "roman_anchor_ides": [
+   "idele",
+   "ides",
+   "idibus"
+  ],
+  "roman_anchor_kalends": [
+   "calendele",
+   "calends",
+   "kalendis",
+   "kalends"
+  ],
+  "roman_anchor_nones": [
+   "nonele",
+   "nones",
+   "nonis"
+  ],
+  "scale_1000": [
+   "mie",
+   "mii"
+  ],
+  "scale_1000000": [
+   "milioane",
+   "milion"
+  ],
+  "scale_1000000000": [
+   "miliard",
+   "miliarde"
+  ],
+  "scale_1000000000.short": [
+   "bilioane",
+   "bilion"
+  ],
+  "scale_1000000000000.long": [
+   "bilioane",
+   "bilion"
+  ],
+  "scope_unit_century": [
+   "secol",
+   "secole"
+  ],
+  "scope_unit_decade": [
+   "decenii",
+   "deceniu"
+  ],
+  "scope_unit_millennium": [
+   "milenii",
+   "mileniu"
+  ],
+  "season_fall": [
+   "toamna",
+   "toamnă"
+  ],
+  "season_spring": [
+   "primavara",
+   "primavară",
+   "primăvara",
+   "primăvară"
+  ],
+  "season_summer": [
+   "vara",
+   "vară"
+  ],
+  "season_winter": [
+   "iarna",
+   "iarnă"
+  ],
+  "special_weekend": [
+   "week-end",
+   "weekend",
+   "weekendul"
+  ],
+  "unit1_century": [
+   "secol"
+  ],
+  "unit1_day": [
+   "zi"
+  ],
+  "unit1_decade": [
+   "deceniu"
+  ],
+  "unit1_hour": [
+   "ora",
+   "oră"
+  ],
+  "unit1_millennium": [
+   "mileniu"
+  ],
+  "unit1_minute": [
+   "min",
+   "minut"
+  ],
+  "unit1_month": [
+   "luna",
+   "lună"
+  ],
+  "unit1_second": [
+   "secunda",
+   "secundă"
+  ],
+  "unit1_week": [
+   "saptamana",
+   "săptămâna",
+   "săptămână"
+  ],
+  "unit1_year": [
+   "an",
+   "anul"
+  ],
+  "unit_century": [
+   "secol",
+   "secole"
+  ],
+  "unit_day": [
+   "zi",
+   "zile"
+  ],
+  "unit_decade": [
+   "decenii",
+   "deceniu"
+  ],
+  "unit_hour": [
+   "ora",
+   "ore",
+   "oră"
+  ],
+  "unit_millennium": [
+   "milenii",
+   "mileniu"
+  ],
+  "unit_minute": [
+   "min",
+   "minut",
+   "minute"
+  ],
+  "unit_month": [
+   "luna",
+   "luni",
+   "lună"
+  ],
+  "unit_second": [
+   "secunda",
+   "secunde",
+   "secundă"
+  ],
+  "unit_week": [
+   "saptamana",
+   "saptamani",
+   "săptămâna",
+   "săptămâni",
+   "săptămână"
+  ],
+  "unit_year": [
+   "an",
+   "ani",
+   "anul"
+  ],
+  "weekday_0": [
+   "lunea",
+   "luni"
+  ],
+  "weekday_1": [
+   "martea",
+   "marti",
+   "marțea",
+   "marți"
+  ],
+  "weekday_2": [
+   "miercurea",
+   "miercuri"
+  ],
+  "weekday_3": [
+   "joi",
+   "joia"
+  ],
+  "weekday_4": [
+   "vinerea",
+   "vineri"
+  ],
+  "weekday_5": [
+   "sambata",
+   "sâmbăta",
+   "sâmbătă"
+  ],
+  "weekday_6": [
+   "duminica",
+   "duminică"
+  ]
+ },
+ "sources": {
+  "daypart_dimineata_ro": [
+   "Band boundaries: Unicode CLDR 47 Day Period Rules, locale ro",
+   "(https://www.unicode.org/cldr/charts/47/supplemental/day_periods.html),",
+   "transcribed in chronologia/dayparts.py as [05:00, 12:00).",
+   "Sources: dexonline, Dictionarul explicativ al limbii romane",
+   "(https://dexonline.ro/definitie/dupa-amiaza).",
+   "Romanian opens the morning at 05:00. The articulated form dimineata is",
+   "the everyday one (\"maine dimineata\") and is listed beside the bare noun."
+  ],
+  "daypart_dupa_amiaza_ro": [
+   "Band boundaries: Unicode CLDR 47 Day Period Rules, locale ro",
+   "(https://www.unicode.org/cldr/charts/47/supplemental/day_periods.html),",
+   "transcribed in chronologia/dayparts.py as [12:00, 18:00).",
+   "The hyphenated surface is tokenizer-canonicalised to \"dupa amiaza\" (the",
+   "hyphen splits into two tokens the loader re-glues) -- the same reason",
+   "fr's daypart_apres_midi_fr.voc keeps this comment. Registering it here is",
+   "required because bare \"amiaza\" is ALSO this locale's word for noon",
+   "(clock_landmark_720.voc): without the glued multi-token surface, the",
+   "hyphen-split \"amiaza\" half of \"dupa-amiaza\" was claimed by the noon",
+   "landmark instead of the afternoon band."
+  ],
+  "daypart_noapte_ro": [
+   "Band boundaries: Unicode CLDR 47 Day Period Rules, locale ro",
+   "(https://www.unicode.org/cldr/charts/47/supplemental/day_periods.html),",
+   "transcribed in chronologia/dayparts.py as [22:00, 05:00).",
+   "Sources: dexonline, Dictionarul explicativ al limbii romane",
+   "(https://dexonline.ro/definitie/dupa-amiaza).",
+   "The chart lists noapte twice, at 00:00 and again at 22:00: one band",
+   "split only by the start-time notation, joined here into the single",
+   "midnight-crossing night it is. Romanian is the only language of the",
+   "thirteen where that join fires."
+  ],
+  "daypart_seara_ro": [
+   "Band boundaries: Unicode CLDR 47 Day Period Rules, locale ro",
+   "(https://www.unicode.org/cldr/charts/47/supplemental/day_periods.html),",
+   "transcribed in chronologia/dayparts.py as [18:00, 22:00).",
+   "Sources: dexonline, Dictionarul explicativ al limbii romane",
+   "(https://dexonline.ro/definitie/dupa-amiaza)."
+  ],
+  "marker_date_lead": [
+   "Words that open a date or a clock time and belong to it.",
+   "Each word is shown opening a time or date phrase on the page named in brackets,",
+   "saved under knowledge/wiki/audits/chronologia/parity-fixes/marker-strand/sources/ in the workspace.",
+   "pe: Wiktionary \"pe\": \"on (some time during the day of): pe zece mai\" [ro-pe.wikitext.txt]"
+  ],
+  "month_1": [
+   "Unicode CLDR 47, locale ro, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/ro/ca-gregorian.json): months.format.wide,",
+   "months.stand-alone.wide, months.format.abbreviated,",
+   "months.stand-alone.abbreviated.  CLDR spells the abbreviations with a",
+   "trailing period; the surfaces here drop it."
+  ],
+  "month_10": [
+   "Unicode CLDR 47, locale ro, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/ro/ca-gregorian.json): months.format.wide,",
+   "months.stand-alone.wide, months.format.abbreviated,",
+   "months.stand-alone.abbreviated.  CLDR spells the abbreviations with a",
+   "trailing period; the surfaces here drop it."
+  ],
+  "month_11": [
+   "Unicode CLDR 47, locale ro, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/ro/ca-gregorian.json): months.format.wide,",
+   "months.stand-alone.wide.  Not covered by any of those charts, and so",
+   "unattested here: \"noi\"."
+  ],
+  "month_12": [
+   "Unicode CLDR 47, locale ro, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/ro/ca-gregorian.json): months.format.wide,",
+   "months.stand-alone.wide, months.format.abbreviated,",
+   "months.stand-alone.abbreviated.  CLDR spells the abbreviations with a",
+   "trailing period; the surfaces here drop it."
+  ],
+  "month_2": [
+   "Unicode CLDR 47, locale ro, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/ro/ca-gregorian.json): months.format.wide,",
+   "months.stand-alone.wide, months.format.abbreviated,",
+   "months.stand-alone.abbreviated.  CLDR spells the abbreviations with a",
+   "trailing period; the surfaces here drop it."
+  ],
+  "month_3": [
+   "Unicode CLDR 47, locale ro, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/ro/ca-gregorian.json): months.format.wide,",
+   "months.stand-alone.wide, months.format.abbreviated,",
+   "months.stand-alone.abbreviated.  CLDR spells the abbreviations with a",
+   "trailing period; the surfaces here drop it."
+  ],
+  "month_4": [
+   "Unicode CLDR 47, locale ro, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/ro/ca-gregorian.json): months.format.wide,",
+   "months.stand-alone.wide, months.format.abbreviated,",
+   "months.stand-alone.abbreviated.  CLDR spells the abbreviations with a",
+   "trailing period; the surfaces here drop it."
+  ],
+  "month_5": [
+   "Unicode CLDR 47, locale ro, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/ro/ca-gregorian.json): months.format.wide,",
+   "months.stand-alone.wide, months.format.abbreviated,",
+   "months.stand-alone.abbreviated."
+  ],
+  "month_6": [
+   "Unicode CLDR 47, locale ro, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/ro/ca-gregorian.json): months.format.wide,",
+   "months.stand-alone.wide, months.format.abbreviated,",
+   "months.stand-alone.abbreviated.  CLDR spells the abbreviations with a",
+   "trailing period; the surfaces here drop it."
+  ],
+  "month_7": [
+   "Unicode CLDR 47, locale ro, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/ro/ca-gregorian.json): months.format.wide,",
+   "months.stand-alone.wide, months.format.abbreviated,",
+   "months.stand-alone.abbreviated.  CLDR spells the abbreviations with a",
+   "trailing period; the surfaces here drop it."
+  ],
+  "month_8": [
+   "Unicode CLDR 47, locale ro, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/ro/ca-gregorian.json): months.format.wide,",
+   "months.stand-alone.wide, months.format.abbreviated,",
+   "months.stand-alone.abbreviated.  CLDR spells the abbreviations with a",
+   "trailing period; the surfaces here drop it."
+  ],
+  "month_9": [
+   "Unicode CLDR 47, locale ro, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/ro/ca-gregorian.json): months.format.wide,",
+   "months.stand-alone.wide.  Not covered by any of those charts, and so",
+   "unattested here: \"sep\"."
+  ],
+  "roman_anchor_ides": [
+   "Romanian vernacular forms added; Latin classical forms retained.",
+   "Source: Wikipedia \"Calendarul roman\" (ro):",
+   "  \"... calendele, idele și nonele\".",
+   "  https://ro.wikipedia.org/wiki/Calendarul_roman"
+  ],
+  "roman_anchor_kalends": [
+   "Romanian vernacular forms added; Latin classical forms retained.",
+   "Source: Wikipedia \"Calendarul roman\" (ro):",
+   "  \"... calendele, idele și nonele\".",
+   "  https://ro.wikipedia.org/wiki/Calendarul_roman"
+  ],
+  "roman_anchor_nones": [
+   "Romanian vernacular forms added; Latin classical forms retained.",
+   "Source: Wikipedia \"Calendarul roman\" (ro):",
+   "  \"... calendele, idele și nonele\".",
+   "  https://ro.wikipedia.org/wiki/Calendarul_roman"
+  ],
+  "unit1_second": [
+   "Unicode CLDR 47, locale ro, cldr-units-full/main/ro/units.json,",
+   "duration-second, unitPattern-count-one \"secundă\" (unaccented \"secunda\")."
+  ],
+  "unit_second": [
+   "Unicode CLDR 47, locale ro, cldr-units-full/main/ro/units.json,",
+   "duration-second: one \"secundă\", few/other \"secunde\".  \"secunda\" is the",
+   "same singular with the final vowel written unaccented, the spelling",
+   "unaccented Romanian input produces -- unit_hour.voc ships \"ora\" beside",
+   "\"oră\" for the same reason."
+  ],
+  "weekday_0": [
+   "Romanian weekday, bare and with the enclitic definite article.  The",
+   "articulated form (lunea) is the ordinary written shape in",
+   "\"lunea trecută/viitoare\" (= last/next Monday).  Definite article of the",
+   "days of the week per dexonline / DOOM.",
+   "https://dexonline.ro/definitie/luni"
+  ],
+  "weekday_1": [
+   "Romanian weekday, bare and with the enclitic definite article.  The",
+   "articulated form (marțea) is the ordinary written shape in",
+   "\"marțea trecută/viitoare\" (= last/next Tuesday).  Definite article of the",
+   "days of the week per dexonline / DOOM.",
+   "https://dexonline.ro/definitie/marți"
+  ],
+  "weekday_2": [
+   "Romanian weekday, bare and with the enclitic definite article.  The",
+   "articulated form (miercurea) is the ordinary written shape in",
+   "\"miercurea trecută/viitoare\" (= last/next Wednesday).  Definite article of the",
+   "days of the week per dexonline / DOOM.",
+   "https://dexonline.ro/definitie/miercuri"
+  ],
+  "weekday_3": [
+   "Romanian weekday, bare and with the enclitic definite article.  The",
+   "articulated form (joia) is the ordinary written shape in",
+   "\"joia trecută/viitoare\" (= last/next Thursday).  Definite article of the",
+   "days of the week per dexonline / DOOM.",
+   "https://dexonline.ro/definitie/joi"
+  ],
+  "weekday_4": [
+   "Romanian weekday, bare and with the enclitic definite article.  The",
+   "articulated form (vinerea) is the ordinary written shape in",
+   "\"vinerea trecută/viitoare\" (= last/next Friday).  Definite article of the",
+   "days of the week per dexonline / DOOM.",
+   "https://dexonline.ro/definitie/vineri"
+  ],
+  "weekday_5": [
+   "Romanian weekday, bare and with the enclitic definite article.  The",
+   "articulated form (sâmbăta) is the ordinary written shape in",
+   "\"sâmbăta trecută/viitoare\" (= last/next Saturday).  Definite article of the",
+   "days of the week per dexonline / DOOM.",
+   "https://dexonline.ro/definitie/sâmbătă"
+  ],
+  "weekday_6": [
+   "Unicode CLDR 47, locale ro, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/ro/ca-gregorian.json): days.format.wide,",
+   "days.stand-alone.wide.  Not covered by any of those charts, and so",
+   "unattested here: \"duminica\"."
+  ]
+ }
+}

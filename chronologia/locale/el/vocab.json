@@ -1,0 +1,745 @@
+{
+ "format_version": 1,
+ "words": {
+  "clock_dir_past": [
+   "και"
+  ],
+  "clock_dir_to": [
+   "παρά"
+  ],
+  "clock_fraction_15": [
+   "τέταρτο"
+  ],
+  "clock_fraction_30": [
+   "μισή"
+  ],
+  "clock_landmark_0": [
+   "μεσάνυχτα"
+  ],
+  "clock_landmark_720": [
+   "μεσημέρι"
+  ],
+  "clock_meridiem_am": [
+   "π. μ.",
+   "π.μ.",
+   "πμ",
+   "πρωί"
+  ],
+  "clock_meridiem_night": [
+   "νύχτα"
+  ],
+  "clock_meridiem_pm": [
+   "απόγευμα",
+   "βράδυ",
+   "μ. μ.",
+   "μ.μ.",
+   "μεσημέρι",
+   "μμ"
+  ],
+  "clock_zone_0": [
+   "gmt",
+   "utc"
+  ],
+  "daypart_afternoon_el": [
+   "απόγευμα"
+  ],
+  "daypart_evening_el": [
+   "βράδυ"
+  ],
+  "daypart_morning_el": [
+   "πρωί"
+  ],
+  "daypart_night_el": [
+   "νύχτα"
+  ],
+  "marker_ad": [
+   "μ. χ.",
+   "μ.χ."
+  ],
+  "marker_after": [
+   "μετά"
+  ],
+  "marker_ago": [
+   "πριν",
+   "πριν από"
+  ],
+  "marker_and": [
+   "και"
+  ],
+  "marker_article": [
+   "η",
+   "ο",
+   "οι",
+   "τα",
+   "τη",
+   "την",
+   "το",
+   "τον"
+  ],
+  "marker_at": [
+   "στη",
+   "στην",
+   "στις"
+  ],
+  "marker_bc": [
+   "π. χ.",
+   "π.χ."
+  ],
+  "marker_before": [
+   "πριν"
+  ],
+  "marker_between": [
+   "ανάμεσα",
+   "μεταξύ"
+  ],
+  "marker_business": [
+   "εργάσιμες",
+   "εργάσιμη",
+   "εργάσιμη ημέρα"
+  ],
+  "marker_date_lead": [
+   "στη",
+   "στην",
+   "στις"
+  ],
+  "marker_during": [
+   "κατά",
+   "στη",
+   "στη διάρκεια"
+  ],
+  "marker_every": [
+   "κάθε"
+  ],
+  "marker_freq_daily": [
+   "καθημερινά"
+  ],
+  "marker_freq_monthly": [
+   "μηνιαία"
+  ],
+  "marker_freq_weekly": [
+   "εβδομαδιαία"
+  ],
+  "marker_freq_yearly": [
+   "ετήσια"
+  ],
+  "marker_from": [
+   "από"
+  ],
+  "marker_future": [
+   "μετά",
+   "σε"
+  ],
+  "marker_half": [
+   "μισό",
+   "μισό του"
+  ],
+  "marker_hours": [
+   "ώρες"
+  ],
+  "marker_in": [
+   "σε"
+  ],
+  "marker_indef": [
+   "ένα",
+   "έναν",
+   "μία",
+   "μια"
+  ],
+  "marker_last": [
+   "περασμένη",
+   "περασμένο",
+   "περασμένος",
+   "που πέρασε",
+   "προηγούμενη",
+   "προηγούμενο",
+   "προηγούμενος"
+  ],
+  "marker_month_word": [
+   "μήνα",
+   "μήνας"
+  ],
+  "marker_new": [
+   "πρωτο"
+  ],
+  "marker_next": [
+   "επόμενη",
+   "επόμενο",
+   "επόμενος",
+   "που έρχεται"
+  ],
+  "marker_oclock": [
+   "ακριβώς",
+   "η ώρα",
+   "ώρα"
+  ],
+  "marker_of": [
+   "της",
+   "του",
+   "των"
+  ],
+  "marker_on": [
+   "την",
+   "το"
+  ],
+  "marker_ordlast": [
+   "τελευταία",
+   "τελευταίες",
+   "τελευταίο",
+   "τελευταίοι",
+   "τελευταίος",
+   "τελευταίων"
+  ],
+  "marker_past": [
+   "πριν"
+  ],
+  "marker_present": [
+   "τώρα"
+  ],
+  "marker_q": [
+   "q"
+  ],
+  "marker_quarter_word": [
+   "τρίμηνο",
+   "τριμήνου"
+  ],
+  "marker_recur_for": [
+   "για"
+  ],
+  "marker_since": [
+   "από"
+  ],
+  "marker_this": [
+   "αυτή",
+   "αυτό",
+   "αυτόν",
+   "τούτη"
+  ],
+  "marker_to": [
+   "έως",
+   "μέχρι",
+   "ως"
+  ],
+  "marker_until": [
+   "έως",
+   "μέχρι",
+   "ως"
+  ],
+  "marker_week_num": [
+   "εβδομάδα",
+   "εβδομάδας"
+  ],
+  "marker_weekof": [
+   "εβδομάδα της",
+   "εβδομάδα του",
+   "η εβδομάδα της",
+   "η εβδομάδα του"
+  ],
+  "marker_year_word": [
+   "έτος",
+   "έτους",
+   "χρονιά",
+   "χρονιάς",
+   "χρόνια",
+   "χρόνων"
+  ],
+  "month_1": [
+   "ιανουάριο",
+   "ιανουάριος",
+   "ιανουαρίου"
+  ],
+  "month_10": [
+   "οκτωβρίου",
+   "οκτώβριο",
+   "οκτώβριος"
+  ],
+  "month_11": [
+   "νοέμβριο",
+   "νοέμβριος",
+   "νοεμβρίου"
+  ],
+  "month_12": [
+   "δεκέμβριο",
+   "δεκέμβριος",
+   "δεκεμβρίου"
+  ],
+  "month_2": [
+   "φεβρουάριο",
+   "φεβρουάριος",
+   "φεβρουαρίου"
+  ],
+  "month_3": [
+   "μάρτιο",
+   "μάρτιος",
+   "μαρτίου"
+  ],
+  "month_4": [
+   "απρίλιο",
+   "απρίλιος",
+   "απριλίου"
+  ],
+  "month_5": [
+   "μάιο",
+   "μάιος",
+   "μαΐου"
+  ],
+  "month_6": [
+   "ιουνίου",
+   "ιούνιο",
+   "ιούνιος"
+  ],
+  "month_7": [
+   "ιουλίου",
+   "ιούλιο",
+   "ιούλιος"
+  ],
+  "month_8": [
+   "αυγούστου",
+   "αύγουστο",
+   "αύγουστος"
+  ],
+  "month_9": [
+   "σεπτέμβριο",
+   "σεπτέμβριος",
+   "σεπτεμβρίου"
+  ],
+  "named_day_-1": [
+   "χθες",
+   "χτες"
+  ],
+  "named_day_-2": [
+   "προχθές",
+   "προχτές"
+  ],
+  "named_day_0": [
+   "σήμερα"
+  ],
+  "named_day_1": [
+   "αύριο"
+  ],
+  "named_day_2": [
+   "μεθαύριο"
+  ],
+  "period_part_early": [
+   "αρχές",
+   "αρχή"
+  ],
+  "period_part_late": [
+   "τέλη",
+   "τέλος"
+  ],
+  "period_part_mid": [
+   "μέσα",
+   "μέση"
+  ],
+  "scale_1000": [
+   "χίλια"
+  ],
+  "scale_1000000": [
+   "εκατομμύρια",
+   "εκατομμύριο"
+  ],
+  "scale_1000000000": [
+   "δισεκατομμύρια",
+   "δισεκατομμύριο"
+  ],
+  "scope_unit_century": [
+   "αιώνα",
+   "αιώνας"
+  ],
+  "scope_unit_decade": [
+   "δεκαετία"
+  ],
+  "scope_unit_millennium": [
+   "χιλιετία"
+  ],
+  "season_fall": [
+   "φθινοπώρου",
+   "φθινόπωρο"
+  ],
+  "season_spring": [
+   "άνοιξη",
+   "άνοιξης"
+  ],
+  "season_summer": [
+   "καλοκαίρι",
+   "καλοκαιριού"
+  ],
+  "season_winter": [
+   "χειμώνα",
+   "χειμώνας"
+  ],
+  "special_weekend": [
+   "σαββατοκύριακο"
+  ],
+  "unit1_century": [
+   "αιώνα",
+   "αιώνας"
+  ],
+  "unit1_day": [
+   "ημέρα",
+   "μέρα"
+  ],
+  "unit1_decade": [
+   "δεκαετία"
+  ],
+  "unit1_hour": [
+   "ώρα"
+  ],
+  "unit1_millennium": [
+   "χιλιετία"
+  ],
+  "unit1_minute": [
+   "λεπτό"
+  ],
+  "unit1_month": [
+   "μήνα",
+   "μήνας"
+  ],
+  "unit1_second": [
+   "δευτερόλεπτο"
+  ],
+  "unit1_week": [
+   "εβδομάδα"
+  ],
+  "unit1_year": [
+   "έτος",
+   "έτους",
+   "χρονιά",
+   "χρονιάς",
+   "χρόνο",
+   "χρόνος",
+   "χρόνου"
+  ],
+  "unit_century": [
+   "αιώνα",
+   "αιώνας",
+   "αιώνες"
+  ],
+  "unit_day": [
+   "ημέρα",
+   "ημέρες",
+   "μέρα",
+   "μέρες"
+  ],
+  "unit_decade": [
+   "δεκαετία",
+   "δεκαετίες"
+  ],
+  "unit_hour": [
+   "ώρα",
+   "ώρες"
+  ],
+  "unit_millennium": [
+   "χιλιετία",
+   "χιλιετίες"
+  ],
+  "unit_minute": [
+   "λεπτά",
+   "λεπτό"
+  ],
+  "unit_month": [
+   "μήνα",
+   "μήνας",
+   "μήνες"
+  ],
+  "unit_second": [
+   "δευτερόλεπτα",
+   "δευτερόλεπτο"
+  ],
+  "unit_week": [
+   "εβδομάδα",
+   "εβδομάδες"
+  ],
+  "unit_year": [
+   "έτη",
+   "έτος",
+   "έτους",
+   "χρονιά",
+   "χρονιάς",
+   "χρόνια",
+   "χρόνο",
+   "χρόνος",
+   "χρόνου"
+  ],
+  "weekday_0": [
+   "δευτέρα"
+  ],
+  "weekday_1": [
+   "τρίτη"
+  ],
+  "weekday_2": [
+   "τετάρτη"
+  ],
+  "weekday_3": [
+   "πέμπτη"
+  ],
+  "weekday_4": [
+   "παρασκευή"
+  ],
+  "weekday_5": [
+   "σάββατο"
+  ],
+  "weekday_6": [
+   "κυριακή"
+  ]
+ },
+ "sources": {
+  "clock_meridiem_am": [
+   "Greek ante-meridiem marker.  \"π.μ.\" abbreviates \"προ μεσημβρίας\" (\"before",
+   "midday\"): Λεξικό της Κοινής Νεοελληνικής (Ίδρυμα Μανόλη Τριανταφυλλίδη,",
+   "ΙΝΣ / ΑΠΘ 1998), s.v. \"π.μ.\"; Triantafyllidis, Νεοελληνική Γραμματική §403",
+   "(time expressions).",
+   "The dot-less \"πμ\" is the same abbreviation written without its abbreviation",
+   "points -- the ordinary informal rendering in digital text.",
+   "πρωί (morning, CLDR el [04:00, 12:00)) also serves as an AM cue on an",
+   "explicit hour, the same role mañana/madrugada play in es -- \"τρεις το",
+   "πρωί\" is 03:00 (a no-op AM confirmation, spoken hours 1..11 already read",
+   "AM). Source: Triantafyllidis, Νεοελληνική Γραμματική §403; Λεξικό της",
+   "Κοινής Νεοελληνικής (Ίδρυμα Μανόλη Τριανταφυλλίδη), s.v. \"πρωί\"."
+  ],
+  "clock_meridiem_night": [
+   "The NIGHT daypart is a BAND that crosses midnight in colloquial clock",
+   "usage, not a uniform +12 PM shift: \"μία τη νύχτα\" is 01:00 and \"δώδεκα τη",
+   "νύχτα\" is midnight 00:00, while \"δέκα η ώρα τη νύχτα\" is 22:00. Small",
+   "hours 1..5 stay AM, evening hours 6..11 are PM, twelve is midnight (the",
+   "band-split lives in the resolver's shared night-meridiem logic, the same",
+   "convention es \"de la noche\"/pt \"da noite\" use). CLDR el's own νύχτα band",
+   "starts at 20:00, not 18:00 -- the 6|5 cut is the shared colloquial 12-hour",
+   "clock convention (cf. CLDR ar day-period bands), not a literal restatement",
+   "of the CLDR el band edge. Source: Triantafyllidis, Νεοελληνική Γραμματική",
+   "§403; Λεξικό της Κοινής Νεοελληνικής (Ίδρυμα Μανόλη Τριανταφυλλίδη),",
+   "s.v. \"νύχτα\"."
+  ],
+  "clock_meridiem_pm": [
+   "Greek post-meridiem marker.  \"μ.μ.\" abbreviates \"μετά μεσημβρίαν\" (\"after",
+   "midday\") and is the standard written abbreviation for afternoon/evening clock",
+   "times: Λεξικό της Κοινής Νεοελληνικής (Ίδρυμα Μανόλη Τριανταφυλλίδη, ΙΝΣ /",
+   "ΑΠΘ 1998), s.v. \"μ.μ.\"; Triantafyllidis, Νεοελληνική Γραμματική §403",
+   "(time expressions).",
+   "The dot-less \"μμ\" is the same abbreviation written without its abbreviation",
+   "points -- the ordinary informal rendering in digital text (SMS, chat, forms).",
+   "The daypart nouns απόγευμα (afternoon, CLDR el [12:00, 17:00)) and βράδυ",
+   "(evening, CLDR el [17:00, 20:00)) also serve as a uniform +12 PM cue on an",
+   "explicit hour, the same role tarde plays across afternoon+evening in es/pt",
+   "and nachmittags/abends do separately in de -- \"οκτώ το βράδυ\" is 20:00, not",
+   "a hint to re-derive the daypart band. Source: Triantafyllidis, Νεοελληνική",
+   "Γραμματική §403 (time expressions); Λεξικό της Κοινής Νεοελληνικής",
+   "(Ίδρυμα Μανόλη Τριανταφυλλίδη), s.vv. \"απόγευμα\", \"βράδυ\".",
+   "μεσημέρι (midday) serves the same +12 cue on an explicit hour: \"στη μία το",
+   "μεσημέρι\" is 13:00.  el.wikipedia pairs it with απόγευμα in one sentence --",
+   "\"από τις 12 το μεσημέρι μέχρι τις 3 το απόγευμα\" (Σταύρωση του Ιησού",
+   "Χριστού) -- and uses the hour form in running prose: \"Στη μία το μεσημέρι,",
+   "η κυβέρνηση ανακοινώνει\" (Ουγγρική Επανάσταση του 1956), \"καθημερινά στη",
+   "μία το μεσημέρι\" (Ελένη Μενεγάκη), \"Το τελεσίγραφο εξέπνεε στις 12 το",
+   "μεσημέρι\" (Προσάρτηση της Αυστρίας).  The bare noun keeps its landmark",
+   "reading of noon in clock_landmark_720.voc."
+  ],
+  "daypart_afternoon_el": [
+   "Band boundaries: Unicode CLDR 47 Day Period Rules, locale el",
+   "(https://www.unicode.org/cldr/charts/47/supplemental/day_periods.html),",
+   "transcribed in chronologia/dayparts.py as afternoon [12:00, 17:00) (CLDR",
+   "afternoon1+afternoon2 collapsed into chronologia's four-band model).",
+   "Surface: απόγευμα (apógevma), the neuter noun for \"afternoon\"; used bare",
+   "as an adverb (\"in the afternoon\") and after the article (\"το απόγευμα\").",
+   "Source: Wiktionary, \"απόγευμα\" (noun, gender \"n\"), which glosses \"το",
+   "απόγευμα\" as its own worked example.",
+   "https://en.wiktionary.org/wiki/απόγευμα",
+   "Gender confirms the neuter accusative article \"το\" (Wiktionary, \"το\",",
+   "neuter nominative/accusative singular of \"ο\":",
+   "https://en.wiktionary.org/wiki/το)."
+  ],
+  "daypart_evening_el": [
+   "Band boundaries: Unicode CLDR 47 Day Period Rules, locale el",
+   "(https://www.unicode.org/cldr/charts/47/supplemental/day_periods.html),",
+   "transcribed in chronologia/dayparts.py as evening [17:00, 20:00) (CLDR",
+   "evening1 collapsed into chronologia's four-band model).",
+   "Surface: βράδυ (vrády), the neuter noun for \"evening\" (period between",
+   "sunset and full dark); used bare as an adverb and after the article",
+   "(\"το βράδυ\").",
+   "Source: Wiktionary, \"βράδυ\" (noun, gender \"n\"), which glosses \"το",
+   "βράδυ\" as its own worked example.",
+   "https://en.wiktionary.org/wiki/βράδυ",
+   "Gender confirms the neuter accusative article \"το\" (Wiktionary, \"το\",",
+   "neuter nominative/accusative singular of \"ο\":",
+   "https://en.wiktionary.org/wiki/το)."
+  ],
+  "daypart_morning_el": [
+   "Band boundaries: Unicode CLDR 47 Day Period Rules, locale el",
+   "(https://www.unicode.org/cldr/charts/47/supplemental/day_periods.html),",
+   "transcribed in chronologia/dayparts.py as morning [04:00, 12:00) (CLDR",
+   "morning1+morning2 collapsed into chronologia's four-band model).",
+   "Surface: πρωί (proï), the neuter noun for \"morning\"; used bare as an",
+   "adverb (\"in the morning\") and after the article (\"το πρωί\").",
+   "Source: Wiktionary, \"πρωί\" (noun, gender \"n\")",
+   "https://en.wiktionary.org/wiki/πρωί",
+   "Gender confirms the neuter accusative article \"το\" (Wiktionary, \"το\",",
+   "neuter nominative/accusative singular of \"ο\":",
+   "https://en.wiktionary.org/wiki/το)."
+  ],
+  "daypart_night_el": [
+   "Band boundaries: Unicode CLDR 47 Day Period Rules, locale el",
+   "(https://www.unicode.org/cldr/charts/47/supplemental/day_periods.html),",
+   "transcribed in chronologia/dayparts.py as night [20:00, 04:00) (CLDR",
+   "night1, joined with the 00:00 night2 row into one midnight-crossing band).",
+   "Surface: νύχτα (nýchta), the feminine noun for \"night\"; used bare as an",
+   "adverb and after the article (\"τη νύχτα\").",
+   "Source: Wiktionary, \"νύχτα\" (noun, gender \"f\")",
+   "https://en.wiktionary.org/wiki/νύχτα",
+   "Gender confirms the feminine accusative article \"τη\", not \"την\": Wiktionary,",
+   "\"τη\", feminine accusative singular of \"ο\", used before a word that does",
+   "not start with a vowel or a plosive consonant (κ ξ π τ ψ γκ ντ μπ) --",
+   "\"νύχτα\" starts with ν, so \"τη\" applies, not \"την\":",
+   "https://en.wiktionary.org/wiki/τη."
+  ],
+  "marker_article": [
+   "The definite article. Accusative singular \"το\" (neuter) and \"τη\"/\"την\"",
+   "(feminine) are cited to Wiktionary: \"το\", neuter nominative/accusative",
+   "singular of \"ο\" (https://en.wiktionary.org/wiki/το); \"τη\", feminine",
+   "accusative singular of \"ο\", used before a word that does not start with a",
+   "vowel or a plosive consonant (κ ξ π τ ψ γκ ντ μπ) -- \"την\" is the",
+   "alternative form used otherwise (https://en.wiktionary.org/wiki/τη)."
+  ],
+  "marker_date_lead": [
+   "Words that open a date or a clock time and belong to it, saved pages under",
+   "knowledge/wiki/audits/chronologia/parity-fixes/marker-strand/sources/ in the workspace.",
+   "στις: Wiktionary \"ακριβώς\": \"Το λεωφορείο φεύγει στις 9 π.μ. ακριβώς.\" (\"The bus leaves at 9 am sharp.\")",
+   "  [enwikt-ακριβώς.wikitext.txt line 21]; el.Wiktionary \"ακριβώς\": \"το λεωφορείο έφυγε στις 15.00 ακριβώς\"",
+   "  [elwikt-ακριβώς.wikitext.txt line 16]; el.Wiktionary \"στις\": \"Συγχρονικά αναλύεται ως σε + τις\" [elwikt-στις.wikitext.txt]",
+   "στη, στην: the saved pages show only the contraction of σε and the article: Wiktionary \"στη\":",
+   "  \"contraction of σε + τη\" [el-στη.wikitext.txt]; Wiktionary \"στην\": \"contraction of σε + την\" [el-στην.wikitext.txt].",
+   "  No read page shows στη or στην in front of a clock time or a date."
+  ],
+  "marker_last": [
+   "Greek \"last/previous\" determiner.  Besides the prenominal adjectives",
+   "\"προηγούμενη\" and \"περασμένη\", everyday Greek names the past weekday with a",
+   "postposed relative clause -- \"η Τρίτη που πέρασε\" (\"the Tuesday that has",
+   "passed\") -- which is the commonest spoken form.  \"που πέρασε\" is listed as a",
+   "fixed relative-marker surface.  Λεξικό της κοινής νεοελληνικής (Ίδρυμα",
+   "Τριανταφυλλίδη), s.v. περνώ / περασμένος.",
+   "https://www.greek-language.gr/greekLang/modern_greek/tools/lexica/triantafyllides/"
+  ],
+  "marker_next": [
+   "Greek \"next/coming\" determiner.  Besides the prenominal adjective \"επόμενη\",",
+   "everyday Greek names the coming weekday with a postposed relative clause --",
+   "\"η Τρίτη που έρχεται\" (\"the Tuesday that is coming\") -- mirroring the past",
+   "\"που πέρασε\".  \"που έρχεται\" is listed as a fixed relative-marker surface.",
+   "Λεξικό της κοινής νεοελληνικής (Ίδρυμα Τριανταφυλλίδη), s.v. έρχομαι.",
+   "https://www.greek-language.gr/greekLang/modern_greek/tools/lexica/triantafyllides/"
+  ],
+  "marker_oclock": [
+   "\"sharp\", trailing the hour: Wiktionary, ακριβώς, \"Το λεωφορείο φεύγει στις 9",
+   "π.μ. ακριβώς\" (the bus leaves at 9 am sharp)."
+  ],
+  "marker_ordlast": [
+   "Greek \"last\" ordinal determiner.  \"i teleftaia Deftera tou Maiou\".",
+   "Lexiko tis koinis neoellinikis, s.v. teleftaios."
+  ],
+  "month_1": [
+   "Unicode CLDR 47, locale el, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/el/ca-gregorian.json): months.format.wide,",
+   "months.stand-alone.wide.  Not covered by any of those charts, and so",
+   "unattested here: \"ιανουάριο\"."
+  ],
+  "month_10": [
+   "Unicode CLDR 47, locale el, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/el/ca-gregorian.json): months.format.wide,",
+   "months.stand-alone.wide.  Not covered by any of those charts, and so",
+   "unattested here: \"οκτώβριο\"."
+  ],
+  "month_11": [
+   "Unicode CLDR 47, locale el, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/el/ca-gregorian.json): months.format.wide,",
+   "months.stand-alone.wide.  Not covered by any of those charts, and so",
+   "unattested here: \"νοέμβριο\"."
+  ],
+  "month_12": [
+   "Unicode CLDR 47, locale el, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/el/ca-gregorian.json): months.format.wide,",
+   "months.stand-alone.wide.  Not covered by any of those charts, and so",
+   "unattested here: \"δεκέμβριο\"."
+  ],
+  "month_2": [
+   "Unicode CLDR 47, locale el, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/el/ca-gregorian.json): months.format.wide,",
+   "months.stand-alone.wide.  Not covered by any of those charts, and so",
+   "unattested here: \"φεβρουάριο\"."
+  ],
+  "month_3": [
+   "Unicode CLDR 47, locale el, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/el/ca-gregorian.json): months.format.wide,",
+   "months.stand-alone.wide.  Not covered by any of those charts, and so",
+   "unattested here: \"μάρτιο\"."
+  ],
+  "month_4": [
+   "Unicode CLDR 47, locale el, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/el/ca-gregorian.json): months.format.wide,",
+   "months.stand-alone.wide.  Not covered by any of those charts, and so",
+   "unattested here: \"απρίλιο\"."
+  ],
+  "month_5": [
+   "Unicode CLDR 47, locale el, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/el/ca-gregorian.json): months.format.wide,",
+   "months.stand-alone.wide.  Not covered by any of those charts, and so",
+   "unattested here: \"μάιο\"."
+  ],
+  "month_6": [
+   "Unicode CLDR 47, locale el, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/el/ca-gregorian.json): months.format.wide,",
+   "months.stand-alone.wide.  Not covered by any of those charts, and so",
+   "unattested here: \"ιούνιο\"."
+  ],
+  "month_7": [
+   "Unicode CLDR 47, locale el, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/el/ca-gregorian.json): months.format.wide,",
+   "months.stand-alone.wide.  Not covered by any of those charts, and so",
+   "unattested here: \"ιούλιο\"."
+  ],
+  "month_8": [
+   "Unicode CLDR 47, locale el, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/el/ca-gregorian.json): months.format.wide,",
+   "months.stand-alone.wide.  Not covered by any of those charts, and so",
+   "unattested here: \"αύγουστο\"."
+  ],
+  "month_9": [
+   "Unicode CLDR 47, locale el, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/el/ca-gregorian.json): months.format.wide,",
+   "months.stand-alone.wide.  Not covered by any of those charts, and so",
+   "unattested here: \"σεπτέμβριο\"."
+  ],
+  "weekday_0": [
+   "Unicode CLDR 47, locale el, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/el/ca-gregorian.json): days.format.wide,",
+   "days.stand-alone.wide."
+  ],
+  "weekday_1": [
+   "Unicode CLDR 47, locale el, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/el/ca-gregorian.json): days.format.wide,",
+   "days.stand-alone.wide."
+  ],
+  "weekday_2": [
+   "Unicode CLDR 47, locale el, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/el/ca-gregorian.json): days.format.wide,",
+   "days.stand-alone.wide."
+  ],
+  "weekday_3": [
+   "Unicode CLDR 47, locale el, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/el/ca-gregorian.json): days.format.wide,",
+   "days.stand-alone.wide."
+  ],
+  "weekday_4": [
+   "Unicode CLDR 47, locale el, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/el/ca-gregorian.json): days.format.wide,",
+   "days.stand-alone.wide."
+  ],
+  "weekday_5": [
+   "Unicode CLDR 47, locale el, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/el/ca-gregorian.json): days.format.wide,",
+   "days.stand-alone.wide."
+  ],
+  "weekday_6": [
+   "Unicode CLDR 47, locale el, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/el/ca-gregorian.json): days.format.wide,",
+   "days.stand-alone.wide."
+  ]
+ }
+}

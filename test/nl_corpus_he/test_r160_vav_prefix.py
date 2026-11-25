@@ -5,7 +5,7 @@ word ("ומחר" and-tomorrow) must resolve exactly like the bare word.
 Hebrew glues ו directly onto the following word, no space -- unlike the
 bet-preposition ב ("in"), which the existing locale data already handles for
 months as a curated literal DUPLICATE surface ("ינואר" and "בינואר" both
-listed in month_1.voc). That approach cannot reach the holiday surfaces
+listed in month_1). That approach cannot reach the holiday surfaces
 (harvested from ``well_known.tab`` at load time) or a multi-word holiday
 ("חג הפסח"), so the fix is a token-level strip in the ``he`` fold hook
 (``numlayer_semitic._he_vav_strip``): a ו-initial token folds to its bare

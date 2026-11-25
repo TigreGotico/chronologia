@@ -82,7 +82,7 @@ def test_ende_dezember():
 # masculine, so the bare (article-less) adjective takes the STRONG
 # nominative-masculine ending -er ("früher Frühling", "später Sommer" --
 # Duden strong declension of früh/spät).  Only the weak/mixed forms
-# früh/frühe/frühen and spät/späte/späten were in period_part_*.voc, so the
+# früh/frühe/frühen and spät/späte/späten were in period_part_*, so the
 # bare adjectival phrase fell back to the whole-season ``season_ref`` order
 # with "früher"/"später" stranded in the remainder, exactly the silently
 # too-wide failure mode ``season_fuzzy`` exists to fix for month_fuzzy-style
@@ -93,7 +93,7 @@ def test_ende_dezember():
 #
 # Collision check: "früher"/"später" are also common temporal ADVERBS
 # ("earlier"/"later", e.g. relative-time "das war früher" / "später kam er").
-# Grepped the full de corpus (test/nl_corpus_de/) and de/*.voc for any
+# Grepped the full de corpus (test/nl_corpus_de/) and de/* for any
 # existing pinned use of either word before adding them here -- none found,
 # so there is no adverbial construction these new adjectival vocab entries
 # could hijack.

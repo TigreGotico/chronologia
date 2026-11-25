@@ -1,0 +1,885 @@
+{
+ "format_version": 1,
+ "words": {
+  "clock_dir_past": [
+   "över"
+  ],
+  "clock_dir_to": [
+   "i"
+  ],
+  "clock_fraction_15": [
+   "kvart"
+  ],
+  "clock_fraction_30": [
+   "halv"
+  ],
+  "clock_landmark_0": [
+   "midnatt"
+  ],
+  "clock_landmark_720": [
+   "middag"
+  ],
+  "clock_meridiem_am": [
+   "formiddag",
+   "formiddagen",
+   "förmiddag",
+   "förmiddagen",
+   "morgon",
+   "morgonen"
+  ],
+  "clock_meridiem_night": [
+   "natt",
+   "natten"
+  ],
+  "clock_meridiem_pm": [
+   "eftermiddag",
+   "eftermiddagen",
+   "kvall",
+   "kvallen",
+   "kväll",
+   "kvällen"
+  ],
+  "clock_zone_0": [
+   "gmt",
+   "utc"
+  ],
+  "daypart_eftermiddag_sv": [
+   "eftermiddag",
+   "eftermiddagen"
+  ],
+  "daypart_formiddag_sv": [
+   "formiddag",
+   "formiddagen",
+   "förmiddag",
+   "förmiddagen"
+  ],
+  "daypart_kvall_sv": [
+   "kvall",
+   "kvallen",
+   "kväll",
+   "kvällen"
+  ],
+  "daypart_morgon_sv": [
+   "bitti",
+   "morgon",
+   "morgonen"
+  ],
+  "daypart_natt_sv": [
+   "natt",
+   "natten"
+  ],
+  "marker_ad": [
+   "e. kr.",
+   "e.kr.",
+   "efter kristus"
+  ],
+  "marker_after": [
+   "efter"
+  ],
+  "marker_ago": [
+   "sedan",
+   "sen"
+  ],
+  "marker_and": [
+   "och",
+   "till"
+  ],
+  "marker_article": [
+   "de",
+   "den",
+   "det"
+  ],
+  "marker_at": [
+   "kl",
+   "klockan"
+  ],
+  "marker_bc": [
+   "f. kr.",
+   "f.kr.",
+   "före kristus"
+  ],
+  "marker_before": [
+   "för",
+   "före"
+  ],
+  "marker_between": [
+   "mellan"
+  ],
+  "marker_bp": [
+   "bp"
+  ],
+  "marker_business": [
+   "arbetsdag",
+   "arbetsdagar",
+   "vardag",
+   "vardagar"
+  ],
+  "marker_date_lead": [
+   "på"
+  ],
+  "marker_during": [
+   "under"
+  ],
+  "marker_every": [
+   "varje"
+  ],
+  "marker_freq_daily": [
+   "dagligen"
+  ],
+  "marker_freq_monthly": [
+   "månatligen"
+  ],
+  "marker_freq_weekly": [
+   "veckovis"
+  ],
+  "marker_freq_yearly": [
+   "årligen"
+  ],
+  "marker_from": [
+   "från"
+  ],
+  "marker_future": [
+   "från nu",
+   "om"
+  ],
+  "marker_half": [
+   "halva",
+   "hälften"
+  ],
+  "marker_in": [
+   "om"
+  ],
+  "marker_indef": [
+   "en",
+   "ett"
+  ],
+  "marker_last": [
+   "förra",
+   "senaste"
+  ],
+  "marker_month_word": [
+   "månad",
+   "månaden"
+  ],
+  "marker_new": [
+   "ny"
+  ],
+  "marker_next": [
+   "kommande",
+   "nästa"
+  ],
+  "marker_of": [
+   "av",
+   "i",
+   "på"
+  ],
+  "marker_ordlast": [
+   "sista"
+  ],
+  "marker_past": [
+   "sedan",
+   "sen"
+  ],
+  "marker_plural": [
+   "talet",
+   "tallet"
+  ],
+  "marker_present": [
+   "idag",
+   "nu"
+  ],
+  "marker_q": [
+   "q"
+  ],
+  "marker_quarter_word": [
+   "kvartal",
+   "kvartalet"
+  ],
+  "marker_recur_for": [
+   "i"
+  ],
+  "marker_since": [
+   "sedan"
+  ],
+  "marker_this": [
+   "denna",
+   "detta"
+  ],
+  "marker_to": [
+   "till"
+  ],
+  "marker_until": [
+   "till",
+   "tills"
+  ],
+  "marker_week_num": [
+   "vecka",
+   "veckor"
+  ],
+  "marker_weekof": [
+   "veckan den",
+   "veckan kring",
+   "veckan med"
+  ],
+  "marker_year_word": [
+   "år",
+   "året"
+  ],
+  "month_1": [
+   "jan",
+   "januari"
+  ],
+  "month_10": [
+   "okt",
+   "oktober"
+  ],
+  "month_11": [
+   "nov",
+   "november"
+  ],
+  "month_12": [
+   "dec",
+   "december"
+  ],
+  "month_2": [
+   "feb",
+   "februari"
+  ],
+  "month_3": [
+   "mar",
+   "mars"
+  ],
+  "month_4": [
+   "apr",
+   "april"
+  ],
+  "month_5": [
+   "maj"
+  ],
+  "month_6": [
+   "jun",
+   "juni"
+  ],
+  "month_7": [
+   "jul",
+   "juli"
+  ],
+  "month_8": [
+   "aug",
+   "augusti"
+  ],
+  "month_9": [
+   "sep",
+   "september"
+  ],
+  "months": [
+   "april",
+   "augusti",
+   "december",
+   "februari",
+   "januari",
+   "juli",
+   "juni",
+   "maj",
+   "mars",
+   "november",
+   "oktober",
+   "september"
+  ],
+  "named_day_-1": [
+   "i går",
+   "igår"
+  ],
+  "named_day_-2": [
+   "förrgår",
+   "i förrgår"
+  ],
+  "named_day_0": [
+   "i dag",
+   "idag"
+  ],
+  "named_day_1": [
+   "i morgon",
+   "imorgon",
+   "morgondagen",
+   "morgondagens"
+  ],
+  "named_day_2": [
+   "i övermorgon",
+   "övermorgon"
+  ],
+  "ordinal_suffixes": [
+   "."
+  ],
+  "period_archean": [
+   "arkeikum"
+  ],
+  "period_bronze_age_gb": [
+   "bronsåldern"
+  ],
+  "period_cambrian": [
+   "kambrium"
+  ],
+  "period_carboniferous": [
+   "karbon"
+  ],
+  "period_cenozoic": [
+   "kenozoikum"
+  ],
+  "period_cretaceous": [
+   "krita"
+  ],
+  "period_devonian": [
+   "devon"
+  ],
+  "period_eocene": [
+   "eocen"
+  ],
+  "period_holocene": [
+   "holocen"
+  ],
+  "period_iron_age_gb": [
+   "järnåldern"
+  ],
+  "period_jurassic": [
+   "jura"
+  ],
+  "period_mesozoic": [
+   "mesozoikum"
+  ],
+  "period_miocene": [
+   "miocen"
+  ],
+  "period_neogene": [
+   "neogen"
+  ],
+  "period_neolithic_gb": [
+   "neolitikum",
+   "stenåldern"
+  ],
+  "period_oligocene": [
+   "oligocen"
+  ],
+  "period_ordovician": [
+   "ordovicium"
+  ],
+  "period_paleocene": [
+   "paleocen"
+  ],
+  "period_paleogene": [
+   "paleogen"
+  ],
+  "period_paleozoic": [
+   "paleozoikum"
+  ],
+  "period_part_early": [
+   "början",
+   "tidig",
+   "tidiga"
+  ],
+  "period_part_late": [
+   "sen",
+   "sena",
+   "slutet"
+  ],
+  "period_part_mid": [
+   "mellersta",
+   "mitten"
+  ],
+  "period_permian": [
+   "perm"
+  ],
+  "period_phanerozoic": [
+   "fanerozoikum"
+  ],
+  "period_pleistocene": [
+   "pleistocen"
+  ],
+  "period_pliocene": [
+   "pliocen"
+  ],
+  "period_proterozoic": [
+   "proterozoikum"
+  ],
+  "period_quaternary": [
+   "kvartär"
+  ],
+  "period_silurian": [
+   "silur"
+  ],
+  "period_triassic": [
+   "trias"
+  ],
+  "scale_1000": [
+   "tusen"
+  ],
+  "scale_1000000": [
+   "miljon",
+   "miljoner"
+  ],
+  "scale_1000000000": [
+   "miljard",
+   "miljarder"
+  ],
+  "scope_unit_century": [
+   "sekel",
+   "seklet",
+   "århundrade",
+   "århundraden",
+   "århundradet"
+  ],
+  "scope_unit_decade": [
+   "årtionde",
+   "årtionden",
+   "årtiondet"
+  ],
+  "scope_unit_millennium": [
+   "årtusende",
+   "årtusenden",
+   "årtusendet"
+  ],
+  "season_fall": [
+   "höst",
+   "hösten"
+  ],
+  "season_spring": [
+   "vår",
+   "våren"
+  ],
+  "season_summer": [
+   "sommar",
+   "sommaren"
+  ],
+  "season_winter": [
+   "vinter",
+   "vintern"
+  ],
+  "special_weekend": [
+   "helg",
+   "helgen",
+   "weekend"
+  ],
+  "unit1_century": [
+   "sekel",
+   "seklet",
+   "århundrade",
+   "århundradet"
+  ],
+  "unit1_day": [
+   "dag"
+  ],
+  "unit1_decade": [
+   "årtionde",
+   "årtiondet"
+  ],
+  "unit1_hour": [
+   "timme"
+  ],
+  "unit1_millennium": [
+   "årtusende",
+   "årtusendet"
+  ],
+  "unit1_minute": [
+   "minut"
+  ],
+  "unit1_month": [
+   "månad",
+   "månaden"
+  ],
+  "unit1_second": [
+   "sekund"
+  ],
+  "unit1_week": [
+   "vecka",
+   "veckan"
+  ],
+  "unit1_year": [
+   "år",
+   "året"
+  ],
+  "unit_century": [
+   "sekel",
+   "seklet",
+   "århundrade",
+   "århundraden",
+   "århundradet"
+  ],
+  "unit_day": [
+   "dag",
+   "dagar"
+  ],
+  "unit_decade": [
+   "årtionde",
+   "årtionden",
+   "årtiondet"
+  ],
+  "unit_hour": [
+   "timmar",
+   "timme"
+  ],
+  "unit_millennium": [
+   "årtusende",
+   "årtusenden",
+   "årtusendet"
+  ],
+  "unit_minute": [
+   "minut",
+   "minuter"
+  ],
+  "unit_month": [
+   "månad",
+   "månaden",
+   "månader"
+  ],
+  "unit_second": [
+   "sekund",
+   "sekunder"
+  ],
+  "unit_week": [
+   "vecka",
+   "veckan",
+   "veckor"
+  ],
+  "unit_year": [
+   "år",
+   "året"
+  ],
+  "weekday_0": [
+   "måndag",
+   "måndagen"
+  ],
+  "weekday_1": [
+   "tisdag",
+   "tisdagen"
+  ],
+  "weekday_2": [
+   "onsdag",
+   "onsdagen"
+  ],
+  "weekday_3": [
+   "torsdag",
+   "torsdagen"
+  ],
+  "weekday_4": [
+   "fredag",
+   "fredagen"
+  ],
+  "weekday_5": [
+   "lördag",
+   "lördagen"
+  ],
+  "weekday_6": [
+   "söndag",
+   "söndagen"
+  ],
+  "weekday_abbr_0": [
+   "mån"
+  ],
+  "weekday_abbr_1": [
+   "tis"
+  ],
+  "weekday_abbr_2": [
+   "ons"
+  ],
+  "weekday_abbr_3": [
+   "tor"
+  ],
+  "weekday_abbr_4": [
+   "fre"
+  ],
+  "weekday_abbr_5": [
+   "lör"
+  ],
+  "weekday_abbr_6": [
+   "sön"
+  ]
+ },
+ "sources": {
+  "clock_meridiem_am": [
+   "The AM-side dayparts (Unicode CLDR 47 Day Period Rules, locale sv --",
+   "morgon [05:00, 10:00), formiddag [10:00, 12:00)) doubling as the MERIDIEM",
+   "slot of \"atta pa morgonen\"/\"tio pa formiddagen\" -- the same daypart-as-",
+   "meridiem reuse es/pt already make for \"de la manana\"/\"da manha\" (see their",
+   "clock_meridiem_am.voc).  Surfaces copied verbatim from daypart_morgon_sv.voc",
+   "and daypart_formiddag_sv.voc."
+  ],
+  "clock_meridiem_night": [
+   "The natt daypart (Unicode CLDR 47 Day Period Rules, locale sv --",
+   "[00:00, 05:00)) is a midnight-crossing BAND, not a uniform PM shift: \"ett",
+   "pa natten\" is 01:00 and \"tolv pa natten\" is midnight 00:00, while \"elva pa",
+   "natten\" is 23:00 -- the same colloquial split es/pt's \"de la noche\"/\"da",
+   "noite\" already carry (see their clock_meridiem_night.voc).  Surfaces copied",
+   "verbatim from daypart_natt_sv.voc."
+  ],
+  "clock_meridiem_pm": [
+   "The PM-side dayparts (Unicode CLDR 47 Day Period Rules, locale sv --",
+   "eftermiddag [12:00, 18:00), kvall [18:00, 24:00)) doubling as the MERIDIEM",
+   "slot of \"atta pa kvallen\"/\"tre pa eftermiddagen\" -- the same daypart-as-",
+   "meridiem reuse es/pt already make for \"de la tarde\"/\"da tarde\" (see their",
+   "clock_meridiem_pm.voc).  Surfaces copied verbatim from",
+   "daypart_eftermiddag_sv.voc and daypart_kvall_sv.voc."
+  ],
+  "daypart_eftermiddag_sv": [
+   "Band boundaries: Unicode CLDR 47 Day Period Rules, locale sv",
+   "(https://www.unicode.org/cldr/charts/47/supplemental/day_periods.html),",
+   "transcribed in chronologia/dayparts.py as [12:00, 18:00).",
+   "Sources: Svensk ordbok utgiven av Svenska Akademien",
+   "(https://svenska.se/so/?id=115794), which gives eftermiddag as the",
+   "\"del av dagen som infaller mellan lunchtiden och kvallen\".",
+   "The definite singular is listed beside the bare noun because it is the",
+   "everyday form (\"i eftermiddagen\", \"under kvallen\")."
+  ],
+  "daypart_formiddag_sv": [
+   "Band boundaries: Unicode CLDR 47 Day Period Rules, locale sv",
+   "(https://www.unicode.org/cldr/charts/47/supplemental/day_periods.html),",
+   "transcribed in chronologia/dayparts.py as [10:00, 12:00).",
+   "Sources: Svensk ordbok utgiven av Svenska Akademien",
+   "(https://svenska.se/so/?id=115794), which gives eftermiddag as the",
+   "\"del av dagen som infaller mellan lunchtiden och kvallen\".",
+   "The definite singular is listed beside the bare noun because it is the",
+   "everyday form (\"i eftermiddagen\", \"under kvallen\").",
+   "Late morning, a band English cannot name in one word."
+  ],
+  "daypart_kvall_sv": [
+   "Band boundaries: Unicode CLDR 47 Day Period Rules, locale sv",
+   "(https://www.unicode.org/cldr/charts/47/supplemental/day_periods.html),",
+   "transcribed in chronologia/dayparts.py as [18:00, 24:00).",
+   "Sources: Svensk ordbok utgiven av Svenska Akademien",
+   "(https://svenska.se/so/?id=115794), which gives eftermiddag as the",
+   "\"del av dagen som infaller mellan lunchtiden och kvallen\".",
+   "The definite singular is listed beside the bare noun because it is the",
+   "everyday form (\"i eftermiddagen\", \"under kvallen\")."
+  ],
+  "daypart_morgon_sv": [
+   "Band boundaries: Unicode CLDR 47 Day Period Rules, locale sv",
+   "(https://www.unicode.org/cldr/charts/47/supplemental/day_periods.html),",
+   "transcribed in chronologia/dayparts.py as [05:00, 10:00).",
+   "Sources: Svensk ordbok utgiven av Svenska Akademien",
+   "(https://svenska.se/so/?id=115794), which gives eftermiddag as the",
+   "\"del av dagen som infaller mellan lunchtiden och kvallen\".",
+   "The definite singular is listed beside the bare noun because it is the",
+   "everyday form (\"i eftermiddagen\", \"under kvallen\").",
+   "The Nordic morgon is short -- five hours, handing over to formiddag well",
+   "before noon -- and is not English's six-hour morning.",
+   "\"bitti\" is \"early in the day\", used in \"i morgon bitti\" (early tomorrow,",
+   "tomorrow morning): Wiktionary, sv \"bitti\" (https://en.wiktionary.org/wiki/bitti),",
+   "a contraction of \"bittida\"."
+  ],
+  "daypart_natt_sv": [
+   "Band boundaries: Unicode CLDR 47 Day Period Rules, locale sv",
+   "(https://www.unicode.org/cldr/charts/47/supplemental/day_periods.html),",
+   "transcribed in chronologia/dayparts.py as [00:00, 05:00).",
+   "Sources: Svensk ordbok utgiven av Svenska Akademien",
+   "(https://svenska.se/so/?id=115794), which gives eftermiddag as the",
+   "\"del av dagen som infaller mellan lunchtiden och kvallen\".",
+   "The definite singular is listed beside the bare noun because it is the",
+   "everyday form (\"i eftermiddagen\", \"under kvallen\")."
+  ],
+  "marker_date_lead": [
+   "Words that open a date or a clock time and belong to it.",
+   "Each word is shown opening a time or date phrase on the page named in brackets,",
+   "saved under knowledge/wiki/audits/chronologia/parity-fixes/marker-strand/sources/ in the workspace.",
+   "på: Wiktionary \"på\": \"on (a certain day)\"; \"in (part of the day, time of day): på eftermiddagen\" [sv-på.wikitext.txt]"
+  ],
+  "marker_future": [
+   "\"5 dagar från nu\" (five days from now): the offset counted from the present,",
+   "trailing the count."
+  ],
+  "marker_of": [
+   "\"på\" (\"on/at\"): the connector already attested between a bare hour and a",
+   "day-part noun in this locale's own corpus (\"tidigt på morgonen\",",
+   "test/nl_corpus_sv/test_nl_daypart.py) -- the same slot \"de\"/\"da\" fill in",
+   "es/pt's \"las ocho de la tarde\" / \"oito da noite\"."
+  ],
+  "marker_ordlast": [
+   "Swedish \"last\" ordinal determiner.  \"sista mandagen i maj\" = last Monday of May.",
+   "SAOL, \"sista\"."
+  ],
+  "month_1": [
+   "Unicode CLDR 47, locale sv, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/sv/ca-gregorian.json): months.format.wide,",
+   "months.stand-alone.wide, months.format.abbreviated,",
+   "months.stand-alone.abbreviated.  CLDR spells the abbreviations with a",
+   "trailing period; the surfaces here drop it."
+  ],
+  "month_10": [
+   "Unicode CLDR 47, locale sv, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/sv/ca-gregorian.json): months.format.wide,",
+   "months.stand-alone.wide, months.format.abbreviated,",
+   "months.stand-alone.abbreviated.  CLDR spells the abbreviations with a",
+   "trailing period; the surfaces here drop it."
+  ],
+  "month_11": [
+   "Unicode CLDR 47, locale sv, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/sv/ca-gregorian.json): months.format.wide,",
+   "months.stand-alone.wide, months.format.abbreviated,",
+   "months.stand-alone.abbreviated.  CLDR spells the abbreviations with a",
+   "trailing period; the surfaces here drop it."
+  ],
+  "month_12": [
+   "Unicode CLDR 47, locale sv, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/sv/ca-gregorian.json): months.format.wide,",
+   "months.stand-alone.wide, months.format.abbreviated,",
+   "months.stand-alone.abbreviated.  CLDR spells the abbreviations with a",
+   "trailing period; the surfaces here drop it."
+  ],
+  "month_2": [
+   "Unicode CLDR 47, locale sv, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/sv/ca-gregorian.json): months.format.wide,",
+   "months.stand-alone.wide, months.format.abbreviated,",
+   "months.stand-alone.abbreviated.  CLDR spells the abbreviations with a",
+   "trailing period; the surfaces here drop it."
+  ],
+  "month_3": [
+   "Unicode CLDR 47, locale sv, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/sv/ca-gregorian.json): months.format.wide,",
+   "months.stand-alone.wide, months.format.abbreviated,",
+   "months.stand-alone.abbreviated.  Not covered by any of those charts, and so",
+   "unattested here: \"mar\"."
+  ],
+  "month_4": [
+   "Unicode CLDR 47, locale sv, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/sv/ca-gregorian.json): months.format.wide,",
+   "months.stand-alone.wide, months.format.abbreviated,",
+   "months.stand-alone.abbreviated.  CLDR spells the abbreviations with a",
+   "trailing period; the surfaces here drop it."
+  ],
+  "month_5": [
+   "Unicode CLDR 47, locale sv, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/sv/ca-gregorian.json): months.format.wide,",
+   "months.stand-alone.wide, months.format.abbreviated,",
+   "months.stand-alone.abbreviated."
+  ],
+  "month_6": [
+   "Unicode CLDR 47, locale sv, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/sv/ca-gregorian.json): months.format.wide,",
+   "months.stand-alone.wide, months.format.abbreviated,",
+   "months.stand-alone.abbreviated.  Not covered by any of those charts, and so",
+   "unattested here: \"jun\"."
+  ],
+  "month_7": [
+   "Unicode CLDR 47, locale sv, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/sv/ca-gregorian.json): months.format.wide,",
+   "months.stand-alone.wide, months.format.abbreviated,",
+   "months.stand-alone.abbreviated.  Not covered by any of those charts, and so",
+   "unattested here: \"jul\"."
+  ],
+  "month_8": [
+   "Unicode CLDR 47, locale sv, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/sv/ca-gregorian.json): months.format.wide,",
+   "months.stand-alone.wide, months.format.abbreviated,",
+   "months.stand-alone.abbreviated.  CLDR spells the abbreviations with a",
+   "trailing period; the surfaces here drop it."
+  ],
+  "month_9": [
+   "Unicode CLDR 47, locale sv, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/sv/ca-gregorian.json): months.format.wide,",
+   "months.stand-alone.wide, months.format.abbreviated,",
+   "months.stand-alone.abbreviated.  CLDR spells the abbreviations with a",
+   "trailing period; the surfaces here drop it."
+  ],
+  "named_day_-1": [
+   "Unicode CLDR 47, locale sv, cldr-dates-full/main/sv/dateFields.json.",
+   "day.relative-type--1."
+  ],
+  "named_day_-2": [
+   "Unicode CLDR 47, locale sv, cldr-dates-full/main/sv/dateFields.json.",
+   "day.relative-type--2."
+  ],
+  "named_day_0": [
+   "Unicode CLDR 47, locale sv, cldr-dates-full/main/sv/dateFields.json.",
+   "day.relative-type-0."
+  ],
+  "named_day_1": [
+   "Unicode CLDR 47, locale sv, cldr-dates-full/main/sv/dateFields.json.",
+   "day.relative-type-1.",
+   "the noun \"morgondag\" (tomorrow) in its definite and definite genitive",
+   "forms (\"morgondagens väder\" = tomorrow's weather): Wiktionary, morgondag,",
+   "morgondagen; sv.wikipedia \"Bigert & Bergström\" (\"Morgondagens väder\")."
+  ],
+  "named_day_2": [
+   "Unicode CLDR 47, locale sv, cldr-dates-full/main/sv/dateFields.json.",
+   "day.relative-type-2."
+  ],
+  "unit1_second": [
+   "Unicode CLDR 47, locale sv, cldr-units-full/main/sv/units.json,",
+   "duration-second, unitPattern-count-one \"sekund\"."
+  ],
+  "unit_second": [
+   "Unicode CLDR 47, locale sv, cldr-units-full/main/sv/units.json,",
+   "duration-second: one \"sekund\", other \"sekunder\"."
+  ],
+  "weekday_0": [
+   "Unicode CLDR 47, locale sv, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/sv/ca-gregorian.json): days.format.wide,",
+   "days.stand-alone.wide.  Not covered by any of those charts, and so",
+   "unattested here: \"måndagen\"."
+  ],
+  "weekday_1": [
+   "Unicode CLDR 47, locale sv, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/sv/ca-gregorian.json): days.format.wide,",
+   "days.stand-alone.wide.  Not covered by any of those charts, and so",
+   "unattested here: \"tisdagen\"."
+  ],
+  "weekday_2": [
+   "Unicode CLDR 47, locale sv, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/sv/ca-gregorian.json): days.format.wide,",
+   "days.stand-alone.wide.  Not covered by any of those charts, and so",
+   "unattested here: \"onsdagen\"."
+  ],
+  "weekday_3": [
+   "Unicode CLDR 47, locale sv, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/sv/ca-gregorian.json): days.format.wide,",
+   "days.stand-alone.wide.  Not covered by any of those charts, and so",
+   "unattested here: \"torsdagen\"."
+  ],
+  "weekday_4": [
+   "Unicode CLDR 47, locale sv, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/sv/ca-gregorian.json): days.format.wide,",
+   "days.stand-alone.wide.  Not covered by any of those charts, and so",
+   "unattested here: \"fredagen\"."
+  ],
+  "weekday_5": [
+   "Unicode CLDR 47, locale sv, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/sv/ca-gregorian.json): days.format.wide,",
+   "days.stand-alone.wide.  Not covered by any of those charts, and so",
+   "unattested here: \"lördagen\"."
+  ],
+  "weekday_6": [
+   "Unicode CLDR 47, locale sv, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/sv/ca-gregorian.json): days.format.wide,",
+   "days.stand-alone.wide.  Not covered by any of those charts, and so",
+   "unattested here: \"söndagen\"."
+  ],
+  "weekday_abbr_0": [
+   "Unicode CLDR 47, locale sv, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/sv/ca-gregorian.json): days.format.abbreviated,",
+   "days.stand-alone.abbreviated."
+  ],
+  "weekday_abbr_1": [
+   "Unicode CLDR 47, locale sv, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/sv/ca-gregorian.json): days.format.abbreviated,",
+   "days.stand-alone.abbreviated."
+  ],
+  "weekday_abbr_2": [
+   "Unicode CLDR 47, locale sv, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/sv/ca-gregorian.json): days.format.abbreviated,",
+   "days.stand-alone.abbreviated."
+  ],
+  "weekday_abbr_4": [
+   "Unicode CLDR 47, locale sv, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/sv/ca-gregorian.json): days.format.abbreviated,",
+   "days.stand-alone.abbreviated."
+  ],
+  "weekday_abbr_5": [
+   "Unicode CLDR 47, locale sv, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/sv/ca-gregorian.json): days.format.abbreviated,",
+   "days.stand-alone.abbreviated."
+  ],
+  "weekday_abbr_6": [
+   "Unicode CLDR 47, locale sv, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/sv/ca-gregorian.json): days.format.abbreviated,",
+   "days.stand-alone.abbreviated."
+  ]
+ }
+}

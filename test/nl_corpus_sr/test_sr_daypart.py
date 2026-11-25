@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 """Serbian time-of-day dayparts (CLDR 47 day-period bands, locale sr).
 
-The four ``daypart_*_sr.voc`` files (ujutru/ујутру, popodne/поподне,
+The four ``daypart_*_sr`` files (ujutru/ујутру, popodne/поподне,
 uveče/увече, noću/ноћу) had no ``sr`` row in chronologia/dayparts.py's band
 table, so the vocabulary matched but the band lookup found nothing and the
 phrase fell through unresolved. This file pins the CLDR rows (morning1

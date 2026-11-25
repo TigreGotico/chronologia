@@ -8,8 +8,8 @@ Portuguese already folds the digital-clock suffix "h" into the CLOCK token
 unit word never had a grammar slot of its own -- no pt ``clock_time`` order
 named it, so it fell through untouched.  French already solves the sibling
 problem: "9 heures" consumes "heures" via the literal ``oclock`` slot
-(``marker_oclock.voc`` -> "heures"/"heure"/"h"). The fix mirrors that:
-``chronologia/locale/pt/marker_oclock.voc`` now lists "horas"/"hora", and
+(``marker_oclock`` -> "heures"/"heure"/"h"). The fix mirrors that:
+``chronologia/locale/pt/marker_oclock`` now lists "horas"/"hora", and
 every pt ``clock_time`` order binds an optional ``oclock?`` slot right after
 ``HOUR``.
 

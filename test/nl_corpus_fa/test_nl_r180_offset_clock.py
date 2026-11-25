@@ -2,7 +2,7 @@
 """A day-offset ("N روز پیش") followed by the "ساعت H" clock reading.
 
 "ساعت" is doubly loaded in Persian: it is both the HOUR unit word
-(unit_hour.voc) and the clock's "at" preposition (marker_at.voc). Composed
+(unit_hour) and the clock's "at" preposition (marker_at). Composed
 with a leading digit ("ساعت 3") it reads as a clock; alone it is the bare
 "hour" of an offset ("2 ساعت پیش" = 2 hours ago). Gold is independent
 ``timedelta``/``.replace(hour=...)`` arithmetic against the corpus anchor

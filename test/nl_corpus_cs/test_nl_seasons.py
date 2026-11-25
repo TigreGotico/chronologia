@@ -29,11 +29,11 @@ def test_season(text, s, e):
     # declension tables: "jaro" (neut., "město" type) -> gen. jara; "zima"
     # (fem., "žena" type) -> gen. zimy.  "podzim" (masc. inanimate, "hrad"
     # type) is SKIPPED: its genitive is "podzimu", already present in
-    # season_fall.voc (identical to the locative/dative form already
+    # season_fall (identical to the locative/dative form already
     # there), so there is no gap to fix.  "léto" (neut.) -> gen. "léta" is
     # included: checked for collision with "years" (cs counts years with
     # "roky"/"let"/"lety", never "léta") and no such usage exists in
-    # unit_year.voc or the cs test corpus, so it is safe to add (unlike the
+    # unit_year or the cs test corpus, so it is safe to add (unlike the
     # analogous Polish "lata", which IS the live plural of "rok").
     ("jara 2027", "2027-3-1", "2027-6-1"),
     ("léta 2027", "2027-6-1", "2027-9-1"),

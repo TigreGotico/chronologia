@@ -14,7 +14,7 @@ The daypart noun appears bare, adverbially ("πρωί" -- "in the morning"), and
 after the definite article ("το πρωί", "το απόγευμα", "το βράδυ", "τη
 νύχτα" -- νύχτα is feminine, taking "τη" rather than the neuter "το"). On
 ``dev`` these phrases returned ``None`` -- ``el`` shipped zero
-``daypart_*.voc`` files even though the CLDR-cited boundary rows already
+``daypart_*`` files even though the CLDR-cited boundary rows already
 existed in :mod:`chronologia.dayparts`.
 
 Anchor: Tuesday 2017-06-27 13:04. Every band carries ``BASIS_RECONSTRUCTED``
@@ -52,8 +52,8 @@ def test_daypart_band(text, start, end):
 
 def test_daypart_not_default_band():
     """Regression pin for the filename-suffix trap: a Greek band file that
-    lands on the DEFAULT key (``daypart_morning.voc`` instead of
-    ``daypart_morning_el.voc``) would silently resolve to chronologia's
+    lands on the DEFAULT key (``daypart_morning`` instead of
+    ``daypart_morning_el``) would silently resolve to chronologia's
     English default (06:00, not CLDR el's 04:00). Assert against the
     default row's boundary to catch that silent fallback.
     """

@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 """The article that opens a dated weekday belongs to the date, fr.
 
-"le 15 juin" reads whole through ``marker_defart.voc``; with the weekday
+"le 15 juin" reads whole through ``marker_defart``; with the weekday
 written as a label in front of the day ("le lundi 3 juillet") the article
 opens the whole date and was left stranded.  Anchor 2017-06-27, a mardi,
 13:04; 2017-07-03 is a Monday and 2017-07-02 a Sunday, by hand.

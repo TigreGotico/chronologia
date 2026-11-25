@@ -610,7 +610,7 @@ def test_disable_opts_out():
 
 # --- weekday_of_week: "<weekday> of next week", "next week <weekday>" -------
 #
-# Phrases are assembled from each locale's own vocabulary files, and the gold
+# Phrases are assembled from each locale's own vocab.json, and the gold
 # date is plain ``datetime.date`` arithmetic from the locale's declared
 # week start -- nothing here reads the parser's answer back.
 
@@ -619,15 +619,15 @@ _WEEKDAY_NAMES = ("monday", "tuesday", "wednesday", "thursday", "friday",
 
 
 def _voc_first(lang, stem):
-    path = os.path.join(_LOCALE_DIR, lang, stem + ".voc")
-    if not os.path.isfile(path):
-        return None
+    """A surface of ``stem``: the full name (the longest) for a weekday, whose
+    list also holds abbreviations that other words share ("пет" is Friday and
+    five), else the first."""
+    path = os.path.join(_LOCALE_DIR, lang, "vocab.json")
     with open(path, encoding="utf-8") as fh:
-        for line in fh:
-            line = line.strip()
-            if line and not line.startswith("#"):
-                return line
-    return None
+        words = json.load(fh)["words"].get(stem)
+    if not words:
+        return None
+    return max(words, key=len) if stem.startswith("weekday_") else words[0]
 
 
 def _week_start_index(lang):

@@ -5,20 +5,20 @@ a weekday+clock composition was stranded as unconsumed remainder
 "am" is the contraction "an dem" ("at/on the"), functioning exactly like a
 definite article before a weekday -- the same role Romance "el"/"le"/"il"
 play (Italian already lists analogous contractions -- "al", "nel", "del" --
-in its own ``marker_article.voc``).  The article-swallowing composer in
+in its own ``marker_article``).  The article-swallowing composer in
 ``chronologia/extract/timespan.py`` (``_composition_glue``) already absorbs a
 LEADING article that opens the earlier of two composing matches (Spanish
 "el martes a las 9" consumes "el" this way); it never fired for German
-because "am" lived only in ``marker_on.voc`` (the "on"-connector class used
+because "am" lived only in ``marker_on`` (the "on"-connector class used
 by the RRULE placement qualifier, e.g. "every 2 weeks on Tuesday" ->
 ``ctx.on_words``), not in the "article" connector class the composer reads.
-The fix adds "am" to ``chronologia/locale/de/marker_article.voc`` as well
-(keeping it in ``marker_on.voc`` too, so the recurrence "on"-qualifier path
+The fix adds "am" to ``chronologia/locale/de/marker_article`` as well
+(keeping it in ``marker_on`` too, so the recurrence "on"-qualifier path
 is untouched).
 
 A lone weekday ("am Dienstag"), daypart ("am Abend") or calendar date
 ("am 3. März") has nothing to compose with, so the composer does not fire.
-"am" is listed in ``marker_date_lead.voc`` as the word that opens a date, and
+"am" is listed in ``marker_date_lead`` as the word that opens a date, and
 that vocabulary takes it into the date there.
 
 Anchor for extract_timespan cases is the shared de corpus anchor,

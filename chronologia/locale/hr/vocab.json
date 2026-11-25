@@ -1,0 +1,777 @@
+{
+ "format_version": 1,
+ "words": {
+  "clock_dir_to": [
+   "do"
+  ],
+  "clock_fraction_15": [
+   "četvrt",
+   "četvrti"
+  ],
+  "clock_fraction_30": [
+   "pola"
+  ],
+  "clock_landmark_0": [
+   "ponoć"
+  ],
+  "clock_landmark_720": [
+   "podne"
+  ],
+  "clock_meridiem_am": [
+   "ujutro"
+  ],
+  "clock_meridiem_pm": [
+   "navečer",
+   "popodne",
+   "poslijepodne"
+  ],
+  "clock_zone_0": [
+   "gmt",
+   "utc"
+  ],
+  "daypart_afternoon_hr": [
+   "popodne"
+  ],
+  "daypart_evening_hr": [
+   "navečer",
+   "uvečer"
+  ],
+  "daypart_morning_hr": [
+   "ujutro"
+  ],
+  "daypart_night_hr": [
+   "noću"
+  ],
+  "marker_ad": [
+   "n. e.",
+   "n.e.",
+   "nove ere",
+   "p. kr.",
+   "po. kr.",
+   "poslije krista"
+  ],
+  "marker_after": [
+   "nakon",
+   "poslije"
+  ],
+  "marker_and": [
+   "i"
+  ],
+  "marker_at": [
+   "o",
+   "u"
+  ],
+  "marker_bc": [
+   "pr. kr.",
+   "pr. n. e.",
+   "pr.kr.",
+   "pr.n.e.",
+   "prije krista",
+   "prije nove ere"
+  ],
+  "marker_before": [
+   "prije"
+  ],
+  "marker_between": [
+   "između"
+  ],
+  "marker_business": [
+   "radna",
+   "radni",
+   "radnih"
+  ],
+  "marker_day_filler": [
+   "dana"
+  ],
+  "marker_during": [
+   "u"
+  ],
+  "marker_every": [
+   "svake",
+   "svaki",
+   "svako",
+   "svaku"
+  ],
+  "marker_for_date": [
+   "za"
+  ],
+  "marker_freq_daily": [
+   "dnevno"
+  ],
+  "marker_freq_monthly": [
+   "mjesečno"
+  ],
+  "marker_freq_weekly": [
+   "tjedno"
+  ],
+  "marker_freq_yearly": [
+   "godišnje"
+  ],
+  "marker_from": [
+   "od"
+  ],
+  "marker_future": [
+   "za"
+  ],
+  "marker_half": [
+   "pola"
+  ],
+  "marker_in": [
+   "za"
+  ],
+  "marker_indef": [
+   "jedan",
+   "jedna"
+  ],
+  "marker_last": [
+   "prethodna",
+   "prethodne",
+   "prethodni",
+   "prethodnih",
+   "prethodno",
+   "prethodnog",
+   "prethodnoga",
+   "prethodnoj",
+   "prethodnom",
+   "prethodnu",
+   "prošla",
+   "prošle",
+   "prošli",
+   "prošlih",
+   "prošlim",
+   "prošlima",
+   "prošlo",
+   "prošlog",
+   "prošloga",
+   "prošloj",
+   "prošlom",
+   "prošlome",
+   "prošlu"
+  ],
+  "marker_next": [
+   "iduća",
+   "iduće",
+   "idućeg",
+   "idućega",
+   "idućem",
+   "idući",
+   "idućih",
+   "idućim",
+   "idućoj",
+   "iduću",
+   "sljedeća",
+   "sljedeće",
+   "sljedećeg",
+   "sljedećega",
+   "sljedećem",
+   "sljedeći",
+   "sljedećih",
+   "sljedećim",
+   "sljedećoj",
+   "sljedeću"
+  ],
+  "marker_oclock": [
+   "sati"
+  ],
+  "marker_of": [
+   "u"
+  ],
+  "marker_ordlast": [
+   "posljednja",
+   "posljednje",
+   "posljednjeg",
+   "posljednjega",
+   "posljednjem",
+   "posljednji",
+   "posljednjih",
+   "posljednjim",
+   "posljednju",
+   "zadnja",
+   "zadnje",
+   "zadnjeg",
+   "zadnjega",
+   "zadnjem",
+   "zadnji",
+   "zadnju"
+  ],
+  "marker_past": [
+   "prije"
+  ],
+  "marker_q": [
+   "q"
+  ],
+  "marker_quarter_word": [
+   "kvartal",
+   "kvartala",
+   "tromjesečje"
+  ],
+  "marker_recur_for": [
+   "kroz",
+   "tijekom"
+  ],
+  "marker_since": [
+   "od"
+  ],
+  "marker_this": [
+   "ova",
+   "ovaj",
+   "ove",
+   "ovih",
+   "ovim",
+   "ovima",
+   "ovo",
+   "ovog",
+   "ovoga",
+   "ovoj",
+   "ovom",
+   "ovome",
+   "ovu"
+  ],
+  "marker_to": [
+   "do"
+  ],
+  "marker_until": [
+   "do"
+  ],
+  "marker_week_num": [
+   "tjedan",
+   "tjedna"
+  ],
+  "marker_weekof": [
+   "tjedan od",
+   "tjedan oko",
+   "tjedan s"
+  ],
+  "marker_year_word": [
+   "godina",
+   "godine"
+  ],
+  "month_1": [
+   "sij",
+   "siječanj",
+   "siječnja",
+   "siječnju"
+  ],
+  "month_10": [
+   "lis",
+   "listopad",
+   "listopada",
+   "listopadu"
+  ],
+  "month_11": [
+   "stu",
+   "studeni",
+   "studenog",
+   "studenom"
+  ],
+  "month_12": [
+   "pro",
+   "prosinac",
+   "prosinca",
+   "prosincu"
+  ],
+  "month_2": [
+   "velj",
+   "veljača",
+   "veljače",
+   "veljači"
+  ],
+  "month_3": [
+   "ožu",
+   "ožujak",
+   "ožujka",
+   "ožujku"
+  ],
+  "month_4": [
+   "tra",
+   "travanj",
+   "travnja",
+   "travnju"
+  ],
+  "month_5": [
+   "svi",
+   "svibanj",
+   "svibnja",
+   "svibnju"
+  ],
+  "month_6": [
+   "lip",
+   "lipanj",
+   "lipnja",
+   "lipnju"
+  ],
+  "month_7": [
+   "srp",
+   "srpanj",
+   "srpnja",
+   "srpnju"
+  ],
+  "month_8": [
+   "kol",
+   "kolovoz",
+   "kolovoza",
+   "kolovozu"
+  ],
+  "month_9": [
+   "ruj",
+   "rujan",
+   "rujna",
+   "rujnu"
+  ],
+  "named_day_-1": [
+   "jučer"
+  ],
+  "named_day_-2": [
+   "prekjučer"
+  ],
+  "named_day_0": [
+   "danas"
+  ],
+  "named_day_1": [
+   "sutra"
+  ],
+  "named_day_2": [
+   "prekosutra"
+  ],
+  "period_part_early": [
+   "početak",
+   "početka"
+  ],
+  "period_part_late": [
+   "kraj",
+   "kraja"
+  ],
+  "period_part_mid": [
+   "sredina",
+   "sredine"
+  ],
+  "scale_1000": [
+   "tisuća",
+   "tisuće"
+  ],
+  "scope_unit_century": [
+   "stoljeće",
+   "stoljeću"
+  ],
+  "season_fall": [
+   "jesen"
+  ],
+  "season_spring": [
+   "proljeće"
+  ],
+  "season_summer": [
+   "ljeto"
+  ],
+  "season_winter": [
+   "zima"
+  ],
+  "special_weekend": [
+   "vikend"
+  ],
+  "unit1_century": [
+   "stoljeće",
+   "stoljeću"
+  ],
+  "unit1_day": [
+   "dan"
+  ],
+  "unit1_decade": [
+   "dekada",
+   "desetljeće"
+  ],
+  "unit1_hour": [
+   "sat"
+  ],
+  "unit1_minute": [
+   "minuta",
+   "minutu"
+  ],
+  "unit1_month": [
+   "mjesec",
+   "mjeseca",
+   "mjesecom",
+   "mjesecu"
+  ],
+  "unit1_second": [
+   "sekunda",
+   "sekundu"
+  ],
+  "unit1_week": [
+   "tjedan",
+   "tjedna",
+   "tjednom",
+   "tjednu"
+  ],
+  "unit1_year": [
+   "godina",
+   "godini",
+   "godinom",
+   "godinu"
+  ],
+  "unit_century": [
+   "stoljeća",
+   "stoljeće"
+  ],
+  "unit_day": [
+   "dan",
+   "dana",
+   "danima"
+  ],
+  "unit_decade": [
+   "dekada",
+   "desetljeće"
+  ],
+  "unit_hour": [
+   "sat",
+   "sata",
+   "sati",
+   "satima"
+  ],
+  "unit_minute": [
+   "minuta",
+   "minutama",
+   "minute",
+   "minutu"
+  ],
+  "unit_month": [
+   "mjesec",
+   "mjeseca",
+   "mjesece",
+   "mjeseci",
+   "mjesecima",
+   "mjesecom",
+   "mjesecu"
+  ],
+  "unit_second": [
+   "sekunda",
+   "sekundama",
+   "sekunde",
+   "sekundi",
+   "sekundu"
+  ],
+  "unit_week": [
+   "tjedan",
+   "tjedana",
+   "tjedna",
+   "tjedne",
+   "tjedni",
+   "tjednima",
+   "tjednom",
+   "tjednu"
+  ],
+  "unit_year": [
+   "godina",
+   "godinama",
+   "godine",
+   "godini",
+   "godinom",
+   "godinu",
+   "godinā"
+  ],
+  "weekday_0": [
+   "ponedjeljak",
+   "ponedjeljka"
+  ],
+  "weekday_1": [
+   "utorak",
+   "utorka"
+  ],
+  "weekday_2": [
+   "srijeda",
+   "srijede",
+   "srijedu"
+  ],
+  "weekday_3": [
+   "četvrtak",
+   "četvrtka"
+  ],
+  "weekday_4": [
+   "petak",
+   "petka"
+  ],
+  "weekday_5": [
+   "subota",
+   "subote",
+   "subotu"
+  ],
+  "weekday_6": [
+   "nedjelja",
+   "nedjelje",
+   "nedjelju"
+  ]
+ },
+ "sources": {
+  "clock_dir_to": [
+   "Croatian SUBTRACTIVE clock direction: \"do\" (\"to/until\") names the minutes",
+   "still missing from the coming hour -- \"petnaest do devet\" == fifteen to",
+   "nine == 08:45, \"četvrt do devet\" == a quarter to nine == 08:45.  This is",
+   "the ordinary \"to\" reading (subtract from the named hour), NOT the",
+   "toward-hour reading that \"pola\" takes (see clock_fraction_30.voc).",
+   "Citation: en.wiktionary.org/wiki/do#Serbo-Croatian, preposition sense",
+   "\"to, until, up to\" with the genitive.  The clock use with a worked",
+   "numeric example is in hjp.znanje.hr, s.v. \"četvrt\": \"četvrt do devet\"",
+   "for 8:45."
+  ],
+  "clock_fraction_15": [
+   "Croatian QUARTER hour.  Unlike \"pola\" (which counts toward the coming",
+   "hour, 08:30 for \"pola devet\"), the quarter is only ever spoken with an",
+   "explicit direction word -- \"četvrt do devet\" == 08:45 -- so",
+   "``bare_quarter_to`` is deliberately NOT set for hr and a bare",
+   "\"četvrt devet\" stays unparsed rather than guessed.",
+   "Citation: hjp.znanje.hr (Hrvatski jezicni portal), s.v. \"četvrt\":",
+   "\"četvrtina sata; petnaest minuta\", with the clock example",
+   "\"četvrt do devet\"."
+  ],
+  "clock_fraction_30": [
+   "Croatian toward-hour HALF: \"pola devet\" == half toward the ninth == 08:30",
+   "(bare_half_to + toward_hour_12h).  Unlike Czech/Slovak, the half names the",
+   "coming hour with the bare CARDINAL, not an ordinal.  Citations, both with",
+   "a worked numeric example naming the SAME hour (\"half past one\" = 1:30):",
+   "  - en.wiktionary.org/wiki/pola#Serbo-Croatian: \"pola tri — 2:30\" (half",
+   "    toward three == 2:30).",
+   "  - en.wiktionary.org/wiki/half_past, Translations table (headword \"half",
+   "    past one\" == 1:30): \"Serbo-Croatian: pola dva (used with the following",
+   "    hour)\" -- \"dva\" (two) is the COMING hour, confirming the same",
+   "    toward-hour direction."
+  ],
+  "daypart_afternoon_hr": [
+   "Band boundaries: Unicode CLDR 47 Day Period Rules, locale hr",
+   "(https://www.unicode.org/cldr/charts/47/supplemental/day_periods.html),",
+   "transcribed in chronologia/dayparts.py as the afternoon band.",
+   "Surface: adverb 'in the afternoon' -- the deictic form these phrases use.",
+   "Source: Wiktionary, popodne — https://en.wiktionary.org/wiki/popodne"
+  ],
+  "daypart_evening_hr": [
+   "Band boundaries: Unicode CLDR 47 Day Period Rules, locale hr",
+   "(https://www.unicode.org/cldr/charts/47/supplemental/day_periods.html),",
+   "transcribed in chronologia/dayparts.py as the evening band.",
+   "Surface: adverb 'in the evening' -- the deictic form these phrases use.",
+   "Source: Wiktionary, navečer — https://en.wiktionary.org/wiki/navečer"
+  ],
+  "daypart_morning_hr": [
+   "Band boundaries: Unicode CLDR 47 Day Period Rules, locale hr",
+   "(https://www.unicode.org/cldr/charts/47/supplemental/day_periods.html),",
+   "transcribed in chronologia/dayparts.py as the morning band.",
+   "Surface: adverb 'in the morning' -- the deictic form these phrases use.",
+   "Source: Wiktionary, ujutro — https://en.wiktionary.org/wiki/ujutro"
+  ],
+  "daypart_night_hr": [
+   "Band boundaries: Unicode CLDR 47 Day Period Rules, locale hr",
+   "(https://www.unicode.org/cldr/charts/47/supplemental/day_periods.html),",
+   "transcribed in chronologia/dayparts.py as the night band.",
+   "Surface: adverb 'at night' (instrumental of noć) -- the deictic form these phrases use.",
+   "Source: Wiktionary, noću — https://en.wiktionary.org/wiki/noću"
+  ],
+  "marker_ad": [
+   "The Hrvatski jezični portal entry for \"p. Kr.\" glosses it \"poslije Krista\"",
+   "and gives \"n. e.\" as its alternative",
+   "(https://hjp.znanje.hr/index.php?show=search_by_id&id=eV1lWBA%3D); the",
+   "Hrvatski pravopis writes the same abbreviation \"po. Kr.\"",
+   "(https://pravopis.hr/pravilo/kratice/49/)."
+  ],
+  "marker_bc": [
+   "Croatian has two live pairs. The Hrvatski pravopis of the Institut za",
+   "hrvatski jezik i jezikoslovlje prescribes \"pr. Kr.\" for \"prije Krista\"",
+   "(https://pravopis.hr/pravilo/kratice/49/), and the Hrvatski jezični portal",
+   "entry for it names \"pr. n. e.\" (prije nove ere) as the secular equivalent",
+   "(https://hjp.znanje.hr/index.php?show=search_by_id&id=dl9nXxQ%3D)."
+  ],
+  "marker_day_filler": [
+   "Croatian idiom: a bare genitive-plural \"dana\" (of days) trailing a",
+   "year/month/week count is the emphatic filler \"godinu/mjesec/tjedan DANA\"",
+   "(literally \"a year/month/week OF DAYS\" == exactly one year/month/week),",
+   "never a genuine extra day -- a standalone \"+1 day\" reads the nominative",
+   "\"dan\", not this genitive-plural form.  Institut za hrvatski jezik /",
+   "Hrvatski jezični portal, sklonidba imenice \"dan\": genitiv množine \"dana\".",
+   "https://hjp.znanje.hr/"
+  ],
+  "marker_during": [
+   "Locative \"u\" governing a month (\"u sijecnju\").",
+   "Source: en.wiktionary.org, entry \"u\" (Croatian), \"in\"."
+  ],
+  "marker_for_date": [
+   "\"za\" + accusative marks the time a thing is meant for: \"za sutra\", \"za petak\".",
+   "Source: en.wiktionary.org, entry \"za\" (Serbo-Croatian): \"for ... [with",
+   "accusative]\", \"doći kući za praznike\" (to come home for the holiday season)."
+  ],
+  "marker_last": [
+   "Croatian \"last/previous\" determiner, the full adjectival paradigm.  Croatian",
+   "names a past year with the adverbial genitive \"prošle godine\" and a past week",
+   "with either the accusative \"prošli tjedan\" or the genitive \"prošlog tjedna\",",
+   "so the nominative-only listing missed the commonest phrasings.  The masculine",
+   "genitive/dative have the attested short and long variants (-og / -oga,",
+   "-om / -ome).  The season nouns are neuter, so \"prošlo ljeto\" and",
+   "\"prethodno proljeće\" need the neuter nominative/accusative too.",
+   "Hrvatski jezični portal, sklonidba pridjeva:",
+   "https://hjp.znanje.hr/index.php?show=search_by_id&id=dl5iXBI%3D (prošli)",
+   "https://hjp.znanje.hr/index.php?show=search_by_id&id=eVdjXBk%3D (prethodan)"
+  ],
+  "marker_next": [
+   "Croatian \"next/following\" determiner, the full adjectival paradigm for both",
+   "the \"sljedeći\" and the \"idući\" stems, including the -eg/-ega and -em/-emu",
+   "variants.  \"sljedeće godine\" (genitive) is the ordinary \"next year\".",
+   "Institut za hrvatski jezik / Hrvatski jezični portal, sklonidba pridjeva.",
+   "https://hjp.znanje.hr/index.php?show=search"
+  ],
+  "marker_ordlast": [
+   "Croatian \"last\" ordinal determiner, adjectives \"posljednji\"/\"zadnji\".",
+   "\"posljednji ponedjeljak svibnja\" = last Monday of May.  IHJ, Hrvatski pravopis."
+  ],
+  "marker_this": [
+   "Croatian \"this\" demonstrative, the full pronominal paradigm; \"ove godine\" is",
+   "the ordinary \"this year\" and is genitive.  Institut za hrvatski jezik /",
+   "Hrvatski jezični portal, sklonidba zamjenica.",
+   "https://hjp.znanje.hr/index.php?show=search"
+  ],
+  "month_1": [
+   "Unicode CLDR 47, locale hr, cldr-dates-full/main/hr/ca-gregorian.json.",
+   "months.format.abbreviated and months.stand-alone.abbreviated are identical;",
+   "CLDR ships the trailing dot as part of the surface, but the tokenizer strips",
+   "a trailing dot before matching, so the bare form covers both spellings."
+  ],
+  "month_10": [
+   "Unicode CLDR 47, locale hr, cldr-dates-full/main/hr/ca-gregorian.json.",
+   "months.format.abbreviated and months.stand-alone.abbreviated are identical;",
+   "CLDR ships the trailing dot as part of the surface, but the tokenizer strips",
+   "a trailing dot before matching, so the bare form covers both spellings."
+  ],
+  "month_11": [
+   "Unicode CLDR 47, locale hr, cldr-dates-full/main/hr/ca-gregorian.json.",
+   "months.format.abbreviated and months.stand-alone.abbreviated are identical;",
+   "CLDR ships the trailing dot as part of the surface, but the tokenizer strips",
+   "a trailing dot before matching, so the bare form covers both spellings."
+  ],
+  "month_12": [
+   "Unicode CLDR 47, locale hr, cldr-dates-full/main/hr/ca-gregorian.json.",
+   "months.format.abbreviated and months.stand-alone.abbreviated are identical;",
+   "CLDR ships the trailing dot as part of the surface, but the tokenizer strips",
+   "a trailing dot before matching, so the bare form covers both spellings."
+  ],
+  "month_2": [
+   "Unicode CLDR 47, locale hr, cldr-dates-full/main/hr/ca-gregorian.json.",
+   "months.format.abbreviated and months.stand-alone.abbreviated are identical;",
+   "CLDR ships the trailing dot as part of the surface, but the tokenizer strips",
+   "a trailing dot before matching, so the bare form covers both spellings."
+  ],
+  "month_3": [
+   "Unicode CLDR 47, locale hr, cldr-dates-full/main/hr/ca-gregorian.json.",
+   "months.format.abbreviated and months.stand-alone.abbreviated are identical;",
+   "CLDR ships the trailing dot as part of the surface, but the tokenizer strips",
+   "a trailing dot before matching, so the bare form covers both spellings."
+  ],
+  "month_4": [
+   "Unicode CLDR 47, locale hr, cldr-dates-full/main/hr/ca-gregorian.json.",
+   "months.format.abbreviated and months.stand-alone.abbreviated are identical;",
+   "CLDR ships the trailing dot as part of the surface, but the tokenizer strips",
+   "a trailing dot before matching, so the bare form covers both spellings."
+  ],
+  "month_5": [
+   "Unicode CLDR 47, locale hr, cldr-dates-full/main/hr/ca-gregorian.json.",
+   "months.format.abbreviated and months.stand-alone.abbreviated are identical;",
+   "CLDR ships the trailing dot as part of the surface, but the tokenizer strips",
+   "a trailing dot before matching, so the bare form covers both spellings."
+  ],
+  "month_6": [
+   "Unicode CLDR 47, locale hr, cldr-dates-full/main/hr/ca-gregorian.json.",
+   "months.format.abbreviated and months.stand-alone.abbreviated are identical;",
+   "CLDR ships the trailing dot as part of the surface, but the tokenizer strips",
+   "a trailing dot before matching, so the bare form covers both spellings."
+  ],
+  "month_7": [
+   "Unicode CLDR 47, locale hr, cldr-dates-full/main/hr/ca-gregorian.json.",
+   "months.format.abbreviated and months.stand-alone.abbreviated are identical;",
+   "CLDR ships the trailing dot as part of the surface, but the tokenizer strips",
+   "a trailing dot before matching, so the bare form covers both spellings."
+  ],
+  "month_8": [
+   "Unicode CLDR 47, locale hr, cldr-dates-full/main/hr/ca-gregorian.json.",
+   "months.format.abbreviated and months.stand-alone.abbreviated are identical;",
+   "CLDR ships the trailing dot as part of the surface, but the tokenizer strips",
+   "a trailing dot before matching, so the bare form covers both spellings."
+  ],
+  "month_9": [
+   "Unicode CLDR 47, locale hr, cldr-dates-full/main/hr/ca-gregorian.json.",
+   "months.format.abbreviated and months.stand-alone.abbreviated are identical;",
+   "CLDR ships the trailing dot as part of the surface, but the tokenizer strips",
+   "a trailing dot before matching, so the bare form covers both spellings."
+  ],
+  "scope_unit_century": [
+   "The locative singular the \"u\" preposition takes -- \"u 20. stoljeću\" (\"in the",
+   "20th century\"), the ordinary way to place an event in a century.  Distinct",
+   "from the genitive plural \"stoljeća\" a bare count uses (\"pet stoljeća\"), so",
+   "admitting it cannot admit a count.",
+   "Hrvatski jezicni portal, stoljece, sklonidba (lokativ jd. \"stoljecu\")."
+  ],
+  "unit1_century": [
+   "The locative singular -- a singular form, listed so it is not read as the",
+   "genitive plural a count takes."
+  ],
+  "unit1_second": [
+   "Croatian \"sekunda\" singular surfaces: nominative and accusative.",
+   "Declension: en.wiktionary.org."
+  ],
+  "unit_month": [
+   "Croatian \"mjesec\", full paradigm.",
+   "Hrvatski jezični portal, sklonidba imenica."
+  ],
+  "unit_second": [
+   "Croatian \"sekunda\", matching the depth of unit_minute.voc: nominative",
+   "singular after 1, the paucal genitive singular after 2-4, the genitive",
+   "plural after 5+, plus the accusative and the locative/instrumental plural.",
+   "Unicode CLDR 47, locale hr, cldr-units-full/main/hr/units.json,",
+   "duration-second: one \"sekunda\", few \"sekunde\", other \"sekundi\".",
+   "Declension: en.wiktionary.org, https://en.wiktionary.org/wiki/sekunda"
+  ],
+  "unit_week": [
+   "Croatian \"tjedan\", fleeting-vowel stem (tjedan / tjedna).  Full paradigm.",
+   "Hrvatski jezični portal, sklonidba imenica."
+  ],
+  "unit_year": [
+   "Croatian \"godina\", full first-declension paradigm.  The genitive \"godine\"",
+   "carries the adverbial \"prošle/ove/sljedeće godine\".",
+   "Hrvatski jezični portal, sklonidba imenica."
+  ],
+  "weekday_0": [
+   "Unicode CLDR 47, locale hr, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/hr/ca-gregorian.json): days.format.wide,",
+   "days.stand-alone.wide.  Not covered by any of those charts, and so",
+   "unattested here: \"ponedjeljka\"."
+  ],
+  "weekday_1": [
+   "Unicode CLDR 47, locale hr, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/hr/ca-gregorian.json): days.format.wide,",
+   "days.stand-alone.wide.  Not covered by any of those charts, and so",
+   "unattested here: \"utorka\"."
+  ],
+  "weekday_2": [
+   "Unicode CLDR 47, locale hr, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/hr/ca-gregorian.json): days.format.wide,",
+   "days.stand-alone.wide.  Not covered by any of those charts, and so",
+   "unattested here: \"srijedu\", \"srijede\"."
+  ],
+  "weekday_3": [
+   "Unicode CLDR 47, locale hr, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/hr/ca-gregorian.json): days.format.wide,",
+   "days.stand-alone.wide.  Not covered by any of those charts, and so",
+   "unattested here: \"četvrtka\"."
+  ],
+  "weekday_4": [
+   "Unicode CLDR 47, locale hr, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/hr/ca-gregorian.json): days.format.wide,",
+   "days.stand-alone.wide.  Not covered by any of those charts, and so",
+   "unattested here: \"petka\"."
+  ],
+  "weekday_5": [
+   "Unicode CLDR 47, locale hr, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/hr/ca-gregorian.json): days.format.wide,",
+   "days.stand-alone.wide.  Not covered by any of those charts, and so",
+   "unattested here: \"subotu\", \"subote\"."
+  ],
+  "weekday_6": [
+   "Unicode CLDR 47, locale hr, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/hr/ca-gregorian.json): days.format.wide,",
+   "days.stand-alone.wide.  Not covered by any of those charts, and so",
+   "unattested here: \"nedjelju\", \"nedjelje\"."
+  ]
+ }
+}

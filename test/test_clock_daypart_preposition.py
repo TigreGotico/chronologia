@@ -4,8 +4,8 @@
 
 pt "às 8 à noite" and es "a las 8 por la noche" name the evening hour 20:00,
 the same as "às 8 da noite" and "a las 8 de la noche".  pt "à" is the
-preposition "a" with the article ("marker_at.voc"), and the frame words are in
-"marker_dayframe.voc" (RAE s.v. "por", Priberam s.v. "pela").
+preposition "a" with the article ("marker_at"), and the frame words are in
+"marker_dayframe" (RAE s.v. "por", Priberam s.v. "pela").
 
 Every expected instant is worked out by hand from the anchor, Tuesday
 2026-11-17 08:00: an evening or afternoon hour takes the pm half today, and a

@@ -3,8 +3,8 @@
 a leading clock ("a las 9") must not block the WEEKLY BYDAY qualifier scan.
 
 Vocabulary confirmed attested in the es corpus before writing this file:
-``marker_freq_weekly.voc`` ("semanalmente"), ``marker_at.voc`` ("a"/"las"),
-``marker_on.voc`` ("el"), ``weekday_0.voc`` ("lunes" -- Monday).
+``marker_freq_weekly`` ("semanalmente"), ``marker_at`` ("a"/"las"),
+``marker_on`` ("el"), ``weekday_0`` ("lunes" -- Monday).
 
 Spanish "at" is the MULTI-token marker "a las" and the ``clock_time``
 construction itself only tags from "las" onward (span excludes the leading
