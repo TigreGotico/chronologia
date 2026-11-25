@@ -5,7 +5,7 @@ Standard written Greek prefers the "από" preposition after πριν/μετά 
 least as often as the bare form ("πριν από 3 ημέρες" == "πριν 3 ημέρες"),
 yet the compound used to refuse entirely because the ``MARKER`` slot of the
 ``relative_offset`` construction binds a single token against
-``spec.directions`` (built from ``marker_past.voc``/``marker_future.voc``)
+``spec.directions`` (built from ``marker_past``/``marker_future``)
 -- "πριν από" was never one of those surfaces, so the tokenizer's two
 separate tokens never bound.  Oracles are independent date arithmetic,
 never the engine's own output.

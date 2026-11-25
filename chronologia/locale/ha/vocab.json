@@ -1,0 +1,274 @@
+{
+ "format_version": 1,
+ "words": {
+  "clock_meridiem_am": [
+   "na safe",
+   "na safiya",
+   "na safiyar"
+  ],
+  "clock_meridiem_night": [
+   "na dare"
+  ],
+  "clock_meridiem_pm": [
+   "na rana",
+   "na yamma"
+  ],
+  "marker_after": [
+   "bayan"
+  ],
+  "marker_and": [
+   "da"
+  ],
+  "marker_before": [
+   "kafin"
+  ],
+  "marker_between": [
+   "tsakanin"
+  ],
+  "marker_day_word": [
+   "ranar"
+  ],
+  "marker_every": [
+   "kowace",
+   "kowane"
+  ],
+  "marker_from": [
+   "daga"
+  ],
+  "marker_future": [
+   "a cikin",
+   "bayan",
+   "cikin"
+  ],
+  "marker_ga": [
+   "ga"
+  ],
+  "marker_last": [
+   "da suka gabata",
+   "da suka wuce",
+   "da ta gabata",
+   "da ta wuce",
+   "da ya gabata",
+   "da ya wuce"
+  ],
+  "marker_month_word": [
+   "wata",
+   "watan"
+  ],
+  "marker_next": [
+   "mai zuwa",
+   "na gaba"
+  ],
+  "marker_oclock": [
+   "karfe",
+   "ƙarfe"
+  ],
+  "marker_of": [
+   "na",
+   "ta"
+  ],
+  "marker_past": [
+   "da suka gabata",
+   "da suka wuce",
+   "da ta gabata",
+   "da ta wuce",
+   "da ya gabata",
+   "da ya wuce"
+  ],
+  "marker_since": [
+   "tun"
+  ],
+  "marker_this": [
+   "wannan"
+  ],
+  "marker_until": [
+   "zuwa"
+  ],
+  "marker_year_plural": [
+   "shekaru"
+  ],
+  "marker_year_word": [
+   "shekara",
+   "shekarar"
+  ],
+  "month_1": [
+   "jan",
+   "janairu",
+   "janairun"
+  ],
+  "month_10": [
+   "okt",
+   "oktoba",
+   "oktoban"
+  ],
+  "month_11": [
+   "nuw",
+   "nuwamba",
+   "nuwamban"
+  ],
+  "month_12": [
+   "dis",
+   "disamba",
+   "disamban"
+  ],
+  "month_2": [
+   "fab",
+   "fabrairu",
+   "fabrairun",
+   "faburairu",
+   "faburairun"
+  ],
+  "month_3": [
+   "mar",
+   "maris"
+  ],
+  "month_4": [
+   "afi",
+   "afirilu",
+   "afirilun",
+   "afrilu",
+   "afrilun"
+  ],
+  "month_5": [
+   "may",
+   "mayu",
+   "mayun"
+  ],
+  "month_6": [
+   "yun",
+   "yuni",
+   "yunin"
+  ],
+  "month_7": [
+   "yul",
+   "yuli",
+   "yulin"
+  ],
+  "month_8": [
+   "agu",
+   "agusta",
+   "agustan"
+  ],
+  "month_9": [
+   "sat",
+   "satumba",
+   "satumban"
+  ],
+  "named_day_-1": [
+   "jiya"
+  ],
+  "named_day_-2": [
+   "shekaranjiya"
+  ],
+  "named_day_0": [
+   "yau"
+  ],
+  "named_day_1": [
+   "gobe"
+  ],
+  "unit1_day": [
+   "kwana"
+  ],
+  "unit1_hour": [
+   "awa"
+  ],
+  "unit1_minute": [
+   "minti",
+   "mintin"
+  ],
+  "unit1_month": [
+   "wata",
+   "watan"
+  ],
+  "unit1_second": [
+   "dakika",
+   "daƙiƙa"
+  ],
+  "unit1_week": [
+   "mako",
+   "sati",
+   "satin"
+  ],
+  "unit1_year": [
+   "shekara",
+   "shekarar"
+  ],
+  "unit_day": [
+   "kwana",
+   "kwanaki"
+  ],
+  "unit_hour": [
+   "awa",
+   "awanni"
+  ],
+  "unit_minute": [
+   "minti",
+   "mintin",
+   "mintuna"
+  ],
+  "unit_month": [
+   "wata",
+   "watan",
+   "watanni"
+  ],
+  "unit_second": [
+   "dakika",
+   "dakiku",
+   "daƙiƙa"
+  ],
+  "unit_week": [
+   "mako",
+   "makonni",
+   "sati",
+   "satin"
+  ],
+  "unit_year": [
+   "shekara",
+   "shekarar",
+   "shekaru"
+  ],
+  "weekday_0": [
+   "litinin"
+  ],
+  "weekday_1": [
+   "talata"
+  ],
+  "weekday_2": [
+   "laraba"
+  ],
+  "weekday_3": [
+   "alhamis"
+  ],
+  "weekday_4": [
+   "jumaʼa",
+   "jummaʼa"
+  ],
+  "weekday_5": [
+   "asabar"
+  ],
+  "weekday_6": [
+   "lahadi"
+  ],
+  "weekday_abbr_0": [
+   "lit"
+  ],
+  "weekday_abbr_1": [
+   "tal"
+  ],
+  "weekday_abbr_2": [
+   "lar"
+  ],
+  "weekday_abbr_3": [
+   "alh"
+  ],
+  "weekday_abbr_4": [
+   "jum"
+  ],
+  "weekday_abbr_5": [
+   "asa"
+  ],
+  "weekday_abbr_6": [
+   "lah"
+  ]
+ }
+}

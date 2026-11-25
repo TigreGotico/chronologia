@@ -1,10 +1,10 @@
 # -*- coding: utf-8 -*-
-"""``marker_during.voc`` used to hold "pola"/"polo" -- the part-of-day frame,
+"""``marker_during`` used to hold "pola"/"polo" -- the part-of-day frame,
 not a during-word -- so Galician never inherited the base grammar's
 "during MONTH DAY? YEAR?" order and "en xaneiro" stranded "en" in the
 remainder. The part-of-day surfaces now live in their own
-``marker_dayframe.voc``, bound by ``daypart_ref``'s "dayframe DAYPART" order,
-and ``marker_during.voc`` holds the genuine preposition "en", so ``calendar_date``
+``marker_dayframe``, bound by ``daypart_ref``'s "dayframe DAYPART" order,
+and ``marker_during`` holds the genuine preposition "en", so ``calendar_date``
 opts in to the base grammar's marker-prefixed month order.
 
 "mañá" is a homograph: DRAG gives it both the morning day-part and "tomorrow".
@@ -51,7 +51,7 @@ def test_en_month_fully_consumes(marker, month, num):
     ("pola noite", 21, 24),
 ])
 def test_pola_dayframe_control_unchanged(phrase, start_h, end_h):
-    # "pola"/"polo" moved from marker_during.voc to marker_dayframe.voc; the
+    # "pola"/"polo" moved from marker_during to marker_dayframe; the
     # part-of-day reading must resolve to the identical band as before.
     r = _span(phrase)
     assert r is not None

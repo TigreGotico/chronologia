@@ -16,7 +16,7 @@ chronologia reads dates that people write in 61 languages and computes across 18
 |---|---|
 | `chronologia/` | the calendar, holiday, sky and span code behind `chronologia.__all__` |
 | `chronologia/extract/` | `extract_timespan`: loader, matcher, resolver, tokenizer and the number readers |
-| `chronologia/locale/<code>/` | `lang.json` and the `*.voc` word lists of one language |
+| `chronologia/locale/<code>/` | `lang.json` and the `vocab.json` word lists of one language |
 | `chronologia/holiday_data/` | one `<code>.tab` file of holiday rules per jurisdiction |
 | `test/` | engine tests, `nl_corpus_<code>/` phrase corpora, `holiday_golds/`, `holiday_sources/` |
 | `benchmark/` | the differential benchmark and its generated `SCOREBOARD.md` |

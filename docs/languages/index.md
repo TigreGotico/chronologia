@@ -12,7 +12,7 @@ This page lists the 61 locales, one page for each, and says which number reader 
 
 chronologia never guesses a linguistic surface. A construction ships in a locale only where an attested source supports it. Where the sources conflict, or nothing attests the phrase, the locale ships nothing and the phrase returns nothing. That rule makes a wrong answer rare. It also explains why an ordinary phrase in your language can come back empty.
 
-Every locale has a page. The vocabulary files carry their sources in comment headers. Reading `chronologia/locale/<code>/*.voc` answers the same question at a finer grain.
+Every locale has a page. The vocabulary files carry their sources in comment headers. Reading `chronologia/locale/<code>/*` answers the same question at a finer grain.
 
 ## How to read a page
 

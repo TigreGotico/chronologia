@@ -1,0 +1,194 @@
+{
+ "format_version": 1,
+ "words": {
+  "clock_dir_to": [
+   "전"
+  ],
+  "clock_fraction_30": [
+   "반"
+  ],
+  "clock_landmark_0": [
+   "자정"
+  ],
+  "clock_landmark_720": [
+   "정오"
+  ],
+  "clock_meridiem_am": [
+   "오전"
+  ],
+  "clock_meridiem_pm": [
+   "오후"
+  ],
+  "daypart_achim_ko": [
+   "아침"
+  ],
+  "daypart_bam_ko": [
+   "밤"
+  ],
+  "daypart_jeonyeok_ko": [
+   "저녁"
+  ],
+  "daypart_ohu_ko": [
+   "오후"
+  ],
+  "daypart_ojeon_ko": [
+   "오전"
+  ],
+  "marker_at": [
+   "에"
+  ],
+  "marker_day_word": [
+   "일"
+  ],
+  "marker_future": [
+   "후"
+  ],
+  "marker_last": [
+   "지난"
+  ],
+  "marker_minute_word": [
+   "분"
+  ],
+  "marker_next": [
+   "다음"
+  ],
+  "marker_oclock": [
+   "시"
+  ],
+  "marker_past": [
+   "전"
+  ],
+  "marker_this": [
+   "이번"
+  ],
+  "marker_year_word": [
+   "년"
+  ],
+  "month_1": [
+   "1월"
+  ],
+  "month_10": [
+   "10월"
+  ],
+  "month_11": [
+   "11월"
+  ],
+  "month_12": [
+   "12월"
+  ],
+  "month_2": [
+   "2월"
+  ],
+  "month_3": [
+   "3월"
+  ],
+  "month_4": [
+   "4월"
+  ],
+  "month_5": [
+   "5월"
+  ],
+  "month_6": [
+   "6월"
+  ],
+  "month_7": [
+   "7월"
+  ],
+  "month_8": [
+   "8월"
+  ],
+  "month_9": [
+   "9월"
+  ],
+  "named_day_-1": [
+   "어제"
+  ],
+  "named_day_-2": [
+   "그저께"
+  ],
+  "named_day_-3": [
+   "그끄저께"
+  ],
+  "named_day_0": [
+   "오늘"
+  ],
+  "named_day_1": [
+   "내일"
+  ],
+  "named_day_2": [
+   "모레"
+  ],
+  "named_day_3": [
+   "글피"
+  ],
+  "unit1_day": [
+   "일"
+  ],
+  "unit1_hour": [
+   "시간"
+  ],
+  "unit1_minute": [
+   "분"
+  ],
+  "unit1_month": [
+   "개월",
+   "달"
+  ],
+  "unit1_second": [
+   "초"
+  ],
+  "unit1_week": [
+   "주",
+   "주일"
+  ],
+  "unit1_year": [
+   "년",
+   "해"
+  ],
+  "unit_day": [
+   "일"
+  ],
+  "unit_hour": [
+   "시간"
+  ],
+  "unit_minute": [
+   "분"
+  ],
+  "unit_month": [
+   "개월",
+   "달"
+  ],
+  "unit_second": [
+   "초"
+  ],
+  "unit_week": [
+   "주",
+   "주일"
+  ],
+  "unit_year": [
+   "년",
+   "해"
+  ],
+  "weekday_0": [
+   "월요일"
+  ],
+  "weekday_1": [
+   "화요일"
+  ],
+  "weekday_2": [
+   "수요일"
+  ],
+  "weekday_3": [
+   "목요일"
+  ],
+  "weekday_4": [
+   "금요일"
+  ],
+  "weekday_5": [
+   "토요일"
+  ],
+  "weekday_6": [
+   "일요일"
+  ]
+ }
+}

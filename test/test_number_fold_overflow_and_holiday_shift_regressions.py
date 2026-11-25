@@ -767,9 +767,9 @@ def test_thousand_scale_duration_is_composed_across_locales():
     assert extract_duration("dois mil dias", "pt").duration.days == 2000
     assert extract_duration("iki min gün əvvəl", "az").duration.days == 2000
     # R33: the same thousand-scale composition must hold in every supported
-    # locale, not only the four that first shipped scale_1000.voc.  Each of
+    # locale, not only the four that first shipped scale_1000.  Each of
     # these locales previously returned a flat None for the spelled form while
-    # the digit control parsed; a scale_1000.voc listing the (often declined)
+    # the digit control parsed; a scale_1000 listing the (often declined)
     # thousand surface(s) re-composes it in _read_scale.
     r33 = [
         # Romance: "mil" is invariant.

@@ -4,8 +4,8 @@
 "a las 3 vecinas" (three neighbours) and "look at 5 houses" read a time of day
 at 03:00 and 05:00 and took the place of the date beside them.  A bare hour
 behind a clock preposition that also introduces a counted group
-(``marker_at_counts.voc``) and directly before a noun of
-``marker_counted_noun.voc`` stays a candidate at a low confidence, below the
+(``marker_at_counts``) and directly before a noun of
+``marker_counted_noun`` stays a candidate at a low confidence, below the
 date-only reading, and it is not the parse winner.  Any other word after the
 hour, a verb included, leaves the clock as it is.
 

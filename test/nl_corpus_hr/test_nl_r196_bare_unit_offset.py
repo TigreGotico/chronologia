@@ -3,7 +3,7 @@
 "za tjedan" ("in a week") and "tjedan prije" ("a week ago") carry no
 numeral; Croatian has no article to fold to 1 the way English "a" does,
 so the bare unit itself must read as quantity one. The USG slot (schema
-"singular_units", from unit1_<unit>.voc, already shipped for hr) supplies
+"singular_units", from unit1_<unit>, already shipped for hr) supplies
 only the noun's singular case surfaces, so the fold applies exactly when
 the surface is grammatically singular -- a bare PLURAL unit ("za
 tjedne") is not an offset at all and stays a hard non-match. unit1_year
@@ -77,7 +77,7 @@ def test_numeral_form_unaffected():
 
 # a bare PLURAL unit is not an implied one -- USG only ever supplies
 # singular surfaces, so these stay hard non-matches. "za godine" pins the
-# genitive/nominative-plural "godine" syncretism fix in unit1_year.voc.
+# genitive/nominative-plural "godine" syncretism fix in unit1_year.
 def test_bare_plural_is_not_an_offset():
     nomatch("za dane")
     nomatch("za tjedne")

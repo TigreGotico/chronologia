@@ -349,7 +349,7 @@ BASE_GRAMMAR: Dict[str, List[str]] = {
     ],
     # "early/mid/late <month>" ("early March" -> the first third of March, a
     # ~10-day span; "late December" -> the last third).  ``PART`` binds the
-    # locale's fuzzy period-part surface (``period_part_early/mid/late.voc`` --
+    # locale's fuzzy period-part surface (``period_part_early/mid/late`` --
     # en "early/mid/late", de "Anfang/Mitte/Ende", ru "начало/середина/конец"),
     # ``MONTH`` the month, and the resolver slices the Gregorian month into
     # thirds via :func:`chronologia.subdivide`.  This single order is the
@@ -406,7 +406,7 @@ BASE_GRAMMAR: Dict[str, List[str]] = {
     ],
     # "this morning", "tonight", "yesterday evening", "tomorrow afternoon" --
     # a time-of-day band selected deictically.  ``DAYPART`` binds the locale's
-    # daypart surface (``daypart_<key>.voc`` -- en "morning/afternoon/evening/
+    # daypart surface (``daypart_<key>`` -- en "morning/afternoon/evening/
     # night", ru "утром/днём/вечером/ночью"), and the resolver narrows the
     # anchored day to that band via :func:`chronologia.dayparts.daypart_span`,
     # whose boundaries are CLDR day-period data.  Two orders are the
@@ -427,7 +427,7 @@ BASE_GRAMMAR: Dict[str, List[str]] = {
         "DAYPART",
     ],
     # A bare deictic day word -- "today", "tomorrow", "yesterday".  ``DAY_WORD``
-    # binds the locale's own vocabulary (``named_day_<key>.voc``).  All 40
+    # binds the locale's own vocabulary (``named_day_<key>``).  All 40
     # locales already declared this construction with the IDENTICAL single
     # order, so migrating it changes no locale's matching power at all -- pure
     # DRY, not a gap-fill.
@@ -487,10 +487,10 @@ BASE_GRAMMAR: Dict[str, List[str]] = {
     # "in/during <month>" ("in January", "en janvier", "im Januar").  Only the
     # marker-prefixed order is shared: the bare "MONTH DAY? YEAR?" surface and
     # the day-first orders stay per-locale, since locales disagree on them.
-    # The marker is REQUIRED, so a locale that ships no ``marker_during.voc``
+    # The marker is REQUIRED, so a locale that ships no ``marker_during``
     # keeps exactly the orders it declared inline -- the connector matches
     # nothing and the order is inert.  ``during`` is the locative "in the
-    # course of" connector, deliberately NOT ``marker_in.voc``, which in
+    # course of" connector, deliberately NOT ``marker_in``, which in
     # several locales holds the future-offset "in N units" word instead
     # ("след", "через", "za", "pärast", "múlva").  Two families disable this
     # contribution: locales whose during-word is a POSTPOSITION ("jaanuari
@@ -498,10 +498,10 @@ BASE_GRAMMAR: Dict[str, List[str]] = {
     # prefix order would accept only ungrammatical word order, and the
     # Scandinavian locales, whose July abbreviation "jul" is also the word for
     # Christmas -- there "i jul" must stay the holiday, not the month.
-    # Portuguese/Galician's ``marker_during.voc`` used to double as the
+    # Portuguese/Galician's ``marker_during`` used to double as the
     # part-of-day frame ("pela manhã", "pola mañá"); that vocabulary now lives
-    # in its own ``marker_dayframe.voc`` (bound by ``daypart_ref``'s
-    # "dayframe DAYPART" order), leaving ``marker_during.voc`` free to hold the
+    # in its own ``marker_dayframe`` (bound by ``daypart_ref``'s
+    # "dayframe DAYPART" order), leaving ``marker_during`` free to hold the
     # genuine month preposition ("em", "en") and opt in here.
     # A month named with a relative marker ("last October", "в прошлом
     # октябре") is the occurrence before or after the bare reading, and a day

@@ -26,7 +26,7 @@ expansion (see the docstring on the assertion below) -- not read back from
 this parser.
 
 "every other"/"every 2nd" interval-prefix vocabulary
-(``chronologia/locale/*/marker_recur_other.voc`` or equivalent) has NO de/es
+(``chronologia/locale/*/marker_recur_other`` or equivalent) has NO de/es
 surface at all (checked: neither locale ships an "other"/ordinal-interval
 connector for recurrence), so this defect's de/es siblings are UNATTESTED
 and skipped -- en only.

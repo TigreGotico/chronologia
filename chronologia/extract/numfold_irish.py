@@ -19,7 +19,7 @@ use, so it is absent here.
 Both temporal sets are read, because both reach a temporal slot: this module
 is the numeral half of that split.  The mutation the conjunctive numerals
 impose falls on the *noun*, and every mutated noun surface is enumerated in
-the locale's own ``unit_*.voc`` -- there is no mutation machinery in the
+the locale's own ``unit_*`` -- there is no mutation machinery in the
 engine, and none is needed.
 
 Sources.  The cardinal, ordinal, personal and attributive series 1-30 plus

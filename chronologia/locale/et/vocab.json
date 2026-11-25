@@ -1,0 +1,407 @@
+{
+ "format_version": 1,
+ "words": {
+  "clock_dir_past": [
+   "läbi"
+  ],
+  "clock_dir_to": [
+   "puudu"
+  ],
+  "clock_fraction_15": [
+   "veerand"
+  ],
+  "clock_fraction_30": [
+   "pool"
+  ],
+  "clock_fraction_45": [
+   "kolmveerand"
+  ],
+  "clock_landmark_0": [
+   "kesköö",
+   "keskööl"
+  ],
+  "clock_landmark_720": [
+   "keskpäev",
+   "keskpäeval",
+   "lõuna"
+  ],
+  "clock_meridiem_am": [
+   "e.l.",
+   "hommikul"
+  ],
+  "clock_meridiem_pm": [
+   "p.l.",
+   "pärastlõunal"
+  ],
+  "clock_zone_0": [
+   "gmt",
+   "utc"
+  ],
+  "daypart_afternoon_et": [
+   "pärastlõunal"
+  ],
+  "daypart_evening_et": [
+   "õhtul"
+  ],
+  "daypart_morning_et": [
+   "hommikul"
+  ],
+  "daypart_night_et": [
+   "öösel"
+  ],
+  "marker_ad": [
+   "m.a.j",
+   "p.kr.",
+   "pkr",
+   "pärast kristust"
+  ],
+  "marker_after": [
+   "pärast"
+  ],
+  "marker_ago": [
+   "tagasi"
+  ],
+  "marker_and": [
+   "ja"
+  ],
+  "marker_at": [
+   "kell"
+  ],
+  "marker_bc": [
+   "e.kr.",
+   "e.m.a",
+   "ekr",
+   "enne kristust"
+  ],
+  "marker_before": [
+   "enne"
+  ],
+  "marker_between": [
+   "vahel"
+  ],
+  "marker_business": [
+   "tööpäev",
+   "tööpäeva",
+   "tööpäeval"
+  ],
+  "marker_clock_lead": [
+   "kell"
+  ],
+  "marker_during": [
+   "jooksul"
+  ],
+  "marker_every": [
+   "iga",
+   "igal"
+  ],
+  "marker_freq_daily": [
+   "iga päev"
+  ],
+  "marker_freq_monthly": [
+   "iga kuu"
+  ],
+  "marker_freq_weekly": [
+   "iga nädal"
+  ],
+  "marker_freq_yearly": [
+   "iga aasta"
+  ],
+  "marker_from": [
+   "alates"
+  ],
+  "marker_future": [
+   "järel",
+   "möödudes",
+   "pärast"
+  ],
+  "marker_half": [
+   "pool"
+  ],
+  "marker_hours": [
+   "tundi"
+  ],
+  "marker_in": [
+   "järel",
+   "pärast"
+  ],
+  "marker_indef": [
+   "ühe",
+   "üks"
+  ],
+  "marker_last": [
+   "eelmine",
+   "eelmisel",
+   "möödunud"
+  ],
+  "marker_month_word": [
+   "kuu"
+  ],
+  "marker_next": [
+   "järgmine",
+   "järgmisel",
+   "tulev",
+   "tuleval"
+  ],
+  "marker_oclock": [
+   "kell"
+  ],
+  "marker_past": [
+   "tagasi"
+  ],
+  "marker_present": [
+   "nüüd"
+  ],
+  "marker_q": [
+   "q"
+  ],
+  "marker_quarter_word": [
+   "kvartal",
+   "kvartali",
+   "kvartalis"
+  ],
+  "marker_recur_for": [
+   "jooksul"
+  ],
+  "marker_since": [
+   "alates"
+  ],
+  "marker_this": [
+   "see",
+   "sel"
+  ],
+  "marker_to": [
+   "kuni"
+  ],
+  "marker_until": [
+   "kuni"
+  ],
+  "marker_week_num": [
+   "nädal",
+   "nädala",
+   "nädalal"
+  ],
+  "marker_weekof": [
+   "nädal",
+   "nädalal"
+  ],
+  "marker_year_word": [
+   "aasta",
+   "aastal",
+   "aastat"
+  ],
+  "month_1": [
+   "jaanuar",
+   "jaanuari",
+   "jaanuaril",
+   "jaanuaris"
+  ],
+  "month_10": [
+   "oktoober",
+   "oktoobri",
+   "oktoobril",
+   "oktoobris"
+  ],
+  "month_11": [
+   "november",
+   "novembri",
+   "novembril",
+   "novembris"
+  ],
+  "month_12": [
+   "detsember",
+   "detsembri",
+   "detsembril",
+   "detsembris"
+  ],
+  "month_2": [
+   "veebruar",
+   "veebruari",
+   "veebruaril",
+   "veebruaris"
+  ],
+  "month_3": [
+   "märts",
+   "märtsi",
+   "märtsil",
+   "märtsis"
+  ],
+  "month_4": [
+   "aprill",
+   "aprilli",
+   "aprillil",
+   "aprillis"
+  ],
+  "month_5": [
+   "mai",
+   "maikuu",
+   "mail",
+   "mais"
+  ],
+  "month_6": [
+   "juuni",
+   "juunil",
+   "juunis"
+  ],
+  "month_7": [
+   "juuli",
+   "juulil",
+   "juulis"
+  ],
+  "month_8": [
+   "august",
+   "augusti",
+   "augustil",
+   "augustis"
+  ],
+  "month_9": [
+   "september",
+   "septembri",
+   "septembril",
+   "septembris"
+  ],
+  "named_day_-1": [
+   "eile"
+  ],
+  "named_day_-2": [
+   "üleeile"
+  ],
+  "named_day_0": [
+   "täna"
+  ],
+  "named_day_1": [
+   "homme"
+  ],
+  "named_day_2": [
+   "ülehomme"
+  ],
+  "period_part_early": [
+   "algus",
+   "alguses",
+   "alul"
+  ],
+  "period_part_late": [
+   "lõpp",
+   "lõpul",
+   "lõpus"
+  ],
+  "period_part_mid": [
+   "keskel",
+   "keskpaigas",
+   "keskpaik"
+  ],
+  "scale_1000": [
+   "tuhat"
+  ],
+  "scale_1000000": [
+   "miljon",
+   "miljonit"
+  ],
+  "scale_1000000000": [
+   "miljard",
+   "miljardit"
+  ],
+  "scope_unit_century": [
+   "sajand",
+   "sajandi"
+  ],
+  "scope_unit_decade": [
+   "aastakümme"
+  ],
+  "scope_unit_millennium": [
+   "aastatuhat"
+  ],
+  "season_fall": [
+   "sügis",
+   "sügisel"
+  ],
+  "season_spring": [
+   "kevad",
+   "kevadel"
+  ],
+  "season_summer": [
+   "suvel",
+   "suvi"
+  ],
+  "season_winter": [
+   "talv",
+   "talvel"
+  ],
+  "special_weekend": [
+   "nädalavahetus",
+   "nädalavahetusel"
+  ],
+  "unit_century": [
+   "sajand",
+   "sajandi"
+  ],
+  "unit_day": [
+   "päev",
+   "päeva",
+   "päevad"
+  ],
+  "unit_decade": [
+   "aastakümme",
+   "aastakümne"
+  ],
+  "unit_hour": [
+   "tund",
+   "tundi",
+   "tunni"
+  ],
+  "unit_millennium": [
+   "aastatuhande",
+   "aastatuhat"
+  ],
+  "unit_minute": [
+   "minut",
+   "minuti",
+   "minutit"
+  ],
+  "unit_month": [
+   "kuu",
+   "kuud"
+  ],
+  "unit_second": [
+   "sekund",
+   "sekundi",
+   "sekundit"
+  ],
+  "unit_week": [
+   "nädal",
+   "nädala",
+   "nädalat"
+  ],
+  "unit_year": [
+   "aasta",
+   "aastat"
+  ],
+  "weekday_0": [
+   "esmaspäev",
+   "esmaspäeval"
+  ],
+  "weekday_1": [
+   "teisipäev",
+   "teisipäeval"
+  ],
+  "weekday_2": [
+   "kolmapäev",
+   "kolmapäeval"
+  ],
+  "weekday_3": [
+   "neljapäev",
+   "neljapäeval"
+  ],
+  "weekday_4": [
+   "reede",
+   "reedel"
+  ],
+  "weekday_5": [
+   "laupäev",
+   "laupäeval"
+  ],
+  "weekday_6": [
+   "pühapäev",
+   "pühapäeval"
+  ]
+ }
+}

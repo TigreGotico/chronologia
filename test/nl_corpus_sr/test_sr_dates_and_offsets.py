@@ -141,6 +141,6 @@ def test_this_next_last_year(phrase, year_offset):
 
 def test_between_construction():
     """"između X i Y" -- Wiktionary, između; the "i" glue is the ordinary
-    conjunction (marker_and.voc)."""
+    conjunction (marker_and)."""
     r = span("između januara i marta")
     assert r.start.month == 1

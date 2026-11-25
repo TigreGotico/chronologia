@@ -10,15 +10,10 @@ tokenizer splits glues back ("a.c.").
 """
 from __future__ import annotations
 
-import os
 from dataclasses import replace
 
 from chronologia.extract.model import Token
 from chronologia.extract.numfold_engine import run_extent, reindex as _reindex
-
-#: locale root, for reading a language's ``marker_quarter_word.voc`` (the
-#: calendar-quarter noun -- "trimestre").
-_LOCALE_ROOT = os.path.join(os.path.dirname(os.path.dirname(__file__)), "locale")
 
 
 # abbreviations the tokenizer shatters on their dots/hyphens ("a.c." -> a,c;

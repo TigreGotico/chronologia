@@ -1,0 +1,277 @@
+{
+ "format_version": 1,
+ "words": {
+  "clock_dir_past": [
+   "u"
+  ],
+  "clock_dir_to": [
+   "nieqes"
+  ],
+  "clock_fraction_15": [
+   "kwart"
+  ],
+  "clock_fraction_30": [
+   "nofs"
+  ],
+  "clock_landmark_0": [
+   "nofsillejl"
+  ],
+  "clock_landmark_720": [
+   "nofsinhar"
+  ],
+  "clock_meridiem_am": [
+   "am",
+   "filgħodu"
+  ],
+  "clock_meridiem_pm": [
+   "filgħaxija",
+   "pm"
+  ],
+  "marker_after": [
+   "wara"
+  ],
+  "marker_and": [
+   "u"
+  ],
+  "marker_article": [
+   "id",
+   "il",
+   "in",
+   "ir",
+   "is",
+   "it",
+   "ix",
+   "iz",
+   "iċ",
+   "iż",
+   "l"
+  ],
+  "marker_at": [
+   "f",
+   "fi",
+   "fid",
+   "fil",
+   "fin",
+   "fir",
+   "fis",
+   "fit",
+   "fix",
+   "fiz",
+   "fiċ",
+   "fiż",
+   "fl"
+  ],
+  "marker_before": [
+   "qabel"
+  ],
+  "marker_between": [
+   "bejn"
+  ],
+  "marker_every": [
+   "kull"
+  ],
+  "marker_from": [
+   "minn"
+  ],
+  "marker_future": [
+   "ieħor",
+   "oħra",
+   "oħrajn"
+  ],
+  "marker_il": [
+   "il"
+  ],
+  "marker_in_frame": [
+   "fi żmien",
+   "sa"
+  ],
+  "marker_last": [
+   "l-oħra",
+   "li għadda",
+   "li għaddiet"
+  ],
+  "marker_minute_word": [
+   "minuta",
+   "minuti"
+  ],
+  "marker_next": [
+   "d-dieħla",
+   "id-dieħel",
+   "li ġej",
+   "ta' wara"
+  ],
+  "marker_of": [
+   "ta",
+   "ta'"
+  ],
+  "marker_past": [
+   "ilu"
+  ],
+  "marker_since": [
+   "mindu"
+  ],
+  "marker_this": [
+   "dan",
+   "din",
+   "din il"
+  ],
+  "marker_to": [
+   "sa"
+  ],
+  "marker_until": [
+   "sa"
+  ],
+  "marker_year_word": [
+   "sena"
+  ],
+  "month_1": [
+   "jan",
+   "jannar"
+  ],
+  "month_10": [
+   "ott",
+   "ottubru"
+  ],
+  "month_11": [
+   "nov",
+   "novembru"
+  ],
+  "month_12": [
+   "diċ",
+   "diċembru"
+  ],
+  "month_2": [
+   "fra",
+   "frar"
+  ],
+  "month_3": [
+   "marzu"
+  ],
+  "month_4": [
+   "apr",
+   "april"
+  ],
+  "month_5": [
+   "mej",
+   "mejju"
+  ],
+  "month_6": [
+   "ġun",
+   "ġunju"
+  ],
+  "month_7": [
+   "lul",
+   "lulju"
+  ],
+  "month_8": [
+   "aww",
+   "awwissu"
+  ],
+  "month_9": [
+   "set",
+   "settembru"
+  ],
+  "named_day_-1": [
+   "il-bieraħ",
+   "ilbieraħ",
+   "lbieraħ"
+  ],
+  "named_day_0": [
+   "illum",
+   "llum"
+  ],
+  "named_day_1": [
+   "għada"
+  ],
+  "named_day_2": [
+   "bitgħada",
+   "pitgħada"
+  ],
+  "scope_unit_century": [
+   "sekli",
+   "seklu"
+  ],
+  "unit1_century": [
+   "seklu"
+  ],
+  "unit1_day": [
+   "jum",
+   "ġurnata"
+  ],
+  "unit1_hour": [
+   "siegħa"
+  ],
+  "unit1_minute": [
+   "minuta"
+  ],
+  "unit1_month": [
+   "xahar"
+  ],
+  "unit1_second": [
+   "sekonda"
+  ],
+  "unit1_week": [
+   "ġimgħa"
+  ],
+  "unit1_year": [
+   "sena"
+  ],
+  "unit_century": [
+   "sekli",
+   "seklu"
+  ],
+  "unit_day": [
+   "jiem",
+   "jum",
+   "ġranet",
+   "ġurnata"
+  ],
+  "unit_hour": [
+   "siegħa",
+   "sigħat"
+  ],
+  "unit_minute": [
+   "minuta",
+   "minuti"
+  ],
+  "unit_month": [
+   "xahar",
+   "xhur"
+  ],
+  "unit_second": [
+   "sekonda",
+   "sekondi"
+  ],
+  "unit_week": [
+   "ġimgħa",
+   "ġimgħat"
+  ],
+  "unit_year": [
+   "sena",
+   "snin"
+  ],
+  "weekday_0": [
+   "it-tnejn"
+  ],
+  "weekday_1": [
+   "it-tlieta"
+  ],
+  "weekday_2": [
+   "l-erbgħa"
+  ],
+  "weekday_3": [
+   "il-ħamis",
+   "ħamis"
+  ],
+  "weekday_4": [
+   "il-ġimgħa"
+  ],
+  "weekday_5": [
+   "is-sibt",
+   "sibt"
+  ],
+  "weekday_6": [
+   "il-ħadd"
+  ]
+ }
+}

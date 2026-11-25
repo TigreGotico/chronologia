@@ -26,7 +26,7 @@ case suffix on the unit noun** -- "in three days" is ``երեք օրից``, the
 ablative of ``օր``.  :func:`_split_ablative_unit` splits that fused surface
 back into the bare unit noun plus a ``ից`` marker token, so the ordinary
 ``NUM UNIT MARKER`` order reads it exactly as it reads the backward
-``երեք օր առաջ``; ``marker_future.voc`` carries ``ից`` alongside the two
+``երեք օր առաջ``; ``marker_future`` carries ``ից`` alongside the two
 free-standing forward postpositions ``անց`` and ``հետո``.  The stem changes in
 that paradigm are real (``ամիս`` -> ``ամսից``, ``տարի`` -> ``տարուց``), so the
 map is curated per noun rather than derived by stripping a suffix.
@@ -129,7 +129,7 @@ for _word, _value in list(CARDINALS.items()):
 
 #: ablative unit surface -> the bare nominative noun the fold restores.  The
 #: ablative IS the forward-offset marker, so the split leaves a ``ից`` token
-#: behind for ``marker_future.voc`` to bind.
+#: behind for ``marker_future`` to bind.
 _ABLATIVE_UNITS: Dict[str, str] = {
     "վայրկյանից": "վայրկյան",
     "րոպեից": "րոպե",
@@ -143,7 +143,7 @@ _ABLATIVE_UNITS: Dict[str, str] = {
     "հազարամյակից": "հազարամյակ",
 }
 #: the marker surface the split emits, the ablative's citation form.  Written
-#: once here so it cannot drift from ``marker_future.voc``.
+#: once here so it cannot drift from ``marker_future``.
 ABLATIVE_MARKER = "ից"
 
 

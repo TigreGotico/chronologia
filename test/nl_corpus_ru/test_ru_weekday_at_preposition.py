@@ -1,4 +1,4 @@
-"""The "at" preposition ("в", marker_at.voc) in front of a bare weekday.
+"""The "at" preposition ("в", marker_at) in front of a bare weekday.
 
 "в воскресенье" names the same Sunday as the bare weekday alone; "в" is
 not part of the answer and must be consumed by the match, not left

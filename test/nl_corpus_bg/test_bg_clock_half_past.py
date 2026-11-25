@@ -14,8 +14,8 @@ numeric example:
     "Три и половина" == 3:30.
 
 Wired via the same additive-past mechanism as Greek's "H και μισή"
-(chronologia/locale/el/lang.json:30-38, clock_dir_past.voc "και" +
-clock_fraction_30.voc "μισή"): clock_dir_past.voc "и" + clock_fraction_30.voc
+(chronologia/locale/el/lang.json:30-38, clock_dir_past "και" +
+clock_fraction_30 "μισή"): clock_dir_past "и" + clock_fraction_30
 "половина".
 
 "половин"/"половина" also spell the calendar half ("първата половина на

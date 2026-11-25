@@ -5,7 +5,7 @@ resolving to the pinpoint hour -- "atta pa kvallen" (eight in the evening)
 is 20:00, "halv nio pa kvallen" (half past eight) is 20:30, not the whole
 six-hour evening band with the fraction/hour word stranded in the
 remainder.  The daypart words double as the MERIDIEM slot exactly as es "de
-la tarde"/pt "da noite" already do (see their clock_meridiem_*.voc),
+la tarde"/pt "da noite" already do (see their clock_meridiem_*),
 reusing chronologia/extract/resolver.py's existing MERIDIEM-shift
 machinery, mirrored across clock_time's bare/FRACTION/FRACTION CLOCKDIR/
 MINUTE CLOCKDIR sibling orders the same way chronologia/locale/en/lang.json

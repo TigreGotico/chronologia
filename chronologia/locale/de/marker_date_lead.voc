@@ -1,9 +1,0 @@
-# Words that open a date or a clock time and belong to it.
-# Each word is shown opening a time or date phrase on the page named in brackets,
-# saved under knowledge/wiki/audits/chronologia/parity-fixes/marker-strand/sources/ in the workspace.
-# am: de.Wiktionary "am": "[1] Angabe eines Zeitpunkts - wann? ... am Donnerstag, am 1.11.2005" [dewikt-am.wikitext.txt]
-# an: Wiktionary "an": "temporal, with days or times of day: on; in; at" [de-an.wikitext.txt]
-# im: de.Wiktionary "im": "[1] zeitlich: Position innerhalb einer genannten Zeitspanne ... Im April blühen die Anemonen." [dewikt-im.wikitext.txt]
-am
-an
-im

@@ -101,7 +101,7 @@ def first_occurrence(recurrence: RecurrenceLike,
 #: Leading/trailing prepositions the date grammar does not itself consume but
 #: which read as stranded glue at a summary edge ("lunch on <date>" leaves a
 #: dangling "on").  Locale connectors are the primary source; this per-language
-#: fallback covers the plain prepositions no ``.voc`` marker names.  Edges only
+#: fallback covers the plain prepositions no vocabulary marker names.  Edges only
 #: -- interior words are never touched, so a real "day of rest" survives.
 _PREP_FALLBACK = {
     "en": {"on", "in", "at", "for", "to", "of", "the", "a", "an"},

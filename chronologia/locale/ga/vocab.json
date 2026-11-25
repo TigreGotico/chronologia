@@ -1,0 +1,277 @@
+{
+ "format_version": 1,
+ "words": {
+  "clock_dir_past": [
+   "i ndiaidh",
+   "tar éis"
+  ],
+  "clock_dir_to": [
+   "chun",
+   "go dtí"
+  ],
+  "clock_fraction_15": [
+   "ceathrú"
+  ],
+  "clock_fraction_30": [
+   "leathuair"
+  ],
+  "clock_landmark_0": [
+   "meán oíche"
+  ],
+  "clock_landmark_720": [
+   "meán lae"
+  ],
+  "clock_meridiem_am": [
+   "r.n."
+  ],
+  "clock_meridiem_pm": [
+   "i.n."
+  ],
+  "marker_and": [
+   "agus",
+   "is"
+  ],
+  "marker_article": [
+   "an",
+   "na"
+  ],
+  "marker_at": [
+   "a"
+  ],
+  "marker_between": [
+   "idir"
+  ],
+  "marker_every": [
+   "gach"
+  ],
+  "marker_for": [
+   "ar feadh"
+  ],
+  "marker_from": [
+   "ó"
+  ],
+  "marker_in": [
+   "i",
+   "in"
+  ],
+  "marker_last": [
+   "seo caite"
+  ],
+  "marker_minute_word": [
+   "nóiméad",
+   "nóiméid"
+  ],
+  "marker_next": [
+   "seo chugainn"
+  ],
+  "marker_oclock": [
+   "a chlog"
+  ],
+  "marker_past": [
+   "ó shin"
+  ],
+  "marker_this": [
+   "seo"
+  ],
+  "marker_to": [
+   "go dtí"
+  ],
+  "marker_until": [
+   "go dtí"
+  ],
+  "month_1": [
+   "Ean",
+   "Eanáir",
+   "mí Eanáir",
+   "nEanáir"
+  ],
+  "month_10": [
+   "DFómh",
+   "Deireadh Fómhair",
+   "mí Deireadh Fómhair",
+   "nDeireadh Fómhair"
+  ],
+  "month_11": [
+   "Samh",
+   "Samhain",
+   "Samhna",
+   "mí Samhna"
+  ],
+  "month_12": [
+   "Noll",
+   "Nollag",
+   "Nollaig",
+   "mí Nollag"
+  ],
+  "month_2": [
+   "Feabh",
+   "Feabhra",
+   "bhFeabhra",
+   "mí Feabhra"
+  ],
+  "month_3": [
+   "Márta",
+   "mí Márta"
+  ],
+  "month_4": [
+   "Aib",
+   "Aibreáin",
+   "Aibreán",
+   "mí Aibreáin",
+   "nAibreán"
+  ],
+  "month_5": [
+   "Beal",
+   "Bealtaine",
+   "mBealtaine",
+   "mí Bealtaine"
+  ],
+  "month_6": [
+   "Meith",
+   "Meitheamh",
+   "Meithimh",
+   "mí Meithimh"
+  ],
+  "month_7": [
+   "Iúil",
+   "mí Iúil",
+   "nIúil"
+  ],
+  "month_8": [
+   "Lún",
+   "Lúnasa",
+   "mí Lúnasa"
+  ],
+  "month_9": [
+   "MFómh",
+   "Meán Fómhair"
+  ],
+  "named_day_-1": [
+   "inné"
+  ],
+  "named_day_-2": [
+   "arú inné"
+  ],
+  "named_day_0": [
+   "inniu"
+  ],
+  "named_day_1": [
+   "amárach"
+  ],
+  "named_day_2": [
+   "arú amáireach",
+   "arú amárach"
+  ],
+  "special_weekend": [
+   "deireadh seachtaine",
+   "deirí seachtaine"
+  ],
+  "unit1_day": [
+   "lae",
+   "lá"
+  ],
+  "unit1_hour": [
+   "uair",
+   "uaire"
+  ],
+  "unit1_minute": [
+   "nóiméad"
+  ],
+  "unit1_month": [
+   "mí",
+   "míosa"
+  ],
+  "unit1_second": [
+   "soicind"
+  ],
+  "unit1_week": [
+   "seachtain",
+   "seachtaine"
+  ],
+  "unit1_year": [
+   "bhliain",
+   "bliain",
+   "bliana"
+  ],
+  "unit_day": [
+   "lae",
+   "laethanta",
+   "lá"
+  ],
+  "unit_hour": [
+   "huaire",
+   "n uaire",
+   "n-uaire",
+   "uair",
+   "uaire",
+   "uaireanna",
+   "uaireanta"
+  ],
+  "unit_minute": [
+   "nóiméad",
+   "nóiméid"
+  ],
+  "unit_month": [
+   "mhí",
+   "mí",
+   "míonna",
+   "míosa"
+  ],
+  "unit_second": [
+   "soicind",
+   "soicindí"
+  ],
+  "unit_week": [
+   "seachtain",
+   "seachtaine",
+   "seachtainí"
+  ],
+  "unit_year": [
+   "bhliain",
+   "bliain",
+   "bliana",
+   "blianta",
+   "mbliana",
+   "mblianta"
+  ],
+  "weekday_0": [
+   "Dé Luain",
+   "Luain",
+   "Luan"
+  ],
+  "weekday_1": [
+   "Dé Máirt",
+   "Máirt"
+  ],
+  "weekday_2": [
+   "Céadaoin",
+   "Dé Céadaoin"
+  ],
+  "weekday_3": [
+   "Déardaoin"
+  ],
+  "weekday_4": [
+   "Aoine",
+   "Dé hAoine"
+  ],
+  "weekday_5": [
+   "Dé Sathairn",
+   "Sathairn",
+   "Satharn"
+  ],
+  "weekday_6": [
+   "Domhnach",
+   "Domhnaigh",
+   "Dé Domhnaigh"
+  ],
+  "weekday_abbr_3": [
+   "Déar"
+  ],
+  "weekday_abbr_5": [
+   "Sath"
+  ],
+  "weekday_abbr_6": [
+   "Domh"
+  ]
+ }
+}

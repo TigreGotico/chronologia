@@ -1,4 +1,4 @@
-"""The "at" preposition ("v", marker_at.voc) in front of a bare weekday.
+"""The "at" preposition ("v", marker_at) in front of a bare weekday.
 
 "v nedeľu" names the same Sunday as the bare weekday alone; "v" is not
 part of the answer and must be consumed by the match, not left stranded

@@ -2,7 +2,7 @@
 """A day-offset ("N gün əvvəl") followed by the "saat H" clock reading.
 
 "saat" is doubly loaded in Azerbaijani: it is both the HOUR unit word
-(unit_hour.voc) and the clock's "at" preposition (marker_at.voc). Composed
+(unit_hour) and the clock's "at" preposition (marker_at). Composed
 with a leading digit ("saat 9") it reads as a clock; alone it is the bare
 "hour" of an offset ("2 saat əvvəl" = 2 hours ago). Gold is independent
 ``timedelta``/``.replace(hour=...)`` arithmetic against the corpus anchor

@@ -1,0 +1,420 @@
+{
+ "format_version": 1,
+ "words": {
+  "clock_dir_past": [
+   "múlt"
+  ],
+  "clock_dir_to": [
+   "múlva"
+  ],
+  "clock_fraction_15": [
+   "negyed"
+  ],
+  "clock_fraction_30": [
+   "fél"
+  ],
+  "clock_fraction_45": [
+   "háromnegyed"
+  ],
+  "clock_landmark_0": [
+   "éjfél",
+   "éjfélkor"
+  ],
+  "clock_landmark_720": [
+   "dél",
+   "délben"
+  ],
+  "clock_meridiem_am": [
+   "de.",
+   "délelőtt",
+   "reggel"
+  ],
+  "clock_meridiem_night": [
+   "éjjel"
+  ],
+  "clock_meridiem_pm": [
+   "du.",
+   "délután",
+   "este"
+  ],
+  "clock_zone_0": [
+   "gmt",
+   "utc"
+  ],
+  "daypart_afternoon_hu": [
+   "délután"
+  ],
+  "daypart_evening_hu": [
+   "este"
+  ],
+  "daypart_morning_hu": [
+   "délelőtt",
+   "reggel"
+  ],
+  "daypart_night_hu": [
+   "hajnal",
+   "éjjel"
+  ],
+  "marker_ad": [
+   "i. sz.",
+   "i.sz.",
+   "időszámításunk szerint",
+   "kr. u.",
+   "kr.u."
+  ],
+  "marker_after": [
+   "után"
+  ],
+  "marker_ago": [
+   "ezelőtt"
+  ],
+  "marker_and": [
+   "és"
+  ],
+  "marker_article": [
+   "a",
+   "az"
+  ],
+  "marker_at": [
+   "-kor",
+   "kor"
+  ],
+  "marker_bc": [
+   "i. e.",
+   "i.e.",
+   "időszámításunk előtt",
+   "kr. e.",
+   "kr.e."
+  ],
+  "marker_before": [
+   "előtt"
+  ],
+  "marker_between": [
+   "között"
+  ],
+  "marker_between_post": [
+   "közt",
+   "között"
+  ],
+  "marker_business": [
+   "munkanap",
+   "munkanapot",
+   "munkanappal"
+  ],
+  "marker_during": [
+   "alatt",
+   "folyamán"
+  ],
+  "marker_every": [
+   "minden"
+  ],
+  "marker_freq_daily": [
+   "naponta"
+  ],
+  "marker_freq_monthly": [
+   "havonta"
+  ],
+  "marker_freq_weekly": [
+   "hetente"
+  ],
+  "marker_freq_yearly": [
+   "évente"
+  ],
+  "marker_from": [
+   "-tól",
+   "-től",
+   "tól",
+   "től"
+  ],
+  "marker_future": [
+   "múlva"
+  ],
+  "marker_half": [
+   "fele",
+   "felében"
+  ],
+  "marker_hours": [
+   "óra"
+  ],
+  "marker_in": [
+   "múlva"
+  ],
+  "marker_indef": [
+   "egy"
+  ],
+  "marker_last": [
+   "elmúlt",
+   "előző",
+   "múlt"
+  ],
+  "marker_month_word": [
+   "hónap"
+  ],
+  "marker_next": [
+   "jövő",
+   "következő"
+  ],
+  "marker_oclock": [
+   "óra",
+   "órakor",
+   "órára"
+  ],
+  "marker_of": [
+   "-i"
+  ],
+  "marker_past": [
+   "ezelott",
+   "ezelőtt"
+  ],
+  "marker_present": [
+   "most"
+  ],
+  "marker_q": [
+   "q"
+  ],
+  "marker_quarter_word": [
+   "negyedév",
+   "negyedévben"
+  ],
+  "marker_since": [
+   "óta"
+  ],
+  "marker_this": [
+   "ez",
+   "ezen"
+  ],
+  "marker_to": [
+   "-ig",
+   "ig"
+  ],
+  "marker_until": [
+   "ig"
+  ],
+  "marker_week_num": [
+   "hetének",
+   "hét",
+   "héten"
+  ],
+  "marker_weekof": [
+   "a hét",
+   "hét"
+  ],
+  "marker_year_word": [
+   "év",
+   "évben",
+   "éve",
+   "évek",
+   "évvel"
+  ],
+  "month_1": [
+   "január",
+   "januárban"
+  ],
+  "month_10": [
+   "október",
+   "októberben"
+  ],
+  "month_11": [
+   "november",
+   "novemberben"
+  ],
+  "month_12": [
+   "december",
+   "decemberben"
+  ],
+  "month_2": [
+   "február",
+   "februárban"
+  ],
+  "month_3": [
+   "március",
+   "márciusban"
+  ],
+  "month_4": [
+   "április",
+   "áprilisban"
+  ],
+  "month_5": [
+   "május",
+   "májusban"
+  ],
+  "month_6": [
+   "június",
+   "júniusban"
+  ],
+  "month_7": [
+   "július",
+   "júliusban"
+  ],
+  "month_8": [
+   "augusztus",
+   "augusztusban"
+  ],
+  "month_9": [
+   "szeptember",
+   "szeptemberben"
+  ],
+  "named_day_-1": [
+   "tegnap"
+  ],
+  "named_day_-2": [
+   "tegnapelőtt"
+  ],
+  "named_day_0": [
+   "ma"
+  ],
+  "named_day_1": [
+   "holnap"
+  ],
+  "named_day_2": [
+   "holnapután"
+  ],
+  "period_part_early": [
+   "eleje",
+   "elején"
+  ],
+  "period_part_late": [
+   "vége",
+   "végén"
+  ],
+  "period_part_mid": [
+   "közepe",
+   "közepén"
+  ],
+  "scale_1000": [
+   "ezer"
+  ],
+  "scale_1000000": [
+   "millió"
+  ],
+  "scale_1000000000": [
+   "milliárd"
+  ],
+  "scope_unit_century": [
+   "század",
+   "évszázad"
+  ],
+  "scope_unit_decade": [
+   "évtized"
+  ],
+  "scope_unit_millennium": [
+   "évezred"
+  ],
+  "season_fall": [
+   "ősszel",
+   "ősz"
+  ],
+  "season_spring": [
+   "tavasszal",
+   "tavasz"
+  ],
+  "season_summer": [
+   "nyár",
+   "nyáron"
+  ],
+  "season_winter": [
+   "tél",
+   "télen"
+  ],
+  "special_weekend": [
+   "hétvége",
+   "hétvégén"
+  ],
+  "unit_century": [
+   "század",
+   "évszázad"
+  ],
+  "unit_day": [
+   "nap",
+   "napig",
+   "napja",
+   "napot",
+   "nappal",
+   "napra"
+  ],
+  "unit_decade": [
+   "évtized"
+  ],
+  "unit_hour": [
+   "óra",
+   "óráig",
+   "órára",
+   "órát",
+   "órával"
+  ],
+  "unit_millennium": [
+   "évezred"
+  ],
+  "unit_minute": [
+   "perc",
+   "perccel",
+   "percet",
+   "percig",
+   "percre"
+  ],
+  "unit_month": [
+   "hónap",
+   "hónapja",
+   "hónapot",
+   "hónappal",
+   "hónapra"
+  ],
+  "unit_second": [
+   "másodperc",
+   "másodperccel",
+   "másodpercet",
+   "másodpercre"
+  ],
+  "unit_week": [
+   "hete",
+   "hetet",
+   "hét",
+   "héten",
+   "hétig",
+   "hétre",
+   "héttel"
+  ],
+  "unit_year": [
+   "év",
+   "éve",
+   "évet",
+   "évre",
+   "évvel"
+  ],
+  "weekday_0": [
+   "hétfő",
+   "hétfője",
+   "hétfőn"
+  ],
+  "weekday_1": [
+   "kedd",
+   "kedden",
+   "keddje"
+  ],
+  "weekday_2": [
+   "szerda",
+   "szerdája",
+   "szerdán"
+  ],
+  "weekday_3": [
+   "csütörtök",
+   "csütörtökje",
+   "csütörtökön"
+  ],
+  "weekday_4": [
+   "péntek",
+   "pénteken",
+   "péntekje"
+  ],
+  "weekday_5": [
+   "szombat",
+   "szombatja",
+   "szombaton"
+  ],
+  "weekday_6": [
+   "vasárnap",
+   "vasárnapja",
+   "vasárnapon"
+  ]
+ }
+}

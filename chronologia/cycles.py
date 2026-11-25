@@ -73,7 +73,7 @@ class DayCycle:
         return (day_of_month - 1) % self.length
 
 
-#: Registered day cycles, keyed by the name the ``cycle_<key>_<n>.voc``
+#: Registered day cycles, keyed by the name the ``cycle_<key>_<n>``
 #: filename convention binds vocabulary to.
 DAY_CYCLES = {
     # the canonical instance: the Gregorian seven-day week (Mon=0..Sun=6),

@@ -4,7 +4,7 @@
 On ``dev`` these deictic phrases SILENTLY returned the whole day and stranded
 the daypart word; this file pins the correct CLDR band. Bands and the cited
 single-token surfaces are wired in chronologia/dayparts.py and the
-``daypart_*_et.voc`` vocabulary. Anchor: Tuesday 2017-06-27 13:04.
+``daypart_*_et`` vocabulary. Anchor: Tuesday 2017-06-27 13:04.
 """
 from datetime import datetime
 

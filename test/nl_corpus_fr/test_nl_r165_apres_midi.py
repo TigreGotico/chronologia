@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 """R165: French "après-midi" (afternoon) daypart was registered as a band
 (``chronologia/dayparts.py``, ``[12:00, 18:00)``) but shipped no
-``daypart_*.voc`` surface, so it stranded as remainder instead of composing
+``daypart_*`` surface, so it stranded as remainder instead of composing
 with a weekday the way "matin"/"soir" already do. Gold band bounds are the
 CLDR fr transcription already used by ``test_nl_daypart.py``; the weekday
 math is the shared ANCHOR (Tuesday 2017-06-27 13:04) rolled forward to the

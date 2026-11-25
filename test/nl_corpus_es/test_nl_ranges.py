@@ -151,7 +151,7 @@ def test_del_al_garbage_never_raises(text):
 
 
 # -- the shared-month range with the "día" label on both ends: "día" heads the
-# idiom "día N de <mes>" (see marker_day_label.voc) and, written alone, "día
+# idiom "día N de <mes>" (see marker_day_label) and, written alone, "día
 # N" still resolves on its own to the Nth of the ANCHOR month -- so the bare
 # "5" borrowing path (test_del_al_crosses_month_and_year, above) used to skip
 # it, and "del día 2 al día 5 de septiembre" bound only the dated right end

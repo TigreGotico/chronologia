@@ -16,12 +16,11 @@ from functools import lru_cache
 from typing import Callable, Collection, Dict, FrozenSet, Optional, Set, Tuple
 
 from numtag import ARTICLE_CONFIDENCE, Kind, Role
-from ovos_spec_tools import expand, read_resource_file
 
 from chronologia.extract.model import Token
 from chronologia.extract.numfold_engine import reindex
-from chronologia.extract.numlayer import (_LOCALE_DIR, CountWords,
-                                          counts_things, fold_mentions,
+from chronologia.extract.numlayer import (CountWords, counts_things,
+                                          fold_mentions, locale_words,
                                           mark_counts, scale_factor,
                                           scale_factors,
                                           withhold_split_counts)
@@ -29,17 +28,6 @@ from chronologia.extract.numlayer import (_LOCALE_DIR, CountWords,
 #: The claimed words, the words a language keeps as numbers against a shared
 #: claim, and the deep-time scale words with their factors, by token index.
 Claims = Tuple[Set[int], Set[int], Dict[int, int]]
-
-
-@lru_cache(maxsize=None)
-def locale_words(lang: str, *prefixes: str) -> FrozenSet[str]:
-    """The surfaces of every ``locale/<lang>/<prefix>*.voc`` file."""
-    out = set()
-    for path in sorted((_LOCALE_DIR / lang).glob("*.voc")):
-        if path.name.startswith(prefixes):
-            for template in read_resource_file(path):
-                out.update(s.lower() for s in expand(template, {}))
-    return frozenset(out)
 
 
 _scale_factors = lru_cache(maxsize=None)(scale_factors)

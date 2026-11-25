@@ -1,11 +1,11 @@
-"""Versioned structural checker for the locale grammar (``lang.json`` + ``*.voc``).
+"""Versioned structural checker for the locale grammar (``lang.json`` + ``vocab.json``).
 
 The locale grammar is a small, implicit contract: every ``lang.json`` states
 construction *orders* (slot/connector sequences over a fixed slot alphabet),
 conventions, quantifiers, guards, a hook and per-construction flags, and every
 order is only reachable if the vocabulary its slots bind against actually ships
 in that locale.  Nothing enforced that contract -- a typo'd slot name, a
-non-numeric quantifier key or an order referencing a ``.voc`` file that was
+non-numeric quantifier key or an order referencing a vocabulary that was
 never translated simply produced a silently dead construction.
 
 This module derives the *actual* schema from two authorities and checks a
@@ -31,7 +31,7 @@ Two entry points:
     every slot / connector of every order has non-empty backing vocabulary in
     the locale -- i.e. the order can actually fire.  Optional slots and the
     optional connectors of the shared base grammar may lack vocabulary; any
-    other ``.voc`` an order names but the locale lacks is a defect.
+    other vocabulary an order names but the locale lacks is a defect.
 
 ``validate(cfg, lang, spec)`` runs both and raises
 :class:`LocaleSchemaError` aggregating all findings with locale + field
@@ -103,9 +103,9 @@ CONNECTOR_SLOTS: Dict[str, str] = {
 DUAL_UNIT_SLOTS: FrozenSet[str] = frozenset({"SEL_UNIT", "SCOPE_UNIT"})
 
 #: slot -> the :class:`LangSpec` attribute holding its vocabulary.  A slot maps
-#: here iff it is backed by a ``.voc`` file convention; slots absent from every
+#: here iff it is backed by a vocabulary convention; slots absent from every
 #: table above and this map (currently only ``HOLIDAY``, whose surfaces are
-#: derived from the holidays engine, not a ``.voc``) are not reachability-checked.
+#: derived from the holidays engine, not a vocabulary) are not reachability-checked.
 SLOT_VOCAB_ATTR: Dict[str, str] = {
     "UNIT": "units",
     "USG": "singular_units",
@@ -141,7 +141,7 @@ SLOT_VOCAB_ATTR: Dict[str, str] = {
     "DECADE": "decade_words",
 }
 
-#: slots the matcher binds but whose surfaces are not shipped as ``.voc`` in the
+#: slots the matcher binds but whose surfaces are not shipped as vocabulary in the
 #: locale (engine-derived), so an order using one is never counted unreachable.
 _NON_VOC_SLOTS: FrozenSet[str] = frozenset({"HOLIDAY"})
 
@@ -174,7 +174,7 @@ TOP_LEVEL_KEYS: FrozenSet[str] = frozenset({
 
 #: marker roles whose POSITIONALITY may be declared -- the open-range and
 #: recurrence-bound framing words the engine scans for around a date.  Each maps
-#: to a per-locale ``marker_<role>.voc`` surface set.
+#: to a per-locale ``marker_<role>`` surface set.
 KNOWN_POSITION_ROLES: FrozenSet[str] = frozenset({"until", "since", "for", "from"})
 
 #: where a marker sits relative to its date: ``pre`` leads it (default),
@@ -372,7 +372,7 @@ def validate_reachability(spec, cfg: dict, lang: str) -> List[str]:
     """Findings for orders that name a slot or connector with no vocabulary.
 
     Optional slots and the optional connectors of the shared base grammar are
-    exempt.  Any other missing or empty ``.voc`` is a defect: dead data that
+    exempt.  Any other missing or empty vocabulary is a defect: dead data that
     silently disables a construction, or a typo in a connector name.
     """
     errors: List[str] = []
@@ -387,7 +387,7 @@ def validate_reachability(spec, cfg: dict, lang: str) -> List[str]:
                           f"{', '.join(sorted(set(missing)))}")
 
     # a declared marker positionality is dead unless the locale actually ships
-    # the role's marker surfaces (``marker_<role>.voc``): a ``post``/``affix``
+    # the role's marker surfaces (``marker_<role>``): a ``post``/``affix``
     # ``until`` with no ``marker_until`` vocabulary can never fire.
     for role, pos in cfg.get("positions", {}).items():
         if role in KNOWN_POSITION_ROLES and pos in KNOWN_POSITIONS \

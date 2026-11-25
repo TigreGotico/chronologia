@@ -7,7 +7,7 @@ instead and stranded the quarter word -- four times too wide.  The new
 "YEAR ORD quarter_word" / "YEAR q NUM" orders mirror the YEAR-first
 possessive ``half_period`` extend TR already ships (chronologia/locale/tr/
 lang.json, base_grammar.py's Turkic YEAR-first possessive comment) but read
-the BARE quarter noun: ``marker_quarter_word.voc`` only lists the bare
+the BARE quarter noun: ``marker_quarter_word`` only lists the bare
 "çeyrek", never its possessive-marked "çeyreği" (TDK Güncel Türkçe Sözlük,
 3. tekil iyelik eki -(s)I, https://sozluk.gov.tr), unlike ``marker_half``'s
 "yarısı", which already IS the possessive form. Reading "çeyreği" would need

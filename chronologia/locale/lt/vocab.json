@@ -1,0 +1,394 @@
+{
+ "format_version": 1,
+ "words": {
+  "clock_dir_to": [
+   "be"
+  ],
+  "clock_fraction_30": [
+   "pusė"
+  ],
+  "clock_landmark_0": [
+   "vidurnaktis",
+   "vidurnaktį"
+  ],
+  "clock_landmark_720": [
+   "vidurdienis",
+   "vidurdienį"
+  ],
+  "clock_meridiem_am": [
+   "priešpiet"
+  ],
+  "clock_meridiem_pm": [
+   "popiet"
+  ],
+  "daypart_afternoon_lt": [
+   "popietė",
+   "popietėje",
+   "popietę"
+  ],
+  "daypart_evening_lt": [
+   "vakaras",
+   "vakare",
+   "vakarą"
+  ],
+  "daypart_morning_lt": [
+   "rytas",
+   "ryte",
+   "rytą"
+  ],
+  "daypart_night_lt": [
+   "naktis",
+   "naktyje",
+   "naktį"
+  ],
+  "marker_after": [
+   "po"
+  ],
+  "marker_and": [
+   "ir"
+  ],
+  "marker_before": [
+   "prieš"
+  ],
+  "marker_between": [
+   "tarp"
+  ],
+  "marker_day_word": [
+   "d"
+  ],
+  "marker_every": [
+   "kas"
+  ],
+  "marker_from": [
+   "nuo"
+  ],
+  "marker_future": [
+   "po"
+  ],
+  "marker_half": [
+   "pusė",
+   "pusėje",
+   "pusės",
+   "pusę"
+  ],
+  "marker_last": [
+   "praeita",
+   "praeitame",
+   "praeitas",
+   "praeiti",
+   "praeito",
+   "praeitoje",
+   "praeitos",
+   "praeitose",
+   "praeituose",
+   "praeitus",
+   "praeitą",
+   "praeitų"
+  ],
+  "marker_next": [
+   "kita",
+   "kitame",
+   "kitas",
+   "kiti",
+   "kito",
+   "kitoje",
+   "kitos",
+   "kitose",
+   "kituose",
+   "kitus",
+   "kitą",
+   "kitų"
+  ],
+  "marker_past": [
+   "prieš"
+  ],
+  "marker_since": [
+   "nuo"
+  ],
+  "marker_this": [
+   "ši",
+   "šiame",
+   "šias",
+   "šie",
+   "šio",
+   "šioje",
+   "šios",
+   "šiose",
+   "šis",
+   "šiuos",
+   "šiuose",
+   "šią",
+   "šių",
+   "šį"
+  ],
+  "marker_to": [
+   "iki"
+  ],
+  "marker_until": [
+   "iki"
+  ],
+  "marker_year_word": [
+   "m",
+   "metai",
+   "metais",
+   "metų"
+  ],
+  "month_1": [
+   "saus.",
+   "sausio",
+   "sausis"
+  ],
+  "month_10": [
+   "spal.",
+   "spalio",
+   "spalis"
+  ],
+  "month_11": [
+   "lapkr.",
+   "lapkritis",
+   "lapkričio"
+  ],
+  "month_12": [
+   "gruod.",
+   "gruodis",
+   "gruodžio"
+  ],
+  "month_2": [
+   "vas.",
+   "vasario",
+   "vasaris"
+  ],
+  "month_3": [
+   "kov.",
+   "kovas",
+   "kovo"
+  ],
+  "month_4": [
+   "bal.",
+   "balandis",
+   "balandžio"
+  ],
+  "month_5": [
+   "geg.",
+   "gegužė",
+   "gegužės"
+  ],
+  "month_6": [
+   "birž.",
+   "birželio",
+   "birželis"
+  ],
+  "month_7": [
+   "liep.",
+   "liepa",
+   "liepos"
+  ],
+  "month_8": [
+   "rugp.",
+   "rugpjūtis",
+   "rugpjūčio"
+  ],
+  "month_9": [
+   "rugs.",
+   "rugsėjis",
+   "rugsėjo"
+  ],
+  "named_day_-1": [
+   "vakar"
+  ],
+  "named_day_-2": [
+   "užvakar"
+  ],
+  "named_day_0": [
+   "šiandien"
+  ],
+  "named_day_1": [
+   "rytoj"
+  ],
+  "named_day_2": [
+   "poryt"
+  ],
+  "scope_unit_century": [
+   "amžiaus",
+   "amžiuje",
+   "amžius",
+   "amžių"
+  ],
+  "scope_unit_decade": [
+   "dešimtmetis",
+   "dešimtmetyje",
+   "dešimtmetį",
+   "dešimtmečio"
+  ],
+  "season_fall": [
+   "rudens",
+   "rudenį",
+   "ruduo"
+  ],
+  "season_spring": [
+   "pavasario",
+   "pavasaris",
+   "pavasarį"
+  ],
+  "season_summer": [
+   "vasara",
+   "vasaros",
+   "vasarą"
+  ],
+  "season_winter": [
+   "žiema",
+   "žiemos",
+   "žiemą"
+  ],
+  "special_weekend": [
+   "savaitgaliai",
+   "savaitgalio",
+   "savaitgalis",
+   "savaitgalių",
+   "savaitgalį"
+  ],
+  "unit1_century": [
+   "amžiaus",
+   "amžius",
+   "amžių"
+  ],
+  "unit1_day": [
+   "diena",
+   "dienos",
+   "dieną"
+  ],
+  "unit1_decade": [
+   "dešimtmetis",
+   "dešimtmetį",
+   "dešimtmečio"
+  ],
+  "unit1_hour": [
+   "valanda",
+   "valandos",
+   "valandą"
+  ],
+  "unit1_minute": [
+   "minutė",
+   "minutės",
+   "minutę"
+  ],
+  "unit1_month": [
+   "mėnesio",
+   "mėnesį",
+   "mėnuo"
+  ],
+  "unit1_second": [
+   "sekundė",
+   "sekundės",
+   "sekundę"
+  ],
+  "unit1_week": [
+   "savaitė",
+   "savaitės",
+   "savaitę"
+  ],
+  "unit1_year": [
+   "metai",
+   "metus",
+   "metų"
+  ],
+  "unit_century": [
+   "amžiai",
+   "amžiaus",
+   "amžius",
+   "amžių"
+  ],
+  "unit_day": [
+   "diena",
+   "dienas",
+   "dienos",
+   "dieną",
+   "dienų"
+  ],
+  "unit_decade": [
+   "dešimtmetis",
+   "dešimtmetį",
+   "dešimtmečiai",
+   "dešimtmečio",
+   "dešimtmečius",
+   "dešimtmečių"
+  ],
+  "unit_hour": [
+   "valanda",
+   "valandas",
+   "valandos",
+   "valandą",
+   "valandų"
+  ],
+  "unit_minute": [
+   "minutes",
+   "minutė",
+   "minutės",
+   "minutę",
+   "minučių"
+  ],
+  "unit_month": [
+   "mėnesiai",
+   "mėnesio",
+   "mėnesius",
+   "mėnesių",
+   "mėnesį",
+   "mėnuo"
+  ],
+  "unit_second": [
+   "sekundes",
+   "sekundė",
+   "sekundės",
+   "sekundę",
+   "sekundžių"
+  ],
+  "unit_week": [
+   "savaites",
+   "savaitė",
+   "savaitės",
+   "savaitę",
+   "savaičių"
+  ],
+  "unit_year": [
+   "metai",
+   "metais",
+   "metus",
+   "metų"
+  ],
+  "weekday_0": [
+   "pirmadienio",
+   "pirmadienis",
+   "pirmadienį"
+  ],
+  "weekday_1": [
+   "antradienio",
+   "antradienis",
+   "antradienį"
+  ],
+  "weekday_2": [
+   "trečiadienio",
+   "trečiadienis",
+   "trečiadienį"
+  ],
+  "weekday_3": [
+   "ketvirtadienio",
+   "ketvirtadienis",
+   "ketvirtadienį"
+  ],
+  "weekday_4": [
+   "penktadienio",
+   "penktadienis",
+   "penktadienį"
+  ],
+  "weekday_5": [
+   "šeštadienio",
+   "šeštadienis",
+   "šeštadienį"
+  ],
+  "weekday_6": [
+   "sekmadienio",
+   "sekmadienis",
+   "sekmadienį"
+  ]
+ }
+}

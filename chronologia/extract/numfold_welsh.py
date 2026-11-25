@@ -32,7 +32,7 @@ after the soft-mutation triggers ``am`` and ``i``.  Every cardinal and ordinal
 surface is therefore registered in its radical form *and* in the soft-mutated
 form the regular table below derives, so the matcher sees one value whichever
 surface the sentence carries.  Mutation of the *unit nouns* is a vocabulary
-question and is answered in the ``.voc`` files, not here.
+question and is answered in the locale vocabulary, not here.
 
 One further vigesimal shape has to be undone rather than read: above twenty
 the numeral WRAPS the noun -- ``pum munud ar hugain`` is "twenty-five minutes",

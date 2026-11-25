@@ -1,6 +1,0 @@
-# Words that open a clock time and belong to it. They fold only in front of
-# a number, a clock time, a clock fraction or a clock landmark.
-# Each word is shown opening a clock time on the page named in brackets,
-# saved under knowledge/wiki/audits/chronologia/parity-fixes/marker-strand/sources/ in the workspace.
-# um: Wiktionary "um": "at, by (when relating to time): Um acht Uhr reisen wir ab" [de-um.wikitext.txt]
-um

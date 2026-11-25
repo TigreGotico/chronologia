@@ -1,0 +1,21 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "chronologia locale vocabulary",
+  "description": "locale/<lang>/vocab.json: the expanded words of one language, by OVOS-INTENT-2 resource base name.",
+  "type": "object",
+  "required": ["format_version", "words"],
+  "additionalProperties": false,
+  "properties": {
+    "format_version": {"const": 1},
+    "words": {
+      "type": "object",
+      "propertyNames": {"pattern": "^[a-z0-9_.-]+$"},
+      "additionalProperties": {
+        "type": "array",
+        "minItems": 1,
+        "uniqueItems": true,
+        "items": {"type": "string", "minLength": 1}
+      }
+    }
+  }
+}

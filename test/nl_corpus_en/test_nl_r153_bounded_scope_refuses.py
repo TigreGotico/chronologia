@@ -21,7 +21,7 @@ REFUSE the whole extraction (``extract_recurrence`` returns ``None``) rather
 than degrade to a wrong rule or strand a partial one.
 
 "of the current year" is checked as a would-be control: the en
-``marker_this``/REL_MARKER vocabulary (``chronologia/locale/en/marker_this.voc``,
+``marker_this``/REL_MARKER vocabulary (``chronologia/locale/en/marker_this``,
 value 0) has NO "current" surface, so "of the current year" is NOT the
 zero-offset "this" reading and is left correctly stranding by the SAME
 mechanism the "next"/"last" case above hits: "current" is not a ``REL_MARKER``

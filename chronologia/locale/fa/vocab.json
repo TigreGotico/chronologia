@@ -1,0 +1,342 @@
+{
+ "format_version": 1,
+ "words": {
+  "clock_dir_past": [
+   "و"
+  ],
+  "clock_fraction_15": [
+   "ربع"
+  ],
+  "clock_fraction_30": [
+   "نیم"
+  ],
+  "clock_landmark_0": [
+   "نیمه‌شب"
+  ],
+  "clock_landmark_720": [
+   "ظهر"
+  ],
+  "clock_meridiem_am": [
+   "صبح"
+  ],
+  "clock_meridiem_night": [
+   "شب"
+  ],
+  "clock_meridiem_pm": [
+   "بعدازظهر",
+   "عصر"
+  ],
+  "clock_zone_0": [
+   "gmt",
+   "utc"
+  ],
+  "daypart_afternoon_fa": [
+   "بعدازظهر",
+   "عصر"
+  ],
+  "daypart_morning_fa": [
+   "صبح"
+  ],
+  "daypart_night_fa": [
+   "شب"
+  ],
+  "marker_ad": [
+   "میلادی"
+  ],
+  "marker_after": [
+   "بعد",
+   "بعد از",
+   "پس از"
+  ],
+  "marker_and": [
+   "و"
+  ],
+  "marker_at": [
+   "راس",
+   "ساعت"
+  ],
+  "marker_bc": [
+   "پیش از میلاد"
+  ],
+  "marker_before": [
+   "قبل",
+   "قبل از",
+   "پیش از"
+  ],
+  "marker_between": [
+   "بین",
+   "میان"
+  ],
+  "marker_business": [
+   "کاری"
+  ],
+  "marker_clock_lead": [
+   "ساعت"
+  ],
+  "marker_during": [
+   "در"
+  ],
+  "marker_every": [
+   "هر"
+  ],
+  "marker_freq_daily": [
+   "روزانه"
+  ],
+  "marker_freq_monthly": [
+   "ماهانه"
+  ],
+  "marker_freq_weekly": [
+   "هفتگی"
+  ],
+  "marker_freq_yearly": [
+   "سالانه"
+  ],
+  "marker_from": [
+   "از"
+  ],
+  "marker_future": [
+   "بعد",
+   "دیگر",
+   "دیگه"
+  ],
+  "marker_half": [
+   "نیم"
+  ],
+  "marker_last": [
+   "قبلی",
+   "گذشته"
+  ],
+  "marker_next": [
+   "آینده",
+   "بعدی"
+  ],
+  "marker_of": [
+   "در"
+  ],
+  "marker_past": [
+   "قبل",
+   "پیش"
+  ],
+  "marker_present": [
+   "الان",
+   "اکنون"
+  ],
+  "marker_quarter_word": [
+   "سه‌ماهه",
+   "فصل"
+  ],
+  "marker_recur_for": [
+   "برای",
+   "به مدت"
+  ],
+  "marker_since": [
+   "از"
+  ],
+  "marker_this": [
+   "این"
+  ],
+  "marker_until": [
+   "تا"
+  ],
+  "marker_week_num": [
+   "هفته"
+  ],
+  "marker_weekof": [
+   "هفته",
+   "هفتهٔ",
+   "هفته‌ی"
+  ],
+  "marker_year_word": [
+   "سال"
+  ],
+  "month_1": [
+   "ژانویه"
+  ],
+  "month_10": [
+   "اکتبر"
+  ],
+  "month_11": [
+   "نوامبر"
+  ],
+  "month_12": [
+   "دسامبر"
+  ],
+  "month_2": [
+   "فوریه"
+  ],
+  "month_3": [
+   "مارس"
+  ],
+  "month_4": [
+   "آوریل"
+  ],
+  "month_5": [
+   "مه",
+   "می"
+  ],
+  "month_6": [
+   "ژوئن"
+  ],
+  "month_7": [
+   "ژوئیه"
+  ],
+  "month_8": [
+   "آگوست",
+   "اوت"
+  ],
+  "month_9": [
+   "سپتامبر"
+  ],
+  "month_solar_hijri_arithmetic_1": [
+   "فروردین"
+  ],
+  "month_solar_hijri_arithmetic_10": [
+   "دی"
+  ],
+  "month_solar_hijri_arithmetic_11": [
+   "بهمن"
+  ],
+  "month_solar_hijri_arithmetic_12": [
+   "اسفند"
+  ],
+  "month_solar_hijri_arithmetic_2": [
+   "اردیبهشت"
+  ],
+  "month_solar_hijri_arithmetic_3": [
+   "خرداد"
+  ],
+  "month_solar_hijri_arithmetic_4": [
+   "تیر"
+  ],
+  "month_solar_hijri_arithmetic_5": [
+   "مرداد"
+  ],
+  "month_solar_hijri_arithmetic_6": [
+   "شهریور"
+  ],
+  "month_solar_hijri_arithmetic_7": [
+   "مهر"
+  ],
+  "month_solar_hijri_arithmetic_8": [
+   "آبان"
+  ],
+  "month_solar_hijri_arithmetic_9": [
+   "آذر"
+  ],
+  "months": [
+   "آوریل",
+   "اوت",
+   "اکتبر",
+   "دسامبر",
+   "سپتامبر",
+   "فوریه",
+   "مارس",
+   "مه",
+   "نوامبر",
+   "ژانویه",
+   "ژوئن",
+   "ژوئیه"
+  ],
+  "named_day_-1": [
+   "دیروز"
+  ],
+  "named_day_-2": [
+   "پریروز"
+  ],
+  "named_day_0": [
+   "امروز"
+  ],
+  "named_day_1": [
+   "فردا"
+  ],
+  "named_day_2": [
+   "پس‌فردا"
+  ],
+  "period_part_early": [
+   "ابتدا",
+   "ابتدای",
+   "اوایل"
+  ],
+  "period_part_late": [
+   "آخر",
+   "اواخر",
+   "پایان"
+  ],
+  "period_part_mid": [
+   "اواسط",
+   "میانه",
+   "وسط"
+  ],
+  "scope_unit_century": [
+   "قرن"
+  ],
+  "scope_unit_decade": [
+   "دهه"
+  ],
+  "season_fall": [
+   "پائیز",
+   "پاییز"
+  ],
+  "season_spring": [
+   "بهار"
+  ],
+  "season_summer": [
+   "تابستان"
+  ],
+  "season_winter": [
+   "زمستان"
+  ],
+  "special_weekend": [
+   "آخر هفته",
+   "آخرهفته"
+  ],
+  "unit_century": [
+   "قرن"
+  ],
+  "unit_day": [
+   "روز"
+  ],
+  "unit_decade": [
+   "دهه"
+  ],
+  "unit_hour": [
+   "ساعت"
+  ],
+  "unit_minute": [
+   "دقیقه"
+  ],
+  "unit_month": [
+   "ماه"
+  ],
+  "unit_second": [
+   "ثانیه"
+  ],
+  "unit_week": [
+   "هفته"
+  ],
+  "unit_year": [
+   "سال"
+  ],
+  "weekday_0": [
+   "دوشنبه"
+  ],
+  "weekday_1": [
+   "سه‌شنبه"
+  ],
+  "weekday_2": [
+   "چهارشنبه"
+  ],
+  "weekday_3": [
+   "پنج‌شنبه"
+  ],
+  "weekday_4": [
+   "جمعه"
+  ],
+  "weekday_5": [
+   "شنبه"
+  ],
+  "weekday_6": [
+   "یکشنبه"
+  ]
+ }
+}

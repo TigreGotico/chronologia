@@ -1,0 +1,491 @@
+{
+ "format_version": 1,
+ "words": {
+  "clock_dir_past": [
+   "eta"
+  ],
+  "clock_dir_to": [
+   "gutxi",
+   "gutxiago"
+  ],
+  "clock_fraction_15": [
+   "laurden"
+  ],
+  "clock_fraction_30": [
+   "erdi",
+   "erdia"
+  ],
+  "clock_landmark_0": [
+   "gauerdia",
+   "gauerdian"
+  ],
+  "clock_landmark_720": [
+   "eguerdia",
+   "eguerdian"
+  ],
+  "clock_meridiem_am": [
+   "goizeko"
+  ],
+  "clock_meridiem_pm": [
+   "arratsaldeko"
+  ],
+  "clock_zone_0": [
+   "gmt",
+   "utc"
+  ],
+  "daypart_afternoon_eu": [
+   "arratsaldea",
+   "arratsaldean"
+  ],
+  "daypart_evening_eu": [
+   "iluntzea",
+   "iluntzean"
+  ],
+  "daypart_morning_eu": [
+   "goiza",
+   "goizean"
+  ],
+  "daypart_night_eu": [
+   "gau honetan",
+   "gaua",
+   "gauean"
+  ],
+  "marker_ad": [
+   "d.c.",
+   "k. o.",
+   "k.o."
+  ],
+  "marker_after": [
+   "eta gero",
+   "geroago",
+   "ondoren"
+  ],
+  "marker_ago": [
+   "duela",
+   "orain dela"
+  ],
+  "marker_and": [
+   "eta"
+  ],
+  "marker_at": [
+   "-etan",
+   "etan"
+  ],
+  "marker_bc": [
+   "a.c.",
+   "k. a.",
+   "k.a."
+  ],
+  "marker_before": [
+   "aurreko",
+   "aurretik",
+   "lehenago"
+  ],
+  "marker_between": [
+   "artean",
+   "tartean"
+  ],
+  "marker_business": [
+   "lanegun",
+   "laneguna",
+   "lanegunean"
+  ],
+  "marker_dayparttoday": [
+   "gau honetan"
+  ],
+  "marker_during": [
+   "bitartean",
+   "zehar"
+  ],
+  "marker_freq_daily": [
+   "egunero"
+  ],
+  "marker_freq_monthly": [
+   "hilero"
+  ],
+  "marker_freq_weekly": [
+   "astero"
+  ],
+  "marker_freq_yearly": [
+   "urtero"
+  ],
+  "marker_from": [
+   "-tik",
+   "tik"
+  ],
+  "marker_future": [
+   "barne",
+   "barru",
+   "buru"
+  ],
+  "marker_half": [
+   "erdi",
+   "erdia"
+  ],
+  "marker_hours": [
+   "ordu"
+  ],
+  "marker_in": [
+   "barru",
+   "buru"
+  ],
+  "marker_indef": [
+   "bat"
+  ],
+  "marker_last": [
+   "aurreko",
+   "joan den",
+   "pasa den"
+  ],
+  "marker_month_word": [
+   "hila",
+   "hilabete"
+  ],
+  "marker_next": [
+   "datorren",
+   "hurrengo",
+   "ondorengo"
+  ],
+  "marker_oclock": [
+   "-etan",
+   "etan"
+  ],
+  "marker_of": [
+   "-ko",
+   "-ren"
+  ],
+  "marker_offset_lead": [
+   "baino"
+  ],
+  "marker_ordlast": [
+   "azken",
+   "azkena",
+   "azkeneko",
+   "azkenengo"
+  ],
+  "marker_past": [
+   "duela",
+   "orain dela"
+  ],
+  "marker_present": [
+   "orain"
+  ],
+  "marker_q": [
+   "q"
+  ],
+  "marker_quarter_word": [
+   "hiruhileko",
+   "hiruhilekoa",
+   "hiruhilekoan"
+  ],
+  "marker_this": [
+   "honetako",
+   "oraingo"
+  ],
+  "marker_to": [
+   "-ra",
+   "arte"
+  ],
+  "marker_until": [
+   "arte"
+  ],
+  "marker_week_num": [
+   "aste",
+   "astea",
+   "astean"
+  ],
+  "marker_weekof": [
+   "aste",
+   "astea"
+  ],
+  "marker_year_word": [
+   "urte",
+   "urtean",
+   "urteko"
+  ],
+  "month_1": [
+   "urt",
+   "urtarrila",
+   "urtarrilak",
+   "urtarrilan",
+   "urtarrilaren",
+   "urtarrilean",
+   "urtarrilko"
+  ],
+  "month_10": [
+   "urr",
+   "urria",
+   "urriak",
+   "urrian",
+   "urriaren",
+   "urriean",
+   "urriko"
+  ],
+  "month_11": [
+   "aza",
+   "azaroa",
+   "azaroak",
+   "azaroan",
+   "azaroaren",
+   "azaroean",
+   "azaroko"
+  ],
+  "month_12": [
+   "abe",
+   "abendua",
+   "abenduak",
+   "abenduan",
+   "abenduaren",
+   "abenduean",
+   "abenduko"
+  ],
+  "month_2": [
+   "ots",
+   "otsaila",
+   "otsailak",
+   "otsailan",
+   "otsailaren",
+   "otsailean",
+   "otsailko"
+  ],
+  "month_3": [
+   "mar",
+   "martxoa",
+   "martxoak",
+   "martxoan",
+   "martxoaren",
+   "martxoean",
+   "martxoko"
+  ],
+  "month_4": [
+   "api",
+   "apirila",
+   "apirilak",
+   "apirilan",
+   "apirilaren",
+   "apirilean",
+   "apirilko"
+  ],
+  "month_5": [
+   "mai",
+   "maiatza",
+   "maiatzak",
+   "maiatzan",
+   "maiatzaren",
+   "maiatzean",
+   "maiatzko"
+  ],
+  "month_6": [
+   "eka",
+   "ekaina",
+   "ekainak",
+   "ekainan",
+   "ekainaren",
+   "ekainean",
+   "ekainko"
+  ],
+  "month_7": [
+   "uzt",
+   "uztaila",
+   "uztailak",
+   "uztailan",
+   "uztailaren",
+   "uztailean",
+   "uztailko"
+  ],
+  "month_8": [
+   "abu",
+   "abuztua",
+   "abuztuak",
+   "abuztuan",
+   "abuztuaren",
+   "abuztuean",
+   "abuztuko"
+  ],
+  "month_9": [
+   "ira",
+   "iraila",
+   "irailak",
+   "irailan",
+   "irailaren",
+   "irailean",
+   "irailko"
+  ],
+  "named_day_-1": [
+   "atzo",
+   "atzoko"
+  ],
+  "named_day_-2": [
+   "herenegun",
+   "herenegungo"
+  ],
+  "named_day_0": [
+   "gaur",
+   "gaurko"
+  ],
+  "named_day_1": [
+   "bihar",
+   "biharko"
+  ],
+  "named_day_2": [
+   "etzi"
+  ],
+  "period_part_early": [
+   "hasiera",
+   "hasieran",
+   "hasieretan"
+  ],
+  "period_part_late": [
+   "amaiera",
+   "amaieran",
+   "bukaera",
+   "bukaeran"
+  ],
+  "period_part_mid": [
+   "erdi",
+   "erdialde",
+   "erdialdean",
+   "erdian"
+  ],
+  "scale_1000": [
+   "mila"
+  ],
+  "scale_1000000": [
+   "milioi"
+  ],
+  "scale_1000000000": [
+   "mila milioi"
+  ],
+  "scope_unit_century": [
+   "mende",
+   "mendea"
+  ],
+  "scope_unit_decade": [
+   "hamarkada"
+  ],
+  "scope_unit_millennium": [
+   "milurteko"
+  ],
+  "season_fall": [
+   "udazkena",
+   "udazkenean"
+  ],
+  "season_spring": [
+   "udaberria",
+   "udaberrian"
+  ],
+  "season_summer": [
+   "uda",
+   "udan"
+  ],
+  "season_winter": [
+   "negua",
+   "neguan"
+  ],
+  "special_weekend": [
+   "asteburu",
+   "asteburua"
+  ],
+  "unit_century": [
+   "mende",
+   "mendea"
+  ],
+  "unit_day": [
+   "egun",
+   "eguna",
+   "egunean",
+   "eguneko"
+  ],
+  "unit_decade": [
+   "hamarkada"
+  ],
+  "unit_hour": [
+   "ordu",
+   "ordua",
+   "orduan",
+   "orduko"
+  ],
+  "unit_millennium": [
+   "milurteko"
+  ],
+  "unit_minute": [
+   "minutu",
+   "minutua",
+   "minutuan",
+   "minutuko"
+  ],
+  "unit_month": [
+   "hil",
+   "hilabete",
+   "hilabetea",
+   "hilabetean",
+   "hilabeteko"
+  ],
+  "unit_second": [
+   "segundo",
+   "segundoa",
+   "segundoko"
+  ],
+  "unit_week": [
+   "aste",
+   "astea",
+   "astean",
+   "asteko"
+  ],
+  "unit_year": [
+   "urte",
+   "urtea",
+   "urtean",
+   "urteko"
+  ],
+  "weekday_0": [
+   "astelehena",
+   "astelehenan",
+   "astelehenaren",
+   "astelehenean",
+   "astelehenko"
+  ],
+  "weekday_1": [
+   "asteartea",
+   "asteartean",
+   "asteartearen",
+   "astearteean",
+   "astearteko"
+  ],
+  "weekday_2": [
+   "asteazkena",
+   "asteazkenan",
+   "asteazkenaren",
+   "asteazkenean",
+   "asteazkenko"
+  ],
+  "weekday_3": [
+   "osteguna",
+   "ostegunan",
+   "ostegunaren",
+   "ostegunean",
+   "ostegunko"
+  ],
+  "weekday_4": [
+   "ostirala",
+   "ostiralan",
+   "ostiralaren",
+   "ostiralean",
+   "ostiralko"
+  ],
+  "weekday_5": [
+   "larunbata",
+   "larunbatan",
+   "larunbataren",
+   "larunbatean",
+   "larunbatko"
+  ],
+  "weekday_6": [
+   "igandea",
+   "igandean",
+   "igandearen",
+   "igandeean",
+   "igandeko"
+  ]
+ }
+}

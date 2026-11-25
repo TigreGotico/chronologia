@@ -1,0 +1,904 @@
+{
+ "format_version": 1,
+ "words": {
+  "clock_dir_past": [
+   "e",
+   "ed"
+  ],
+  "clock_dir_to": [
+   "meno"
+  ],
+  "clock_fraction_15": [
+   "quarto"
+  ],
+  "clock_fraction_30": [
+   "mezza",
+   "mezzo"
+  ],
+  "clock_landmark_0": [
+   "mezzanotte"
+  ],
+  "clock_landmark_720": [
+   "mezzogiorno"
+  ],
+  "clock_meridiem_am": [
+   "mattina",
+   "mattino"
+  ],
+  "clock_meridiem_pm": [
+   "pomeriggio",
+   "sera"
+  ],
+  "clock_zone_0": [
+   "gmt",
+   "utc"
+  ],
+  "daypart_mattina_it": [
+   "mattina"
+  ],
+  "daypart_notte_it": [
+   "notte"
+  ],
+  "daypart_pomeriggio_it": [
+   "pomeriggio"
+  ],
+  "daypart_sera_it": [
+   "sera"
+  ],
+  "era_ad_prefix": [
+   "d.c.",
+   "dopo cristo"
+  ],
+  "era_ad_suffix": [
+   "d. c.",
+   "d.c.",
+   "dc",
+   "dopo cristo",
+   "e.v.",
+   "era volgare"
+  ],
+  "era_anno_mundi_prefix": [
+   "anno mundi"
+  ],
+  "era_anno_mundi_suffix": [
+   "anno mundi"
+  ],
+  "era_bc_suffix": [
+   "a. c.",
+   "a.c.",
+   "a.e.v.",
+   "ac",
+   "avanti cristo",
+   "avanti l era volgare",
+   "avanti l'era volgare"
+  ],
+  "era_bp_suffix": [
+   "anni prima del presente",
+   "b.p.",
+   "bp"
+  ],
+  "era_holocene_prefix": [
+   "era olocenica",
+   "era umana"
+  ],
+  "era_holocene_suffix": [
+   "era olocenica",
+   "era umana"
+  ],
+  "era_julian_prefix": [
+   "giorno giuliano",
+   "giorno giuliano numero"
+  ],
+  "era_unix_prefix": [
+   "epoca unix",
+   "tempo unix"
+  ],
+  "era_year_ref": [
+   "anno",
+   "l anno",
+   "l'anno",
+   "nell anno",
+   "nell'anno"
+  ],
+  "marker_ad": [
+   "dc"
+  ],
+  "marker_after": [
+   "dopo"
+  ],
+  "marker_ago": [
+   "fa"
+  ],
+  "marker_alarm_at": [
+   "sveglia per",
+   "sveglie per"
+  ],
+  "marker_alarm_joiner": [
+   "a",
+   "e",
+   "ed",
+   "o",
+   "oppure"
+  ],
+  "marker_and": [
+   "e",
+   "ed"
+  ],
+  "marker_article": [
+   "agli",
+   "ai",
+   "al",
+   "alla",
+   "alle",
+   "allo",
+   "degli",
+   "dei",
+   "del",
+   "della",
+   "delle",
+   "dello",
+   "di",
+   "gli",
+   "i",
+   "il",
+   "l",
+   "la",
+   "le",
+   "lo",
+   "nel",
+   "un",
+   "una",
+   "uno"
+  ],
+  "marker_at": [
+   "a",
+   "ad",
+   "all",
+   "alla",
+   "alle"
+  ],
+  "marker_at_counts": [
+   "alla",
+   "alle"
+  ],
+  "marker_bc": [
+   "ac"
+  ],
+  "marker_before": [
+   "prima"
+  ],
+  "marker_between": [
+   "fra",
+   "tra"
+  ],
+  "marker_bp": [
+   "bp"
+  ],
+  "marker_consulship": [
+   "consolato"
+  ],
+  "marker_counted_noun": [
+   "adulti",
+   "amiche",
+   "amici",
+   "bambine",
+   "bambini",
+   "biglietti",
+   "giocatori",
+   "ospiti",
+   "persona",
+   "persone",
+   "posti",
+   "ragazze",
+   "ragazzi",
+   "stanze",
+   "tavoli",
+   "vicine",
+   "vicini"
+  ],
+  "marker_date_article": [
+   "il"
+  ],
+  "marker_day_label": [
+   "giorno"
+  ],
+  "marker_during": [
+   "durante",
+   "in"
+  ],
+  "marker_every": [
+   "ogni",
+   "tutte",
+   "tutti"
+  ],
+  "marker_exclusion": [
+   "eccetto",
+   "non",
+   "salvo",
+   "tranne"
+  ],
+  "marker_exclusion_bound": [
+   "da",
+   "dopo",
+   "entro",
+   "fino",
+   "prima"
+  ],
+  "marker_freq_daily": [
+   "giornalmente",
+   "quotidianamente"
+  ],
+  "marker_freq_monthly": [
+   "mensilmente"
+  ],
+  "marker_freq_weekly": [
+   "settimanalmente"
+  ],
+  "marker_freq_yearly": [
+   "annualmente"
+  ],
+  "marker_from": [
+   "da",
+   "dal",
+   "dalle",
+   "fra",
+   "tra"
+  ],
+  "marker_future": [
+   "fra",
+   "tra"
+  ],
+  "marker_half": [
+   "meta",
+   "metà",
+   "mezza",
+   "mezzo"
+  ],
+  "marker_hebrew": [
+   "ebraica",
+   "ebraico"
+  ],
+  "marker_hours": [
+   "ore"
+  ],
+  "marker_in": [
+   "in",
+   "nel",
+   "nell"
+  ],
+  "marker_indef": [
+   "un",
+   "una",
+   "uno"
+  ],
+  "marker_last": [
+   "passata",
+   "passate",
+   "passati",
+   "passato",
+   "scorsa",
+   "scorse",
+   "scorsi",
+   "scorso",
+   "ultima",
+   "ultime",
+   "ultimi",
+   "ultimo"
+  ],
+  "marker_month_word": [
+   "mese",
+   "mesi"
+  ],
+  "marker_new": [
+   "nuova",
+   "nuovo"
+  ],
+  "marker_next": [
+   "prossima",
+   "prossime",
+   "prossimi",
+   "prossimo",
+   "successiva",
+   "successivo"
+  ],
+  "marker_oclock": [
+   "ora",
+   "ore"
+  ],
+  "marker_of": [
+   "d",
+   "degli",
+   "dei",
+   "del",
+   "della",
+   "delle",
+   "dello",
+   "di"
+  ],
+  "marker_ordlast": [
+   "ultima",
+   "ultimo"
+  ],
+  "marker_past": [
+   "fa"
+  ],
+  "marker_plural": [
+   "e",
+   "i"
+  ],
+  "marker_present": [
+   "oggi",
+   "presente"
+  ],
+  "marker_pridie": [
+   "pridie"
+  ],
+  "marker_q": [
+   "q",
+   "t"
+  ],
+  "marker_quarter_word": [
+   "trimestre",
+   "trimestri"
+  ],
+  "marker_recur_for": [
+   "per"
+  ],
+  "marker_since": [
+   "da",
+   "dai",
+   "dal",
+   "dalla"
+  ],
+  "marker_this": [
+   "quest",
+   "questa",
+   "questo"
+  ],
+  "marker_to": [
+   "a",
+   "ad",
+   "al",
+   "alle",
+   "fino a",
+   "sino a"
+  ],
+  "marker_until": [
+   "entro",
+   "fino",
+   "fino a",
+   "fino al"
+  ],
+  "marker_week_num": [
+   "settimana",
+   "settimane"
+  ],
+  "marker_weekof": [
+   "la settimana del",
+   "la settimana di",
+   "settimana del",
+   "settimana di"
+  ],
+  "marker_year_plural": [
+   "anni"
+  ],
+  "marker_year_word": [
+   "anni",
+   "anno"
+  ],
+  "month_1": [
+   "gen",
+   "gennaio"
+  ],
+  "month_10": [
+   "ott",
+   "ottobre"
+  ],
+  "month_11": [
+   "nov",
+   "novembre"
+  ],
+  "month_12": [
+   "dic",
+   "dicembre"
+  ],
+  "month_2": [
+   "feb",
+   "febbraio"
+  ],
+  "month_3": [
+   "mar",
+   "marzo"
+  ],
+  "month_4": [
+   "apr",
+   "aprile"
+  ],
+  "month_5": [
+   "mag",
+   "maggio"
+  ],
+  "month_6": [
+   "giu",
+   "giugno"
+  ],
+  "month_7": [
+   "lug",
+   "luglio"
+  ],
+  "month_8": [
+   "ago",
+   "agosto"
+  ],
+  "month_9": [
+   "set",
+   "sett",
+   "settembre"
+  ],
+  "month_french_republican_1": [
+   "vendemiaire"
+  ],
+  "month_french_republican_10": [
+   "messidor"
+  ],
+  "month_french_republican_11": [
+   "thermidor"
+  ],
+  "month_french_republican_12": [
+   "fructidor"
+  ],
+  "month_french_republican_2": [
+   "brumaire"
+  ],
+  "month_french_republican_3": [
+   "frimaire"
+  ],
+  "month_french_republican_4": [
+   "nivose"
+  ],
+  "month_french_republican_5": [
+   "pluviose"
+  ],
+  "month_french_republican_6": [
+   "ventose"
+  ],
+  "month_french_republican_7": [
+   "germinal"
+  ],
+  "month_french_republican_8": [
+   "floreal"
+  ],
+  "month_french_republican_9": [
+   "prairial"
+  ],
+  "month_hebrew_1": [
+   "nisan"
+  ],
+  "month_hebrew_10": [
+   "tevet"
+  ],
+  "month_hebrew_11": [
+   "shevat"
+  ],
+  "month_hebrew_12": [
+   "adar"
+  ],
+  "month_hebrew_13": [
+   "adar 2",
+   "adar b",
+   "adar bet",
+   "adar ii",
+   "adar sheni",
+   "adarbet"
+  ],
+  "month_hebrew_2": [
+   "iyar"
+  ],
+  "month_hebrew_3": [
+   "sivan"
+  ],
+  "month_hebrew_4": [
+   "tammuz"
+  ],
+  "month_hebrew_5": [
+   "av"
+  ],
+  "month_hebrew_6": [
+   "elul"
+  ],
+  "month_hebrew_7": [
+   "tishrei",
+   "tishri"
+  ],
+  "month_hebrew_8": [
+   "cheshvan",
+   "heshvan"
+  ],
+  "month_hebrew_9": [
+   "kislev"
+  ],
+  "month_islamic_civil_1": [
+   "muharram"
+  ],
+  "month_islamic_civil_10": [
+   "shawwal"
+  ],
+  "month_islamic_civil_11": [
+   "dhualqadah"
+  ],
+  "month_islamic_civil_12": [
+   "dhualhijjah"
+  ],
+  "month_islamic_civil_2": [
+   "safar"
+  ],
+  "month_islamic_civil_3": [
+   "rabi al-awwal",
+   "rabialawwal"
+  ],
+  "month_islamic_civil_4": [
+   "rabi al-thani",
+   "rabialthani"
+  ],
+  "month_islamic_civil_5": [
+   "jumadaalawwal"
+  ],
+  "month_islamic_civil_6": [
+   "jumadaalthani"
+  ],
+  "month_islamic_civil_7": [
+   "rajab"
+  ],
+  "month_islamic_civil_8": [
+   "shaaban",
+   "shaban"
+  ],
+  "month_islamic_civil_9": [
+   "ramadan",
+   "ramzan"
+  ],
+  "months": [
+   "agosto",
+   "aprile",
+   "dicembre",
+   "febbraio",
+   "gennaio",
+   "giugno",
+   "luglio",
+   "maggio",
+   "marzo",
+   "novembre",
+   "ottobre",
+   "settembre"
+  ],
+  "named_day_-1": [
+   "ieri"
+  ],
+  "named_day_-2": [
+   "altroieri",
+   "avanti ieri",
+   "avantieri"
+  ],
+  "named_day_0": [
+   "oggi"
+  ],
+  "named_day_1": [
+   "domani"
+  ],
+  "named_day_2": [
+   "dopo domani",
+   "dopodomani"
+  ],
+  "ordinal_suffixes": [
+   "a",
+   "o",
+   "°",
+   "º"
+  ],
+  "period_archean": [
+   "archean"
+  ],
+  "period_bronze_age_gb": [
+   "bronze age"
+  ],
+  "period_cambrian": [
+   "cambrian"
+  ],
+  "period_carboniferous": [
+   "carboniferous"
+  ],
+  "period_cenozoic": [
+   "cenozoic"
+  ],
+  "period_cretaceous": [
+   "cretaceous"
+  ],
+  "period_devonian": [
+   "devonian"
+  ],
+  "period_eocene": [
+   "eocene"
+  ],
+  "period_holocene": [
+   "holocene"
+  ],
+  "period_iron_age_gb": [
+   "iron age"
+  ],
+  "period_jurassic": [
+   "jurassic"
+  ],
+  "period_mesozoic": [
+   "mesozoic"
+  ],
+  "period_miocene": [
+   "miocene"
+  ],
+  "period_neogene": [
+   "neogene"
+  ],
+  "period_neolithic_gb": [
+   "neolithic"
+  ],
+  "period_oligocene": [
+   "oligocene"
+  ],
+  "period_ordovician": [
+   "ordovician"
+  ],
+  "period_paleocene": [
+   "paleocene"
+  ],
+  "period_paleogene": [
+   "paleogene"
+  ],
+  "period_paleozoic": [
+   "paleozoic"
+  ],
+  "period_part_early": [
+   "inizi",
+   "inizio",
+   "principi",
+   "principio"
+  ],
+  "period_part_late": [
+   "fine",
+   "fini"
+  ],
+  "period_part_mid": [
+   "meta",
+   "metà",
+   "mezzo"
+  ],
+  "period_permian": [
+   "permian"
+  ],
+  "period_phanerozoic": [
+   "phanerozoic"
+  ],
+  "period_pleistocene": [
+   "pleistocene"
+  ],
+  "period_pliocene": [
+   "pliocene"
+  ],
+  "period_proterozoic": [
+   "proterozoic"
+  ],
+  "period_quaternary": [
+   "quaternary"
+  ],
+  "period_silurian": [
+   "silurian"
+  ],
+  "period_triassic": [
+   "triassic"
+  ],
+  "regnal_nengo_heisei": [
+   "heisei"
+  ],
+  "regnal_nengo_meiji": [
+   "meiji"
+  ],
+  "regnal_nengo_reiwa": [
+   "reiwa"
+  ],
+  "regnal_nengo_showa": [
+   "showa"
+  ],
+  "regnal_nengo_taisho": [
+   "taisho"
+  ],
+  "roman_anchor_ides": [
+   "ides",
+   "idi",
+   "idibus"
+  ],
+  "roman_anchor_kalends": [
+   "calende",
+   "calends",
+   "kalendis",
+   "kalends"
+  ],
+  "roman_anchor_nones": [
+   "none",
+   "nones",
+   "nonis"
+  ],
+  "scale_1000": [
+   "mila",
+   "mille"
+  ],
+  "scale_1000000": [
+   "milione",
+   "milioni"
+  ],
+  "scale_1000000000": [
+   "miliardi",
+   "miliardo"
+  ],
+  "scale_1000000000.short": [
+   "bilione",
+   "bilioni"
+  ],
+  "scale_1000000000000.long": [
+   "bilione",
+   "bilioni"
+  ],
+  "scope_unit_century": [
+   "secoli",
+   "secolo"
+  ],
+  "scope_unit_decade": [
+   "decenni",
+   "decennio"
+  ],
+  "scope_unit_millennium": [
+   "millenni",
+   "millennio"
+  ],
+  "season_fall": [
+   "autunno"
+  ],
+  "season_spring": [
+   "primavera"
+  ],
+  "season_summer": [
+   "estate"
+  ],
+  "season_winter": [
+   "inverno"
+  ],
+  "special_weekend": [
+   "fine settimana",
+   "finesettimana",
+   "weekend"
+  ],
+  "unit1_century": [
+   "secolo"
+  ],
+  "unit1_day": [
+   "giorno"
+  ],
+  "unit1_decade": [
+   "decennio"
+  ],
+  "unit1_fortnight": [
+   "quindicina"
+  ],
+  "unit1_hour": [
+   "ora"
+  ],
+  "unit1_millennium": [
+   "millennio"
+  ],
+  "unit1_minute": [
+   "min",
+   "minuto"
+  ],
+  "unit1_month": [
+   "mese"
+  ],
+  "unit1_second": [
+   "secondo"
+  ],
+  "unit1_week": [
+   "settimana"
+  ],
+  "unit1_year": [
+   "anno"
+  ],
+  "unit_century": [
+   "secoli",
+   "secolo"
+  ],
+  "unit_day": [
+   "giorni",
+   "giorno"
+  ],
+  "unit_decade": [
+   "decenni",
+   "decennio"
+  ],
+  "unit_fortnight": [
+   "quindicina",
+   "quindicine"
+  ],
+  "unit_hour": [
+   "ora",
+   "ore"
+  ],
+  "unit_millennium": [
+   "millenni",
+   "millennio"
+  ],
+  "unit_minute": [
+   "min",
+   "minuti",
+   "minuto"
+  ],
+  "unit_month": [
+   "mese",
+   "mesi"
+  ],
+  "unit_second": [
+   "secondi",
+   "secondo"
+  ],
+  "unit_week": [
+   "settimana",
+   "settimane"
+  ],
+  "unit_year": [
+   "anni",
+   "anno"
+  ],
+  "weekday_0": [
+   "lunedi",
+   "lunedì"
+  ],
+  "weekday_1": [
+   "martedi",
+   "martedì"
+  ],
+  "weekday_2": [
+   "mercoledi",
+   "mercoledì"
+  ],
+  "weekday_3": [
+   "giovedi",
+   "giovedì"
+  ],
+  "weekday_4": [
+   "venerdi",
+   "venerdì"
+  ],
+  "weekday_5": [
+   "sabato"
+  ],
+  "weekday_6": [
+   "domenica"
+  ],
+  "weekday_abbr_0": [
+   "lun"
+  ],
+  "weekday_abbr_1": [
+   "mar"
+  ],
+  "weekday_abbr_2": [
+   "mer"
+  ],
+  "weekday_abbr_3": [
+   "gio"
+  ],
+  "weekday_abbr_4": [
+   "ven"
+  ],
+  "weekday_abbr_5": [
+   "sab"
+  ],
+  "weekday_abbr_6": [
+   "dom"
+  ]
+ }
+}

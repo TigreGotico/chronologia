@@ -123,7 +123,7 @@ _CASES = [
     # year"/"every second year" above.  Before the fix the interval scan only
     # recognised NUMBER tokens before the year unit, so "other" (which the
     # bare "every other year" control already reads via ctx.other, the same
-    # ``marker_recur_other.voc`` vocabulary "every other week" uses) fell
+    # ``marker_recur_other`` vocabulary "every other week" uses) fell
     # through and stranded "on christmas"/"on may 10" as remainder behind a
     # bare FREQ=YEARLY;INTERVAL=2 rule that silently fired on the anchor date
     # instead of the named holiday/date.

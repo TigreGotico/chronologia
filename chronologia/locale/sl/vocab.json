@@ -1,0 +1,469 @@
+{
+ "format_version": 1,
+ "words": {
+  "clock_fraction_30": [
+   "pol"
+  ],
+  "clock_landmark_0": [
+   "opolnoči",
+   "polnoč"
+  ],
+  "clock_landmark_720": [
+   "opoldne",
+   "poldne"
+  ],
+  "clock_meridiem_am": [
+   "dopoldne",
+   "zjutraj"
+  ],
+  "clock_meridiem_night": [
+   "ponoči"
+  ],
+  "clock_meridiem_pm": [
+   "popoldne",
+   "zvečer"
+  ],
+  "clock_zone_0": [
+   "gmt",
+   "utc"
+  ],
+  "daypart_afternoon_sl": [
+   "popoldan",
+   "popoldne"
+  ],
+  "daypart_evening_sl": [
+   "zvečer"
+  ],
+  "daypart_morning_sl": [
+   "zjutraj"
+  ],
+  "daypart_night_sl": [
+   "ponoči"
+  ],
+  "marker_ad": [
+   "n. št.",
+   "n.št.",
+   "našega štetja",
+   "po n. št.",
+   "po našem štetju"
+  ],
+  "marker_after": [
+   "po"
+  ],
+  "marker_and": [
+   "in"
+  ],
+  "marker_at": [
+   "ob",
+   "v"
+  ],
+  "marker_bc": [
+   "pr. n. št.",
+   "pr.n.št.",
+   "pred našim štetjem"
+  ],
+  "marker_before": [
+   "pred"
+  ],
+  "marker_between": [
+   "med"
+  ],
+  "marker_business": [
+   "delovne",
+   "delovni",
+   "delovnih"
+  ],
+  "marker_during": [
+   "v"
+  ],
+  "marker_every": [
+   "vsak",
+   "vsakega",
+   "vsako"
+  ],
+  "marker_freq_daily": [
+   "dnevno"
+  ],
+  "marker_freq_monthly": [
+   "mesečno"
+  ],
+  "marker_freq_weekly": [
+   "tedensko"
+  ],
+  "marker_freq_yearly": [
+   "letno"
+  ],
+  "marker_from": [
+   "od"
+  ],
+  "marker_future": [
+   "čez"
+  ],
+  "marker_half": [
+   "pol"
+  ],
+  "marker_in": [
+   "čez"
+  ],
+  "marker_indef": [
+   "en",
+   "ena"
+  ],
+  "marker_last": [
+   "prejšnja",
+   "prejšnje",
+   "prejšnjega",
+   "prejšnjem",
+   "prejšnjemu",
+   "prejšnji",
+   "prejšnjih",
+   "prejšnjim",
+   "prejšnjimi",
+   "prejšnjo",
+   "pretekla",
+   "preteklega",
+   "preteklem",
+   "preteklemu",
+   "pretekli",
+   "preteklih",
+   "preteklim",
+   "preteklo"
+  ],
+  "marker_next": [
+   "naslednja",
+   "naslednje",
+   "naslednjega",
+   "naslednjem",
+   "naslednjemu",
+   "naslednji",
+   "naslednjih",
+   "naslednjim",
+   "naslednjo",
+   "prihodnja",
+   "prihodnje",
+   "prihodnjega",
+   "prihodnjem",
+   "prihodnjemu",
+   "prihodnji",
+   "prihodnjih",
+   "prihodnjim",
+   "prihodnjo"
+  ],
+  "marker_oclock": [
+   "uri"
+  ],
+  "marker_of": [
+   "v"
+  ],
+  "marker_ordlast": [
+   "zadnja",
+   "zadnje",
+   "zadnjega",
+   "zadnjem",
+   "zadnjemu",
+   "zadnji",
+   "zadnjih",
+   "zadnjim",
+   "zadnjimi",
+   "zadnjo"
+  ],
+  "marker_past": [
+   "pred"
+  ],
+  "marker_q": [
+   "q"
+  ],
+  "marker_quarter_word": [
+   "kvartal",
+   "kvartala",
+   "četrtletje"
+  ],
+  "marker_recur_for": [
+   "v obdobju"
+  ],
+  "marker_since": [
+   "od"
+  ],
+  "marker_this": [
+   "ta",
+   "te",
+   "tega",
+   "teh",
+   "tej",
+   "tem",
+   "temi",
+   "temu",
+   "ti",
+   "to"
+  ],
+  "marker_to": [
+   "do"
+  ],
+  "marker_until": [
+   "do"
+  ],
+  "marker_week_num": [
+   "teden",
+   "tedna"
+  ],
+  "marker_weekof": [
+   "teden od",
+   "teden okoli",
+   "teden s"
+  ],
+  "marker_year_word": [
+   "leta",
+   "leto"
+  ],
+  "month_1": [
+   "januar",
+   "januarja",
+   "januarjem",
+   "januarju"
+  ],
+  "month_10": [
+   "oktober",
+   "oktobra",
+   "oktobrom",
+   "oktobru"
+  ],
+  "month_11": [
+   "november",
+   "novembra",
+   "novembrom",
+   "novembru"
+  ],
+  "month_12": [
+   "december",
+   "decembra",
+   "decembrom",
+   "decembru"
+  ],
+  "month_2": [
+   "februar",
+   "februarja",
+   "februarjem",
+   "februarju"
+  ],
+  "month_3": [
+   "marca",
+   "marcem",
+   "marcu",
+   "marec"
+  ],
+  "month_4": [
+   "april",
+   "aprila",
+   "aprilom",
+   "aprilu"
+  ],
+  "month_5": [
+   "maj",
+   "maja",
+   "majem",
+   "maju"
+  ],
+  "month_6": [
+   "junij",
+   "junija",
+   "junijem",
+   "juniju"
+  ],
+  "month_7": [
+   "julij",
+   "julija",
+   "julijem",
+   "juliju"
+  ],
+  "month_8": [
+   "avgust",
+   "avgusta",
+   "avgustom",
+   "avgustu"
+  ],
+  "month_9": [
+   "september",
+   "septembra",
+   "septembrom",
+   "septembru"
+  ],
+  "named_day_-1": [
+   "včeraj"
+  ],
+  "named_day_-2": [
+   "predvčerajšnjim"
+  ],
+  "named_day_0": [
+   "danes"
+  ],
+  "named_day_1": [
+   "jutri"
+  ],
+  "named_day_2": [
+   "pojutrišnjem"
+  ],
+  "period_part_early": [
+   "začetek",
+   "začetka"
+  ],
+  "period_part_late": [
+   "konca",
+   "konec"
+  ],
+  "period_part_mid": [
+   "sredina",
+   "sredini"
+  ],
+  "scale_1000": [
+   "tisoč"
+  ],
+  "scope_unit_century": [
+   "stoletje"
+  ],
+  "season_fall": [
+   "jesen"
+  ],
+  "season_spring": [
+   "pomlad"
+  ],
+  "season_summer": [
+   "poletje"
+  ],
+  "season_winter": [
+   "zima"
+  ],
+  "special_weekend": [
+   "vikend"
+  ],
+  "unit1_century": [
+   "stoletje"
+  ],
+  "unit1_day": [
+   "dan"
+  ],
+  "unit1_decade": [
+   "dekada",
+   "desetletje"
+  ],
+  "unit1_hour": [
+   "ura",
+   "uro"
+  ],
+  "unit1_minute": [
+   "minuta",
+   "minuto"
+  ],
+  "unit1_month": [
+   "mesec",
+   "mesecem",
+   "mesecu"
+  ],
+  "unit1_second": [
+   "sekunda",
+   "sekundo"
+  ],
+  "unit1_week": [
+   "teden",
+   "tednom",
+   "tednu"
+  ],
+  "unit1_year": [
+   "leto",
+   "letom",
+   "letu"
+  ],
+  "unit_century": [
+   "stoletja",
+   "stoletje"
+  ],
+  "unit_day": [
+   "dan",
+   "dneva",
+   "dnevi",
+   "dni"
+  ],
+  "unit_decade": [
+   "dekada",
+   "desetletje"
+  ],
+  "unit_hour": [
+   "ur",
+   "ura",
+   "ure",
+   "uro"
+  ],
+  "unit_minute": [
+   "minut",
+   "minuta",
+   "minute",
+   "minuto"
+  ],
+  "unit_month": [
+   "mesec",
+   "meseca",
+   "mesece",
+   "mesecem",
+   "mesecev",
+   "meseci",
+   "mesecih",
+   "mesecu"
+  ],
+  "unit_second": [
+   "sekund",
+   "sekunda",
+   "sekunde",
+   "sekundi",
+   "sekundo"
+  ],
+  "unit_week": [
+   "teden",
+   "tedna",
+   "tedne",
+   "tedni",
+   "tednih",
+   "tednom",
+   "tednov",
+   "tednu"
+  ],
+  "unit_year": [
+   "let",
+   "leta",
+   "leti",
+   "letih",
+   "leto",
+   "letom",
+   "letu"
+  ],
+  "weekday_0": [
+   "ponedeljek",
+   "ponedeljka"
+  ],
+  "weekday_1": [
+   "torek",
+   "torka"
+  ],
+  "weekday_2": [
+   "sreda",
+   "srede",
+   "sredo"
+  ],
+  "weekday_3": [
+   "četrtek",
+   "četrtka"
+  ],
+  "weekday_4": [
+   "petek",
+   "petka"
+  ],
+  "weekday_5": [
+   "sobota",
+   "sobote",
+   "soboto"
+  ],
+  "weekday_6": [
+   "nedelja",
+   "nedelje",
+   "nedeljo"
+  ]
+ }
+}

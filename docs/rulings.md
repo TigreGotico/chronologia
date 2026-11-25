@@ -123,7 +123,7 @@ A unit word or a CLDR currency name right after the number makes it a count what
 
 A bare hour behind such a preposition and directly before a noun that counts people or things is not a time of day. With a date it reads the date alone ("a las 3 vecinas mañana" is tomorrow, "look at 5 houses tomorrow" is tomorrow). Alone it reads nothing.
 
-Each locale lists the nouns, each with a cited dictionary entry (`marker_counted_noun.voc`). Any other word after the hour keeps the clock, and this includes a verb, a pronoun or a name: "a las 8 llegamos", "um 8 gehe ich", "om 8 ben ik thuis", "ich rufe dich um 8 an". The count reading stays a candidate at half the confidence. Known cost: a counted noun that is not on the list reads as a clock ("at 5 lions"). A noun that is on the list and names a place or a time reads as a count.
+Each locale lists the nouns, each with a cited dictionary entry (`marker_counted_noun`). Any other word after the hour keeps the clock, and this includes a verb, a pronoun or a name: "a las 8 llegamos", "um 8 gehe ich", "om 8 ben ik thuis", "ich rufe dich um 8 an". The count reading stays a candidate at half the confidence. Known cost: a counted noun that is not on the list reads as a clock ("at 5 lions"). A noun that is on the list and names a place or a time reads as a count.
 
 **23. A digit clock from speech follows the lone-hour rule**. Speech recognition writes a spoken "three thirty" as "3:30". So the two forms must read the same.
 

@@ -57,7 +57,7 @@ def test_quarterto_idiom_gap():
 
 
 def test_seconds_offset_resolves():
-    # a sub-minute offset resolves to the second: unit_second.voc ships
+    # a sub-minute offset resolves to the second: unit_second ships
     from datetime import timedelta
     from ._corpus import ad
     r = parse('za 45 sekúnd')

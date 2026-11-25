@@ -52,7 +52,7 @@ def test_ordinary_prose_with_a_numeral_syllable_names_no_time(text):
 
 
 def test_the_dictionary_is_read_from_the_shipped_vocabulary():
-    """The segmenter's word list is the locale's own ``.voc`` surfaces, so a
+    """The segmenter's word list is the locale's own vocabulary surfaces, so a
     surface can never be matchable but unsegmentable."""
     words = dictionary()
     for surface in ("วันจันทร์", "มกราคม", "พรุ่งนี้", "สัปดาห์", "ที่ผ่านมา",

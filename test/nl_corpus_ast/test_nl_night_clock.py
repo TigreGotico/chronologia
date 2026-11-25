@@ -5,12 +5,12 @@ uniform +12 PM shift.  "a les cinco de la nueche" is 05:00 (not 17:00) and
 evening hours 6..11 becoming PM, and twelve landing on midnight.  Gold is
 computed by independent arithmetic (h if h <= 5 else h + 12, h == 12 -> 0),
 never read back from the parser -- this is exactly the bug: before the fix,
-the pm.voc union of "nueche" applied a flat +12 and turned "a les 5 de la
+the pm union of "nueche" applied a flat +12 and turned "a les 5 de la
 nueche" into 17:00.
 
 AST is Ibero-Romance and inherits the same madrugada band [00:00, 06:00) --
 hence the 5|6 cut -- as the es/ca/pt siblings (chronologia/locale/es/
-clock_meridiem_night.voc); native confirmation for Asturian specifically is
+clock_meridiem_night); native confirmation for Asturian specifically is
 still open, tracked in issue #266.
 
 "una" (one) is excluded from the spelled-number matrix: "a les una ..." does

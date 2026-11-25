@@ -12,7 +12,7 @@ passes through untouched.  Maximal-match cutting would pull temporal readings
 out of ordinary prose, and Thai is full of temporal homographs: ``จันทร์`` is
 Monday and the moon, ``อาทิตย์`` is Sunday and the week, ``ตี`` is the
 small-hours word and "to hit", ``ทุ่ม`` is the evening hour and "to hurl".  The
-dictionary comes from the locale's own ``.voc`` files plus the numeral and clock
+dictionary comes from the locale's own vocabulary plus the numeral and clock
 words below, so a surface cannot be segmentable but unmatchable.
 
 Numerals.  Digit words 0-9 and the ascending places ``สิบ`` 10, ``ร้อย`` 100,
@@ -59,16 +59,13 @@ Nothing is delegated to an external number back-end.
 from __future__ import annotations
 
 import functools
-import glob
-import os
 from typing import Dict, List, Optional, Sequence, Tuple
 
 from chronologia.eras import ERAS
 from chronologia.extract.model import Token
 from chronologia.extract.numfold_engine import (clock_literal, compose, numeric,
                                                 opaque, reindex)
-
-_LOCALE_DIR = os.path.join(os.path.dirname(__file__), os.pardir, "locale", "th")
+from chronologia.extract.numlayer import vocabulary
 
 #: 0..9 in their citation form.
 DIGITS: Dict[str, int] = {
@@ -103,7 +100,7 @@ MINUTE_WORD = "นาที"
 
 #: every word this module contributes to the segmentation dictionary in its own
 #: right -- the numeral and clock vocabulary, which is deliberately NOT shipped
-#: as locale ``.voc`` (``โมง``/``ตี``/``ทุ่ม`` must never bind a slot on their
+#: as locale vocabulary (``โมง``/``ตี``/``ทุ่ม`` must never bind a slot on their
 #: own; they are only ever read next to a numeral).
 _OWN_WORDS = (frozenset(DIGITS) | frozenset(PLACES)
               | {TENS_TWO, TWENTY_DIALECTAL, MILLION, UNIT_ONE,
@@ -119,17 +116,13 @@ def _is_thai(text: str) -> bool:
 def dictionary() -> frozenset:
     """Every Thai-script surface the segmenter may cut a run into.
 
-    The locale's own ``.voc`` surfaces plus this module's numeral and clock
-    words.  Reading the shipped files keeps the segmenter and the matcher
+    The locale's own vocabulary surfaces plus this module's numeral and clock
+    words.  Reading the shipped vocabulary keeps the segmenter and the matcher
     from disagreeing about what Thai words exist.
     """
     words = set(_OWN_WORDS)
-    for path in glob.glob(os.path.join(_LOCALE_DIR, "*.voc")):
-        with open(path, encoding="utf-8") as fh:
-            for line in fh:
-                line = line.strip()
-                if line and not line.startswith("#") and _is_thai(line):
-                    words.add(line)
+    for surfaces in vocabulary("th").values():
+        words.update(s for s in surfaces if _is_thai(s))
     return frozenset(words)
 
 

@@ -1,0 +1,200 @@
+{
+ "format_version": 1,
+ "words": {
+  "clock_dir_past": [
+   "makalipas"
+  ],
+  "clock_dir_to": [
+   "bago"
+  ],
+  "clock_fraction_30": [
+   "mediya",
+   "medya"
+  ],
+  "clock_landmark_0": [
+   "hatinggabi"
+  ],
+  "clock_landmark_720": [
+   "tanghali"
+  ],
+  "clock_meridiem_am": [
+   "umaga"
+  ],
+  "clock_meridiem_night": [
+   "hatinggabi"
+  ],
+  "clock_meridiem_pm": [
+   "gabi",
+   "hapon",
+   "tanghali"
+  ],
+  "daypart_afternoon_fil": [
+   "hapon"
+  ],
+  "daypart_morning_fil": [
+   "umaga"
+  ],
+  "daypart_night_fil": [
+   "gabi"
+  ],
+  "marker_after": [
+   "pagkatapos"
+  ],
+  "marker_and": [
+   "y"
+  ],
+  "marker_ang": [
+   "ang"
+  ],
+  "marker_at": [
+   "ala",
+   "alas"
+  ],
+  "marker_before": [
+   "bago"
+  ],
+  "marker_every": [
+   "tuwing"
+  ],
+  "marker_from": [
+   "mula"
+  ],
+  "marker_future": [
+   "sa"
+  ],
+  "marker_last": [
+   "nakaraan",
+   "nakaraang",
+   "noong"
+  ],
+  "marker_mag": [
+   "mag"
+  ],
+  "marker_minute_word": [
+   "minuto"
+  ],
+  "marker_na": [
+   "na"
+  ],
+  "marker_next": [
+   "susunod",
+   "susunod na"
+  ],
+  "marker_ng": [
+   "ng"
+  ],
+  "marker_past": [
+   "noon",
+   "noong"
+  ],
+  "marker_until": [
+   "hanggang"
+  ],
+  "marker_weekday_counted_ambiguous": [
+   "linggo"
+  ],
+  "marker_year_word": [
+   "taon",
+   "taong"
+  ],
+  "month_1": [
+   "enero"
+  ],
+  "month_10": [
+   "oktubre"
+  ],
+  "month_11": [
+   "nobyembre"
+  ],
+  "month_12": [
+   "disyembre"
+  ],
+  "month_2": [
+   "pebrero"
+  ],
+  "month_3": [
+   "marso"
+  ],
+  "month_4": [
+   "abril"
+  ],
+  "month_5": [
+   "mayo"
+  ],
+  "month_6": [
+   "hunyo"
+  ],
+  "month_7": [
+   "hulyo"
+  ],
+  "month_8": [
+   "agosto"
+  ],
+  "month_9": [
+   "setyembre"
+  ],
+  "named_day_-1": [
+   "kahapon"
+  ],
+  "named_day_-2": [
+   "kamakalawa"
+  ],
+  "named_day_0": [
+   "ngayon"
+  ],
+  "named_day_1": [
+   "bukas"
+  ],
+  "unit_century": [
+   "siglo"
+  ],
+  "unit_day": [
+   "araw"
+  ],
+  "unit_decade": [
+   "dekada"
+  ],
+  "unit_hour": [
+   "oras"
+  ],
+  "unit_millennium": [
+   "milenyo"
+  ],
+  "unit_minute": [
+   "minuto"
+  ],
+  "unit_month": [
+   "buwan"
+  ],
+  "unit_second": [
+   "segundo"
+  ],
+  "unit_week": [
+   "semana"
+  ],
+  "unit_year": [
+   "taon"
+  ],
+  "weekday_0": [
+   "lunes"
+  ],
+  "weekday_1": [
+   "martes"
+  ],
+  "weekday_2": [
+   "miyerkules"
+  ],
+  "weekday_3": [
+   "huwebes"
+  ],
+  "weekday_4": [
+   "biyernes"
+  ],
+  "weekday_5": [
+   "sabado"
+  ],
+  "weekday_6": [
+   "linggo"
+  ]
+ }
+}

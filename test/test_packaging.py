@@ -128,7 +128,8 @@ def test_wheel_carries_the_locale_and_holiday_data(built_wheel):
         names = zf.namelist()
     # Ratios, not exact counts: this must not need editing every time a locale
     # or a jurisdiction is added.
-    assert sum(n.endswith(".voc") for n in names) > 1000
+    assert sum(n.endswith("vocab.json") for n in names) > 30
+    assert any(n.endswith("locale/vocab.schema.json") for n in names)
     assert sum(n.endswith(".tab") for n in names) > 100
     assert sum(n.endswith("lang.json") for n in names) > 30
 

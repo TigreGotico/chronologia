@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 """All three attested Kabyle 'weekend' surfaces resolve to the coming Fri-Sat.
 
-special_weekend.voc lists taggara n ssmana / taggara n dduṛt / taggara n
+special_weekend lists taggara n ssmana / taggara n dduṛt / taggara n
 yimalas ("end of the week"), all attested by native speaker athmanemokraoui
 (#265); weekend_start=Friday (lang.json). From Tue anchor 2017-06-27 the coming
 weekend is Fri 2017-06-30 -> Sun 2017-07-02 (two days wide).

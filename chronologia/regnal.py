@@ -76,7 +76,7 @@ def _jdn(y, m, d):
     return gregorian_to_jdn(y, m, d)
 
 
-#: Registered regnal sequences, keyed by the ``regnal_<key>_<segment>.voc``
+#: Registered regnal sequences, keyed by the ``regnal_<key>_<segment>``
 #: filename convention that binds vocabulary to a segment.
 REGNAL_SEQUENCES = {
     # Modern Japanese nengō, Meiji -> Reiwa (accession dates from

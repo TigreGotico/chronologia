@@ -82,7 +82,7 @@ import datetime as _dt_r41
 def test_every_n_unit_with_trailing_placement(text, rrule):
     # "every N <unit>" carrying a trailing "on <weekday>" / "on the <Nth>" that
     # pins the day. Regression: the units branch of _recur_every dropped the
-    # placement in locales lacking a marker_on.voc, stranding the qualifier in
+    # placement in locales lacking a marker_on, stranding the qualifier in
     # the remainder while occurrences() fell back to the anchor's own weekday.
     got = extract_recurrence(text, LANG, anchor=_dt_r41.datetime(2017, 6, 28, 13, 4))
     assert got is not None

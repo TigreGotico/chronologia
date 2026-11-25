@@ -3,7 +3,7 @@
 "след седмица" ("in a week") and "преди седмица" ("a week ago") carry no
 numeral; Bulgarian has no article to fold to 1 the way English "a" does,
 so the bare unit itself must read as quantity one. The USG slot (schema
-"singular_units", from unit1_<unit>.voc) supplies only the noun's
+"singular_units", from unit1_<unit>) supplies only the noun's
 singular surfaces -- indefinite and definite, since Bulgarian marks
 number by ending rather than case -- so the fold applies exactly when
 the surface is grammatically singular; a bare PLURAL unit ("след

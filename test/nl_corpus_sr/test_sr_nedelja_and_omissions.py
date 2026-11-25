@@ -5,8 +5,8 @@ and the "nedelja"/"sedmica" week-vs-Sunday disambiguation.
 Wiktionary marks the week sense secondary/regional and sr.wikipedia treats
 "sedmica" as the unmarked week word, with the two conflicting on which is
 primary.  This locale resolves the ambiguity by CONSTRUCTION: "nedelja"
-binds only the WEEKDAY slot (weekday_6.voc), and the duration unit is
-"sedmica" alone (unit_week.voc) -- "nedelja" never enters a duration
+binds only the WEEKDAY slot (weekday_6), and the duration unit is
+"sedmica" alone (unit_week) -- "nedelja" never enters a duration
 reading.
 
 Two shapes of that ambiguity are refused outright rather than guessed:
@@ -199,7 +199,7 @@ def test_counted_unambiguous_weekday_counts_on_both_sides(phrase, expected_day):
 ])
 def test_counted_genitive_nedelje_refuses_too(phrase):
     """"nedelje" is the paucal (2-4) GENITIVE SINGULAR of "nedelja" -- the
-    same case unit_week.voc's "sedmica"/"sedmice" pair uses for a counted
+    same case unit_week's "sedmica"/"sedmice" pair uses for a counted
     week ("dve sedmice").  A count immediately before it is just as
     unable to name a specific Sunday as the nominative "nedelja" is, so it
     gets the same veto, on either side of a relative marker."""

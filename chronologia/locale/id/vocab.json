@@ -1,0 +1,298 @@
+{
+ "format_version": 1,
+ "words": {
+  "clock_fraction_30": [
+   "setengah"
+  ],
+  "clock_landmark_0": [
+   "tengah malam"
+  ],
+  "clock_landmark_720": [
+   "tengah hari"
+  ],
+  "clock_meridiem_am": [
+   "pagi"
+  ],
+  "clock_meridiem_night": [
+   "malam"
+  ],
+  "clock_meridiem_pm": [
+   "sore"
+  ],
+  "clock_zone_0": [
+   "gmt",
+   "utc"
+  ],
+  "daypart_afternoon_id": [
+   "siang"
+  ],
+  "daypart_evening_id": [
+   "sore"
+  ],
+  "daypart_morning_id": [
+   "pagi"
+  ],
+  "daypart_night_id": [
+   "malam"
+  ],
+  "marker_ad": [
+   "m"
+  ],
+  "marker_after": [
+   "sesudah",
+   "setelah"
+  ],
+  "marker_and": [
+   "dan"
+  ],
+  "marker_at": [
+   "jam",
+   "pukul"
+  ],
+  "marker_bc": [
+   "sm"
+  ],
+  "marker_before": [
+   "sebelum"
+  ],
+  "marker_between": [
+   "antara"
+  ],
+  "marker_business": [
+   "kerja"
+  ],
+  "marker_daypart_future": [
+   "nanti"
+  ],
+  "marker_daypart_past": [
+   "tadi"
+  ],
+  "marker_every": [
+   "setiap",
+   "tiap"
+  ],
+  "marker_freq_daily": [
+   "harian"
+  ],
+  "marker_freq_monthly": [
+   "bulanan"
+  ],
+  "marker_freq_weekly": [
+   "mingguan"
+  ],
+  "marker_freq_yearly": [
+   "tahunan"
+  ],
+  "marker_from": [
+   "dari"
+  ],
+  "marker_future": [
+   "dalam",
+   "lagi"
+  ],
+  "marker_half": [
+   "setengah"
+  ],
+  "marker_last": [
+   "lalu"
+  ],
+  "marker_next": [
+   "depan"
+  ],
+  "marker_ordinal_prefix": [
+   "ke"
+  ],
+  "marker_past": [
+   "lalu",
+   "yang lalu"
+  ],
+  "marker_q": [
+   "q"
+  ],
+  "marker_quarter_word": [
+   "kuartal",
+   "triwulan"
+  ],
+  "marker_recur_for": [
+   "selama"
+  ],
+  "marker_since": [
+   "sejak"
+  ],
+  "marker_this": [
+   "ini"
+  ],
+  "marker_until": [
+   "hingga",
+   "sampai"
+  ],
+  "marker_week_num": [
+   "minggu",
+   "pekan"
+  ],
+  "marker_weekof": [
+   "minggu",
+   "pekan"
+  ],
+  "month_1": [
+   "januari"
+  ],
+  "month_10": [
+   "oktober"
+  ],
+  "month_11": [
+   "november"
+  ],
+  "month_12": [
+   "desember"
+  ],
+  "month_2": [
+   "februari"
+  ],
+  "month_3": [
+   "maret"
+  ],
+  "month_4": [
+   "april"
+  ],
+  "month_5": [
+   "mei"
+  ],
+  "month_6": [
+   "juni"
+  ],
+  "month_7": [
+   "juli"
+  ],
+  "month_8": [
+   "agustus"
+  ],
+  "month_9": [
+   "september"
+  ],
+  "months": [
+   "agustus",
+   "april",
+   "desember",
+   "februari",
+   "januari",
+   "juli",
+   "juni",
+   "maret",
+   "mei",
+   "november",
+   "oktober",
+   "september"
+  ],
+  "named_day_-1": [
+   "kemarin"
+  ],
+  "named_day_-2": [
+   "kemarin dahulu",
+   "kemarin dulu",
+   "kemarin lusa"
+  ],
+  "named_day_0": [
+   "hari ini"
+  ],
+  "named_day_1": [
+   "besok"
+  ],
+  "named_day_2": [
+   "lusa"
+  ],
+  "period_part_early": [
+   "awal"
+  ],
+  "period_part_late": [
+   "akhir"
+  ],
+  "period_part_mid": [
+   "pertengahan"
+  ],
+  "scale_1000": [
+   "ribu"
+  ],
+  "scope_unit_century": [
+   "abad"
+  ],
+  "scope_unit_decade": [
+   "dasawarsa",
+   "dekade"
+  ],
+  "season_fall": [
+   "musim gugur"
+  ],
+  "season_spring": [
+   "musim semi"
+  ],
+  "season_summer": [
+   "musim panas"
+  ],
+  "season_winter": [
+   "musim dingin"
+  ],
+  "special_weekend": [
+   "akhir minggu",
+   "akhir pekan"
+  ],
+  "unit_century": [
+   "abad"
+  ],
+  "unit_day": [
+   "hari"
+  ],
+  "unit_decade": [
+   "dasawarsa",
+   "dekade"
+  ],
+  "unit_hour": [
+   "jam"
+  ],
+  "unit_minute": [
+   "menit"
+  ],
+  "unit_month": [
+   "bulan"
+  ],
+  "unit_second": [
+   "detik"
+  ],
+  "unit_week": [
+   "minggu",
+   "pekan"
+  ],
+  "unit_year": [
+   "tahun"
+  ],
+  "weekday_0": [
+   "hari senin",
+   "senin"
+  ],
+  "weekday_1": [
+   "hari selasa",
+   "selasa"
+  ],
+  "weekday_2": [
+   "hari rabu",
+   "rabu"
+  ],
+  "weekday_3": [
+   "hari kamis",
+   "kamis"
+  ],
+  "weekday_4": [
+   "hari jumat",
+   "jumat"
+  ],
+  "weekday_5": [
+   "hari sabtu",
+   "sabtu"
+  ],
+  "weekday_6": [
+   "ahad",
+   "hari ahad",
+   "hari minggu"
+  ]
+ }
+}

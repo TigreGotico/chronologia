@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 """The word-hour clock frame "a les <hour>" combines two separate
-marker_at.voc tokens: the bare preposition "a" and the agreeing article
+marker_at tokens: the bare preposition "a" and the agreeing article
 "les", which ``clock_time``'s bare-HOUR order treats as an alternative
 at-marker on its own.  With only a single ``at`` slot, the match starts
 at the article and strands the leading "a" as remainder.

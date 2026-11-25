@@ -1,0 +1,304 @@
+{
+ "format_version": 1,
+ "words": {
+  "clock_dir_past": [
+   "geçe"
+  ],
+  "clock_dir_to": [
+   "kala"
+  ],
+  "clock_fraction_15": [
+   "çeyrek"
+  ],
+  "clock_fraction_30": [
+   "buçuk"
+  ],
+  "clock_landmark_0": [
+   "gece yarısı"
+  ],
+  "clock_landmark_720": [
+   "öğle",
+   "öğlen"
+  ],
+  "clock_meridiem_am": [
+   "sabah"
+  ],
+  "clock_meridiem_pm": [
+   "akşam",
+   "öğleden sonra"
+  ],
+  "clock_zone_0": [
+   "gmt",
+   "utc"
+  ],
+  "daypart_evening_tr": [
+   "akşam",
+   "akşamı"
+  ],
+  "daypart_morning_tr": [
+   "sabah",
+   "sabahı"
+  ],
+  "daypart_night_tr": [
+   "gece"
+  ],
+  "marker_ad": [
+   "is",
+   "ms"
+  ],
+  "marker_and": [
+   "ile",
+   "ve"
+  ],
+  "marker_at": [
+   "saat"
+  ],
+  "marker_bc": [
+   "iö",
+   "mö"
+  ],
+  "marker_between_post": [
+   "arası",
+   "arasında"
+  ],
+  "marker_business": [
+   "işgünleri",
+   "işgünü"
+  ],
+  "marker_every": [
+   "her"
+  ],
+  "marker_freq_daily": [
+   "günlük"
+  ],
+  "marker_freq_monthly": [
+   "aylık"
+  ],
+  "marker_freq_weekly": [
+   "haftalık"
+  ],
+  "marker_freq_yearly": [
+   "yıllık"
+  ],
+  "marker_future": [
+   "sonra"
+  ],
+  "marker_half": [
+   "yarı",
+   "yarım",
+   "yarısı"
+  ],
+  "marker_last": [
+   "geçen",
+   "geçtiğimiz"
+  ],
+  "marker_next": [
+   "gelecek",
+   "gelen",
+   "önümüzdeki"
+  ],
+  "marker_past": [
+   "önce"
+  ],
+  "marker_poss": [
+   "in",
+   "nin",
+   "nun",
+   "nün",
+   "nın",
+   "un",
+   "ün",
+   "ın"
+  ],
+  "marker_q": [
+   "q"
+  ],
+  "marker_quarter_word": [
+   "çeyrek"
+  ],
+  "marker_recur_weekday_word": [
+   "günleri"
+  ],
+  "marker_this": [
+   "bu"
+  ],
+  "marker_until": [
+   "kadar"
+  ],
+  "marker_week_num": [
+   "hafta"
+  ],
+  "marker_weekday_word": [
+   "günü"
+  ],
+  "marker_year_word": [
+   "yıl",
+   "yılı",
+   "yılın",
+   "yılının"
+  ],
+  "month_1": [
+   "ocak"
+  ],
+  "month_10": [
+   "ekim"
+  ],
+  "month_11": [
+   "kasım"
+  ],
+  "month_12": [
+   "aralık"
+  ],
+  "month_2": [
+   "şubat"
+  ],
+  "month_3": [
+   "mart"
+  ],
+  "month_4": [
+   "nisan"
+  ],
+  "month_5": [
+   "mayıs"
+  ],
+  "month_6": [
+   "haziran"
+  ],
+  "month_7": [
+   "temmuz"
+  ],
+  "month_8": [
+   "ağustos"
+  ],
+  "month_9": [
+   "eylül"
+  ],
+  "months": [
+   "aralık",
+   "ağustos",
+   "ekim",
+   "eylül",
+   "haziran",
+   "kasım",
+   "mart",
+   "mayıs",
+   "nisan",
+   "ocak",
+   "temmuz",
+   "şubat"
+  ],
+  "named_day_-1": [
+   "dün"
+  ],
+  "named_day_-2": [
+   "evvelki gün",
+   "önceki gün"
+  ],
+  "named_day_0": [
+   "bugün"
+  ],
+  "named_day_1": [
+   "yarın"
+  ],
+  "named_day_2": [
+   "ertesi gün",
+   "öbür gün"
+  ],
+  "period_part_early": [
+   "baş",
+   "başlarında",
+   "başı",
+   "başında"
+  ],
+  "period_part_late": [
+   "son",
+   "sonlarında",
+   "sonu",
+   "sonunda"
+  ],
+  "period_part_mid": [
+   "orta",
+   "ortalarında",
+   "ortası",
+   "ortasında"
+  ],
+  "scale_1000": [
+   "bin"
+  ],
+  "scope_unit_century": [
+   "yüzyıl",
+   "yüzyıllar"
+  ],
+  "season_fall": [
+   "güz",
+   "güzü",
+   "sonbahar",
+   "sonbaharı"
+  ],
+  "season_spring": [
+   "bahar",
+   "baharı",
+   "ilkbahar",
+   "ilkbaharı"
+  ],
+  "season_summer": [
+   "yaz",
+   "yazı"
+  ],
+  "season_winter": [
+   "kış",
+   "kışı"
+  ],
+  "special_weekend": [
+   "hafta sonu",
+   "haftasonu"
+  ],
+  "unit_century": [
+   "yüzyıl",
+   "yüzyıllar"
+  ],
+  "unit_day": [
+   "gün"
+  ],
+  "unit_hour": [
+   "saat"
+  ],
+  "unit_minute": [
+   "dakika"
+  ],
+  "unit_month": [
+   "ay"
+  ],
+  "unit_second": [
+   "saniye"
+  ],
+  "unit_week": [
+   "hafta"
+  ],
+  "unit_year": [
+   "sene",
+   "yıl"
+  ],
+  "weekday_0": [
+   "pazartesi"
+  ],
+  "weekday_1": [
+   "salı"
+  ],
+  "weekday_2": [
+   "çarşamba"
+  ],
+  "weekday_3": [
+   "perşembe"
+  ],
+  "weekday_4": [
+   "cuma"
+  ],
+  "weekday_5": [
+   "cumartesi"
+  ],
+  "weekday_6": [
+   "pazar"
+  ]
+ }
+}

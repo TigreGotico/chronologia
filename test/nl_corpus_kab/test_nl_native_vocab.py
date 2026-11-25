@@ -3,14 +3,14 @@
 
 The vocabulary in this file comes from a native Kabyle speaker
 (athmanemokraoui), who supplied seven date vocabulary files. His forms are
-the first lines of ``locale/kab/months.voc``, ``unit_day.voc``,
-``unit_year.voc``, ``season_winter.voc``, ``season_spring.voc``,
-``era_year_ref.voc`` and ``marker_last.voc``.
+the first lines of ``locale/kab/months``, ``unit_day``,
+``unit_year``, ``season_winter``, ``season_spring``,
+``era_year_ref`` and ``marker_last``.
 
 Three of his forms were new to the locale:
 
 * ``duǧembeṛ``, a second spelling of December beside ``dujembeṛ``. Before it
-  was added to ``month_12.voc`` and ``month_berber_12.voc`` both "duǧembeṛ
+  was added to ``month_12`` and ``month_berber_12`` both "duǧembeṛ
   25" and "25 duǧembeṛ" returned ``None``. The pair is kept the way a
   locale keeps any two spellings of one month: both surfaces bind the same
   month number.
@@ -29,7 +29,7 @@ locale declares no postposed ``rel_period`` order. Adding one is a grammar
 change that needs a native reader, so it is left to a follow-up and is not
 asserted here.
 
-``era_year_ref.voc`` is read by the eras subsystem, not by the span loader,
+``era_year_ref`` is read by the eras subsystem, not by the span loader,
 so it is carried as he wrote it and only its file content is asserted.
 
 Gold from independent arithmetic against anchor Tue 2017-06-27.
@@ -117,16 +117,16 @@ def test_last_day_is_the_day_before_the_anchor(marker):
 
 
 # --------------------------------------------------------------------- #
-# era_year_ref.voc: carried as supplied, read by the eras subsystem
+# era_year_ref: carried as supplied, read by the eras subsystem
 # --------------------------------------------------------------------- #
 
-def test_era_year_ref_file_carries_his_two_surfaces():
+def test_era_year_ref_carries_his_two_surfaces():
     from pathlib import Path
 
     import chronologia
 
-    path = (Path(chronologia.__file__).parent / "locale" / LANG
-            / "era_year_ref.voc")
-    lines = [ln.strip() for ln in
-             path.read_text(encoding="utf-8").splitlines() if ln.strip()]
-    assert lines[:2] == ["aseggas n", "deg useggas n"]
+    import json
+
+    path = Path(chronologia.__file__).parent / "locale" / LANG / "vocab.json"
+    words = json.loads(path.read_text(encoding="utf-8"))["words"]["era_year_ref"]
+    assert {"aseggas n", "deg useggas n"} <= set(words)

@@ -1,7 +1,7 @@
 """Basque abbreviated month names (CLDR 47 ``months.format.abbreviated``).
 
 Basque could not read an abbreviated month at all before this file's
-companion fix to ``locale/eu/month_*.voc`` -- ``extract_timespan("11 urt",
+companion fix to ``locale/eu/month_*`` -- ``extract_timespan("11 urt",
 "eu", anchor=...)`` returned ``None`` for all twelve abbreviations.  CLDR
 ships the abbreviated surface with a trailing dot ("urt."); the tokenizer
 strips a trailing dot before vocabulary matching, so both the dotted and

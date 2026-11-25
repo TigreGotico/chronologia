@@ -1,0 +1,574 @@
+{
+ "format_version": 1,
+ "words": {
+  "clock_dir_past": [
+   "po"
+  ],
+  "clock_dir_to": [
+   "za"
+  ],
+  "clock_fraction_15": [
+   "kwadrans"
+  ],
+  "clock_fraction_30": [
+   "wpół"
+  ],
+  "clock_landmark_0": [
+   "o północy",
+   "północ"
+  ],
+  "clock_landmark_720": [
+   "południe"
+  ],
+  "clock_meridiem_am": [
+   "rano"
+  ],
+  "clock_meridiem_night": [
+   "w nocy"
+  ],
+  "clock_meridiem_pm": [
+   "wieczorem",
+   "wieczór"
+  ],
+  "clock_zone_0": [
+   "gmt",
+   "utc"
+  ],
+  "daypart_afternoon_pl": [
+   "po południu",
+   "popołudnie",
+   "popołudniu"
+  ],
+  "daypart_evening_pl": [
+   "wieczorem"
+  ],
+  "daypart_morning_pl": [
+   "rano"
+  ],
+  "daypart_night_pl": [
+   "noc",
+   "nocy",
+   "w nocy"
+  ],
+  "decade_word_20": [
+   "dwudzieste"
+  ],
+  "decade_word_30": [
+   "trzydzieste"
+  ],
+  "decade_word_40": [
+   "czterdzieste"
+  ],
+  "decade_word_50": [
+   "pięćdziesiąte"
+  ],
+  "decade_word_60": [
+   "sześćdziesiąte"
+  ],
+  "decade_word_70": [
+   "siedemdziesiąte"
+  ],
+  "decade_word_80": [
+   "osiemdziesiąte"
+  ],
+  "decade_word_90": [
+   "dziewięćdziesiąte"
+  ],
+  "marker_ad": [
+   "n. e.",
+   "n.e.",
+   "naszej ery"
+  ],
+  "marker_after": [
+   "po"
+  ],
+  "marker_and": [
+   "a",
+   "i"
+  ],
+  "marker_at": [
+   "o",
+   "w",
+   "we"
+  ],
+  "marker_bc": [
+   "p. n. e.",
+   "p.n.e.",
+   "przed naszą erą"
+  ],
+  "marker_before": [
+   "przed"
+  ],
+  "marker_between": [
+   "między"
+  ],
+  "marker_business": [
+   "robocze",
+   "roboczy",
+   "roboczych"
+  ],
+  "marker_during": [
+   "w",
+   "we"
+  ],
+  "marker_every": [
+   "co",
+   "każde",
+   "każdy",
+   "każdą"
+  ],
+  "marker_freq_daily": [
+   "codziennie"
+  ],
+  "marker_freq_monthly": [
+   "miesięcznie"
+  ],
+  "marker_freq_weekly": [
+   "tygodniowo"
+  ],
+  "marker_freq_yearly": [
+   "rocznie"
+  ],
+  "marker_from": [
+   "od"
+  ],
+  "marker_future": [
+   "za"
+  ],
+  "marker_half": [
+   "połowa",
+   "pół"
+  ],
+  "marker_in": [
+   "za"
+  ],
+  "marker_indef": [
+   "jeden",
+   "jedna"
+  ],
+  "marker_last": [
+   "ostatni",
+   "ostatnia",
+   "ostatnich",
+   "ostatnie",
+   "ostatniego",
+   "ostatniej",
+   "ostatniemu",
+   "ostatnim",
+   "ostatnimi",
+   "ostatnią",
+   "poprzedni",
+   "poprzednia",
+   "poprzednich",
+   "poprzednie",
+   "poprzedniego",
+   "poprzedniej",
+   "poprzedniemu",
+   "poprzednim",
+   "poprzednimi",
+   "poprzednią",
+   "ubiegła",
+   "ubiegłe",
+   "ubiegłego",
+   "ubiegłej",
+   "ubiegłemu",
+   "ubiegły",
+   "ubiegłych",
+   "ubiegłym",
+   "ubiegłymi",
+   "ubiegłą",
+   "zeszła",
+   "zeszłe",
+   "zeszłego",
+   "zeszłej",
+   "zeszłemu",
+   "zeszły",
+   "zeszłych",
+   "zeszłym",
+   "zeszłymi",
+   "zeszłą"
+  ],
+  "marker_next": [
+   "następna",
+   "następne",
+   "następnego",
+   "następnej",
+   "następnemu",
+   "następny",
+   "następnych",
+   "następnym",
+   "następnymi",
+   "następną",
+   "przyszła",
+   "przyszłe",
+   "przyszłego",
+   "przyszłej",
+   "przyszłemu",
+   "przyszły",
+   "przyszłych",
+   "przyszłym",
+   "przyszłymi",
+   "przyszłą"
+  ],
+  "marker_of": [
+   "w",
+   "we"
+  ],
+  "marker_on": [
+   "w",
+   "we"
+  ],
+  "marker_ordlast": [
+   "ostatni",
+   "ostatnia",
+   "ostatnich",
+   "ostatnie",
+   "ostatniego",
+   "ostatniej",
+   "ostatniemu",
+   "ostatnim",
+   "ostatnimi",
+   "ostatnią"
+  ],
+  "marker_past": [
+   "temu"
+  ],
+  "marker_q": [
+   "q"
+  ],
+  "marker_quarter_word": [
+   "kwartale",
+   "kwartał",
+   "kwartału",
+   "kwartały"
+  ],
+  "marker_recur_for": [
+   "przez"
+  ],
+  "marker_since": [
+   "od"
+  ],
+  "marker_this": [
+   "ta",
+   "te",
+   "tego",
+   "tej",
+   "ten",
+   "to",
+   "tych",
+   "tym",
+   "tymi",
+   "tą",
+   "tę"
+  ],
+  "marker_to": [
+   "do"
+  ],
+  "marker_until": [
+   "do"
+  ],
+  "marker_week_num": [
+   "tydzień",
+   "tygodnia"
+  ],
+  "marker_weekof": [
+   "tydzień od",
+   "tydzień około",
+   "tydzień z"
+  ],
+  "marker_year_plural": [
+   "lata"
+  ],
+  "marker_year_word": [
+   "rok",
+   "roku"
+  ],
+  "month_1": [
+   "styczeń",
+   "stycznia",
+   "styczniem",
+   "styczniu"
+  ],
+  "month_10": [
+   "październik",
+   "października",
+   "październikiem",
+   "październiku"
+  ],
+  "month_11": [
+   "listopad",
+   "listopada",
+   "listopadem",
+   "listopadzie"
+  ],
+  "month_12": [
+   "grudnia",
+   "grudniem",
+   "grudniu",
+   "grudzień"
+  ],
+  "month_2": [
+   "lutego",
+   "luty",
+   "lutym"
+  ],
+  "month_3": [
+   "marca",
+   "marcem",
+   "marcu",
+   "marzec"
+  ],
+  "month_4": [
+   "kwiecień",
+   "kwietnia",
+   "kwietniem",
+   "kwietniu"
+  ],
+  "month_5": [
+   "maj",
+   "maja",
+   "majem",
+   "maju"
+  ],
+  "month_6": [
+   "czerwca",
+   "czerwcem",
+   "czerwcu",
+   "czerwiec"
+  ],
+  "month_7": [
+   "lipca",
+   "lipcem",
+   "lipcu",
+   "lipiec"
+  ],
+  "month_8": [
+   "sierpień",
+   "sierpnia",
+   "sierpniem",
+   "sierpniu"
+  ],
+  "month_9": [
+   "wrzesień",
+   "września",
+   "wrześniem",
+   "wrześniu"
+  ],
+  "named_day_-1": [
+   "wczoraj"
+  ],
+  "named_day_-2": [
+   "przedwczoraj"
+  ],
+  "named_day_0": [
+   "dzisiaj",
+   "dziś"
+  ],
+  "named_day_1": [
+   "jutro"
+  ],
+  "named_day_2": [
+   "pojutrze"
+  ],
+  "period_part_early": [
+   "początek",
+   "początku"
+  ],
+  "period_part_late": [
+   "koniec",
+   "końca"
+  ],
+  "period_part_mid": [
+   "połowa",
+   "połowie",
+   "środek"
+  ],
+  "scale_1000": [
+   "tysiąc",
+   "tysiące",
+   "tysięcy"
+  ],
+  "scope_unit_century": [
+   "wiek",
+   "wieku"
+  ],
+  "scope_unit_decade": [
+   "dekada"
+  ],
+  "season_fall": [
+   "jesieni",
+   "jesienią",
+   "jesień"
+  ],
+  "season_spring": [
+   "wiosna",
+   "wiosny",
+   "wiosną"
+  ],
+  "season_summer": [
+   "latem",
+   "lato"
+  ],
+  "season_winter": [
+   "zima",
+   "zimy",
+   "zimą"
+  ],
+  "special_weekend": [
+   "weekend"
+  ],
+  "unit1_century": [
+   "wiek",
+   "wieku"
+  ],
+  "unit1_day": [
+   "dnia",
+   "dzień"
+  ],
+  "unit1_decade": [
+   "dekada",
+   "dziesięciolecie"
+  ],
+  "unit1_hour": [
+   "godzina",
+   "godzinę"
+  ],
+  "unit1_minute": [
+   "minuta",
+   "minutę"
+  ],
+  "unit1_month": [
+   "miesiąc",
+   "miesiąca",
+   "miesiącem",
+   "miesiącowi",
+   "miesiącu"
+  ],
+  "unit1_second": [
+   "sekunda",
+   "sekundę"
+  ],
+  "unit1_week": [
+   "tydzień",
+   "tygodnia",
+   "tygodniem",
+   "tygodniowi",
+   "tygodniu"
+  ],
+  "unit1_year": [
+   "rok",
+   "rokiem",
+   "rokowi",
+   "roku"
+  ],
+  "unit_century": [
+   "wiek",
+   "wieki",
+   "wieku"
+  ],
+  "unit_day": [
+   "dni",
+   "dnia",
+   "dniach",
+   "dniami",
+   "dzień"
+  ],
+  "unit_decade": [
+   "dekad",
+   "dekada",
+   "dekady",
+   "dziesięciolecie"
+  ],
+  "unit_hour": [
+   "godzin",
+   "godzina",
+   "godziny",
+   "godzinę"
+  ],
+  "unit_minute": [
+   "minut",
+   "minuta",
+   "minuty",
+   "minutę"
+  ],
+  "unit_month": [
+   "miesiąc",
+   "miesiąca",
+   "miesiącach",
+   "miesiącami",
+   "miesiące",
+   "miesiącem",
+   "miesiącom",
+   "miesiącowi",
+   "miesiącu",
+   "miesięcy"
+  ],
+  "unit_second": [
+   "sekund",
+   "sekunda",
+   "sekundy",
+   "sekundę"
+  ],
+  "unit_week": [
+   "tydzień",
+   "tygodni",
+   "tygodnia",
+   "tygodniach",
+   "tygodniami",
+   "tygodnie",
+   "tygodniem",
+   "tygodniom",
+   "tygodniowi",
+   "tygodniu"
+  ],
+  "unit_year": [
+   "lat",
+   "lata",
+   "latach",
+   "latami",
+   "latom",
+   "rok",
+   "rokiem",
+   "rokowi",
+   "roku"
+  ],
+  "weekday_0": [
+   "poniedziałek",
+   "poniedziałkiem",
+   "poniedziałku"
+  ],
+  "weekday_1": [
+   "wtorek",
+   "wtorkiem",
+   "wtorku"
+  ],
+  "weekday_2": [
+   "środa",
+   "środy",
+   "środą",
+   "środę"
+  ],
+  "weekday_3": [
+   "czwartek",
+   "czwartkiem",
+   "czwartku"
+  ],
+  "weekday_4": [
+   "piątek",
+   "piątkiem",
+   "piątku"
+  ],
+  "weekday_5": [
+   "sobota",
+   "soboty",
+   "sobotą",
+   "sobotę"
+  ],
+  "weekday_6": [
+   "niedziela",
+   "niedzieli",
+   "niedzielą",
+   "niedzielę"
+  ]
+ }
+}

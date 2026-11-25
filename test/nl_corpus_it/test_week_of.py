@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 """The "week of <date>" construction: widen a date to its calendar week.
 
-The locale carries a "week of" marker (marker_weekof.voc); the engine
+The locale carries a "week of" marker (marker_weekof); the engine
 resolves the inner date normally, then widens it to the seven-day week
 (week_start = monday for these locales) that contains it.  Expected weeks
 are derived by independent Python date arithmetic, never from the parser.

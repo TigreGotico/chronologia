@@ -1,0 +1,439 @@
+{
+ "format_version": 1,
+ "words": {
+  "clock_dir_past": [
+   "yli"
+  ],
+  "clock_dir_to": [
+   "vailla",
+   "vaille"
+  ],
+  "clock_fraction_15": [
+   "vartin",
+   "vartti",
+   "varttia"
+  ],
+  "clock_fraction_30": [
+   "puoli"
+  ],
+  "clock_landmark_0": [
+   "keskiyö",
+   "keskiyöllä"
+  ],
+  "clock_landmark_720": [
+   "keskipäivä",
+   "keskipäivällä",
+   "puolenpäivän"
+  ],
+  "clock_meridiem_am": [
+   "aamulla",
+   "aamupäivällä",
+   "ap."
+  ],
+  "clock_meridiem_night": [
+   "yöllä"
+  ],
+  "clock_meridiem_pm": [
+   "illalla",
+   "iltapäivällä",
+   "ip."
+  ],
+  "clock_zone_0": [
+   "gmt",
+   "utc"
+  ],
+  "daypart_aamu_fi": [
+   "aamulla"
+  ],
+  "daypart_aamupaiva_fi": [
+   "aamupäivällä"
+  ],
+  "daypart_ilta_fi": [
+   "illalla"
+  ],
+  "daypart_iltapaiva_fi": [
+   "iltapäivällä"
+  ],
+  "daypart_yo_fi": [
+   "yöllä"
+  ],
+  "marker_ad": [
+   "j.kr.",
+   "jaa.",
+   "jkr.",
+   "jälkeen kristuksen"
+  ],
+  "marker_after": [
+   "jälkeen"
+  ],
+  "marker_ago": [
+   "sitten"
+  ],
+  "marker_and": [
+   "ja"
+  ],
+  "marker_at": [
+   "kello",
+   "klo"
+  ],
+  "marker_bc": [
+   "e.kr.",
+   "eaa.",
+   "ekr.",
+   "ennen kristusta"
+  ],
+  "marker_before": [
+   "ennen"
+  ],
+  "marker_between": [
+   "välillä"
+  ],
+  "marker_between_post": [
+   "välillä",
+   "välisenä aikana"
+  ],
+  "marker_business": [
+   "arkipäivä",
+   "arkipäivän",
+   "arkipäivää",
+   "työpäivä",
+   "työpäivän",
+   "työpäivää"
+  ],
+  "marker_during": [
+   "aikana"
+  ],
+  "marker_every": [
+   "joka",
+   "jokainen"
+  ],
+  "marker_freq_daily": [
+   "päivittäin"
+  ],
+  "marker_freq_monthly": [
+   "kuukausittain"
+  ],
+  "marker_freq_weekly": [
+   "viikoittain"
+  ],
+  "marker_freq_yearly": [
+   "vuosittain"
+  ],
+  "marker_from": [
+   "alkaen"
+  ],
+  "marker_future": [
+   "kuluttua",
+   "päähän",
+   "päästä"
+  ],
+  "marker_half": [
+   "puolisko"
+  ],
+  "marker_hours": [
+   "tuntia"
+  ],
+  "marker_in": [
+   "kuluttua",
+   "päästä"
+  ],
+  "marker_indef": [
+   "yhden",
+   "yksi"
+  ],
+  "marker_last": [
+   "edellinen",
+   "edellisenä",
+   "mennyt",
+   "viime"
+  ],
+  "marker_month_word": [
+   "kuukausi"
+  ],
+  "marker_next": [
+   "ensi",
+   "seuraava",
+   "seuraavana",
+   "tuleva",
+   "tulevana"
+  ],
+  "marker_oclock": [
+   "kello",
+   "klo"
+  ],
+  "marker_past": [
+   "sitten"
+  ],
+  "marker_present": [
+   "nyt"
+  ],
+  "marker_q": [
+   "q"
+  ],
+  "marker_quarter_word": [
+   "neljänneksellä",
+   "neljänneksenä",
+   "neljännes",
+   "neljännesvuonna",
+   "vuosineljänneksellä",
+   "vuosineljännes"
+  ],
+  "marker_this": [
+   "tällä",
+   "tämä",
+   "tänä",
+   "tässä"
+  ],
+  "marker_to": [
+   "asti",
+   "saakka"
+  ],
+  "marker_until": [
+   "asti",
+   "saakka"
+  ],
+  "marker_week_num": [
+   "viikko",
+   "viikolla",
+   "viikon"
+  ],
+  "marker_weekof": [
+   "viikko",
+   "viikolla"
+  ],
+  "marker_year_word": [
+   "vuoden",
+   "vuonna",
+   "vuosi",
+   "vuotta"
+  ],
+  "month_1": [
+   "tammikuu",
+   "tammikuun",
+   "tammikuussa",
+   "tammikuuta"
+  ],
+  "month_10": [
+   "lokakuu",
+   "lokakuun",
+   "lokakuussa",
+   "lokakuuta"
+  ],
+  "month_11": [
+   "marraskuu",
+   "marraskuun",
+   "marraskuussa",
+   "marraskuuta"
+  ],
+  "month_12": [
+   "joulukuu",
+   "joulukuun",
+   "joulukuussa",
+   "joulukuuta"
+  ],
+  "month_2": [
+   "helmikuu",
+   "helmikuun",
+   "helmikuussa",
+   "helmikuuta"
+  ],
+  "month_3": [
+   "maaliskuu",
+   "maaliskuun",
+   "maaliskuussa",
+   "maaliskuuta"
+  ],
+  "month_4": [
+   "huhtikuu",
+   "huhtikuun",
+   "huhtikuussa",
+   "huhtikuuta"
+  ],
+  "month_5": [
+   "toukokuu",
+   "toukokuun",
+   "toukokuussa",
+   "toukokuuta"
+  ],
+  "month_6": [
+   "kesäkuu",
+   "kesäkuun",
+   "kesäkuussa",
+   "kesäkuuta"
+  ],
+  "month_7": [
+   "heinäkuu",
+   "heinäkuun",
+   "heinäkuussa",
+   "heinäkuuta"
+  ],
+  "month_8": [
+   "elokuu",
+   "elokuun",
+   "elokuussa",
+   "elokuuta"
+  ],
+  "month_9": [
+   "syyskuu",
+   "syyskuun",
+   "syyskuussa",
+   "syyskuuta"
+  ],
+  "named_day_-1": [
+   "eilen"
+  ],
+  "named_day_-2": [
+   "toissa päivänä",
+   "toissapäivänä"
+  ],
+  "named_day_0": [
+   "tänään"
+  ],
+  "named_day_1": [
+   "huomenna"
+  ],
+  "named_day_2": [
+   "ylihuomenna"
+  ],
+  "period_part_early": [
+   "alku",
+   "alkupuolella",
+   "alkupuoli",
+   "alussa"
+  ],
+  "period_part_late": [
+   "loppu",
+   "loppupuolella",
+   "loppupuoli",
+   "lopussa"
+  ],
+  "period_part_mid": [
+   "keskivaihe",
+   "keskivaiheilla",
+   "puoliväli",
+   "puolivälissä"
+  ],
+  "scale_1000": [
+   "tuhat",
+   "tuhatta"
+  ],
+  "scale_1000000": [
+   "miljoona",
+   "miljoonaa"
+  ],
+  "scale_1000000000": [
+   "miljardi",
+   "miljardia"
+  ],
+  "scope_unit_century": [
+   "vuosisadan",
+   "vuosisata"
+  ],
+  "scope_unit_decade": [
+   "vuosikymmen"
+  ],
+  "scope_unit_millennium": [
+   "vuosituhat"
+  ],
+  "season_fall": [
+   "syksy",
+   "syksyllä"
+  ],
+  "season_spring": [
+   "kevät",
+   "keväällä"
+  ],
+  "season_summer": [
+   "kesä",
+   "kesällä"
+  ],
+  "season_winter": [
+   "talvella",
+   "talvi"
+  ],
+  "special_weekend": [
+   "viikonloppu",
+   "viikonloppuna"
+  ],
+  "unit_century": [
+   "vuosisadan",
+   "vuosisata",
+   "vuosisataa"
+  ],
+  "unit_day": [
+   "päivä",
+   "päiväksi",
+   "päivän",
+   "päivää"
+  ],
+  "unit_decade": [
+   "vuosikymmen",
+   "vuosikymmentä"
+  ],
+  "unit_hour": [
+   "tunnin",
+   "tunti",
+   "tuntia"
+  ],
+  "unit_millennium": [
+   "vuosituhannen",
+   "vuosituhat"
+  ],
+  "unit_minute": [
+   "minuutin",
+   "minuutti",
+   "minuuttia"
+  ],
+  "unit_month": [
+   "kuukauden",
+   "kuukausi",
+   "kuukautta",
+   "kuussa"
+  ],
+  "unit_second": [
+   "sekunnin",
+   "sekunti",
+   "sekuntia"
+  ],
+  "unit_week": [
+   "viikko",
+   "viikkoa",
+   "viikolla",
+   "viikon"
+  ],
+  "unit_year": [
+   "vuoden",
+   "vuonna",
+   "vuosi",
+   "vuotta"
+  ],
+  "weekday_0": [
+   "maanantai",
+   "maanantaina"
+  ],
+  "weekday_1": [
+   "tiistai",
+   "tiistaina"
+  ],
+  "weekday_2": [
+   "keskiviikko",
+   "keskiviikkona"
+  ],
+  "weekday_3": [
+   "torstai",
+   "torstaina"
+  ],
+  "weekday_4": [
+   "perjantai",
+   "perjantaina"
+  ],
+  "weekday_5": [
+   "lauantai",
+   "lauantaina"
+  ],
+  "weekday_6": [
+   "sunnuntai",
+   "sunnuntaina"
+  ]
+ }
+}

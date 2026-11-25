@@ -7,7 +7,7 @@ on Mondays, "flugas ... lunde" -- flies ... on Mondays).
 Source: en.wiktionary.org, "lundo".
 
 The two BARE (unmarked) suffixes are gated to DIFFERENT vocabulary: only the
-accusative forms are shipped in ``weekday_N.voc``, feeding the
+accusative forms are shipped in ``weekday_N``, feeding the
 single-occurrence ``weekday_ref``/``calendar_date`` constructions.  The
 adverbial forms are never added to that vocabulary at all -- adding them
 would let a bare "lunde" (habitual, no occurrence implied) resolve to a
@@ -24,7 +24,7 @@ every day, see test_eo_recurrence.py), and the combination names a WEEKLY
 recurrence ("ĉiun lundon" -- every Monday), never a single date. The
 adverbial "-e" form is still never wired to any recurrence surface: "ĉiu
 lunde"/"lunde" alone refuse, mirroring the Hindi locale's documented
-refusal of a bare recurring weekday (``locale/hi/marker_weekday_word.voc``)
+refusal of a bare recurring weekday (``locale/hi/marker_weekday_word``)
 -- Esperanto's "ĉiu(n) ACCUSATIVE" idiom covers the same meaning through
 attested vocabulary instead.
 """

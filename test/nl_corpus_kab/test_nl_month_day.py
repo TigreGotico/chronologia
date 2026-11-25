@@ -5,7 +5,7 @@
 Without an explicit year the date is future-shifted into the anchor year or the
 next (prefer_future=true); with a year it is that exact date. Gold from
 independent arithmetic against anchor Tue 2017-06-27. Month surfaces are the
-Tamazight month names in months.voc.
+Tamazight month names in months.
 """
 from datetime import date, timedelta
 

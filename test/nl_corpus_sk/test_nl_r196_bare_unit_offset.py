@@ -3,7 +3,7 @@
 "za deň" ("in a day") and "pred dňom" ("a day ago") carry no numeral;
 Slovak has no article to fold to 1 the way English "a" does, so the bare
 unit itself must read as quantity one. The USG slot (schema
-"singular_units", from unit1_<unit>.voc, already shipped for sk) supplies
+"singular_units", from unit1_<unit>, already shipped for sk) supplies
 only the noun's singular case surfaces, so the fold applies exactly when
 the surface is grammatically singular -- a bare PLURAL unit ("za
 týždne") is not an offset at all and stays a hard non-match. Values
@@ -14,7 +14,7 @@ from its own directional endpoint, same as "za 1 <unit>"/"pred 1
 
 The instrumental singular that "pred" governs is missing from the week
 and month unit vocabulary ("týždňom", "mesiacom" are absent from
-unit_week.voc / unit_month.voc, unlike "dňom"/"rokom"/"hodinou"), so
+unit_week / unit_month, unlike "dňom"/"rokom"/"hodinou"), so
 "pred týždňom" and "pred mesiacom" stay unmatched -- a vocabulary gap,
 not a grammar-order gap, and out of scope here pending a native check.
 """

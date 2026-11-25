@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 """A plural COUNT ("the two days of March") must not be fabricated into an
 ordinal date (ca): the scoped-ordinal plural-unit veto rejects it. Regression:
-ca shipped no unit1_<kind>.voc, so its derived plural_units missed the irregular
+ca shipped no unit1_<kind>, so its derived plural_units missed the irregular
 plurals and the veto never fired, inventing March 2."""
 import datetime
 

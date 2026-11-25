@@ -20,7 +20,7 @@ The fix mirrors #677's own convention: ``BYHOUR`` pins to the range's
 left/start endpoint (the same convention "daily from 9 to 5" already uses
 for the leading construction), the whole clause -- connector, both
 endpoints, and the trailing marker -- is consumed, and the marker vocab
-(``marker_between_post.voc``) is reused unchanged from the single-span fix.
+(``marker_between_post``) is reused unchanged from the single-span fix.
 """
 from datetime import datetime
 
@@ -35,7 +35,7 @@ _A = datetime(2026, 8, 12, 12, 0)
 @pytest.mark.parametrize("text,rrule,remainder", [
     # the defect as reported: postposed clock range on a daily rule.
     ("minden nap 9 és 17 óra között", "FREQ=DAILY;BYHOUR=9", ""),
-    # "közt" is the short synonym marker_between_post.voc also carries.
+    # "közt" is the short synonym marker_between_post also carries.
     ("minden nap 9 és 17 óra közt", "FREQ=DAILY;BYHOUR=9", ""),
     # the left endpoint's own "óra" is optional -- only the right one needs
     # to spell it out, licensing the bare left reading (mirrors the

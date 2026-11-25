@@ -55,7 +55,7 @@ def test_season(text, s, e):
     # neuter "о"-stem, gen. лета), осень (8*a, gen./dat./loc. all осени),
     # зима (1a/1'a, gen. зимы).  "лета" is genitive singular of "лето"
     # (summer) here, not to be confused with "лет" (genitive plural of
-    # "год", years) -- that word is deliberately absent from unit_year.voc
+    # "год", years) -- that word is deliberately absent from unit_year
     # for the same reason (see its docstring); no overlap was introduced.
     ("весны 2027", "2027-3-1", "2027-6-1"),
     ("лета 2027", "2027-6-1", "2027-9-1"),

@@ -37,7 +37,7 @@ def test_season_year(text, s, e):
 # genitive of "ранний", agreeing with genitive "весны") in the remainder --
 # the same silently-too-wide failure the ``season_fuzzy`` construction
 # fixes for the noun period_part surface (начало/середина/конец).  Only the
-# noun paradigm was in period_part_early/late.voc; the adjectival paradigm
+# noun paradigm was in period_part_early/late; the adjectival paradigm
 # of "ранний"/"поздний" (Зализняк, hard-stem adjective declension) was
 # missing.  Added here: nominative fem ранняя, genitive/dative/instr/prep
 # fem ранней, neuter nom/acc раннее, genitive masc/neut раннего,
@@ -49,7 +49,7 @@ def test_season_year(text, s, e):
 # construction; "раннее" has no such collision (the comparative of "рано"
 # is "раньше", not "раннее"). Comparative adverbs "ранее"/"позднее" are
 # likewise never added as PART entries for the same reason. Grepped the
-# full ru corpus (test/nl_corpus_ru/) and ru/*.voc for any existing use of
+# full ru corpus (test/nl_corpus_ru/) and ru/* for any existing use of
 # ранее/позднее/ранняя/поздняя before adding -- none found.
 #
 # Expected boundaries are the same independent thirds-of-92-days arithmetic

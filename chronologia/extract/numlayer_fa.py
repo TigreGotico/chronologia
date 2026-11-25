@@ -19,7 +19,7 @@ def _fold_fa(tokens: Tuple[Token, ...]) -> Tuple[Token, ...]:
     return fold(tokens, _WORDS)
 
 
-#: the Persian length nouns, from ``locale/fa/unit_*.voc``.  A half word
+#: the Persian length nouns, from ``locale/fa/unit_*``.  A half word
 #: directly before one of these closes a length ("نیم ساعت" half an hour,
 #: "نیم قرن" half a century); anywhere else "نیم" keeps the clock FRACTION
 #: slot it is withheld from the fold for ("سه و نیم" is half past three).

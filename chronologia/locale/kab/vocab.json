@@ -1,0 +1,320 @@
+{
+ "format_version": 1,
+ "words": {
+  "clock_dir_past": [
+   "d",
+   "u"
+  ],
+  "clock_dir_to": [
+   "ɣir",
+   "ɣiṛ"
+  ],
+  "clock_fraction_15": [
+   "rrbeɛ",
+   "ṛbeɛ",
+   "ṛṛbeɛ"
+  ],
+  "clock_fraction_30": [
+   "azgen",
+   "uzgen",
+   "wezgen"
+  ],
+  "clock_meridiem_am": [
+   "n ssbaḥ",
+   "n ssbeḥ",
+   "n taṣebḥit",
+   "n tufat",
+   "n tṣebḥit",
+   "n tṣ̣ebḥit",
+   "n ṣṣbeḥ",
+   "ssbaḥ",
+   "ssbeḥ",
+   "taṣebḥit",
+   "tufat",
+   "tṣebḥit",
+   "ṣṣbeḥ"
+  ],
+  "clock_meridiem_night": [
+   "n yiḍ"
+  ],
+  "clock_meridiem_pm": [
+   "n tmeddit",
+   "n uzal",
+   "tameddit",
+   "tmeddit",
+   "uzal"
+  ],
+  "clock_zone_0": [
+   "gmt",
+   "utc"
+  ],
+  "daypart_evening": [
+   "tameddit",
+   "tameddit-a"
+  ],
+  "daypart_morning": [
+   "taṣebḥit",
+   "taṣebḥit-a",
+   "ṣṣbeḥ",
+   "ṣṣbeḥ-a"
+  ],
+  "daypart_night": [
+   "iḍ",
+   "iḍ-a"
+  ],
+  "daypart_noon": [
+   "azal"
+  ],
+  "era_year_ref": [
+   "aseggas n",
+   "deg useggas n"
+  ],
+  "marker_and": [
+   "d"
+  ],
+  "marker_at": [
+   "d",
+   "ɣef"
+  ],
+  "marker_every": [
+   "yal"
+  ],
+  "marker_half": [
+   "azgen"
+  ],
+  "marker_last": [
+   "aneggaru",
+   "iɛeddan",
+   "yezrin"
+  ],
+  "marker_oclock": [
+   "gedged",
+   "swaswa"
+  ],
+  "marker_of": [
+   "n"
+  ],
+  "marker_q": [
+   "q"
+  ],
+  "marker_since": [
+   "seg",
+   "segmi"
+  ],
+  "marker_until": [
+   "alarmi",
+   "armi"
+  ],
+  "marker_week_num": [
+   "amalas",
+   "ddurt",
+   "dduṛt"
+  ],
+  "marker_weekof": [
+   "amalas",
+   "amalas n",
+   "ddurt n"
+  ],
+  "month_1": [
+   "yennayer"
+  ],
+  "month_10": [
+   "tubeṛ"
+  ],
+  "month_11": [
+   "wambeṛ"
+  ],
+  "month_12": [
+   "dujembeṛ",
+   "duǧembeṛ"
+  ],
+  "month_2": [
+   "furar",
+   "fuṛar"
+  ],
+  "month_3": [
+   "meɣres"
+  ],
+  "month_4": [
+   "yebrir"
+  ],
+  "month_5": [
+   "mayyu"
+  ],
+  "month_6": [
+   "yunyu"
+  ],
+  "month_7": [
+   "yulyu"
+  ],
+  "month_8": [
+   "ɣuct"
+  ],
+  "month_9": [
+   "ctembeṛ"
+  ],
+  "month_berber_1": [
+   "yennayer"
+  ],
+  "month_berber_10": [
+   "tubeṛ"
+  ],
+  "month_berber_11": [
+   "wambeṛ"
+  ],
+  "month_berber_12": [
+   "dujembeṛ",
+   "duǧembeṛ"
+  ],
+  "month_berber_2": [
+   "furar",
+   "fuṛar"
+  ],
+  "month_berber_3": [
+   "meɣres"
+  ],
+  "month_berber_4": [
+   "yebrir"
+  ],
+  "month_berber_5": [
+   "mayyu"
+  ],
+  "month_berber_6": [
+   "yunyu"
+  ],
+  "month_berber_7": [
+   "yulyu"
+  ],
+  "month_berber_8": [
+   "ɣuct"
+  ],
+  "month_berber_9": [
+   "ctembeṛ"
+  ],
+  "months": [
+   "ctembeṛ",
+   "dujembeṛ",
+   "duǧembeṛ",
+   "furar",
+   "fuṛar",
+   "mayyu",
+   "meɣres",
+   "tubeṛ",
+   "wambeṛ",
+   "yebrir",
+   "yennayer",
+   "yulyu",
+   "yunyu",
+   "ɣuct"
+  ],
+  "named_day_-1": [
+   "idelli",
+   "iḍelli"
+  ],
+  "named_day_0": [
+   "ass a",
+   "ass agi",
+   "assa"
+  ],
+  "named_day_1": [
+   "azekka"
+  ],
+  "season_autumn": [
+   "lexṛif"
+  ],
+  "season_spring": [
+   "tafsut",
+   "ṛṛbiɛ"
+  ],
+  "season_summer": [
+   "anebdu",
+   "ṣṣif"
+  ],
+  "season_winter": [
+   "ccetwa",
+   "tagrest"
+  ],
+  "special_weekend": [
+   "taggara n dduṛt",
+   "taggara n ssmana",
+   "taggara n yimalas"
+  ],
+  "unit1_day": [
+   "ass",
+   "wass"
+  ],
+  "unit1_hour": [
+   "asrag",
+   "saɛa",
+   "ssaɛa",
+   "usrag",
+   "wesrag"
+  ],
+  "unit1_minute": [
+   "ddqiqa",
+   "dqiqa"
+  ],
+  "unit1_week": [
+   "amalas",
+   "ddurt",
+   "dduṛt",
+   "wamalas"
+  ],
+  "unit_day": [
+   "ass",
+   "ussan",
+   "wass",
+   "wussan"
+  ],
+  "unit_hour": [
+   "asrag",
+   "isragen",
+   "saɛa",
+   "ssaɛa",
+   "sswayeɛ",
+   "tisaɛtin",
+   "tsaɛtin",
+   "usrag",
+   "wesrag"
+  ],
+  "unit_minute": [
+   "ddqiqa",
+   "dqiqa",
+   "tesdidin",
+   "tisdidin"
+  ],
+  "unit_week": [
+   "amalas",
+   "ddurt",
+   "dduṛt",
+   "imalasen",
+   "wamalas",
+   "yimalasen"
+  ],
+  "unit_year": [
+   "aseggas",
+   "iseggasen"
+  ],
+  "weekday_0": [
+   "letnayen"
+  ],
+  "weekday_1": [
+   "ttlata"
+  ],
+  "weekday_2": [
+   "laṛebɛa"
+  ],
+  "weekday_3": [
+   "lexmis"
+  ],
+  "weekday_4": [
+   "lǧemɛa"
+  ],
+  "weekday_5": [
+   "ssebt"
+  ],
+  "weekday_6": [
+   "lḥedd"
+  ]
+ }
+}

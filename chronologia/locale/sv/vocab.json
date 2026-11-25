@@ -1,0 +1,597 @@
+{
+ "format_version": 1,
+ "words": {
+  "clock_dir_past": [
+   "över"
+  ],
+  "clock_dir_to": [
+   "i"
+  ],
+  "clock_fraction_15": [
+   "kvart"
+  ],
+  "clock_fraction_30": [
+   "halv"
+  ],
+  "clock_landmark_0": [
+   "midnatt"
+  ],
+  "clock_landmark_720": [
+   "middag"
+  ],
+  "clock_meridiem_am": [
+   "formiddag",
+   "formiddagen",
+   "förmiddag",
+   "förmiddagen",
+   "morgon",
+   "morgonen"
+  ],
+  "clock_meridiem_night": [
+   "natt",
+   "natten"
+  ],
+  "clock_meridiem_pm": [
+   "eftermiddag",
+   "eftermiddagen",
+   "kvall",
+   "kvallen",
+   "kväll",
+   "kvällen"
+  ],
+  "clock_zone_0": [
+   "gmt",
+   "utc"
+  ],
+  "daypart_eftermiddag_sv": [
+   "eftermiddag",
+   "eftermiddagen"
+  ],
+  "daypart_formiddag_sv": [
+   "formiddag",
+   "formiddagen",
+   "förmiddag",
+   "förmiddagen"
+  ],
+  "daypart_kvall_sv": [
+   "kvall",
+   "kvallen",
+   "kväll",
+   "kvällen"
+  ],
+  "daypart_morgon_sv": [
+   "bitti",
+   "morgon",
+   "morgonen"
+  ],
+  "daypart_natt_sv": [
+   "natt",
+   "natten"
+  ],
+  "marker_ad": [
+   "e. kr.",
+   "e.kr.",
+   "efter kristus"
+  ],
+  "marker_after": [
+   "efter"
+  ],
+  "marker_ago": [
+   "sedan",
+   "sen"
+  ],
+  "marker_and": [
+   "och",
+   "till"
+  ],
+  "marker_article": [
+   "de",
+   "den",
+   "det"
+  ],
+  "marker_at": [
+   "kl",
+   "klockan"
+  ],
+  "marker_bc": [
+   "f. kr.",
+   "f.kr.",
+   "före kristus"
+  ],
+  "marker_before": [
+   "för",
+   "före"
+  ],
+  "marker_between": [
+   "mellan"
+  ],
+  "marker_bp": [
+   "bp"
+  ],
+  "marker_business": [
+   "arbetsdag",
+   "arbetsdagar",
+   "vardag",
+   "vardagar"
+  ],
+  "marker_date_lead": [
+   "på"
+  ],
+  "marker_during": [
+   "under"
+  ],
+  "marker_every": [
+   "varje"
+  ],
+  "marker_freq_daily": [
+   "dagligen"
+  ],
+  "marker_freq_monthly": [
+   "månatligen"
+  ],
+  "marker_freq_weekly": [
+   "veckovis"
+  ],
+  "marker_freq_yearly": [
+   "årligen"
+  ],
+  "marker_from": [
+   "från"
+  ],
+  "marker_future": [
+   "från nu",
+   "om"
+  ],
+  "marker_half": [
+   "halva",
+   "hälften"
+  ],
+  "marker_in": [
+   "om"
+  ],
+  "marker_indef": [
+   "en",
+   "ett"
+  ],
+  "marker_last": [
+   "förra",
+   "senaste"
+  ],
+  "marker_month_word": [
+   "månad",
+   "månaden"
+  ],
+  "marker_new": [
+   "ny"
+  ],
+  "marker_next": [
+   "kommande",
+   "nästa"
+  ],
+  "marker_of": [
+   "av",
+   "i",
+   "på"
+  ],
+  "marker_ordlast": [
+   "sista"
+  ],
+  "marker_past": [
+   "sedan",
+   "sen"
+  ],
+  "marker_plural": [
+   "talet",
+   "tallet"
+  ],
+  "marker_present": [
+   "idag",
+   "nu"
+  ],
+  "marker_q": [
+   "q"
+  ],
+  "marker_quarter_word": [
+   "kvartal",
+   "kvartalet"
+  ],
+  "marker_recur_for": [
+   "i"
+  ],
+  "marker_since": [
+   "sedan"
+  ],
+  "marker_this": [
+   "denna",
+   "detta"
+  ],
+  "marker_to": [
+   "till"
+  ],
+  "marker_until": [
+   "till",
+   "tills"
+  ],
+  "marker_week_num": [
+   "vecka",
+   "veckor"
+  ],
+  "marker_weekof": [
+   "veckan den",
+   "veckan kring",
+   "veckan med"
+  ],
+  "marker_year_word": [
+   "år",
+   "året"
+  ],
+  "month_1": [
+   "jan",
+   "januari"
+  ],
+  "month_10": [
+   "okt",
+   "oktober"
+  ],
+  "month_11": [
+   "nov",
+   "november"
+  ],
+  "month_12": [
+   "dec",
+   "december"
+  ],
+  "month_2": [
+   "feb",
+   "februari"
+  ],
+  "month_3": [
+   "mar",
+   "mars"
+  ],
+  "month_4": [
+   "apr",
+   "april"
+  ],
+  "month_5": [
+   "maj"
+  ],
+  "month_6": [
+   "jun",
+   "juni"
+  ],
+  "month_7": [
+   "jul",
+   "juli"
+  ],
+  "month_8": [
+   "aug",
+   "augusti"
+  ],
+  "month_9": [
+   "sep",
+   "september"
+  ],
+  "months": [
+   "april",
+   "augusti",
+   "december",
+   "februari",
+   "januari",
+   "juli",
+   "juni",
+   "maj",
+   "mars",
+   "november",
+   "oktober",
+   "september"
+  ],
+  "named_day_-1": [
+   "i går",
+   "igår"
+  ],
+  "named_day_-2": [
+   "förrgår",
+   "i förrgår"
+  ],
+  "named_day_0": [
+   "i dag",
+   "idag"
+  ],
+  "named_day_1": [
+   "i morgon",
+   "imorgon",
+   "morgondagen",
+   "morgondagens"
+  ],
+  "named_day_2": [
+   "i övermorgon",
+   "övermorgon"
+  ],
+  "ordinal_suffixes": [
+   "."
+  ],
+  "period_archean": [
+   "arkeikum"
+  ],
+  "period_bronze_age_gb": [
+   "bronsåldern"
+  ],
+  "period_cambrian": [
+   "kambrium"
+  ],
+  "period_carboniferous": [
+   "karbon"
+  ],
+  "period_cenozoic": [
+   "kenozoikum"
+  ],
+  "period_cretaceous": [
+   "krita"
+  ],
+  "period_devonian": [
+   "devon"
+  ],
+  "period_eocene": [
+   "eocen"
+  ],
+  "period_holocene": [
+   "holocen"
+  ],
+  "period_iron_age_gb": [
+   "järnåldern"
+  ],
+  "period_jurassic": [
+   "jura"
+  ],
+  "period_mesozoic": [
+   "mesozoikum"
+  ],
+  "period_miocene": [
+   "miocen"
+  ],
+  "period_neogene": [
+   "neogen"
+  ],
+  "period_neolithic_gb": [
+   "neolitikum",
+   "stenåldern"
+  ],
+  "period_oligocene": [
+   "oligocen"
+  ],
+  "period_ordovician": [
+   "ordovicium"
+  ],
+  "period_paleocene": [
+   "paleocen"
+  ],
+  "period_paleogene": [
+   "paleogen"
+  ],
+  "period_paleozoic": [
+   "paleozoikum"
+  ],
+  "period_part_early": [
+   "början",
+   "tidig",
+   "tidiga"
+  ],
+  "period_part_late": [
+   "sen",
+   "sena",
+   "slutet"
+  ],
+  "period_part_mid": [
+   "mellersta",
+   "mitten"
+  ],
+  "period_permian": [
+   "perm"
+  ],
+  "period_phanerozoic": [
+   "fanerozoikum"
+  ],
+  "period_pleistocene": [
+   "pleistocen"
+  ],
+  "period_pliocene": [
+   "pliocen"
+  ],
+  "period_proterozoic": [
+   "proterozoikum"
+  ],
+  "period_quaternary": [
+   "kvartär"
+  ],
+  "period_silurian": [
+   "silur"
+  ],
+  "period_triassic": [
+   "trias"
+  ],
+  "scale_1000": [
+   "tusen"
+  ],
+  "scale_1000000": [
+   "miljon",
+   "miljoner"
+  ],
+  "scale_1000000000": [
+   "miljard",
+   "miljarder"
+  ],
+  "scope_unit_century": [
+   "sekel",
+   "seklet",
+   "århundrade",
+   "århundraden",
+   "århundradet"
+  ],
+  "scope_unit_decade": [
+   "årtionde",
+   "årtionden",
+   "årtiondet"
+  ],
+  "scope_unit_millennium": [
+   "årtusende",
+   "årtusenden",
+   "årtusendet"
+  ],
+  "season_fall": [
+   "höst",
+   "hösten"
+  ],
+  "season_spring": [
+   "vår",
+   "våren"
+  ],
+  "season_summer": [
+   "sommar",
+   "sommaren"
+  ],
+  "season_winter": [
+   "vinter",
+   "vintern"
+  ],
+  "special_weekend": [
+   "helg",
+   "helgen",
+   "weekend"
+  ],
+  "unit1_century": [
+   "sekel",
+   "seklet",
+   "århundrade",
+   "århundradet"
+  ],
+  "unit1_day": [
+   "dag"
+  ],
+  "unit1_decade": [
+   "årtionde",
+   "årtiondet"
+  ],
+  "unit1_hour": [
+   "timme"
+  ],
+  "unit1_millennium": [
+   "årtusende",
+   "årtusendet"
+  ],
+  "unit1_minute": [
+   "minut"
+  ],
+  "unit1_month": [
+   "månad",
+   "månaden"
+  ],
+  "unit1_second": [
+   "sekund"
+  ],
+  "unit1_week": [
+   "vecka",
+   "veckan"
+  ],
+  "unit1_year": [
+   "år",
+   "året"
+  ],
+  "unit_century": [
+   "sekel",
+   "seklet",
+   "århundrade",
+   "århundraden",
+   "århundradet"
+  ],
+  "unit_day": [
+   "dag",
+   "dagar"
+  ],
+  "unit_decade": [
+   "årtionde",
+   "årtionden",
+   "årtiondet"
+  ],
+  "unit_hour": [
+   "timmar",
+   "timme"
+  ],
+  "unit_millennium": [
+   "årtusende",
+   "årtusenden",
+   "årtusendet"
+  ],
+  "unit_minute": [
+   "minut",
+   "minuter"
+  ],
+  "unit_month": [
+   "månad",
+   "månaden",
+   "månader"
+  ],
+  "unit_second": [
+   "sekund",
+   "sekunder"
+  ],
+  "unit_week": [
+   "vecka",
+   "veckan",
+   "veckor"
+  ],
+  "unit_year": [
+   "år",
+   "året"
+  ],
+  "weekday_0": [
+   "måndag",
+   "måndagen"
+  ],
+  "weekday_1": [
+   "tisdag",
+   "tisdagen"
+  ],
+  "weekday_2": [
+   "onsdag",
+   "onsdagen"
+  ],
+  "weekday_3": [
+   "torsdag",
+   "torsdagen"
+  ],
+  "weekday_4": [
+   "fredag",
+   "fredagen"
+  ],
+  "weekday_5": [
+   "lördag",
+   "lördagen"
+  ],
+  "weekday_6": [
+   "söndag",
+   "söndagen"
+  ],
+  "weekday_abbr_0": [
+   "mån"
+  ],
+  "weekday_abbr_1": [
+   "tis"
+  ],
+  "weekday_abbr_2": [
+   "ons"
+  ],
+  "weekday_abbr_3": [
+   "tor"
+  ],
+  "weekday_abbr_4": [
+   "fre"
+  ],
+  "weekday_abbr_5": [
+   "lör"
+  ],
+  "weekday_abbr_6": [
+   "sön"
+  ]
+ }
+}

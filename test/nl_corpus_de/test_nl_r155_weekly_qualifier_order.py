@@ -3,8 +3,8 @@
 a leading clock ("um 9") must not block the WEEKLY BYDAY qualifier scan.
 
 Vocabulary confirmed attested in the de corpus before writing this file:
-``marker_freq_weekly.voc`` ("woechentlich"/"wöchentlich"), ``marker_at.voc``
-("um"), ``marker_on.voc`` ("am"), ``weekday_1.voc`` ("montag" -- Monday).
+``marker_freq_weekly`` ("woechentlich"/"wöchentlich"), ``marker_at``
+("um"), ``marker_on`` ("am"), ``weekday_1`` ("montag" -- Monday).
 Only the WEEKLY case is mirrored here; the MONTHLY/YEARLY siblings are left
 to the en file -- de's own qualifier-order behaviour for those was checked
 live and already works in both orders, so no further defect surface needed

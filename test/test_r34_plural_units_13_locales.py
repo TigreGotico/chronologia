@@ -4,7 +4,7 @@ into an ordinal date across 13 more locales.
 Each locale derived its ``plural_units`` from an ``-s`` suffix heuristic that
 fails for non-Latin / irregular / case-inflected plurals, so the derived set was
 empty/incomplete and the scoped-ordinal veto was starved -- inventing March 2
-with an empty remainder.  The fix ships ``unit1_<kind>.voc`` singular vocab for
+with an empty remainder.  The fix ships ``unit1_<kind>`` singular vocab for
 every unit kind each locale ships, so the plural COUNT is flagged and vetoed.
 
 Anchor 2017-06-27 13:04.  Mirrors test/nl_corpus_de/test_nl_ordinal_count.py's

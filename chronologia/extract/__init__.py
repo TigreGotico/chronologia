@@ -7,7 +7,7 @@ years ago") into the *referential width* of the phrase -- a half-open
 
 The public edge is :func:`extract_timespan`; :func:`explain` opens a debug
 window over the same pipeline.  Every language is data only -- a
-``chronologia/locale/<code>/`` directory of ``.voc`` vocabulary files plus
+``chronologia/locale/<code>/`` directory holding a ``vocab.json`` of words plus
 one ``lang.json`` stanza; the engine core (tokenizer, normaliser,
 compiler, matcher, resolver, loader) is shared and language-agnostic.
 

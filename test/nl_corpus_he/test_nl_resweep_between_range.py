@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 """Second-pass sweep: the ``בין X ו-Y`` ("between X and Y") range framing.
 
-``marker_between.voc`` (בין) pairs with the ``ו`` coordinator per its own
+``marker_between`` (בין) pairs with the ``ו`` coordinator per its own
 documentation ("בין ינואר ומרץ" is cited there), but no test exercised the
 construction end-to-end before this sweep.  All three endpoint granularities
 are probed: bare month+year, and full day-level dates (same month, cross
@@ -102,7 +102,7 @@ def test_between_fused_and_pending():
 
 
 # -- ל- as the "between" closing marker binds the 2nd endpoint ---------------
-# marker_to.voc's prose (and Glinert §9.2) call "בין ... ל..." standard
+# marker_to's prose (and Glinert §9.2) call "בין ... ל..." standard
 # alongside the ו-coordinated form.  The proclitic ל־ ("to") is a dative
 # homograph, so it is licensed as a range terminal only after a from-lead
 # (מ־/מן) or a between-lead (בין) -- the same lead-required guard the Romance

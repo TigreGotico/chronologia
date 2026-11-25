@@ -1,7 +1,7 @@
 """Slovak abbreviated month names (CLDR 47 ``months.format.abbreviated``).
 
 Slovak could not read an abbreviated month at all before this file's
-companion fix to ``locale/sk/month_*.voc`` -- ``extract_timespan("15. jan
+companion fix to ``locale/sk/month_*`` -- ``extract_timespan("15. jan
 2020", "sk", anchor=...)`` returned ``None`` for nine of the twelve months
 (``máj``/``jún``/``júl`` already shipped as full nominative forms and needed
 no change). CLDR ships the abbreviated surface bare; a day-month-year date

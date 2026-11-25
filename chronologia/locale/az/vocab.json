@@ -1,0 +1,250 @@
+{
+ "format_version": 1,
+ "words": {
+  "clock_landmark_0": [
+   "gecə yarısı"
+  ],
+  "clock_landmark_720": [
+   "günorta"
+  ],
+  "clock_meridiem_am": [
+   "səhər"
+  ],
+  "clock_meridiem_night": [
+   "gecə"
+  ],
+  "clock_meridiem_pm": [
+   "axşam"
+  ],
+  "clock_zone_0": [
+   "gmt",
+   "utc"
+  ],
+  "marker_ad": [
+   "bizim era",
+   "bizim eranın"
+  ],
+  "marker_and": [
+   "və"
+  ],
+  "marker_at": [
+   "saat"
+  ],
+  "marker_bc": [
+   "eramızdan əvvəl"
+  ],
+  "marker_business": [
+   "işgünləri",
+   "işgünü"
+  ],
+  "marker_every": [
+   "hər"
+  ],
+  "marker_freq_daily": [
+   "gündəlik"
+  ],
+  "marker_freq_monthly": [
+   "aylıq"
+  ],
+  "marker_freq_weekly": [
+   "həftəlik"
+  ],
+  "marker_freq_yearly": [
+   "illik"
+  ],
+  "marker_future": [
+   "sonra"
+  ],
+  "marker_half": [
+   "yarım"
+  ],
+  "marker_last": [
+   "keçən",
+   "ötən"
+  ],
+  "marker_next": [
+   "gələn",
+   "növbəti"
+  ],
+  "marker_past": [
+   "qabaq",
+   "öncə",
+   "əvvəl"
+  ],
+  "marker_q": [
+   "q"
+  ],
+  "marker_quarter_word": [
+   "rüb"
+  ],
+  "marker_this": [
+   "bu"
+  ],
+  "marker_until": [
+   "qədər"
+  ],
+  "marker_week_num": [
+   "həftə"
+  ],
+  "month_1": [
+   "yanvar"
+  ],
+  "month_10": [
+   "oktyabr"
+  ],
+  "month_11": [
+   "noyabr"
+  ],
+  "month_12": [
+   "dekabr"
+  ],
+  "month_2": [
+   "fevral"
+  ],
+  "month_3": [
+   "mart"
+  ],
+  "month_4": [
+   "aprel"
+  ],
+  "month_5": [
+   "may"
+  ],
+  "month_6": [
+   "iyun"
+  ],
+  "month_7": [
+   "iyul"
+  ],
+  "month_8": [
+   "avqust"
+  ],
+  "month_9": [
+   "sentyabr"
+  ],
+  "months": [
+   "aprel",
+   "avqust",
+   "dekabr",
+   "fevral",
+   "iyul",
+   "iyun",
+   "mart",
+   "may",
+   "noyabr",
+   "oktyabr",
+   "sentyabr",
+   "yanvar"
+  ],
+  "named_day_-1": [
+   "dünən"
+  ],
+  "named_day_-2": [
+   "srağagün"
+  ],
+  "named_day_0": [
+   "bu gün",
+   "bugün"
+  ],
+  "named_day_1": [
+   "sabah"
+  ],
+  "named_day_2": [
+   "birigün",
+   "o biri gün",
+   "o birisi gün"
+  ],
+  "period_part_early": [
+   "başında",
+   "əvvəlində"
+  ],
+  "period_part_late": [
+   "axırında",
+   "son",
+   "sonunda"
+  ],
+  "period_part_mid": [
+   "orta",
+   "ortalarında",
+   "ortasında"
+  ],
+  "scale_1000": [
+   "min"
+  ],
+  "scope_unit_century": [
+   "əsr",
+   "əsrlər"
+  ],
+  "scope_unit_decade": [
+   "onillik",
+   "onilliklər"
+  ],
+  "season_fall": [
+   "payız"
+  ],
+  "season_spring": [
+   "bahar",
+   "yaz"
+  ],
+  "season_summer": [
+   "yay"
+  ],
+  "season_winter": [
+   "qış"
+  ],
+  "special_weekend": [
+   "həftə sonu",
+   "həftəsonu"
+  ],
+  "unit_century": [
+   "əsr",
+   "əsrlər"
+  ],
+  "unit_day": [
+   "gün"
+  ],
+  "unit_decade": [
+   "onillik",
+   "onilliklər"
+  ],
+  "unit_hour": [
+   "saat"
+  ],
+  "unit_minute": [
+   "dəqiqə"
+  ],
+  "unit_month": [
+   "ay"
+  ],
+  "unit_second": [
+   "saniyə"
+  ],
+  "unit_week": [
+   "həftə"
+  ],
+  "unit_year": [
+   "il"
+  ],
+  "weekday_0": [
+   "bazar ertəsi"
+  ],
+  "weekday_1": [
+   "çərşənbə axşamı"
+  ],
+  "weekday_2": [
+   "çərşənbə"
+  ],
+  "weekday_3": [
+   "cümə axşamı"
+  ],
+  "weekday_4": [
+   "cümə"
+  ],
+  "weekday_5": [
+   "şənbə"
+  ],
+  "weekday_6": [
+   "bazar"
+  ]
+ }
+}

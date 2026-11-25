@@ -1,0 +1,781 @@
+{
+ "format_version": 1,
+ "words": {
+  "clock_dir_past": [
+   "e"
+  ],
+  "clock_dir_to": [
+   "manca",
+   "mens"
+  ],
+  "clock_fraction_15": [
+   "quart"
+  ],
+  "clock_fraction_30": [
+   "mieja",
+   "mièja"
+  ],
+  "clock_landmark_0": [
+   "miejanuech",
+   "mièjanuèch"
+  ],
+  "clock_landmark_720": [
+   "miegjorn",
+   "miègjorn"
+  ],
+  "clock_meridiem_am": [
+   "matin"
+  ],
+  "clock_meridiem_night": [
+   "anuèch",
+   "anuèit",
+   "anuòch",
+   "anèch",
+   "anèit",
+   "anèt",
+   "nuèch",
+   "nuèit",
+   "nuòch",
+   "nèch",
+   "nèit",
+   "nèt"
+  ],
+  "clock_meridiem_pm": [
+   "aprèp dinnar",
+   "aprèp merende",
+   "aprèp miègjorn",
+   "après dinnar",
+   "après merende",
+   "après miègjorn",
+   "l'aprèp miègjorn",
+   "l'après miègjorn",
+   "ser",
+   "vesprada",
+   "vespre",
+   "vèspre"
+  ],
+  "clock_zone_0": [
+   "gmt",
+   "utc"
+  ],
+  "decade_word_20": [
+   "vint"
+  ],
+  "decade_word_30": [
+   "trenta"
+  ],
+  "decade_word_40": [
+   "quaranta"
+  ],
+  "decade_word_50": [
+   "cinquanta"
+  ],
+  "decade_word_60": [
+   "seissanta"
+  ],
+  "decade_word_70": [
+   "setanta"
+  ],
+  "decade_word_80": [
+   "ochanta"
+  ],
+  "decade_word_90": [
+   "nonanta"
+  ],
+  "era_ad_prefix": [
+   "apc",
+   "aprèp jèsus-crist"
+  ],
+  "era_ad_suffix": [
+   "apc",
+   "aprep jesus-crist",
+   "aprèp jèsus-crist",
+   "de nòstra èra"
+  ],
+  "era_anno_mundi_prefix": [
+   "anno mundi"
+  ],
+  "era_anno_mundi_suffix": [
+   "anno mundi"
+  ],
+  "era_bc_suffix": [
+   "abans jesus-crist",
+   "abans jèsus-crist",
+   "abans nòstra èra",
+   "acn"
+  ],
+  "era_bp_suffix": [
+   "ans abans lo present",
+   "b.p.",
+   "bp"
+  ],
+  "era_holocene_prefix": [
+   "èra olocèna",
+   "èra umana"
+  ],
+  "era_holocene_suffix": [
+   "èra olocèna",
+   "èra umana"
+  ],
+  "era_julian_prefix": [
+   "julian day",
+   "julian day number"
+  ],
+  "era_unix_prefix": [
+   "temps unix"
+  ],
+  "era_year_ref": [
+   "an",
+   "en l'an",
+   "l an",
+   "l'an"
+  ],
+  "marker_ad": [
+   "apc"
+  ],
+  "marker_after": [
+   "aprep",
+   "aprèp"
+  ],
+  "marker_ago": [
+   "fa"
+  ],
+  "marker_and": [
+   "e"
+  ],
+  "marker_article": [
+   "a la",
+   "al",
+   "aquesta",
+   "aqueste",
+   "de la",
+   "del",
+   "l",
+   "la",
+   "las",
+   "lo",
+   "los",
+   "un",
+   "una"
+  ],
+  "marker_at": [
+   "a",
+   "al",
+   "la",
+   "las",
+   "à"
+  ],
+  "marker_bc": [
+   "acn"
+  ],
+  "marker_before": [
+   "abans"
+  ],
+  "marker_between": [
+   "entre"
+  ],
+  "marker_bp": [
+   "bp"
+  ],
+  "marker_consulship": [
+   "consolat"
+  ],
+  "marker_during": [
+   "durant",
+   "en",
+   "pendent"
+  ],
+  "marker_every": [
+   "cada",
+   "totas",
+   "totes"
+  ],
+  "marker_freq_daily": [
+   "jornalièrament"
+  ],
+  "marker_freq_monthly": [
+   "mensualament"
+  ],
+  "marker_freq_weekly": [
+   "setmanalament"
+  ],
+  "marker_freq_yearly": [
+   "annadièirament"
+  ],
+  "marker_from": [
+   "de",
+   "del",
+   "entre"
+  ],
+  "marker_future": [
+   "d'aicí",
+   "d'aicí a",
+   "d'aquí",
+   "d'aquí a",
+   "dins"
+  ],
+  "marker_half": [
+   "mieja",
+   "mitat",
+   "mièja"
+  ],
+  "marker_hebrew": [
+   "ebraïc",
+   "josieu"
+  ],
+  "marker_hours": [
+   "h",
+   "oras"
+  ],
+  "marker_in": [
+   "dins",
+   "en"
+  ],
+  "marker_indef": [
+   "un",
+   "una"
+  ],
+  "marker_last": [
+   "darrièir",
+   "darrièr",
+   "darrièra",
+   "darrèr",
+   "passada",
+   "passat",
+   "precedent",
+   "precedents"
+  ],
+  "marker_month_word": [
+   "mes",
+   "meses"
+  ],
+  "marker_new": [
+   "novèl",
+   "novèla"
+  ],
+  "marker_next": [
+   "prochan",
+   "prochana",
+   "queven"
+  ],
+  "marker_oclock": [
+   "h",
+   "ora",
+   "oras"
+  ],
+  "marker_of": [
+   "d",
+   "de",
+   "del"
+  ],
+  "marker_ordlast": [
+   "darrièr",
+   "darrièra"
+  ],
+  "marker_past": [
+   "fa"
+  ],
+  "marker_plural": [
+   "s"
+  ],
+  "marker_present": [
+   "present",
+   "uèi"
+  ],
+  "marker_pridie": [
+   "pridie"
+  ],
+  "marker_q": [
+   "q",
+   "t"
+  ],
+  "marker_quarter_word": [
+   "trimestre",
+   "trimèstre",
+   "trimèstres"
+  ],
+  "marker_recur_for": [
+   "durant",
+   "pendent"
+  ],
+  "marker_since": [
+   "dempuei",
+   "dempuèi",
+   "despuèi",
+   "dès"
+  ],
+  "marker_this": [
+   "aquesta",
+   "aqueste"
+  ],
+  "marker_to": [
+   "a",
+   "al",
+   "au",
+   "fins a",
+   "fins au"
+  ],
+  "marker_until": [
+   "dinc a",
+   "fins",
+   "fins a",
+   "fins al"
+  ],
+  "marker_week_num": [
+   "setmana",
+   "setmanas"
+  ],
+  "marker_weekof": [
+   "la setmana de",
+   "la setmana del",
+   "setmana de",
+   "setmana del"
+  ],
+  "marker_year_plural": [
+   "annadas",
+   "ans"
+  ],
+  "marker_year_word": [
+   "an",
+   "annada",
+   "annadas",
+   "ans"
+  ],
+  "month_1": [
+   "gen",
+   "genier",
+   "genièr"
+  ],
+  "month_10": [
+   "oct",
+   "octòbre"
+  ],
+  "month_11": [
+   "nov",
+   "novembre"
+  ],
+  "month_12": [
+   "dec",
+   "decembre"
+  ],
+  "month_2": [
+   "feb",
+   "febrièr"
+  ],
+  "month_3": [
+   "març"
+  ],
+  "month_4": [
+   "abr",
+   "abril"
+  ],
+  "month_5": [
+   "mai"
+  ],
+  "month_6": [
+   "junh"
+  ],
+  "month_7": [
+   "julh",
+   "julhet"
+  ],
+  "month_8": [
+   "ago",
+   "agost"
+  ],
+  "month_9": [
+   "set",
+   "setembre"
+  ],
+  "month_french_republican_1": [
+   "vendemiaire"
+  ],
+  "month_french_republican_10": [
+   "messidor"
+  ],
+  "month_french_republican_11": [
+   "thermidor"
+  ],
+  "month_french_republican_12": [
+   "fructidor"
+  ],
+  "month_french_republican_2": [
+   "brumaire"
+  ],
+  "month_french_republican_3": [
+   "frimaire"
+  ],
+  "month_french_republican_4": [
+   "nivose"
+  ],
+  "month_french_republican_5": [
+   "pluviose"
+  ],
+  "month_french_republican_6": [
+   "ventose"
+  ],
+  "month_french_republican_7": [
+   "germinal"
+  ],
+  "month_french_republican_8": [
+   "floreal"
+  ],
+  "month_french_republican_9": [
+   "prairial"
+  ],
+  "month_hebrew_1": [
+   "nisan"
+  ],
+  "month_hebrew_10": [
+   "tevet"
+  ],
+  "month_hebrew_11": [
+   "shevat"
+  ],
+  "month_hebrew_12": [
+   "adar"
+  ],
+  "month_hebrew_13": [
+   "adar 2",
+   "adar b",
+   "adar bet",
+   "adar ii",
+   "adar sheni",
+   "adarbet"
+  ],
+  "month_hebrew_2": [
+   "iyar"
+  ],
+  "month_hebrew_3": [
+   "sivan"
+  ],
+  "month_hebrew_4": [
+   "tammuz"
+  ],
+  "month_hebrew_5": [
+   "av"
+  ],
+  "month_hebrew_6": [
+   "elul"
+  ],
+  "month_hebrew_7": [
+   "tishrei",
+   "tishri"
+  ],
+  "month_hebrew_8": [
+   "cheshvan",
+   "heshvan"
+  ],
+  "month_hebrew_9": [
+   "kislev"
+  ],
+  "month_islamic_civil_1": [
+   "muharram"
+  ],
+  "month_islamic_civil_10": [
+   "shawwal"
+  ],
+  "month_islamic_civil_11": [
+   "dhualqadah"
+  ],
+  "month_islamic_civil_12": [
+   "dhualhijjah"
+  ],
+  "month_islamic_civil_2": [
+   "safar"
+  ],
+  "month_islamic_civil_3": [
+   "rabi al-awwal",
+   "rabialawwal"
+  ],
+  "month_islamic_civil_4": [
+   "rabi al-thani",
+   "rabialthani"
+  ],
+  "month_islamic_civil_5": [
+   "jumadaalawwal"
+  ],
+  "month_islamic_civil_6": [
+   "jumadaalthani"
+  ],
+  "month_islamic_civil_7": [
+   "rajab"
+  ],
+  "month_islamic_civil_8": [
+   "shaaban",
+   "shaban"
+  ],
+  "month_islamic_civil_9": [
+   "ramadan",
+   "ramzan"
+  ],
+  "named_day_-1": [
+   "ier",
+   "ièr"
+  ],
+  "named_day_-2": [
+   "abans ier",
+   "abans ièr",
+   "abansièr",
+   "davant ier",
+   "davant ièr",
+   "davant-ier",
+   "davant-ièr",
+   "ier dela",
+   "ier delai",
+   "ièr delai",
+   "ièr delà",
+   "passat ier",
+   "passat ièr"
+  ],
+  "named_day_0": [
+   "uei",
+   "uèi"
+  ],
+  "named_day_1": [
+   "deman"
+  ],
+  "named_day_2": [
+   "delà deman",
+   "passat deman",
+   "passatdeman"
+  ],
+  "period_archean": [
+   "archean"
+  ],
+  "period_bronze_age_gb": [
+   "bronze age"
+  ],
+  "period_cambrian": [
+   "cambrian"
+  ],
+  "period_carboniferous": [
+   "carboniferous"
+  ],
+  "period_cenozoic": [
+   "cenozoic"
+  ],
+  "period_cretaceous": [
+   "cretaceous"
+  ],
+  "period_devonian": [
+   "devonian"
+  ],
+  "period_eocene": [
+   "eocene"
+  ],
+  "period_holocene": [
+   "holocene"
+  ],
+  "period_iron_age_gb": [
+   "iron age"
+  ],
+  "period_jurassic": [
+   "jurassic"
+  ],
+  "period_mesozoic": [
+   "mesozoic"
+  ],
+  "period_miocene": [
+   "miocene"
+  ],
+  "period_neogene": [
+   "neogene"
+  ],
+  "period_neolithic_gb": [
+   "neolithic"
+  ],
+  "period_oligocene": [
+   "oligocene"
+  ],
+  "period_ordovician": [
+   "ordovician"
+  ],
+  "period_paleocene": [
+   "paleocene"
+  ],
+  "period_paleogene": [
+   "paleogene"
+  ],
+  "period_paleozoic": [
+   "paleozoic"
+  ],
+  "period_part_early": [
+   "començament",
+   "debut",
+   "debuta"
+  ],
+  "period_part_late": [
+   "fin",
+   "finala",
+   "fins"
+  ],
+  "period_part_mid": [
+   "mitan"
+  ],
+  "period_permian": [
+   "permian"
+  ],
+  "period_phanerozoic": [
+   "phanerozoic"
+  ],
+  "period_pleistocene": [
+   "pleistocene"
+  ],
+  "period_pliocene": [
+   "pliocene"
+  ],
+  "period_proterozoic": [
+   "proterozoic"
+  ],
+  "period_quaternary": [
+   "quaternary"
+  ],
+  "period_silurian": [
+   "silurian"
+  ],
+  "period_triassic": [
+   "triassic"
+  ],
+  "regnal_nengo_heisei": [
+   "heisei"
+  ],
+  "regnal_nengo_meiji": [
+   "meiji"
+  ],
+  "regnal_nengo_reiwa": [
+   "reiwa"
+  ],
+  "regnal_nengo_showa": [
+   "showa"
+  ],
+  "regnal_nengo_taisho": [
+   "taisho"
+  ],
+  "roman_anchor_ides": [
+   "ides",
+   "idibus"
+  ],
+  "roman_anchor_kalends": [
+   "calends",
+   "kalendis",
+   "kalends"
+  ],
+  "roman_anchor_nones": [
+   "nones",
+   "nonis"
+  ],
+  "scale_1000": [
+   "mil",
+   "mila"
+  ],
+  "scale_1000000": [
+   "milion",
+   "milions"
+  ],
+  "scale_1000000000": [
+   "miliard",
+   "miliards"
+  ],
+  "scope_unit_century": [
+   "sègle",
+   "sègles"
+  ],
+  "scope_unit_decade": [
+   "decenni",
+   "decennis"
+  ],
+  "scope_unit_millennium": [
+   "millenari",
+   "millenaris"
+  ],
+  "season_fall": [
+   "auton",
+   "tardor"
+  ],
+  "season_spring": [
+   "prima",
+   "primtemps"
+  ],
+  "season_summer": [
+   "estiu"
+  ],
+  "season_winter": [
+   "ivern",
+   "ivèrn"
+  ],
+  "special_weekend": [
+   "dimenjada",
+   "week-end",
+   "weekend"
+  ],
+  "unit_century": [
+   "sègle",
+   "sègles"
+  ],
+  "unit_day": [
+   "jorn",
+   "jorns"
+  ],
+  "unit_decade": [
+   "decenni",
+   "decennis"
+  ],
+  "unit_fortnight": [
+   "quinzena",
+   "quinzenas"
+  ],
+  "unit_hour": [
+   "ora",
+   "oras"
+  ],
+  "unit_millennium": [
+   "millenari",
+   "millenaris"
+  ],
+  "unit_minute": [
+   "min",
+   "minuta",
+   "minutas"
+  ],
+  "unit_month": [
+   "mes",
+   "meses"
+  ],
+  "unit_second": [
+   "segonda",
+   "segondas"
+  ],
+  "unit_week": [
+   "setmana",
+   "setmanas"
+  ],
+  "unit_year": [
+   "an",
+   "annada",
+   "annadas",
+   "ans"
+  ],
+  "weekday_0": [
+   "diluns"
+  ],
+  "weekday_1": [
+   "dimars"
+  ],
+  "weekday_2": [
+   "dimècres"
+  ],
+  "weekday_3": [
+   "dijòus"
+  ],
+  "weekday_4": [
+   "divendres"
+  ],
+  "weekday_5": [
+   "dissabte"
+  ],
+  "weekday_6": [
+   "dimenge"
+  ]
+ }
+}

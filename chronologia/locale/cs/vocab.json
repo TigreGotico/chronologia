@@ -1,0 +1,537 @@
+{
+ "format_version": 1,
+ "words": {
+  "clock_dir_past": [
+   "po"
+  ],
+  "clock_dir_to": [
+   "do",
+   "před"
+  ],
+  "clock_fraction_15": [
+   "čtvrt"
+  ],
+  "clock_fraction_30": [
+   "půl"
+  ],
+  "clock_fraction_45": [
+   "třičtvrtě",
+   "tříčtvrtě"
+  ],
+  "clock_landmark_0": [
+   "půlnoc"
+  ],
+  "clock_landmark_720": [
+   "poledne"
+  ],
+  "clock_meridiem_am": [
+   "dopoledne",
+   "ráno"
+  ],
+  "clock_meridiem_pm": [
+   "odpoledne",
+   "večer"
+  ],
+  "clock_zone_0": [
+   "gmt",
+   "utc"
+  ],
+  "daypart_afternoon_cs": [
+   "odpoledne"
+  ],
+  "daypart_evening_cs": [
+   "večer"
+  ],
+  "daypart_morning_cs": [
+   "ráno"
+  ],
+  "marker_ad": [
+   "n. l.",
+   "n.l.",
+   "našeho letopočtu",
+   "po kr.",
+   "po kristu"
+  ],
+  "marker_after": [
+   "po"
+  ],
+  "marker_and": [
+   "a"
+  ],
+  "marker_article": [
+   "ta",
+   "ten"
+  ],
+  "marker_at": [
+   "o",
+   "v",
+   "ve"
+  ],
+  "marker_bc": [
+   "př. kr.",
+   "př. n. l.",
+   "př.kr.",
+   "př.n.l.",
+   "před kristem",
+   "před naším letopočtem"
+  ],
+  "marker_before": [
+   "před"
+  ],
+  "marker_between": [
+   "mezi"
+  ],
+  "marker_business": [
+   "pracovní",
+   "pracovních"
+  ],
+  "marker_during": [
+   "v",
+   "ve"
+  ],
+  "marker_every": [
+   "každou",
+   "každé",
+   "každý"
+  ],
+  "marker_for_date": [
+   "na"
+  ],
+  "marker_freq_daily": [
+   "denně"
+  ],
+  "marker_freq_monthly": [
+   "měsíčně"
+  ],
+  "marker_freq_weekly": [
+   "týdně"
+  ],
+  "marker_freq_yearly": [
+   "ročně"
+  ],
+  "marker_from": [
+   "od"
+  ],
+  "marker_future": [
+   "za"
+  ],
+  "marker_half": [
+   "polovina",
+   "půl"
+  ],
+  "marker_in": [
+   "za"
+  ],
+  "marker_indef": [
+   "jeden",
+   "jedna"
+  ],
+  "marker_last": [
+   "minulou",
+   "minulá",
+   "minulé",
+   "minulého",
+   "minulém",
+   "minulému",
+   "minulý",
+   "minulých",
+   "minulým",
+   "minulými"
+  ],
+  "marker_month_word": [
+   "měsíc",
+   "měsíce"
+  ],
+  "marker_na": [
+   "na"
+  ],
+  "marker_next": [
+   "příští",
+   "příštích",
+   "příštího",
+   "příštím",
+   "příštími",
+   "příštímu"
+  ],
+  "marker_oclock": [
+   "hodin",
+   "hodinu",
+   "hodiny",
+   "hodině"
+  ],
+  "marker_of": [
+   "v",
+   "ve"
+  ],
+  "marker_on": [
+   "v",
+   "ve"
+  ],
+  "marker_ordlast": [
+   "poslední",
+   "posledních",
+   "posledního",
+   "posledním",
+   "posledními",
+   "poslednímu"
+  ],
+  "marker_past": [
+   "před"
+  ],
+  "marker_q": [
+   "q"
+  ],
+  "marker_quarter_word": [
+   "kvartál",
+   "kvartálu",
+   "čtvrtletí"
+  ],
+  "marker_recur_for": [
+   "po dobu"
+  ],
+  "marker_since": [
+   "od"
+  ],
+  "marker_this": [
+   "tahle",
+   "tato",
+   "tenhle",
+   "tento",
+   "tohle",
+   "tohohle",
+   "tohoto",
+   "tomhle",
+   "tomto",
+   "tomuto",
+   "toto",
+   "touto",
+   "tuhle",
+   "tuto",
+   "tyto",
+   "této",
+   "tímto",
+   "těchto",
+   "těmito"
+  ],
+  "marker_to": [
+   "až",
+   "do"
+  ],
+  "marker_until": [
+   "do"
+  ],
+  "marker_week_num": [
+   "týden",
+   "týdne"
+  ],
+  "marker_weekof": [
+   "týden od",
+   "týden okolo",
+   "týden s"
+  ],
+  "marker_year_word": [
+   "roce",
+   "rok",
+   "roku"
+  ],
+  "month_1": [
+   "led",
+   "leden",
+   "ledna",
+   "lednem",
+   "lednu"
+  ],
+  "month_10": [
+   "říj",
+   "říjen",
+   "října",
+   "říjnem",
+   "říjnu"
+  ],
+  "month_11": [
+   "lis",
+   "listopad",
+   "listopadem",
+   "listopadu"
+  ],
+  "month_12": [
+   "pro",
+   "prosince",
+   "prosincem",
+   "prosinci",
+   "prosinec"
+  ],
+  "month_2": [
+   "úno",
+   "únor",
+   "února",
+   "únorem",
+   "únoru"
+  ],
+  "month_3": [
+   "bře",
+   "březen",
+   "března",
+   "březnem",
+   "březnu"
+  ],
+  "month_4": [
+   "dub",
+   "duben",
+   "dubna",
+   "dubnem",
+   "dubnu"
+  ],
+  "month_5": [
+   "kvě",
+   "květen",
+   "května",
+   "květnem",
+   "květnu"
+  ],
+  "month_6": [
+   "červen",
+   "června",
+   "červnem",
+   "červnu",
+   "čvn"
+  ],
+  "month_7": [
+   "července",
+   "červencem",
+   "červenci",
+   "červenec",
+   "čvc"
+  ],
+  "month_8": [
+   "srp",
+   "srpen",
+   "srpna",
+   "srpnem",
+   "srpnu"
+  ],
+  "month_9": [
+   "září",
+   "zářím"
+  ],
+  "named_day_-1": [
+   "včera"
+  ],
+  "named_day_-2": [
+   "předevčírem"
+  ],
+  "named_day_0": [
+   "dnes",
+   "dneska"
+  ],
+  "named_day_1": [
+   "zítra"
+  ],
+  "named_day_2": [
+   "pozítří"
+  ],
+  "period_part_early": [
+   "počátek",
+   "začátek",
+   "začátku"
+  ],
+  "period_part_late": [
+   "konce",
+   "konec"
+  ],
+  "period_part_mid": [
+   "polovina",
+   "poloviny",
+   "prostředek"
+  ],
+  "scale_1000": [
+   "tisíc",
+   "tisíce"
+  ],
+  "scope_unit_century": [
+   "století"
+  ],
+  "scope_unit_decade": [
+   "desetiletí"
+  ],
+  "scope_unit_millennium": [
+   "tisíciletí"
+  ],
+  "season_fall": [
+   "podzim",
+   "podzimu"
+  ],
+  "season_spring": [
+   "jara",
+   "jaro",
+   "jaře"
+  ],
+  "season_summer": [
+   "léta",
+   "léto",
+   "létě"
+  ],
+  "season_winter": [
+   "zima",
+   "zimy",
+   "zimě"
+  ],
+  "special_weekend": [
+   "vikend",
+   "víkend"
+  ],
+  "unit1_century": [
+   "století"
+  ],
+  "unit1_day": [
+   "den",
+   "dne",
+   "dnem"
+  ],
+  "unit1_decade": [
+   "dekáda",
+   "desetiletí"
+  ],
+  "unit1_hour": [
+   "hodina",
+   "hodinou",
+   "hodinu"
+  ],
+  "unit1_millennium": [
+   "tisíciletí"
+  ],
+  "unit1_minute": [
+   "min",
+   "minuta",
+   "minutou",
+   "minutu"
+  ],
+  "unit1_month": [
+   "měsíc",
+   "měsícem",
+   "měsíci"
+  ],
+  "unit1_second": [
+   "sekunda",
+   "sekundou",
+   "sekundu"
+  ],
+  "unit1_week": [
+   "týden",
+   "týdne",
+   "týdnem",
+   "týdni",
+   "týdnu"
+  ],
+  "unit1_year": [
+   "roce",
+   "rok",
+   "rokem",
+   "roku"
+  ],
+  "unit_century": [
+   "století"
+  ],
+  "unit_day": [
+   "den",
+   "dne",
+   "dnech",
+   "dnem",
+   "dny",
+   "dní",
+   "dnů"
+  ],
+  "unit_decade": [
+   "dekád",
+   "dekáda",
+   "dekády",
+   "desetiletí"
+  ],
+  "unit_hour": [
+   "hodin",
+   "hodina",
+   "hodinami",
+   "hodinou",
+   "hodinu",
+   "hodiny",
+   "hodinách"
+  ],
+  "unit_minute": [
+   "min",
+   "minut",
+   "minuta",
+   "minutami",
+   "minutou",
+   "minutu",
+   "minuty",
+   "minutách"
+  ],
+  "unit_month": [
+   "měsíc",
+   "měsíce",
+   "měsícem",
+   "měsíci",
+   "měsících",
+   "měsíců",
+   "měsícům"
+  ],
+  "unit_second": [
+   "sekund",
+   "sekunda",
+   "sekundami",
+   "sekundou",
+   "sekundu",
+   "sekundy",
+   "sekundách"
+  ],
+  "unit_week": [
+   "týden",
+   "týdne",
+   "týdnech",
+   "týdnem",
+   "týdni",
+   "týdnu",
+   "týdny",
+   "týdnů"
+  ],
+  "unit_year": [
+   "let",
+   "letech",
+   "lety",
+   "roce",
+   "rok",
+   "rokem",
+   "roku",
+   "roky",
+   "roků"
+  ],
+  "weekday_0": [
+   "pondělí"
+  ],
+  "weekday_1": [
+   "úterý"
+  ],
+  "weekday_2": [
+   "středa",
+   "středu",
+   "středy"
+  ],
+  "weekday_3": [
+   "čtvrtek",
+   "čtvrtka"
+  ],
+  "weekday_4": [
+   "pátek",
+   "pátku"
+  ],
+  "weekday_5": [
+   "sobota",
+   "sobotu",
+   "soboty"
+  ],
+  "weekday_6": [
+   "neděle",
+   "neděli"
+  ]
+ }
+}

@@ -2,7 +2,7 @@
 
 A Welsh word changes its FIRST letter according to what precedes it, so a
 vocabulary listing only dictionary forms would silently fail on ordinary
-sentences.  The surfaces are therefore enumerated in the ``.voc`` files, and
+sentences.  The surfaces are therefore enumerated in the `vocab.json`, and
 this module is the proof that every enumerated one resolves and that the
 mutation never changes the meaning: "dwy flynedd" and "tair blynedd" differ by
 one year, not by which word the year is.

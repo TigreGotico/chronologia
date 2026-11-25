@@ -4,12 +4,12 @@ uniform +12 PM shift.  "la una de nueyt" is 01:00 (not 13:00) and "las once
 de nueyt" is 23:00, with small hours 1..5 staying AM, evening hours 6..11
 becoming PM, and twelve landing on midnight.  Gold is computed by
 independent arithmetic (h if h <= 5 else h + 12, h == 12 -> 0), never read
-back from the parser -- this is exactly the bug: before the fix, the pm.voc
+back from the parser -- this is exactly the bug: before the fix, the pm
 union of "nueyt" applied a flat +12 and turned "la una de nueyt" into 13:00.
 
 AN is Ibero-Romance and inherits the same madrugada band [00:00, 06:00) --
 hence the 5|6 cut -- as the es/ca/pt siblings (chronologia/locale/es/
-clock_meridiem_night.voc); native confirmation for Aragonese specifically is
+clock_meridiem_night); native confirmation for Aragonese specifically is
 still open, tracked in issue #266.
 """
 import pytest

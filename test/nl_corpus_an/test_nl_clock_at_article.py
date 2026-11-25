@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-"""The clock frame "a las <hour>" combines two separate marker_at.voc
+"""The clock frame "a las <hour>" combines two separate marker_at
 tokens: the bare preposition "a" and the agreeing article "las", which
 ``clock_time``'s bare-HOUR order treats as an alternative at-marker on
 its own.  With only a single ``at`` slot, the match starts at the

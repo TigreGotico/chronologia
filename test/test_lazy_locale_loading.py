@@ -37,7 +37,7 @@ def counting_open(file, *a, **k):
         p = os.fspath(file)
         if isinstance(p, bytes):
             p = p.decode("utf-8", "replace")
-        if (os.sep + "locale" + os.sep) in p and p.endswith((".voc", ".json")):
+        if (os.sep + "locale" + os.sep) in p and p.endswith(".json"):
             hits.append(p)
     except Exception:
         pass
@@ -45,13 +45,12 @@ def counting_open(file, *a, **k):
 builtins.open = counting_open
 import chronologia  # noqa: F401
 builtins.open = _real_open
-# also fail if any locale .voc slipped in through a non-open reader
 sys.stdout.write(repr(hits))
 """
 
 
 def test_import_reads_no_locale_files():
-    """Importing the package must not touch a single ``locale/*.voc`` or
+    """Importing the package must not touch a single ``locale/*/vocab.json`` or
     ``locale/*/lang.json`` -- locale loading is strictly deferred to the first
     extraction call, so a target that never extracts pays nothing."""
     out = subprocess.check_output(

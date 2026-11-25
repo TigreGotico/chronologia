@@ -1,0 +1,234 @@
+{
+ "format_version": 1,
+ "words": {
+  "clock_dir_to": [
+   "kém"
+  ],
+  "clock_fraction_30": [
+   "rưỡi"
+  ],
+  "clock_landmark_0": [
+   "nửa đêm"
+  ],
+  "clock_meridiem_am": [
+   "sáng"
+  ],
+  "clock_meridiem_night": [
+   "đêm"
+  ],
+  "clock_meridiem_pm": [
+   "chiều",
+   "trưa",
+   "tối"
+  ],
+  "daypart_afternoon_vi": [
+   "chiều"
+  ],
+  "daypart_evening_vi": [
+   "tối"
+  ],
+  "daypart_morning_vi": [
+   "sáng"
+  ],
+  "daypart_night_vi": [
+   "đêm"
+  ],
+  "marker_at": [
+   "giờ",
+   "lúc"
+  ],
+  "marker_bc": [
+   "tcn",
+   "trước công nguyên"
+  ],
+  "marker_day_word": [
+   "ngày"
+  ],
+  "marker_future": [
+   "sau"
+  ],
+  "marker_last": [
+   "trước"
+  ],
+  "marker_minute_word": [
+   "phút"
+  ],
+  "marker_next": [
+   "sau"
+  ],
+  "marker_ordinal_prefix": [
+   "thứ"
+  ],
+  "marker_past": [
+   "cách đây",
+   "trước"
+  ],
+  "marker_year_word": [
+   "năm"
+  ],
+  "month_1": [
+   "thg 1",
+   "tháng 1",
+   "tháng giêng",
+   "tháng một"
+  ],
+  "month_10": [
+   "thg 10",
+   "tháng 10",
+   "tháng mười"
+  ],
+  "month_11": [
+   "thg 11",
+   "tháng 11",
+   "tháng mười một"
+  ],
+  "month_12": [
+   "thg 12",
+   "tháng 12",
+   "tháng chạp",
+   "tháng mười hai"
+  ],
+  "month_2": [
+   "thg 2",
+   "tháng 2",
+   "tháng hai"
+  ],
+  "month_3": [
+   "thg 3",
+   "tháng 3",
+   "tháng ba"
+  ],
+  "month_4": [
+   "thg 4",
+   "tháng 4",
+   "tháng tư"
+  ],
+  "month_5": [
+   "thg 5",
+   "tháng 5",
+   "tháng năm"
+  ],
+  "month_6": [
+   "thg 6",
+   "tháng 6",
+   "tháng sáu"
+  ],
+  "month_7": [
+   "thg 7",
+   "tháng 7",
+   "tháng bảy"
+  ],
+  "month_8": [
+   "thg 8",
+   "tháng 8",
+   "tháng tám"
+  ],
+  "month_9": [
+   "thg 9",
+   "tháng 9",
+   "tháng chín"
+  ],
+  "named_day_-1": [
+   "hôm qua"
+  ],
+  "named_day_-2": [
+   "hôm kia"
+  ],
+  "named_day_0": [
+   "hôm nay"
+  ],
+  "named_day_1": [
+   "mai",
+   "ngày mai"
+  ],
+  "named_day_2": [
+   "ngày kia",
+   "ngày mốt"
+  ],
+  "scope_unit_century": [
+   "thế kỉ",
+   "thế kỷ"
+  ],
+  "scope_unit_decade": [
+   "thập kỉ",
+   "thập kỷ",
+   "thập niên"
+  ],
+  "season_fall": [
+   "mùa thu"
+  ],
+  "season_spring": [
+   "mùa xuân"
+  ],
+  "season_summer": [
+   "mùa hè",
+   "mùa hạ"
+  ],
+  "season_winter": [
+   "mùa đông"
+  ],
+  "special_weekend": [
+   "cuối tuần"
+  ],
+  "unit_century": [
+   "thế kỉ",
+   "thế kỷ"
+  ],
+  "unit_day": [
+   "ngày"
+  ],
+  "unit_decade": [
+   "thập kỉ",
+   "thập kỷ"
+  ],
+  "unit_hour": [
+   "giờ"
+  ],
+  "unit_millennium": [
+   "thiên niên kỉ",
+   "thiên niên kỷ"
+  ],
+  "unit_minute": [
+   "phút"
+  ],
+  "unit_month": [
+   "tháng"
+  ],
+  "unit_second": [
+   "giây"
+  ],
+  "unit_week": [
+   "tuần"
+  ],
+  "unit_year": [
+   "năm"
+  ],
+  "weekday_0": [
+   "thứ 2",
+   "thứ hai"
+  ],
+  "weekday_1": [
+   "thứ 3",
+   "thứ ba"
+  ],
+  "weekday_2": [
+   "thứ 4",
+   "thứ tư"
+  ],
+  "weekday_3": [
+   "thứ 5",
+   "thứ năm"
+  ],
+  "weekday_4": [
+   "thứ 6",
+   "thứ sáu"
+  ],
+  "weekday_5": [
+   "thứ 7",
+   "thứ bảy"
+  ],
+  "weekday_6": [
+   "chủ nhật"
+  ]
+ }
+}

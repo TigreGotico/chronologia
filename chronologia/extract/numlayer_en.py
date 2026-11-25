@@ -19,34 +19,21 @@ from __future__ import annotations
 
 import re
 from dataclasses import replace
-from pathlib import Path
+from functools import partial
 from typing import Dict, FrozenSet, Set, Tuple
 
 from numtag import Kind
-from ovos_spec_tools import expand, read_resource_file
 
 from chronologia.extract.model import Token
 from chronologia.extract.numfold_engine import reindex
 from chronologia.extract.numlayer import (CountWords, counts_things,
-                                          fold_mentions, voc_file_words,
+                                          fold_mentions, locale_words,
                                           mark_counts, mention_number,
                                           mentions, scale_factor,
-                                          scale_factors,
+                                          scale_factors, vocabulary,
                                           withhold_split_counts)
 
-_LANG_DIR = Path(__file__).resolve().parent.parent / "locale" / "en"
-
-
-def _voc(*bases: str) -> FrozenSet[str]:
-    """The surfaces of the English ``.voc`` files whose names start with one
-    of ``bases``."""
-    out = set()
-    for path in sorted(_LANG_DIR.glob("*.voc")):
-        if path.name.startswith(bases):
-            for template in read_resource_file(path):
-                out.update(s.lower() for s in expand(template, {}))
-    return frozenset(out)
-
+_voc = partial(locale_words, "en")
 
 _UNITS = _voc("unit_")
 _YEAR_UNITS = _voc("unit_year")
@@ -58,7 +45,7 @@ _YEAR_CUES = _YEAR_WORDS | _voc("marker_in.")
 #: thousand and ten", "from two thousand to two thousand and ten").  "since"
 #: and "between" are the built-in English range words of
 #: ``timespan._RANGE_SINCE`` and ``timespan._RANGE_BETWEEN``, which have no
-#: ``.voc`` file.  "by" and "of" also take a count ("killed by two thousand
+#: vocabulary.  "by" and "of" also take a count ("killed by two thousand
 #: soldiers", "a crowd of two thousand"), so they are no cue.
 _COUNT_CUES = (_YEAR_CUES | {"since", "between"}
                | _voc("marker_from.", "marker_until.", "marker_before.",
@@ -66,8 +53,8 @@ _COUNT_CUES = (_YEAR_CUES | {"since", "between"}
 #: The Gregorian months.  The other calendars' month files name months that
 #: never head a Gregorian year.
 _MONTHS = frozenset().union(*(
-    _voc(path.name) for path in _LANG_DIR.glob("month_*.voc")
-    if re.fullmatch(r"month_\d+\.voc", path.name)))
+    _voc(base + ".") for base in vocabulary("en")
+    if re.fullmatch(r"month_\d+", base)))
 #: The clock fractions, and the plural of "three quarters of an hour".
 _FRACTIONS = _voc("clock_fraction_") | {"quarters"}
 #: The deep-time SCALE words ("thousand", "million", "billion").
@@ -80,8 +67,8 @@ _FACTORS = scale_factors("en")
 _COUNT_WORDS = CountWords(
     scales=_SCALES, cues=_COUNT_CUES, months=_MONTHS, units=_UNITS,
     currencies=_voc("currency."),
-    codes=voc_file_words("en", "currency_code.voc"),
-    qualifiers=voc_file_words("en", "currency_qualifier.voc"),
+    codes=frozenset(vocabulary("en")["currency_code"]),
+    qualifiers=frozenset(vocabulary("en")["currency_qualifier"]),
     ranges={"from": _voc("marker_to.", "marker_until."),
             "since": _voc("marker_until."),
             "between": _voc("marker_and.")})

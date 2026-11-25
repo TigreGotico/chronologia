@@ -70,7 +70,7 @@ def fold_tr(tokens: Tuple[Token, ...]) -> Tuple[Token, ...]:
 
 def _az_other_day(tokens: Tuple[Token, ...]):
     """Claim "biri" in "o biri gün" (the day after tomorrow): the phrase is a
-    named day, not the count one (``locale/az/named_day_2.voc``)."""
+    named day, not the count one (``locale/az/named_day_2``)."""
     claimed = {i for i, t in enumerate(tokens)
                if t.text == "biri" and t.mention is not None
                and i > 0 and tokens[i - 1].text == "o"}

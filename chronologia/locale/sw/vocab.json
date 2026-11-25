@@ -1,0 +1,204 @@
+{
+ "format_version": 1,
+ "words": {
+  "daypart_alfajiri_sw": [
+   "alfajiri"
+  ],
+  "daypart_asubuhi_sw": [
+   "asubuhi"
+  ],
+  "daypart_jioni_sw": [
+   "jioni"
+  ],
+  "daypart_mchana_sw": [
+   "mchana"
+  ],
+  "daypart_usiku_sw": [
+   "usiku"
+  ],
+  "marker_after": [
+   "baada ya"
+  ],
+  "marker_and": [
+   "na"
+  ],
+  "marker_at": [
+   "katika",
+   "mnamo"
+  ],
+  "marker_before": [
+   "kabla ya"
+  ],
+  "marker_between": [
+   "kati ya"
+  ],
+  "marker_daypart_counted_ambiguous": [
+   "saa"
+  ],
+  "marker_every": [
+   "kila"
+  ],
+  "marker_from": [
+   "kutoka",
+   "tangu"
+  ],
+  "marker_future": [
+   "baada ya"
+  ],
+  "marker_last": [
+   "iliyopita",
+   "uliopita",
+   "zilizopita"
+  ],
+  "marker_next": [
+   "ijayo",
+   "ujao"
+  ],
+  "marker_past": [
+   "iliyopita",
+   "uliopita",
+   "zilizopita"
+  ],
+  "marker_since": [
+   "tangu"
+  ],
+  "marker_this": [
+   "hii",
+   "huu"
+  ],
+  "marker_until": [
+   "hadi",
+   "mpaka"
+  ],
+  "marker_year_plural": [
+   "miaka"
+  ],
+  "month_1": [
+   "jan",
+   "januari"
+  ],
+  "month_10": [
+   "okt",
+   "oktoba"
+  ],
+  "month_11": [
+   "nov",
+   "novemba"
+  ],
+  "month_12": [
+   "des",
+   "desemba"
+  ],
+  "month_2": [
+   "feb",
+   "februari"
+  ],
+  "month_3": [
+   "mac",
+   "machi"
+  ],
+  "month_4": [
+   "apr",
+   "aprili"
+  ],
+  "month_5": [
+   "mei"
+  ],
+  "month_6": [
+   "jun",
+   "juni"
+  ],
+  "month_7": [
+   "jul",
+   "julai"
+  ],
+  "month_8": [
+   "ago",
+   "agosti"
+  ],
+  "month_9": [
+   "sep",
+   "septemba"
+  ],
+  "named_day_-1": [
+   "jana"
+  ],
+  "named_day_-2": [
+   "juzi"
+  ],
+  "named_day_0": [
+   "leo"
+  ],
+  "named_day_1": [
+   "kesho"
+  ],
+  "named_day_2": [
+   "kesho kutwa"
+  ],
+  "unit1_day": [
+   "siku"
+  ],
+  "unit1_hour": [
+   "saa"
+  ],
+  "unit1_minute": [
+   "dakika"
+  ],
+  "unit1_month": [
+   "mwezi"
+  ],
+  "unit1_second": [
+   "sekunde"
+  ],
+  "unit1_week": [
+   "wiki"
+  ],
+  "unit1_year": [
+   "mwaka"
+  ],
+  "unit_day": [
+   "siku"
+  ],
+  "unit_hour": [
+   "saa"
+  ],
+  "unit_minute": [
+   "dakika"
+  ],
+  "unit_month": [
+   "miezi",
+   "mwezi"
+  ],
+  "unit_second": [
+   "sekunde"
+  ],
+  "unit_week": [
+   "wiki"
+  ],
+  "unit_year": [
+   "miaka",
+   "mwaka"
+  ],
+  "weekday_0": [
+   "jumatatu"
+  ],
+  "weekday_1": [
+   "jumanne"
+  ],
+  "weekday_2": [
+   "jumatano"
+  ],
+  "weekday_3": [
+   "alhamisi"
+  ],
+  "weekday_4": [
+   "ijumaa"
+  ],
+  "weekday_5": [
+   "jumamosi"
+  ],
+  "weekday_6": [
+   "jumapili"
+  ]
+ }
+}

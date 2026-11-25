@@ -51,7 +51,7 @@ days" while ``மூன்று நாட்களுக்கு முன்`
 a trailing முன்.  The engine reads a direction from a marker TOKEN, and there
 is no token here to read, so the locative pass below cuts the fused surface in
 two -- the unit in its citation form, and the suffix as the separate forward
-marker the locale ships as ``marker_future.voc``.  The pairs are transcribed
+marker the locale ships as ``marker_future``.  The pairs are transcribed
 from CLDR's own in-N patterns one by one; the suffix is not stripped by rule,
 because the oblique stem it attaches to differs per noun (மாதம் -> மாதத்தில்,
 நாள் -> நாளில்) and a rule would have to invent those stems.
@@ -248,7 +248,7 @@ _THREE_QUARTERS = "முக்கால்"
 # The locative "in N units" surfaces, each mapped to the citation form of the
 # unit it inflects.  Every key is a CLDR ``dateFields.json`` future pattern for
 # ``ta``, singular and plural; the value is the surface the locale's own
-# ``unit_*.voc`` ships.
+# ``unit_*`` ships.
 # ---------------------------------------------------------------------------
 _LOCATIVE: Dict[str, str] = {
     "ஆண்டில்": "ஆண்டு", "ஆண்டுகளில்": "ஆண்டுகள்",
@@ -284,7 +284,7 @@ def _locative_rewrite(tokens: Tuple[Token, ...]) -> Tuple[Token, ...]:
 
 #: the day-period surfaces that may lead a clock phrase, mapped to the
 #: registry key of the band they name.  The keys are the locale's own
-#: ``daypart_*_ta.voc`` file names, so a band can never be spellable in a clock
+#: ``daypart_*_ta`` file names, so a band can never be spellable in a clock
 #: phrase but unknown to the registry.
 _DAYPARTS: Dict[str, str] = {
     "அதிகாலை": "adhikaalai_ta",

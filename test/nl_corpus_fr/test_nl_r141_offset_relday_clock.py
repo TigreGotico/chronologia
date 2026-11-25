@@ -8,8 +8,8 @@ FRENCH-SPECIFIC AMBIGUITY -- "avant-hier"/"après-demain" idioms:
 
 French spells "the day before yesterday" and "the day after tomorrow" as
 their OWN two-word ``named_day`` vocabulary surfaces ("avant hier"/"avant-
-hier", "après demain"/"après-demain" -- see ``named_day_-2.voc``/
-``named_day_2.voc``), not through the ``named_day_before``/``named_day_after``
+hier", "après demain"/"après-demain" -- see ``named_day_-2``/
+``named_day_2``), not through the ``named_day_before``/``named_day_after``
 grammar construction this fix touches. When an offset marker's own surface
 happens to be the FIRST WORD of one of those idioms ("avant" + "hier",
 "après" + "demain"), a preceding quantified unit ("une heure avant hier")

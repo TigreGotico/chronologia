@@ -101,7 +101,7 @@ So that one named day is absent, while "the day after tomorrow" answers normally
 
 Both look identical from the caller's side: `None`, or a span with words left in the remainder. Three checks separate them.
 
-**Does the phrase's construction exist in that locale at all**? Look in `chronologia/locale/<code>/` for the vocabulary the phrase needs. A minutes-to clock needs `clock_dir_to.voc`. A day-before-yesterday needs `named_day_-2.voc`.
+**Does the phrase's construction exist in that locale at all**? Look in `chronologia/locale/<code>/` for the vocabulary the phrase needs. A minutes-to clock needs `clock_dir_to`. A day-before-yesterday needs `named_day_-2`.
 
 If the file is not there, the omission is deliberate. The neighbouring files usually carry a header comment saying which source was consulted and what it failed to establish. Those headers are where the reason lives.
 
@@ -228,7 +228,7 @@ An hour from 1 to 12 takes the next of its two twelve-hour readings at or after 
 
 Dutch "om 8:00 's ochtends" is 08:00 and "om 8:00 's avonds" is 20:00. Only a clock word ("uur"), the word that opens the clock ("om") or an article may stand between them. So Spanish "a las 6:30 que no quiero llegar tarde" ("late") said at 23:00 is 06:30. Spanish, Portuguese and Galician "tarde" is also the adverb "late", so before the clock and after another word of its clause it decides nothing: "llego tarde a las 6:30" is 06:30, while "tarde a las 4:30" is 16:30.
 
-A part of the day after a digit clock joins the clock as it joins a spoken hour: Spanish "a las 6:30 de la tarde" said at 13:04 is 18:30. "a las 6:30 de la mañana" is 06:30 the next day. This holds for `extract_timespan`, `extract_timespans` and the top `extract_candidates` reading, in every language whose vocabulary has meridiem words (`clock_meridiem_*.voc`). The locales `eo`, `fy`, `ka`, `lv`, `mwl`, `sw`, `ta` and `th` ship none. A recurrence pin names an hour of the day, so `extract_recurrence("daily at 7")` stays `BYHOUR=7`.
+A part of the day after a digit clock joins the clock as it joins a spoken hour: Spanish "a las 6:30 de la tarde" said at 13:04 is 18:30. "a las 6:30 de la mañana" is 06:30 the next day. This holds for `extract_timespan`, `extract_timespans` and the top `extract_candidates` reading, in every language whose vocabulary has meridiem words (`clock_meridiem_*`). The locales `eo`, `fy`, `ka`, `lv`, `mwl`, `sw`, `ta` and `th` ship none. A recurrence pin names an hour of the day, so `extract_recurrence("daily at 7")` stays `BYHOUR=7`.
 
 ```python
 from datetime import datetime
@@ -356,7 +356,7 @@ extract_timespan("le idi di marzo",   "it", anchor)[0].start_datetime   # 2017-0
 extract_timespan("die Iden des März", "de", anchor)[0].start_datetime   # 2017-03-15
 ```
 
-Every surface is attested, not invented. Each `roman_anchor_kalends.voc`, `roman_anchor_nones.voc` and `roman_anchor_ides.voc` file (`chronologia/locale/<lang>/`) has a header that cites the Wikipedia "Roman calendar" article of that language as the source of the word it wires. The `en` and `oc` files have no header. For example, `pt/roman_anchor_ides.voc` cites `pt.wikipedia.org/wiki/Calendário_romano`. `nl` cites the dedicated `Nonen (kalender)` and `Iden (kalender)` articles.
+Every surface is attested, not invented. Each `roman_anchor_kalends`, `roman_anchor_nones` and `roman_anchor_ides` file (`chronologia/locale/<lang>/`) has a header that cites the Wikipedia "Roman calendar" article of that language as the source of the word it wires. The `en` and `oc` files have no header. For example, `pt/roman_anchor_ides` cites `pt.wikipedia.org/wiki/Calendário_romano`. `nl` cites the dedicated `Nonen (kalender)` and `Iden (kalender)` articles.
 
 **The distinctive part is composition, not the vocabulary**. To the anchored-arithmetic engine, these anchors are one more named reference point. The same engine resolves "3 days before christmas" (see below). So **any** offset composes with **any** anchor in **any** of the twelve languages, for free. The offset logic needs nothing month-specific or language-specific:
 
@@ -446,7 +446,7 @@ A **business day** (or working day) is a calendar day that is neither a weekend 
 - **counting from the anchor**: "in N business days", "N working days". "the next working day" (which is N=1). Each returns the N-th business day *strictly after* the anchor date, as a day-wide span.
 - **counting from a reference**: "3 working days after christmas" and "two business days before new year" count the same way. They count from a date that the engine already resolved: any holiday or calendar date. They reuse the same composition as the rest of the anchored arithmetic.
 
-The weekend is the locale's own two-day rest period (the `weekend_start` convention, Saturday+Sunday by default, Friday+Saturday where a locale declares it), never hard-coded. The surfaces are a per-locale fact (`marker_business.voc`: `business`/`working`, `dia útil`, `día hábil`/`laborable`, `Werktag`/`Arbeitstag`, `jour ouvrable`/`ouvré`). The counting is generic.
+The weekend is the locale's own two-day rest period (the `weekend_start` convention, Saturday+Sunday by default, Friday+Saturday where a locale declares it), never hard-coded. The surfaces are a per-locale fact (`marker_business`: `business`/`working`, `dia útil`, `día hábil`/`laborable`, `Werktag`/`Arbeitstag`, `jour ouvrable`/`ouvré`). The counting is generic.
 
 **The holiday calendar needs a jurisdiction**. Which weekdays are public holidays is not knowable without one, so `extract_timespan` takes an optional `jurisdiction` (an ISO country code). With it, the count skips the public holidays of that jurisdiction. The shared civil-holiday engine looks them up, and this code never derives holiday data again. **Without** it, the count is *holiday-blind* and weekend-aware. But every weekday is treated as a business day. This is an honest, documented default, not an oversight.
 
@@ -714,7 +714,7 @@ Think of the module as an **assembly line**. A sentence enters at one end as a s
 
 No station reaches back. No station knows the language it is processing. The language is the parts bin that the stations pull from.
 
-That is the whole design in one sentence: **language is data, capability is a resolver. The two never entangle**. A language adds `.voc` files and a `lang.json`. A capability adds a construction and a resolver method. Neither touches the other, because the stations in between are language-agnostic and the date math is capability-agnostic.
+That is the whole design in one sentence: **language is data, capability is a resolver. The two never entangle**. A language adds `vocab.json` and a `lang.json`. A capability adds a construction and a resolver method. Neither touches the other, because the stations in between are language-agnostic and the date math is capability-agnostic.
 
 ```mermaid
 flowchart LR
@@ -969,7 +969,7 @@ These live above the grammar on purpose: a construction's job is to bind a conti
 
 The two extension paths never cross:
 
-- **Add a language**: pure data, no Python. Create `chronologia/locale/<code>/`, translate the `.voc` surface forms, write a `lang.json` listing the constructions the language enables and its calendar conventions. The stations already know what to do with the vocab. This is the path detailed in *[How a language works, and how to add one](#how-a-language-works-and-how-to-add-one)* below.
+- **Add a language**: pure data, no Python. Create `chronologia/locale/<code>/`, translate the vocabulary surface forms, write a `lang.json` listing the constructions the language enables and its calendar conventions. The stations already know what to do with the vocab. This is the path detailed in *[How a language works, and how to add one](#how-a-language-works-and-how-to-add-one)* below.
 - **Add a capability**: a *construction*. Give it an entry in `PRECEDENCE` (`compiler.py`). Let each language declare its `orders` and any slot vocabulary. Teach `_bind` (`matcher.py`) any slot names. Write one `_resolve_<name>` method (`resolver.py`) for the date math, and add its entry in `Resolver._HANDLERS`. The capability then works for *every* language that lists it, because the resolver is language-agnostic.
 
 Concretely: teaching the engine a *word for June* is a one-line vocabulary edit. To understand *"the Nth quarter of YEAR"* you add a construction (order, slot and resolver). English, Polish and every other locale can use it as soon as they list it.
@@ -1238,23 +1238,23 @@ assert extract_recurrence("toutes les deux semaines", "fr")[0].to_string() == (
 
 Every language is **data only**. There is no per-language code: the engine core (tokenizer, normaliser, compiler, matcher, resolver) is shared, and a language is a directory under `chronologia/locale/<code>/`:
 
-- **`*.voc` vocabulary files**: one *slot* per file, one surface form per line. The filename is the slot. `month_6.voc` lists the words for the sixth Gregorian month (`june`, `jun`). `weekday_0.voc` the words for Monday. `unit_day.voc` the words meaning "day". `marker_next.voc` the words meaning "next". Non-Gregorian months use `month_<calendar>_<n>.voc` (e.g. `month_islamic_civil_9.voc` is Ramadan), where `<calendar>` must be a calendar the core knows. In Hebrew, a Hebrew-calendar year in traditional *gematria* letter-numerals reads like the digit form. `15 אדר תשפ״ה` resolves the same as `15 אדר 5785`. The *small count* drops the implied 5000, and the full count `ה׳תשפ״ה` reads too. So a Hebrew month followed by a gematria year lands on the same Gregorian span as its numeric equivalent.
+- **`vocab.json`**: one list of surface forms per *slot*, keyed by the slot's base name. `month_6` lists the words for the sixth Gregorian month (`june`, `jun`). `weekday_0` the words for Monday. `unit_day` the words meaning "day". `marker_next` the words meaning "next". Non-Gregorian months use `month_<calendar>_<n>` (e.g. `month_islamic_civil_9` is Ramadan), where `<calendar>` must be a calendar the core knows. In Hebrew, a Hebrew-calendar year in traditional *gematria* letter-numerals reads like the digit form. `15 אדר תשפ״ה` resolves the same as `15 אדר 5785`. The *small count* drops the implied 5000, and the full count `ה׳תשפ״ה` reads too. So a Hebrew month followed by a gematria year lands on the same Gregorian span as its numeric equivalent.
 - **`lang.json`** holds one stanza per language: tokenizer options, the constructions that the language enables, and calendar conventions. The conventions are day and month order, hemisphere, week start and `weekend_start`. The setting `weekend_start` is the first day of the two-day weekend, as a weekday index with Monday=0. The default is Saturday. Israel and much of the Arab world set `4` for a Friday-Saturday weekend), and an optional `hook`. The tokenizer is script-agnostic, so right-to-left locales (Arabic, Hebrew) and mixed-direction strings, Western or Arabic-Indic digits embedded in RTL text, need no special handling.
 
-The vocabulary files are loaded through **ovos-spec-tools**, the shared `/locale` convention. Spelled-out numbers ("twenty fifth", "three") are folded to digits before matching. So a slot binds the same whether the writer typed `5` or `five`. **numtag** reads the numbers of 40 languages ([the table](languages/index.md) lists them).
+Spelled-out numbers ("twenty fifth", "three") are folded to digits before matching. So a slot binds the same whether the writer typed `5` or `five`. **numtag** reads the numbers of 40 languages ([the table](languages/index.md) lists them).
 
-To add a language, create `chronologia/locale/<code>/`, translate the `.voc` surface forms, and write a `lang.json` that sets the conventions and lists the constructions the language supports. Start by copying the closest existing language and replacing the surfaces, no Python required.
+To add a language, create `chronologia/locale/<code>/`, translate the vocabulary surface forms, and write a `lang.json` that sets the conventions and lists the constructions the language supports. Start by copying the closest existing language and replacing the surfaces, no Python required.
 
 ### The locale data contract, validated on load
 
 A locale is not free-form data: it must satisfy a **schema** the engine derives from itself and checks the moment a language is loaded (see `chronologia/extract/schema.py`). The loader checks this eagerly. A broken locale fails **loudly** with the language code and the exact field at fault. It does not silently produce a construction that can never match. The contract is:
 
 - **Order strings use the fixed slot alphabet**. Every `orders` entry is a space-separated sequence of *slots* (uppercase, `MONTH`, `NUM`, `SEASON`, …) and *connector literals* (lowercase, `of`, `year_word`, `ago`). The slot alphabet is exactly the set the matcher's `_bind` recognises. A mistyped slot (`MOMTH`) is rejected. A trailing `?` marks a single optional element (`YEAR?`). A `?` anywhere else is malformed.
-- **Every required slot must have vocabulary**. An order is *reachable* only if each non-optional slot and connector has a non-empty backing `.voc` in this locale. `of` needs `marker_of.voc`. `SEASON` needs the `season_*.voc` files. `CAL_MONTH` needs `month_<calendar>_<n>.voc`. An order whose vocabulary was never translated is dead data and is reported. Drop the order, or supply the missing surfaces. Numeric/regex slots (`NUM`, `YEAR`, `ORD`, `ISO`, …) need no vocabulary and are always reachable.
+- **Every required slot must have vocabulary**. An order is *reachable* only if each non-optional slot and connector has a non-empty backing vocabulary in this locale. `of` needs `marker_of`. `SEASON` needs the `season_*` files. `CAL_MONTH` needs `month_<calendar>_<n>`. An order whose vocabulary was never translated is dead data and is reported. Drop the order, or supply the missing surfaces. Numeric/regex slots (`NUM`, `YEAR`, `ORD`, `ISO`, …) need no vocabulary and are always reachable.
 - **Only known keys**. The loader rejects unknown top-level keys, unknown `conventions`, `tokenizer` and `guards` keys, and unknown per-construction flags (only `prefer_future` and `group` exist). It rejects construction names that the engine does not rank, and `group` values other than `classical`.
 - **Quantifier keys are numeric strings**. Each key under `quantifiers` is the numeric value its surface forms mean (`"2": ["couple", "pair"]`), so a non-numeric key is rejected.
 
-The locale linter in `test/test_locale_schema.py` enforces two further **data-quality** rules. A defect fails the case of that language. A `.voc` must contain no **duplicate** surface and no surface that **normalises to empty**. A non-English `period_part_*.voc` (the early/mid/late words) must not be left byte-identical to English, the tell-tale of an untranslated placeholder. Run `pytest test/test_locale_schema.py` after editing a locale.
+The locale linter in `test/test_locale_schema.py` enforces two further **data-quality** rules. A defect fails the case of that language. A vocabulary must contain no **duplicate** surface and no surface that **normalises to empty**. A non-English `period_part_*` (the early/mid/late words) must not be left byte-identical to English, the tell-tale of an untranslated placeholder. Run `pytest test/test_locale_schema.py` after editing a locale.
 
 ### Performance: lazy, cached per-locale loading
 
@@ -1262,7 +1262,7 @@ The locale linter in `test/test_locale_schema.py` enforces two further **data-qu
 
 So an embedded voice target that speaks one language pays for one locale, not all 61, and pays for it once. A lock guards the cache. So concurrent first calls from different threads are safe: each language is compiled once, and every later call returns the identical engine.
 
-The first call for a language expands its `.voc` files and loads its number reader. The first call in a process also loads the numtag lexicons. Depending on the language and the machine, that first call takes from a fraction of a second to a few seconds. Later calls for the same language take milliseconds.
+The first call for a language reads its `vocab.json` and loads its number reader. The first call in a process also loads the numtag lexicons. Depending on the language and the machine, that first call takes from a fraction of a second to a few seconds. Later calls for the same language take milliseconds.
 
 Loading is **linear** in the number of vocabulary files. Reading a locale builds its name→templates map once and expands each file against it. The loader does not scan the whole locale tree again for each file.
 

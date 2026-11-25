@@ -1,4 +1,4 @@
-"""The "at" preposition ("у", marker_at.voc) in front of a bare weekday.
+"""The "at" preposition ("у", marker_at) in front of a bare weekday.
 
 "у неділю" names the same Sunday as the bare weekday alone; "у" is not
 part of the answer and must be consumed by the match, not left stranded

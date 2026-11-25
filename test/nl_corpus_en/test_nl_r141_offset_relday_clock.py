@@ -30,7 +30,7 @@ ROOT CAUSE (two distinct bugs, both closed here):
 
 2. Spanish/Galician-specific: "mañana" is a genuine homograph of BOTH
    "tomorrow" (``named_day``) and "morning" (``DAYPART``). "de" is the
-   ``marker_of.voc`` surface, so "de mañana" ALSO matches the ``daypart_ref``
+   ``marker_of`` surface, so "de mañana" ALSO matches the ``daypart_ref``
    construction's "of DAYPART" order ("in the morning"), a 2-token span that
    beats the 1-token bare ``named_day`` reading of "mañana" alone in the
    matcher's longest-span contest -- even when "antes"/"después" (before/

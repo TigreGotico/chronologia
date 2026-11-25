@@ -1,7 +1,7 @@
 """Croatian abbreviated month names (CLDR 47 ``months.format.abbreviated``).
 
 Croatian could not read an abbreviated month at all before this file's
-companion fix to ``locale/hr/month_*.voc`` -- ``extract_timespan("15. sij
+companion fix to ``locale/hr/month_*`` -- ``extract_timespan("15. sij
 2020", "hr", anchor=...)`` returned ``None``.  CLDR ships the abbreviated
 surface bare (no trailing dot in the data itself), but a day-month-year date
 still carries the ordinal dot after the day number ("15."); a further dot

@@ -1,6 +1,6 @@
 """R119 sibling probe (de): a resolved PINPOINT clock start with a trailing
 bare "für <duration>" extends the span's end, sharing the "recur_for"
-marker vocabulary (``marker_recur_for.voc`` -> "für"/"fur") the recurrence
+marker vocabulary (``marker_recur_for`` -> "für"/"fur") the recurrence
 grammar already ships -- no new locale data needed.
 
 Expected values are independently hand-computed against the anchor

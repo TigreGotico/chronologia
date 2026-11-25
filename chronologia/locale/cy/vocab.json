@@ -1,0 +1,279 @@
+{
+ "format_version": 1,
+ "words": {
+  "clock_dir_past": [
+   "wedi"
+  ],
+  "clock_dir_to": [
+   "i"
+  ],
+  "clock_fraction_15": [
+   "chwarter"
+  ],
+  "clock_fraction_30": [
+   "hanner",
+   "hanner awr"
+  ],
+  "clock_landmark_0": [
+   "canol nos"
+  ],
+  "clock_landmark_720": [
+   "canol dydd"
+  ],
+  "clock_meridiem_am": [
+   "yb"
+  ],
+  "clock_meridiem_pm": [
+   "yh"
+  ],
+  "daypart_afternoon_cy": [
+   "brynhawn",
+   "prydnawn",
+   "prynhawn"
+  ],
+  "daypart_evening_cy": [
+   "hwyr"
+  ],
+  "daypart_morning_cy": [
+   "borau",
+   "bore",
+   "fore"
+  ],
+  "marker_article": [
+   "y",
+   "yr"
+  ],
+  "marker_at": [
+   "am"
+  ],
+  "marker_every": [
+   "bob",
+   "pob"
+  ],
+  "marker_future": [
+   "ymhen"
+  ],
+  "marker_last": [
+   "ddiwethaf",
+   "diweddaf",
+   "diwetha",
+   "diwethaf"
+  ],
+  "marker_minute_word": [
+   "funud",
+   "munud"
+  ],
+  "marker_next": [
+   "nesa",
+   "nesaf"
+  ],
+  "marker_oclock": [
+   "o'r gloch"
+  ],
+  "marker_of": [
+   "o"
+  ],
+  "marker_past": [
+   "yn ôl"
+  ],
+  "marker_this": [
+   "hon",
+   "hwn"
+  ],
+  "month_1": [
+   "ion",
+   "ionawr"
+  ],
+  "month_10": [
+   "hyd",
+   "hydref"
+  ],
+  "month_11": [
+   "dachwedd",
+   "tach",
+   "tachwedd"
+  ],
+  "month_12": [
+   "ragfyr",
+   "rhag",
+   "rhagfyr"
+  ],
+  "month_2": [
+   "chw",
+   "chwef",
+   "chwefror"
+  ],
+  "month_3": [
+   "fawrth",
+   "maw",
+   "mawrth"
+  ],
+  "month_4": [
+   "ebr",
+   "ebrill"
+  ],
+  "month_5": [
+   "fai",
+   "mai"
+  ],
+  "month_6": [
+   "fehefin",
+   "meh",
+   "mehefin"
+  ],
+  "month_7": [
+   "gor",
+   "gorff",
+   "gorffennaf",
+   "orffennaf"
+  ],
+  "month_8": [
+   "awst"
+  ],
+  "month_9": [
+   "fedi",
+   "medi"
+  ],
+  "named_day_-1": [
+   "ddoe"
+  ],
+  "named_day_-2": [
+   "echddoe",
+   "echdoe"
+  ],
+  "named_day_0": [
+   "heddi",
+   "heddiw"
+  ],
+  "named_day_1": [
+   "fory",
+   "yfory"
+  ],
+  "scope_unit_century": [
+   "canrif",
+   "canrifoedd",
+   "ganrif"
+  ],
+  "scope_unit_decade": [
+   "ddegawd",
+   "degawd",
+   "degawdau"
+  ],
+  "unit1_century": [
+   "canrif",
+   "ganrif"
+  ],
+  "unit1_day": [
+   "ddiwrnod",
+   "ddydd",
+   "diwrnod",
+   "dydd"
+  ],
+  "unit1_decade": [
+   "ddegawd",
+   "degawd"
+  ],
+  "unit1_hour": [
+   "awr"
+  ],
+  "unit1_minute": [
+   "funud",
+   "munud"
+  ],
+  "unit1_month": [
+   "fis",
+   "mis"
+  ],
+  "unit1_second": [
+   "eiliad"
+  ],
+  "unit1_week": [
+   "wythnos"
+  ],
+  "unit1_year": [
+   "blwyddyn",
+   "blynedd",
+   "flwyddyn",
+   "flynedd",
+   "mlynedd"
+  ],
+  "unit_century": [
+   "canrif",
+   "canrifoedd",
+   "ganrif",
+   "ganrifoedd"
+  ],
+  "unit_day": [
+   "ddiwrnod",
+   "ddydd",
+   "diwrnod",
+   "diwrnodau",
+   "dydd",
+   "dyddiau"
+  ],
+  "unit_decade": [
+   "ddegawd",
+   "degawd",
+   "degawdau"
+  ],
+  "unit_hour": [
+   "awr",
+   "oriau"
+  ],
+  "unit_minute": [
+   "funud",
+   "munud",
+   "munudau"
+  ],
+  "unit_month": [
+   "fis",
+   "mis",
+   "misoedd"
+  ],
+  "unit_second": [
+   "eiliad",
+   "eiliadau"
+  ],
+  "unit_week": [
+   "wythnos",
+   "wythnosau"
+  ],
+  "unit_year": [
+   "blwyddyn",
+   "blynedd",
+   "blynyddau",
+   "blynyddoedd",
+   "flwyddyn",
+   "flynedd",
+   "mlynedd"
+  ],
+  "weekday_0": [
+   "ddydd llun",
+   "dydd llun"
+  ],
+  "weekday_1": [
+   "ddydd mawrth",
+   "dydd mawrth"
+  ],
+  "weekday_2": [
+   "ddydd mercher",
+   "dydd mercher"
+  ],
+  "weekday_3": [
+   "ddydd iau",
+   "dydd iau"
+  ],
+  "weekday_4": [
+   "ddydd gwener",
+   "dydd gwener"
+  ],
+  "weekday_5": [
+   "ddydd sadwrn",
+   "dydd sadwrn"
+  ],
+  "weekday_6": [
+   "ddydd sul",
+   "dydd sul"
+  ]
+ }
+}
