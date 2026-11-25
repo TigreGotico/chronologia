@@ -228,7 +228,7 @@ An hour from 1 to 12 takes the next of its two twelve-hour readings at or after 
 
 Dutch "om 8:00 's ochtends" is 08:00 and "om 8:00 's avonds" is 20:00. Only a clock word ("uur"), the word that opens the clock ("om") or an article may stand between them. So Spanish "a las 6:30 que no quiero llegar tarde" ("late") said at 23:00 is 06:30. Spanish, Portuguese and Galician "tarde" is also the adverb "late", so before the clock and after another word of its clause it decides nothing: "llego tarde a las 6:30" is 06:30, while "tarde a las 4:30" is 16:30.
 
-A part of the day after a digit clock joins the clock as it joins a spoken hour: Spanish "a las 6:30 de la tarde" said at 13:04 is 18:30. "a las 6:30 de la mañana" is 06:30 the next day. This holds for `extract_timespan`, `extract_timespans` and the top `extract_candidates` reading, in every language whose vocabulary has meridiem words (`clock_meridiem_*.voc`). Eight locales ship none: `eo`, `fy`, `ka`, `lv`, `mwl`, `sw`, `ta` and `th`. A recurrence pin names an hour of the day, so `extract_recurrence("daily at 7")` stays `BYHOUR=7`.
+A part of the day after a digit clock joins the clock as it joins a spoken hour: Spanish "a las 6:30 de la tarde" said at 13:04 is 18:30. "a las 6:30 de la mañana" is 06:30 the next day. This holds for `extract_timespan`, `extract_timespans` and the top `extract_candidates` reading, in every language whose vocabulary has meridiem words (`clock_meridiem_*.voc`). The locales `eo`, `fy`, `ka`, `lv`, `mwl`, `sw`, `ta` and `th` ship none. A recurrence pin names an hour of the day, so `extract_recurrence("daily at 7")` stays `BYHOUR=7`.
 
 ```python
 from datetime import datetime
@@ -996,9 +996,7 @@ Chronologia treats a stranded ordinal or unit word next to a resolved date as pr
 
 **The rationale is trust**. A caller that acts on a date span cannot tell two cases apart. One is "the library computed this on purpose". The other is "the library dropped a piece it could not place."
 
-A human who says "February 30" has made an error or tests the boundary.
-
-They do not mean March 2, and a scheduler that quietly proceeds as if they did will act on a date nobody asked for. Returning `None` costs an unhandled case. Returning a plausible-looking wrong date costs a silent, undetectable one. Between an honest "this does not resolve" and a fabricated answer that happens to parse without complaint, the library always chooses the former.
+A human who says "February 30" has made an error or tests the boundary. They do not mean March 2, and a scheduler that quietly proceeds as if they did will act on a date nobody asked for. Returning `None` costs an unhandled case. Returning a plausible-looking wrong date costs a silent, undetectable one. Between an honest "this does not resolve" and a fabricated answer that happens to parse without complaint, the library always chooses the former.
 
 **Telling an impossible date from a phrase that is no date**. By default both give `None`. A caller that must tell them apart passes `impossible="raise"` to `extract_timespan`, `extract_candidates`, `extract_event` or `extract_recurrence`. A call that would return `None` (or, for `extract_candidates`, an empty list) then raises `ImpossibleDateError`. This `ValueError` is exported from `chronologia`.
 

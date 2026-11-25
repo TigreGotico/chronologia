@@ -52,7 +52,7 @@ The file `clock_meridiem_pm.voc` lists `ettermiddagen`, `ettermiddag`, `kvelden`
 
 Two gaps remain, and each gives a wrong time rather than a refusal. A fraction or a minute count before the hour takes no meridiem word. The phrase `halv åtte om kvelden` returns 07:30 with `om kvelden` in the remainder. The phrase `kvart over tre om ettermiddagen` returns 03:15 rather than 15:15.
 
-The night word has no entry: `klokka elleve om natta` returns 11:00 rather than 23:00. The discarded words are visible in the remainder. Danish reads all three phrases. Eight of the sixty-one locales ship no meridiem vocabulary, and Bokmål is not one of them.
+The night word has no entry: `klokka elleve om natta` returns 11:00 rather than 23:00. The discarded words are visible in the remainder. Danish reads all three phrases. Bokmål ships meridiem vocabulary.
 
 **Day parts** take their band boundaries from the Unicode CLDR 47 day-period chart. The chart's Bokmål rows carry the period codes with no example words at all (every `nb` cell reads "missing") so the boundaries are read off the Norwegian (`no`) rows, which both written standards share: `natt` from 00:00, `morgen` from 06:00, `formiddag` from 10:00, `ettermiddag` from 12:00 and `kveld` from 18:00. The words are supplied per standard, and `chronologia/ dayparts.py` records that reasoning.
 

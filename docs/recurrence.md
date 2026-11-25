@@ -177,7 +177,7 @@ print([d.start.year for d in later])   # [2026, 2027, 2028, 2029]
 print(bounded.to_json()["until"])   # 2029-01-01T00:00:00
 ```
 
-`extract_recurrence("every easter until 2030", "en")` reads into this object with `until` set to 1 January 2030. A length or a count after a movable holiday ("every easter for 3 years") is not read, and `extract_recurrence` raises `AttributeError` for it ([#1373](https://github.com/TigreGotico/chronologia/issues/1373)).
+`extract_recurrence("every easter until 2030", "en")` reads into this object with `until` set to 1 January 2030. A length or a count after a movable holiday ("every easter for 3 years") is not read. Without an anchor the length stays in the remainder. With an anchor `extract_recurrence` raises `AttributeError` ([#1373](https://github.com/TigreGotico/chronologia/issues/1373)).
 
 ## Jurisdiction holiday sets: `JurisdictionHolidays`
 
