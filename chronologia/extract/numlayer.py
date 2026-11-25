@@ -49,14 +49,27 @@ _LOCALE_DIR = Path(__file__).resolve().parent.parent / "locale"
 VOCAB_FORMAT_VERSION = 1
 
 
+def _unique_keys(pairs):
+    """``object_pairs_hook`` that refuses an object with a repeated key."""
+    keys = [key for key, _ in pairs]
+    if len(set(keys)) != len(keys):
+        repeated = sorted({key for key in keys if keys.count(key) > 1})
+        raise ValueError(f"repeated key(s) {repeated}")
+    return dict(pairs)
+
+
 def read_vocabulary(lang_dir) -> Dict[str, List[str]]:
     """The surfaces of ``<lang_dir>/vocab.json``, by resource base name."""
     path = Path(lang_dir) / "vocab.json"
     with open(path, encoding="utf-8") as fh:
-        data = json.load(fh)
-    if data.get("format_version") != VOCAB_FORMAT_VERSION:
+        try:
+            data = json.load(fh, object_pairs_hook=_unique_keys)
+        except ValueError as error:
+            raise ValueError(f"{path}: {error}") from error
+    version = data.get("format_version")
+    if type(version) is not int or version != VOCAB_FORMAT_VERSION:
         raise ValueError(
-            f"{path}: format_version {data.get('format_version')!r} is not "
+            f"{path}: format_version {version!r} is not "
             f"supported, expected {VOCAB_FORMAT_VERSION}")
     return data["words"]
 
@@ -70,9 +83,11 @@ def vocabulary(lang: str) -> Dict[str, List[str]]:
 @lru_cache(maxsize=None)
 def locale_words(lang: str, *prefixes: str) -> FrozenSet[str]:
     """The lower-cased surfaces of every vocabulary of ``lang`` whose base
-    name starts with one of ``prefixes``.  A prefix that ends in a dot stops at
-    the end of a base name: ``marker_in.`` names ``marker_in`` and no
-    ``marker_in_*``."""
+    name starts with one of ``prefixes``.  The test runs on the base name with a
+    dot appended, so a prefix that ends in a dot matches that base name and the
+    dotted names under it: ``marker_in.`` names ``marker_in`` and no
+    ``marker_in_*``, and ``scale_1000.`` names ``scale_1000`` and
+    ``scale_1000.short``."""
     return frozenset(
         s.lower() for base, surfaces in vocabulary(lang).items()
         if (base + ".").startswith(prefixes) for s in surfaces)

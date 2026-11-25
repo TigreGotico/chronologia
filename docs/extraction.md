@@ -356,7 +356,7 @@ extract_timespan("le idi di marzo",   "it", anchor)[0].start_datetime   # 2017-0
 extract_timespan("die Iden des März", "de", anchor)[0].start_datetime   # 2017-03-15
 ```
 
-Every surface is attested, not invented. Each `roman_anchor_kalends`, `roman_anchor_nones` and `roman_anchor_ides` file (`chronologia/locale/<lang>/`) has a header that cites the Wikipedia "Roman calendar" article of that language as the source of the word it wires. The `en` and `oc` files have no header. For example, `pt/roman_anchor_ides` cites `pt.wikipedia.org/wiki/Calendário_romano`. `nl` cites the dedicated `Nonen (kalender)` and `Iden (kalender)` articles.
+Every surface is attested, not invented. Each `roman_anchor_kalends`, `roman_anchor_nones` and `roman_anchor_ides` vocabulary (`chronologia/locale/<lang>/vocab.json`) has a `sources` entry that cites the Wikipedia "Roman calendar" article of that language as the source of the word it wires. The `en` and `oc` vocabularies have no `sources` entry. For example, `pt/roman_anchor_ides` cites `pt.wikipedia.org/wiki/Calendário_romano`. `nl` cites the dedicated `Nonen (kalender)` and `Iden (kalender)` articles.
 
 **The distinctive part is composition, not the vocabulary**. To the anchored-arithmetic engine, these anchors are one more named reference point. The same engine resolves "3 days before christmas" (see below). So **any** offset composes with **any** anchor in **any** of the twelve languages, for free. The offset logic needs nothing month-specific or language-specific:
 

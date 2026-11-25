@@ -225,7 +225,7 @@ _REGION_NUMBER_LANG = {"pt-br": "pt-BR", "fr-be": "fr-BE", "fr-ch": "fr-CH"}
 # the locale's number/date grammar -- the SAME base locale data serves every
 # region -- but the dialect default differs by naming country.  A full BCP-47
 # code selects the dialect (``pt-BR`` short, ``pt-PT`` long) while loading the
-# same base voc; a bare code is the naming country's own norm.  An explicit
+# same base vocabulary; a bare code is the naming country's own norm.  An explicit
 # ``scale=`` kwarg hard-overrides both.  Precedence: explicit kwarg > region
 # subtag > bare-code naming-country default.  Sources: Wikipedia, "Long and
 # short scales" (per-language sections).
@@ -249,9 +249,9 @@ _REGION_SCALE = {
 }
 #: every language not otherwise classified defaults to the SHORT scale -- the
 #: modern SI-aligned trend and the reading English (the fallback base) already
-#: uses.  A locale with no dialect-tagged scale voc resolves identically under
+#: uses.  A locale with no dialect-tagged scale vocabulary resolves identically under
 #: either mode, so this default is byte-neutral for them; it only bites the
-#: languages that actually ship ``scale_*.short.voc`` / ``.long.voc`` data.
+#: languages that actually ship ``scale_*.short`` / ``.long`` data.
 
 
 def _resolve_scale_mode(lang: str, scale):
@@ -275,7 +275,7 @@ def _resolve_scale_mode(lang: str, scale):
 
 #: default (English) range framing words, always available so English
 #: behaviour is unchanged.  A language adds its own surfaces via the
-#: ``from``/``to``/``between``/``and`` connectors (``marker_from.voc`` ...),
+#: ``from``/``to``/``between``/``and`` connectors (``marker_from`` ...),
 #: which are unioned in per language -- ranges are not English-only.  ``"-"``
 #: is deliberately *not* a ``to`` word here: a hyphen is punctuation the
 #: tokenizer drops, so a dash range separator is detected on the character gap
@@ -883,8 +883,8 @@ def _extract_range(text, tokens, engine, anchor, scale_mode="short"):
     # Turkish, Hungarian and Finnish frame a closed range with the "between"
     # word placed AFTER the pair instead of before it ("3 Mart ile 5 Nisan
     # arasında" == "3 March and 5 April between"), unlike English/Romance
-    # "between A and B".  A locale opts in with its own ``marker_between_post
-    # .voc`` (-> ``spec.connectors["between_post"]``); the set is empty by
+    # "between A and B".  A locale opts in with its own ``marker_between_post``
+    # (-> ``spec.connectors["between_post"]``); the set is empty by
     # default so no other language's bare "A and B" is ever mistaken for a
     # range -- the trailing marker is what licenses the bind, exactly as the
     # leading "between"/"from" licenses the preposed readings above.  Requiring
@@ -919,7 +919,7 @@ def _extract_range(text, tokens, engine, anchor, scale_mode="short"):
 
 
 #: the surfaces "now" resolves from -- the anchor instant.  Kept as a connector
-#: (``marker_now.voc`` -> ``spec.connectors["now"]``) so a locale supplies its
+#: (``marker_now`` -> ``spec.connectors["now"]``) so a locale supplies its
 #: own; the English defaults carry the bare word and its "right now" intensifier.
 _NOW_WORDS = ("now", "right now")
 
@@ -1346,7 +1346,7 @@ def _bare_numeral(text, sub, engine, anchor):
     # though it resolves on its own to a day of the ANCHOR month -- "do dia 2
     # ao dia 5 de setembro" would otherwise bind the left endpoint to the 2nd
     # of the anchor's month instead of September.  The label names no month of
-    # its own (see ``marker_day_label.voc``), so the slice looks to its
+    # its own (see ``marker_day_label``), so the slice looks to its
     # partner exactly as the label-less "5" in "del 5 al 12 de junio" does.
     # Checked *before* the duration-unit veto below: the label heads the
     # numeral ("dia 2"), the opposite word order from a duration ("2 dias"),
@@ -1823,7 +1823,7 @@ def _fold_day_label(folded, consumed, spec):
     correctly-bound date) whether or not the date sits inside a range, so the
     fold applies wherever a date binds.
 
-    A locale opts in via ``marker_day_label.voc`` (-> ``spec.connectors
+    A locale opts in via ``marker_day_label`` (-> ``spec.connectors
     ["day_label"]``); the set is empty by default so no other language's bare
     noun is ever mistaken for range-marker glue.  Only a label word
     IMMEDIATELY followed (no gap) by an already-consumed token is folded in --
@@ -1855,7 +1855,7 @@ def _fold_day_early(tokens, span, consumed, spec):
     word is consumed.  A span that is already the morning band ("mañá pola
     mañá cedo") keeps its value and takes the word.  Any other span, or an
     "early" word with no bound day before it ("chegou cedo"), is left as it
-    is.  A locale opts in with ``marker_day_early.voc``.
+    is.  A locale opts in with ``marker_day_early``.
     """
     early = spec.connectors.get("day_early", frozenset())
     if not early or not consumed:
@@ -1889,15 +1889,15 @@ def _fold_date_article(folded, consumed, spec, span):
     "le mardi"), so it must not strand.  The habitual forms ("ao sábado", "os
     luns") read as the next such day and take their article too.
 
-    A locale opts in via ``marker_date_article.voc``; only a surface that
+    A locale opts in via ``marker_date_article``; only a surface that
     directly abuts an already-consumed token is folded, so an article heading
     any other noun ("o bebé") stays in the remainder.  Runs after
     :func:`_fold_day_label`, so the article in front of a label ("no dia 25")
     folds too.
 
-    ``marker_date_lead.voc`` lists the other words that open a date or a
+    ``marker_date_lead`` lists the other words that open a date or a
     clock and belong to it, the preposition of English "at 5" or "on
-    monday", and folds the same way.  ``marker_clock_lead.voc`` lists the
+    monday", and folds the same way.  ``marker_clock_lead`` lists the
     words that open a clock time only, Dutch "om 9:00" or Norwegian "klokka
     15:30": they fold only when ``span`` is a clock time (one minute wide or
     less) and the next token is a number, a clock time, a clock fraction
@@ -1909,17 +1909,17 @@ def _fold_date_article(folded, consumed, spec, span):
     particle before it belongs to the verb.  No word folds in front of a
     named day or a daypart fused with today ("turn the lights on tomorrow",
     "what's on tonight"): such a day takes no preposition, so the word in
-    front of it belongs to the verb.  ``marker_date_lead_no_deixis.voc``
+    front of it belongs to the verb.  ``marker_date_lead_no_deixis``
     lists the lead words that also do not open a this, next or last phrase
     of a daypart, a period or a weekday ("turn it on this evening", "what is
     on this weekend", "turn it on next friday").  A word in
-    ``marker_date_lead_dative.voc`` makes the this-phrase take the lead word
+    ``marker_date_lead_dative`` makes the this-phrase take the lead word
     again: German "an" governs the dative in a time phrase, so "an diesem
     Freitag" folds while the bare "nächsten Freitag" in "ruf mich an
     nächsten Freitag" leaves "an" to the verb.  The determiner folds with
     its lead word before a calendar date too ("an diesem 31. Januar").  In a
     locale with such determiners, a lead word of
-    ``marker_date_lead_no_deixis.voc`` opens a bare weekday, daypart or
+    ``marker_date_lead_no_deixis`` opens a bare weekday, daypart or
     period only through one: the time phrase is "am Montag" or "an diesem
     Montag", so the "an" of "ruf mich an Montag" and "denk an Montag"
     belongs to the verb.
@@ -2572,7 +2572,7 @@ def _apply_week_of(tokens, resolved, spec):
     (july 20); this pass then finds the locale's ``weekof`` marker stranded
     right before that date -- claimed by no stronger construction -- and
     replaces the day span with the calendar week (locale ``week_start``) that
-    contains it.  The marker is a per-locale fact (``marker_weekof.voc``); the
+    contains it.  The marker is a per-locale fact (``marker_weekof``); the
     widening is generic (it wraps *any* date the engine already resolves).
 
     It fires only when the marker tokens are consumed by no other match (so
@@ -2798,9 +2798,9 @@ def _bare_hour_in_sentence(tokens, consumed, spec, text=None):
     vocabulary with its source:
 
     * the verb that states the hour, with its article ("il est 3 heures",
-      "son las 15h", ``marker_hour_statement.voc``);
+      "son las 15h", ``marker_hour_statement``);
     * a word of approximation or of a start time ("vers 20h", "por volta das
-      20h", ``marker_hour_approx.voc``);
+      20h", ``marker_hour_approx``);
     * a day period or a day word right after an hour written with the
       letter ("20h ce soir").  After a counted hour ("une heure avant-hier")
       the day word does not make a clock, because the count is as often a
@@ -3551,7 +3551,7 @@ def _relday_daypart_homograph_veto(tokens, match, spec) -> bool:
     the morning" -- Spanish has no such reading of "antes de" + a bare
     daypart.  Without this veto, the matcher's own longest-span rule always
     prefers the 2-token ``daypart_ref`` reading ("de mañana" via the "of
-    DAYPART" order, ``marker_of.voc`` binding "de") over the 1-token bare
+    DAYPART" order, ``marker_of`` binding "de") over the 1-token bare
     ``named_day`` reading of "mañana" alone, so "mañana" is read as "the
     morning" and the whole reference silently becomes a daypart band on
     TODAY -- stranding "antes"/the offset's own magnitude in the remainder.
@@ -3575,7 +3575,7 @@ def _relday_daypart_homograph_veto(tokens, match, spec) -> bool:
 
 def _participle_season_veto(tokens, match, spec) -> bool:
     """True for a match that opens on a season word directly behind a form of
-    the auxiliary listed in ``marker_participle_aux.voc``.
+    the auxiliary listed in ``marker_participle_aux``.
 
     French "été" is the season and the past participle of "être": "il a été
     malade le 15 mai" says nothing about summer.  The participle follows a form
@@ -3678,7 +3678,7 @@ def _candidate_veto(tokens, match, spec) -> bool:
 
 #: the "for <duration>" bound marker vocabulary, keyed by spec identity so a
 #: repeat call for the same language does not recompile the alternation. The
-#: WORDS come from ``spec.connectors["recur_for"]`` (``marker_recur_for.voc``)
+#: WORDS come from ``spec.connectors["recur_for"]`` (``marker_recur_for``)
 #: -- the recurrence grammar's own "for" bound ("every monday for 3 weeks") --
 #: reused here rather than adding a parallel marker family for the same word.
 _FOR_PATTERN_CACHE = {}

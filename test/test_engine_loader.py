@@ -116,3 +116,19 @@ def test_unsupported_vocab_format_version_is_a_load_error(tmp_path):
     root = _write_locale(tmp_path, {"month_6": ["zjun"]}, format_version=2)
     with pytest.raises(ValueError, match="format_version 2 is not supported"):
         load_lang_spec("xx", root)
+
+
+@pytest.mark.parametrize("version", [True, 1.0])
+def test_vocab_format_version_must_be_the_integer_one(tmp_path, version):
+    root = _write_locale(tmp_path, {"month_6": ["zjun"]}, format_version=version)
+    with pytest.raises(ValueError, match="is not supported"):
+        load_lang_spec("xx", root)
+
+
+def test_repeated_vocab_key_is_a_load_error(tmp_path):
+    root = _write_locale(tmp_path, {"month_6": ["zjun"]})
+    (tmp_path / "xx" / "vocab.json").write_text(
+        '{"format_version": 1, "words": {"month_6": ["zjun"], "month_6": ["zjul"]}}',
+        encoding="utf-8")
+    with pytest.raises(ValueError, match=r"repeated key.*month_6"):
+        load_lang_spec("xx", root)
