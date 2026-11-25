@@ -53,6 +53,7 @@ FIXED_SPANS = {
     "laat me vanmiddag weten dat ik de loodgieter moet bellen",
     "väck mig i morgon bitti",
     "vilka larm har jag till i morgon",
+    "duas horas e três quartos",
 }
 FIXED_LENGTHS = {
     "sæt en timer",
