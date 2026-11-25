@@ -7,3 +7,7 @@
 # [12:00, 18:00) and avond/evening [18:00, 24:00) are the pm half.
 middags
 avonds
+# "vanmiddag"/"vanavond" name today's own band (marker_dayparttoday.voc), so
+# "om acht uur vanavond" is 20:00 today without the clock's roll to tomorrow.
+vanmiddag
+vanavond

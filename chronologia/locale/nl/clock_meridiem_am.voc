@@ -6,3 +6,7 @@
 # the night daypart crosses midnight -- see clock_meridiem_night.voc.)
 ochtends
 morgens
+# "vanochtend"/"vanmorgen" name today's own morning (marker_dayparttoday.voc), so
+# "om drie uur vanochtend" is 03:00 today even after it has passed.
+vanochtend
+vanmorgen

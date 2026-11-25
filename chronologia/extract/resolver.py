@@ -3037,7 +3037,10 @@ class Resolver:
             width = timedelta(hours=1)
         prefer_future = self.spec.construction_flags.get(
             match.construction, {}).get("prefer_future", False)
-        if prefer_future and dt < anchor:
+        meridiem = match.slots.get("MERIDIEM")
+        today_word = (meridiem is not None
+                      and meridiem.text in self.spec.daypart_today_words)
+        if prefer_future and dt < anchor and not today_word:
             dt = dt + timedelta(days=1)
         start = AstroDate.from_datetime(dt)
         tz = self._zone_tzinfo(match.slots.get("ZONE"))
