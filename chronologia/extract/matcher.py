@@ -342,6 +342,9 @@ def _bind(element: SlotElement, token: Token, spec: LangSpec,
         return token.text in spec.clock_dir_minutes
     if name == "CLOCKDIR":
         return token.text in spec.clock_dirs
+    if name == "CLOCKTO":
+        # the "to the hour" words alone, never a past-the-hour word
+        return spec.clock_dirs.get(token.text, 0) < 0
     if name == "MERIDIEM":
         return token.text in spec.meridiems
     # -- season_ref / scoped_ordinal slots ---------------------------------
@@ -647,7 +650,7 @@ def _walk(elements: Tuple[SlotElement, ...], tokens: Tuple[Token, ...],
                        and any(e.name == "ERA" for e in elements[ei + 1:]))
         if ti < len(tokens) and _bind(el, tokens[ti], spec, era_follows):
             bound = dict(slots)
-            bound[el.name] = tokens[ti]
+            bound["CLOCKDIR" if el.name == "CLOCKTO" else el.name] = tokens[ti]
             consider(_walk(elements, tokens, ei + 1, ti + 1, spec, bound))
             # A digit ordinal the language writes with a hyphenated
             # inflectional suffix ("5-е", "2-го") tokenises as the number plus
