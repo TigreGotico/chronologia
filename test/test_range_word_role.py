@@ -236,3 +236,24 @@ def test_an_until_word_after_the_rule_alone_runs_no_span_reading(monkeypatch, te
         raise AssertionError("read() ran")
     monkeypatch.setattr(nseries, "read", fail)
     assert recurrence("en", text) == (rule, "")
+
+
+# "until august" from 2026-11-22 is 2027-08-01; the clock sets the hour
+@pytest.mark.parametrize("lang, text, until", [
+    ("es", "cada lunes desde junio hasta agosto a las 9", "2027-08-01T09:00:00"),
+    ("es", "todos los lunes de junio hasta agosto a las 9", "2027-08-01T09:00:00"),
+    ("es", "cada lunes desde junio hasta agosto a la una", "2027-08-01T01:00:00"),
+    ("es", "cada lunes desde junio hasta agosto a mediodía", "2027-08-01T12:00:00"),
+    ("fr", "chaque lundi de juin jusqu'à août à 9h", "2027-08-01T09:00:00"),
+    ("fr", "tous les jours du 3 juin jusqu'au 5 août à 8h", "2027-08-05T08:00:00"),
+    ("fr", "tous les jours de juin jusqu'en août à 8 heures", "2027-08-01T08:00:00"),
+    ("ca", "cada dilluns de juny fins a agost a les 9", "2027-08-01T09:00:00"),
+    ("ca", "cada dilluns de juny fins a agost al migdia", "2027-08-01T12:00:00"),
+    ("it", "ogni lunedì da giugno fino a agosto a mezzogiorno",
+     "2027-08-01T12:00:00"),
+    ("pt", "todos os dias de junho até agosto ao meio-dia", "2027-08-01T12:00:00"),
+    ("en", "every monday from june until august at 9", "2027-08-01T09:00:00"),
+])
+def test_a_clock_after_a_month_range_is_not_its_right_bound(lang, text, until):
+    got = extract_recurrence(text, lang, ANCHOR)
+    assert (got.recurrence.until.isoformat(), got.remainder) == (until, "")

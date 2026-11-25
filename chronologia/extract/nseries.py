@@ -2083,6 +2083,10 @@ def _apply_range_bound(rec, consumed, ctx, lang, anchor, range_words):
                          if (m + x) not in consumed]
                 if not left or not right:
                     continue
+                # a "to" word after a range word ("de junio hasta agosto a
+                # las 9") starts the clock, not the right bound of the range
+                if range_words.intersection(range(j, k)):
+                    continue
 
                 if (len(left) == 1 and len(right) == 1
                         and left[0].text in ctx.weekdays
