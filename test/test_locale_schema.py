@@ -271,10 +271,19 @@ def test_vocab_json_is_sorted_and_deduplicated(lang):
     assert not unsorted, f"not sorted or not unique: {unsorted}"
 
 
+@pytest.mark.parametrize("lang", LOCALES)
+def test_vocab_sources_name_vocabularies(lang):
+    with open(os.path.join(LOCALE_DIR, lang, "vocab.json"), encoding="utf-8") as fh:
+        document = json.load(fh)
+    assert set(document.get("sources", {})) <= set(document["words"])
+
+
 def test_vocab_schema_rejects_malformed_documents():
     bad_version = {"format_version": 2, "words": {}}
     empty_list = {"format_version": 1, "words": {"unit_day": []}}
     duplicate = {"format_version": 1, "words": {"unit_day": ["day", "day"]}}
-    for doc in (bad_version, empty_list, duplicate):
+    empty_source = {"format_version": 1, "words": {"unit_day": ["day"]},
+                    "sources": {"unit_day": []}}
+    for doc in (bad_version, empty_list, duplicate, empty_source):
         with pytest.raises(jsonschema.ValidationError):
             jsonschema.validate(doc, VOCAB_SCHEMA)

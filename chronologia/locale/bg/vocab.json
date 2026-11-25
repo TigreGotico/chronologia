@@ -415,5 +415,246 @@
   "weekday_6": [
    "неделя"
   ]
+ },
+ "sources": {
+  "clock_fraction_30": [
+   "Bulgarian tells the half hour additively, past the stated hour: \"осем и",
+   "половина\" == \"eight and a half\" == 8:30, the opposite direction from the",
+   "toward-hour Slovene/Croatian/Czech \"pol\"/\"půl\" siblings. Two independent",
+   "attestations with worked examples:",
+   "  en.wikibooks.org/wiki/Bulgarian/Time -- \"Единайсет и трийсет, Единайсет",
+   "    и половина (Edinayset i triyset, Edinayset i polovina) = Eleven thirty,",
+   "    Half past eleven = 11:30\".",
+   "  preply.com, telling the time in Bulgarian -- \"Пет и половина\" == 5:30,",
+   "    \"Три и половина\" == 3:30.",
+   "Mechanism copied from el's additive-past clock (clock_dir_past.voc \"και\" +",
+   "clock_fraction_30.voc \"μισή\"), chronologia/locale/el/lang.json:30-38",
+   "(order \"HOUR CLOCKDIR FRACTION article? MERIDIEM? ZONE?\")."
+  ],
+  "daypart_afternoon_bg": [
+   "Band boundaries: Unicode CLDR 47 Day Period Rules, locale bg",
+   "(https://www.unicode.org/cldr/charts/47/supplemental/day_periods.html),",
+   "transcribed in chronologia/dayparts.py as the afternoon band.",
+   "Surface: adverb 'in the afternoon' -- the deictic form these phrases use.",
+   "Source: Wiktionary, следобед — https://en.wiktionary.org/wiki/следобед"
+  ],
+  "daypart_evening_bg": [
+   "Band boundaries: Unicode CLDR 47 Day Period Rules, locale bg",
+   "(https://www.unicode.org/cldr/charts/47/supplemental/day_periods.html),",
+   "transcribed in chronologia/dayparts.py as the evening band.",
+   "Surface: noun/adverb 'evening' -- the deictic form these phrases use.",
+   "Source: Wiktionary, вечер — https://en.wiktionary.org/wiki/вечер#Bulgarian"
+  ],
+  "daypart_morning_bg": [
+   "Band boundaries: Unicode CLDR 47 Day Period Rules, locale bg",
+   "(https://www.unicode.org/cldr/charts/47/supplemental/day_periods.html),",
+   "transcribed in chronologia/dayparts.py as the morning band.",
+   "Surface: noun/adverb 'morning' -- the deictic form these phrases use.",
+   "Source: Wiktionary, сутрин — https://en.wiktionary.org/wiki/сутрин"
+  ],
+  "daypart_night_bg": [
+   "Band boundaries: Unicode CLDR 47 Day Period Rules, locale bg",
+   "(https://www.unicode.org/cldr/charts/47/supplemental/day_periods.html),",
+   "transcribed in chronologia/dayparts.py as the night band.",
+   "Surface: adverb 'at night' -- the deictic form these phrases use.",
+   "Source: Wiktionary, нощем — https://en.wiktionary.org/wiki/нощем"
+  ],
+  "marker_ad": [
+   "The mirror of \"пр.н.е.\" is \"сл.н.е.\" (след новата ера), also written \"от",
+   "новата ера\" and shortened to \"н.е.\"; the religious pair is \"сл.Хр.\" (след",
+   "Христа). Spacing follows the same rule as the BC forms",
+   "(https://ibl.bas.bg/ezikovispravki/vaprosi/pravopis-na-skrashcheniyata-4/96)."
+  ],
+  "marker_bc": [
+   "Bulgarian writes the secular \"преди новата ера\" as \"пр.н.е.\"; the Институт",
+   "за български език answers that both the spaced and the unspaced form are",
+   "correct and only asks that a text stay consistent",
+   "(https://ibl.bas.bg/ezikovispravki/vaprosi/pravopis-na-skrashcheniyata-4/96,",
+   "citing Официален правописен речник, 2012, т. 72.2.1). The religious",
+   "\"пр.Хр.\" (преди Христа) is the other current pair."
+  ],
+  "marker_date_lead": [
+   "Words that open a date or a clock time and belong to it.",
+   "Each word is shown opening a time or date phrase on the page named in brackets,",
+   "saved under knowledge/wiki/audits/chronologia/parity-fixes/marker-strand/sources/ in the workspace.",
+   "в: Wiktionary \"в\": \"used with certain time expressions to say when something happens: в 8 часа; в петък\" [bg-в.wikitext.txt]",
+   "на: Wiktionary \"на\": \"used with certain time expressions to show when something happens: Роден на 4 юли.\" [bg-на.wikitext.txt]"
+  ],
+  "marker_during": [
+   "\"during/in\" preposition governing a calendar period (\"during 2030\" /",
+   "\"during January\"), distinct from marker_in.voc's future-offset \"in N",
+   "units\" sense (\"след 5 дни\"), which is a different Bulgarian word.",
+   "\"през\": en.wiktionary.org, entry \"през\" (Bulgarian section) -- senses",
+   "\"through, via\" and \"during, in the course of\". \"в\" is the same locative",
+   "preposition already attested by marker_at.voc/marker_of.voc in this",
+   "locale (\"в 2030\" = \"in 2030\")."
+  ],
+  "marker_half": [
+   "Bulgarian period noun \"half\" for \"first/second half of <year>\" (half_period).",
+   "\"половина\": Речник на българския език (ИБЕ, БАН) -- \"половина\" = една от двете",
+   "  равни части на цяло (\"първата половина на годината\").  https://ibl.bas.bg/rbe/",
+   "\"половин\" is the attributive/quantifier form kept for the clock half path."
+  ],
+  "marker_last": [
+   "Bulgarian \"last/previous\" determiner.  Bulgarian has no case, but the",
+   "adjective agrees in gender and number and carries the postposed definite",
+   "article, so each of \"миналият/миналия\" (m), \"миналата\" (f), \"миналото\" (n)",
+   "and \"миналите\" (pl) occurs; the full-article masculine \"миналият\" is the",
+   "subject form, the short \"миналия\" the object form.  Институт за български",
+   "език, БАН -- *Официален правописен речник на българския език*, членуване.",
+   "https://ibl.bas.bg/rechnik/",
+   "\"предходен\" is the near-synonym the calendar phrases use -- CLDR gives",
+   "\"предходен месец\" and \"предходната седмица\" (dateFields, locale \"bg\",",
+   "month/week relative-type--1).  The gender/number forms are the headword",
+   "line of Институт за български език, БАН -- *Речник на българския език",
+   "(онлайн)*, \"ПРЕДХÒДЕН, -дна, -дно, мн. -дни, прил.\", sense 2 \"който",
+   "съществува или настъпва, става, извършва се по-рано по време от друг;",
+   "предишен\"; the same entry's citations carry предходната, предходния,",
+   "предходното and предходните.  https://ibl.bas.bg/rbe/",
+   "The full-article masculine \"предходният\" is the subject form of the same",
+   "short \"предходния\", by the членуване rule cited above."
+  ],
+  "marker_next": [
+   "Bulgarian \"next/following\" determiner, in all four agreement forms with and",
+   "without the postposed definite article.  Институт за български език, БАН --",
+   "*Официален правописен речник на българския език*.",
+   "https://ibl.bas.bg/rechnik/"
+  ],
+  "marker_ordlast": [
+   "Bulgarian \"last\" ordinal determiner, gender/number + definite article forms.",
+   "\"posleden ponedelnik na maj\" = last Monday of May.  IBE BAN, chlenuvane."
+  ],
+  "marker_this": [
+   "Bulgarian \"this\" demonstrative in all agreement forms.  The demonstrative is",
+   "itself definite, so it takes no article.  Институт за български език, БАН --",
+   "*Официален правописен речник на българския език*, показателни местоимения.",
+   "https://ibl.bas.bg/rechnik/"
+  ],
+  "marker_year_plural": [
+   "The plural of \"година\" (year).  A count of years takes the plural (\"988",
+   "години\"); the singular names a year (\"през 988 година\").",
+   "Source: en.wiktionary.org, \"година\", Bulgarian inflection table:",
+   "indefinite plural and count form \"години\", definite plural \"годините\"."
+  ],
+  "month_1": [
+   "Unicode CLDR 47, locale bg, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/bg/ca-gregorian.json): months.format.wide,",
+   "months.stand-alone.wide."
+  ],
+  "month_10": [
+   "Unicode CLDR 47, locale bg, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/bg/ca-gregorian.json): months.format.wide,",
+   "months.stand-alone.wide."
+  ],
+  "month_11": [
+   "Unicode CLDR 47, locale bg, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/bg/ca-gregorian.json): months.format.wide,",
+   "months.stand-alone.wide."
+  ],
+  "month_12": [
+   "Unicode CLDR 47, locale bg, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/bg/ca-gregorian.json): months.format.wide,",
+   "months.stand-alone.wide."
+  ],
+  "month_2": [
+   "Unicode CLDR 47, locale bg, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/bg/ca-gregorian.json): months.format.wide,",
+   "months.stand-alone.wide."
+  ],
+  "month_3": [
+   "Unicode CLDR 47, locale bg, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/bg/ca-gregorian.json): months.format.wide,",
+   "months.stand-alone.wide, months.format.abbreviated,",
+   "months.stand-alone.abbreviated."
+  ],
+  "month_4": [
+   "Unicode CLDR 47, locale bg, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/bg/ca-gregorian.json): months.format.wide,",
+   "months.stand-alone.wide."
+  ],
+  "month_5": [
+   "Unicode CLDR 47, locale bg, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/bg/ca-gregorian.json): months.format.wide,",
+   "months.stand-alone.wide, months.format.abbreviated,",
+   "months.stand-alone.abbreviated."
+  ],
+  "month_6": [
+   "Unicode CLDR 47, locale bg, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/bg/ca-gregorian.json): months.format.wide,",
+   "months.stand-alone.wide, months.format.abbreviated,",
+   "months.stand-alone.abbreviated."
+  ],
+  "month_7": [
+   "Unicode CLDR 47, locale bg, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/bg/ca-gregorian.json): months.format.wide,",
+   "months.stand-alone.wide, months.format.abbreviated,",
+   "months.stand-alone.abbreviated."
+  ],
+  "month_8": [
+   "Unicode CLDR 47, locale bg, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/bg/ca-gregorian.json): months.format.wide,",
+   "months.stand-alone.wide."
+  ],
+  "month_9": [
+   "Unicode CLDR 47, locale bg, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/bg/ca-gregorian.json): months.format.wide,",
+   "months.stand-alone.wide."
+  ],
+  "unit1_second": [
+   "Unicode CLDR 47, locale bg, cldr-units-full/main/bg/units.json,",
+   "duration-second, unitPattern-count-one \"секунда\"."
+  ],
+  "unit_month": [
+   "Bulgarian \"месец\", with and without the postposed definite article; the",
+   "counting form after a numeral is \"месеца\" (\"три месеца\").",
+   "Институт за български език, БАН -- *Официален правописен речник*."
+  ],
+  "unit_second": [
+   "Unicode CLDR 47, locale bg, cldr-units-full/main/bg/units.json,",
+   "duration-second: one \"секунда\", other \"секунди\"."
+  ],
+  "unit_week": [
+   "Bulgarian \"седмица\", with and without the postposed definite article.",
+   "Институт за български език, БАН -- *Официален правописен речник*."
+  ],
+  "unit_year": [
+   "Bulgarian \"година\", with and without the postposed definite article.",
+   "Институт за български език, БАН -- *Официален правописен речник*."
+  ],
+  "weekday_0": [
+   "Unicode CLDR 47, locale bg, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/bg/ca-gregorian.json): days.format.wide,",
+   "days.stand-alone.wide."
+  ],
+  "weekday_1": [
+   "Unicode CLDR 47, locale bg, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/bg/ca-gregorian.json): days.format.wide,",
+   "days.stand-alone.wide."
+  ],
+  "weekday_2": [
+   "Unicode CLDR 47, locale bg, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/bg/ca-gregorian.json): days.format.wide,",
+   "days.stand-alone.wide."
+  ],
+  "weekday_3": [
+   "Unicode CLDR 47, locale bg, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/bg/ca-gregorian.json): days.format.wide,",
+   "days.stand-alone.wide."
+  ],
+  "weekday_4": [
+   "Unicode CLDR 47, locale bg, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/bg/ca-gregorian.json): days.format.wide,",
+   "days.stand-alone.wide."
+  ],
+  "weekday_5": [
+   "Unicode CLDR 47, locale bg, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/bg/ca-gregorian.json): days.format.wide,",
+   "days.stand-alone.wide."
+  ],
+  "weekday_6": [
+   "Unicode CLDR 47, locale bg, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/bg/ca-gregorian.json): days.format.wide,",
+   "days.stand-alone.wide."
+  ]
  }
 }

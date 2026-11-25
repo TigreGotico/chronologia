@@ -576,5 +576,344 @@
   "weekday_abbr_6": [
    "dg"
   ]
+ },
+ "sources": {
+  "clock_meridiem_night": [
+   "The NIGHT daypart is a midnight-crossing BAND in colloquial clock usage,",
+   "not a uniform +12 PM shift: \"la una de la nit\" is 01:00, \"les deu de la",
+   "nit\" is 22:00, twelve is midnight 00:00.  Small hours 1..5 stay AM, evening",
+   "hours 6..11 are PM, twelve is midnight (band-split in resolver _clock_hms).",
+   "AM ceiling follows the madrugada band [00:00, 06:00) transcribed for ca in",
+   "chronologia/dayparts.py; Diccionari de la llengua catalana (DIEC2), s.v.",
+   "\"nit\" (https://dlc.iec.cat/)."
+  ],
+  "daypart_mati_ca": [
+   "Band boundaries: Unicode CLDR 47 Day Period Rules, locale ca",
+   "(https://www.unicode.org/cldr/charts/47/supplemental/day_periods.html),",
+   "transcribed in chronologia/dayparts.py as [06:00, 12:00).",
+   "Sources: Gran diccionari de la llengua catalana",
+   "(https://www.diccionari.cat/GDLC/vespre), which defines vespre as the",
+   "\"primeres hores de la nit\" -- an early-evening band Spanish runs",
+   "straight through with one tarde."
+  ],
+  "daypart_matinada_ca": [
+   "Band boundaries: Unicode CLDR 47 Day Period Rules, locale ca",
+   "(https://www.unicode.org/cldr/charts/47/supplemental/day_periods.html),",
+   "transcribed in chronologia/dayparts.py as [00:00, 06:00).",
+   "Sources: Gran diccionari de la llengua catalana",
+   "(https://www.diccionari.cat/GDLC/vespre), which defines vespre as the",
+   "\"primeres hores de la nit\" -- an early-evening band Spanish runs",
+   "straight through with one tarde."
+  ],
+  "daypart_nit_ca": [
+   "Band boundaries: Unicode CLDR 47 Day Period Rules, locale ca",
+   "(https://www.unicode.org/cldr/charts/47/supplemental/day_periods.html),",
+   "transcribed in chronologia/dayparts.py as [21:00, 24:00).",
+   "Sources: Gran diccionari de la llengua catalana",
+   "(https://www.diccionari.cat/GDLC/vespre), which defines vespre as the",
+   "\"primeres hores de la nit\" -- an early-evening band Spanish runs",
+   "straight through with one tarde."
+  ],
+  "daypart_tarda_ca": [
+   "Band boundaries: Unicode CLDR 47 Day Period Rules, locale ca",
+   "(https://www.unicode.org/cldr/charts/47/supplemental/day_periods.html),",
+   "transcribed in chronologia/dayparts.py as [13:00, 19:00).",
+   "Sources: Gran diccionari de la llengua catalana",
+   "(https://www.diccionari.cat/GDLC/vespre), which defines vespre as the",
+   "\"primeres hores de la nit\" -- an early-evening band Spanish runs",
+   "straight through with one tarde.",
+   "Catalan opens the tarda at 13:00, after the hour-wide migdia, not at",
+   "noon the way Spanish and English do."
+  ],
+  "daypart_vespre_ca": [
+   "Band boundaries: Unicode CLDR 47 Day Period Rules, locale ca",
+   "(https://www.unicode.org/cldr/charts/47/supplemental/day_periods.html),",
+   "transcribed in chronologia/dayparts.py as [19:00, 21:00).",
+   "Sources: Gran diccionari de la llengua catalana",
+   "(https://www.diccionari.cat/GDLC/vespre), which defines vespre as the",
+   "\"primeres hores de la nit\" -- an early-evening band Spanish runs",
+   "straight through with one tarde."
+  ],
+  "marker_at_counts": [
+   "Clock prepositions that also introduce a counted group: a bare hour behind one",
+   "is doubtful only right before a word of marker_counted_noun.voc.  Attested in",
+   "the parity acceptance rows; no dictionary source checked, a native reviewer is to confirm."
+  ],
+  "marker_between": [
+   "Catalan range \"between\" framing (entre A i B).",
+   "\"entre\": DIEC2 (IEC), s.v. \"entre\" (preposicio) -- denota situacio o estat",
+   "  enmig de dos termes (\"entre juny i agost\"). Pairs with marker_and (\"i\")."
+  ],
+  "marker_counted_noun": [
+   "Nouns that count people or things a clock never takes: a bare hour behind a",
+   "clock preposition and directly before one of them is a count (\"wave at 5",
+   "people\").  Each word is quoted from its Wiktionary Noun entry",
+   "(https://en.wiktionary.org/wiki/<word>); the fetched pages are kept with the audit.",
+   "persona: Noun. \"person\"",
+   "persones: Noun. \"plural of persona\"",
+   "convidats: Noun. \"plural of convidat\"",
+   "amics: Noun. \"plural of amic\"",
+   "amigues: Noun. \"plural of amiga\"",
+   "nens: Noun. \"plural of nen\"",
+   "nenes: Noun. \"plural of nena\"",
+   "noies: Noun. \"plural of noia\"",
+   "nois: Noun. \"plural of noi\"",
+   "adults: Noun. \"plural of adult\"",
+   "jugadors: Noun. \"plural of jugador\"",
+   "seients: Noun. \"plural of seient\"",
+   "taules: Noun. \"plural of taula\"",
+   "entrades: Noun. \"plural of entrada\"",
+   "habitacions: Noun. \"plural of habitació\""
+  ],
+  "marker_date_article": [
+   "The article that opens the day of an event: \"el 29\", \"el dia 29\", and a",
+   "weekday with its date, \"el dijous 5 de gener\".",
+   "\"Per expressar el dia en què s’esdevé un fet s’utilitza l’article masculí el o bé",
+   "l’expressió el dia\" (Universitat de Barcelona, Llibre d'estil, criteri 2800,",
+   "\"Expressió del temps: dies\").",
+   "The same criterion leaves the article out of \"dijous passat\" and \"dijous",
+   "vinent\", but speech often keeps it (\"el vinent divendres\"), and the",
+   "article then still opens the date."
+  ],
+  "marker_day_label": [
+   "Catalan day-of-month label noun: \"el dia 3 d'agost\" names the 3rd of",
+   "August.",
+   "\"Per expressar el dia en què s’esdevé un fet s’utilitza l’article masculí el o bé",
+   "l’expressió el dia\" (Universitat de Barcelona, Llibre d'estil, criteri 2800,",
+   "\"Expressió del temps: dies\")."
+  ],
+  "marker_during": [
+   "\"al\" (a + el) is the usual frame for a calendar month",
+   "(\"al gener\"); \"durant\" is the explicit \"during\" reading.",
+   "Source: Diccionari de la llengua catalana, https://dlc.iec.cat/."
+  ],
+  "marker_from": [
+   "Catalan range \"from\" lead -- opens a bounded or open interval and, crucially,",
+   "disambiguates the hyper-common preposition \"a\" (marker_to) as a genuine range",
+   "boundary: a bare \"A a B\" is only trusted as a range when a \"from\" lead is present.",
+   "\"de\": DIEC2 (IEC), s.v. \"de\" (preposicio) -- origen / punt de partenca,",
+   "  correlativa d'\"a\" (\"de juny a agost\"). Optimot, fitxa \"de ... a\".",
+   "\"des de\": GEIEC / Gramatica de la llengua catalana (IEC), s.v. \"des de\"",
+   "  (locucio prepositiva) -- punt d'origen en el temps o l'espai (\"des de 2010\").",
+   "\"a partir de\": Optimot -- locucio prepositiva, punt de comencament.",
+   "\"del\": contraccio obligatoria de la preposicio \"de\" + l'article \"el\"",
+   "  (IEC, Gramatica de la llengua catalana, 16.3; DIEC2 s.v. \"del\"). Es la",
+   "  forma escrita corrent de l'inici d'un interval: \"del 5 al 12 de juny\"."
+  ],
+  "marker_future": [
+   "\"d'aquí a\" fronts a future offset (\"d'aquí a cinc dies\" = in five days):",
+   "Wiktionary (en), d'aquí a, Catalan preposition, \"in, within (a time span)\"."
+  ],
+  "marker_half": [
+   "clock/adjectival \"mitja/mig\" plus period noun \"meitat\" (cadascuna de les dues parts iguals) -- IEC, Diccionari de la llengua catalana (DIEC2), s.v. \"meitat\"."
+  ],
+  "marker_hour_statement": [
+   "The verb that states the hour, with its article: \"són les 15h\", \"és la",
+   "una\".  \"hora [...] 2 1 Temps del dia expressat en hores comptades des de",
+   "mitjanit o des de migdia i en fraccions d'hora. ─Quina hora és? ─Són les",
+   "tres o són tres hores.\" (IEC, DIEC2, s.v. \"hora\", 2 1)."
+  ],
+  "marker_oclock": [
+   "\"a les set hores\" = at seven o'clock; the plural noun closes a clock hour",
+   "the way Portuguese \"horas\" does.  Wiktionary, hora (Catalan), \"hour\"."
+  ],
+  "marker_to": [
+   "Catalan range \"to\" boundary -- the term / upper limit of a bounded interval.",
+   "\"a\": DIEC2 (IEC), s.v. \"a\" (preposicio) -- terme o punt d'arribada, correlativa",
+   "  de \"de\" (\"de juny a agost\"). Optimot, construccio \"de ... a\".",
+   "\"fins a\" / \"fins\": DIEC2 (IEC), s.v. \"fins\" (preposicio) -- limit de temps,",
+   "  lloc o quantitat (\"de juny fins a agost\"). GEIEC, \"fins (a)\".",
+   "\"al\": contraccio obligatoria de la preposicio \"a\" + l'article \"el\"",
+   "  (IEC, Gramatica de la llengua catalana, 16.3; DIEC2 s.v. \"al\").",
+   "  Correlativa de \"del\" en la construccio \"del ... al ...\"."
+  ],
+  "marker_year_plural": [
+   "The plural year noun that frames a decade (\"els anys vuitanta\", \"els anys",
+   "1980\"); the singular \"any\" names a single year (\"l'any 1931\") and must not",
+   "reach the decade slot.",
+   "Source: Gran diccionari de la llengua catalana, entry \"any\"",
+   "(https://www.diccionari.cat/GDLC/any): \"els anys vint (o trenta, etc.) --",
+   "Els anys del segon, el tercer, etc., decenni del segle.\""
+  ],
+  "month_1": [
+   "Unicode CLDR 47, locale ca, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/ca/ca-gregorian.json): months.stand-alone.wide,",
+   "months.stand-alone.abbreviated.  CLDR spells the abbreviations with a",
+   "trailing period; the surfaces here drop it."
+  ],
+  "month_10": [
+   "Unicode CLDR 47, locale ca, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/ca/ca-gregorian.json): months.stand-alone.wide,",
+   "months.stand-alone.abbreviated.  CLDR spells the abbreviations with a",
+   "trailing period; the surfaces here drop it."
+  ],
+  "month_11": [
+   "Unicode CLDR 47, locale ca, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/ca/ca-gregorian.json): months.stand-alone.wide,",
+   "months.stand-alone.abbreviated.  CLDR spells the abbreviations with a",
+   "trailing period; the surfaces here drop it."
+  ],
+  "month_12": [
+   "Unicode CLDR 47, locale ca, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/ca/ca-gregorian.json): months.stand-alone.wide,",
+   "months.stand-alone.abbreviated.  CLDR spells the abbreviations with a",
+   "trailing period; the surfaces here drop it."
+  ],
+  "month_2": [
+   "Unicode CLDR 47, locale ca, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/ca/ca-gregorian.json): months.stand-alone.wide.  Not",
+   "covered by any of those charts, and so unattested here: \"feb\"."
+  ],
+  "month_3": [
+   "Unicode CLDR 47, locale ca, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/ca/ca-gregorian.json): months.stand-alone.wide,",
+   "months.stand-alone.abbreviated.  Not covered by any of those charts, and so",
+   "unattested here: \"marc\", \"mar\"."
+  ],
+  "month_4": [
+   "Unicode CLDR 47, locale ca, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/ca/ca-gregorian.json): months.stand-alone.wide,",
+   "months.stand-alone.abbreviated.  CLDR spells the abbreviations with a",
+   "trailing period; the surfaces here drop it."
+  ],
+  "month_5": [
+   "Unicode CLDR 47, locale ca, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/ca/ca-gregorian.json): months.stand-alone.wide,",
+   "months.stand-alone.abbreviated.  Not covered by any of those charts, and so",
+   "unattested here: \"mai\"."
+  ],
+  "month_6": [
+   "Unicode CLDR 47, locale ca, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/ca/ca-gregorian.json): months.stand-alone.wide,",
+   "months.stand-alone.abbreviated.  Not covered by any of those charts, and so",
+   "unattested here: \"jun\"."
+  ],
+  "month_7": [
+   "Unicode CLDR 47, locale ca, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/ca/ca-gregorian.json): months.stand-alone.wide,",
+   "months.stand-alone.abbreviated.  CLDR spells the abbreviations with a",
+   "trailing period; the surfaces here drop it."
+  ],
+  "month_8": [
+   "Unicode CLDR 47, locale ca, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/ca/ca-gregorian.json): months.stand-alone.wide.  Not",
+   "covered by any of those charts, and so unattested here: \"ago\"."
+  ],
+  "month_9": [
+   "Unicode CLDR 47, locale ca, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/ca/ca-gregorian.json): months.stand-alone.wide,",
+   "months.stand-alone.abbreviated.  CLDR spells the abbreviations with a",
+   "trailing period; the surfaces here drop it."
+  ],
+  "roman_anchor_ides": [
+   "Catalan vernacular Roman-calendar anchor names.",
+   "Source: Wikipedia \"Calendari romà\" (ca):",
+   "  \"Calendes ... Nones ... Ides\".",
+   "  https://ca.wikipedia.org/wiki/Calendari_rom%C3%A0"
+  ],
+  "roman_anchor_kalends": [
+   "Catalan vernacular Roman-calendar anchor names.",
+   "Source: Wikipedia \"Calendari romà\" (ca):",
+   "  \"Calendes ... Nones ... Ides\".",
+   "  https://ca.wikipedia.org/wiki/Calendari_rom%C3%A0"
+  ],
+  "roman_anchor_nones": [
+   "Catalan vernacular Roman-calendar anchor names.",
+   "Source: Wikipedia \"Calendari romà\" (ca):",
+   "  \"Calendes ... Nones ... Ides\".",
+   "  https://ca.wikipedia.org/wiki/Calendari_rom%C3%A0"
+  ],
+  "unit1_second": [
+   "Unicode CLDR 47, locale ca, cldr-units-full/main/ca/units.json,",
+   "duration-second, unitPattern-count-one \"segon\"."
+  ],
+  "unit_second": [
+   "Unicode CLDR 47, locale ca, cldr-units-full/main/ca/units.json,",
+   "duration-second: one \"segon\", other \"segons\"."
+  ],
+  "weekday_0": [
+   "Unicode CLDR 47, locale ca, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/ca/ca-gregorian.json): days.format.wide,",
+   "days.stand-alone.wide."
+  ],
+  "weekday_1": [
+   "Unicode CLDR 47, locale ca, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/ca/ca-gregorian.json): days.format.wide,",
+   "days.stand-alone.wide."
+  ],
+  "weekday_2": [
+   "Unicode CLDR 47, locale ca, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/ca/ca-gregorian.json): days.format.wide,",
+   "days.stand-alone.wide."
+  ],
+  "weekday_3": [
+   "Unicode CLDR 47, locale ca, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/ca/ca-gregorian.json): days.format.wide,",
+   "days.stand-alone.wide."
+  ],
+  "weekday_4": [
+   "Unicode CLDR 47, locale ca, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/ca/ca-gregorian.json): days.format.wide,",
+   "days.stand-alone.wide."
+  ],
+  "weekday_5": [
+   "Unicode CLDR 47, locale ca, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/ca/ca-gregorian.json): days.format.wide,",
+   "days.stand-alone.wide."
+  ],
+  "weekday_6": [
+   "Unicode CLDR 47, locale ca, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/ca/ca-gregorian.json): days.format.wide,",
+   "days.stand-alone.wide."
+  ],
+  "weekday_abbr_0": [
+   "Unicode CLDR 47, locale ca, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/ca/ca-gregorian.json): days.format.abbreviated,",
+   "days.stand-alone.abbreviated, days.format.short, days.stand-alone.short.",
+   "CLDR spells the abbreviations with a trailing period; the surfaces here drop",
+   "it."
+  ],
+  "weekday_abbr_1": [
+   "Unicode CLDR 47, locale ca, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/ca/ca-gregorian.json): days.format.abbreviated,",
+   "days.stand-alone.abbreviated, days.format.short, days.stand-alone.short.",
+   "CLDR spells the abbreviations with a trailing period; the surfaces here drop",
+   "it."
+  ],
+  "weekday_abbr_2": [
+   "Unicode CLDR 47, locale ca, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/ca/ca-gregorian.json): days.format.abbreviated,",
+   "days.stand-alone.abbreviated, days.format.short, days.stand-alone.short.",
+   "CLDR spells the abbreviations with a trailing period; the surfaces here drop",
+   "it."
+  ],
+  "weekday_abbr_3": [
+   "Unicode CLDR 47, locale ca, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/ca/ca-gregorian.json): days.format.abbreviated,",
+   "days.stand-alone.abbreviated, days.format.short, days.stand-alone.short.",
+   "CLDR spells the abbreviations with a trailing period; the surfaces here drop",
+   "it."
+  ],
+  "weekday_abbr_4": [
+   "Unicode CLDR 47, locale ca, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/ca/ca-gregorian.json): days.format.abbreviated,",
+   "days.stand-alone.abbreviated, days.format.short, days.stand-alone.short.",
+   "CLDR spells the abbreviations with a trailing period; the surfaces here drop",
+   "it."
+  ],
+  "weekday_abbr_5": [
+   "Unicode CLDR 47, locale ca, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/ca/ca-gregorian.json): days.format.abbreviated,",
+   "days.stand-alone.abbreviated, days.format.short, days.stand-alone.short.",
+   "CLDR spells the abbreviations with a trailing period; the surfaces here drop",
+   "it."
+  ],
+  "weekday_abbr_6": [
+   "Unicode CLDR 47, locale ca, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/ca/ca-gregorian.json): days.format.abbreviated,",
+   "days.stand-alone.abbreviated, days.format.short, days.stand-alone.short.",
+   "CLDR spells the abbreviations with a trailing period; the surfaces here drop",
+   "it."
+  ]
  }
 }

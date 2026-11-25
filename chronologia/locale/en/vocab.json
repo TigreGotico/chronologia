@@ -1919,5 +1919,356 @@
   "weekday_abbr_6": [
    "sun"
   ]
+ },
+ "sources": {
+  "currency": [
+   "The head nouns of the currency names, singular and plural: the last word",
+   "of displayName-count-one and displayName-count-other of every currency,",
+   "before any \"of\" phrase and after a leading \"novo\" or \"novos\".",
+   "Source: Unicode CLDR 49.0.0, cldr-json/cldr-numbers-full/main/en/currencies.json.",
+   "ISO 4217 X codes (metals, funds, test codes) are left out."
+  ],
+  "currency_code": [
+   "The ISO 4217 alphabetic codes of the currencies, in capitals: a code after a",
+   "number measures it (\"three thousand USD\").",
+   "Source: Unicode CLDR 49.0.0, cldr-json/cldr-numbers-full/main/en/currencies.json, the keys.",
+   "ISO 4217 X codes of metals, funds and test codes are left out."
+  ],
+  "currency_qualifier": [
+   "The words that stand between a number and a currency noun and qualify the",
+   "currency: \"three thousand US dollars\", \"three thousand more dollars\".",
+   "Sources: the words before the head noun of every currency name in Unicode CLDR 49.0.0,",
+   "cldr-json/cldr-numbers-full/main/en/currencies.json (displayName-count-other, before any",
+   "\"of\" phrase); \"more\", \"extra\" and \"additional\" as quantity adjectives, Wiktionary",
+   "(en) s.v. \"more\" (adjective, \"in greater quantity, amount, or proportion\"), \"extra\"",
+   "(\"additional\") and \"additional\" (\"supplemental or added to something\")."
+  ],
+  "daypart_morning": [
+   "Plural form: Wiktionary gives \"mornings\" as the plural noun of \"morning\"",
+   "and as an adverb for a regular part of the day (https://en.wiktionary.org/wiki/mornings),",
+   "as in \"weekday mornings at 8\"."
+  ],
+  "marker_alarm_at": [
+   "The noun of a thing that sounds at a set time, and \"for\" after it: \"an",
+   "alarm for 7\", \"a reminder for 9\".  \"alarm [...] An instance of an alarm",
+   "ringing, beeping or clanging, to give a noise signal at a certain time.\"",
+   "(Wiktionary, s.v. \"alarm\", noun).  \"reminder [...] Someone or something",
+   "that reminds.\" (Wiktionary, s.v. \"reminder\").  \"wake-up call [...] A",
+   "telephone call to awaken someone at a certain time\" (Wiktionary, s.v.",
+   "\"wake-up call\"; \"wakeup call\" is its alternative form).  \"for [...]",
+   "Directed at; intended to belong to.\" (Wiktionary, s.v. \"for\", preposition)."
+  ],
+  "marker_alarm_joiner": [
+   "The words that join two hours that share one later meridiem: \"alarm for 7",
+   "or 8 pm\"."
+  ],
+  "marker_alarm_length": [
+   "A word that adds to a count after the hour of \"alarm for 10\": \"alarm for 10",
+   "more minutes\" is a length.  \"more [...] Additional; further.\" and \"extra",
+   "[...] (beyond what is due, usual, expected, or necessary; extraneous;",
+   "additional)\" (Wiktionary, s.v. \"more\", \"extra\").  \"of\" after a number",
+   "names the whole the number counts from: \"alarm for 2 of you\".  \"of [...]",
+   "(following a number or other quantitive word) Introduces the whole for which",
+   "is indicated only the specified part or segment\" (Wiktionary, s.v. \"of\",",
+   "preposition).",
+   "\"h\" and \"m\" after the hour are the unit letters of a length: \"alarm for 10 h\"",
+   "is ten hours and \"alarm for 10 m\" ten minutes.  \"h [...] Abbreviation of",
+   "hour, particularly when used as a (non-SI) unit of time alongside SI units\"",
+   "and \"m [...] Abbreviation of minute\" (Wiktionary, s.v. \"h\", \"m\", English)."
+  ],
+  "marker_at_counts": [
+   "Clock prepositions that also introduce a counted group: a bare hour behind one",
+   "is doubtful only right before a word of marker_counted_noun.voc.  Attested in",
+   "the parity acceptance rows; no dictionary source checked, a native reviewer is to confirm."
+  ],
+  "marker_counted_noun": [
+   "Nouns that count people or things a clock never takes: a bare hour behind a",
+   "clock preposition and directly before one of them is a count (\"wave at 5",
+   "people\").  Each word is quoted from its Wiktionary Noun entry",
+   "(https://en.wiktionary.org/wiki/<word>); the fetched pages are kept with the audit.",
+   "people: Noun. \"plural of person: a body of persons considered generally or collectively; a group of two or more...\"",
+   "person: Noun. \"An individual who has been granted personhood; usually a human being.\"",
+   "persons: Noun. \"plural of person\"",
+   "guests: Noun. \"plural of guest\"",
+   "neighbours: Noun. \"plural of neighbour\"",
+   "neighbors: Noun. \"plural of neighbor\"",
+   "friends: Noun. \"plural of friend\"",
+   "children: Noun. \"plural of child\"",
+   "kids: Noun. \"plural of kid\"",
+   "adults: Noun. \"plural of adult\"",
+   "players: Noun. \"plural of player\"",
+   "seats: Noun. \"plural of seat\"",
+   "tables: Noun. \"plural of table\"",
+   "tickets: Noun. \"plural of ticket\"",
+   "rooms: Noun. \"plural of room\"",
+   "houses: Noun. \"plural of house\"",
+   "targets: Noun. \"plural of target\"",
+   "birds: Noun. \"plural of bird\"",
+   "cats: Noun. \"plural of cat\"",
+   "dogs: Noun. \"plural of dog\"",
+   "apples: Noun. \"plural of apple\"",
+   "books: Noun. \"plural of book\"",
+   "euros: Noun. \"plural of euro\"",
+   "dollars: Noun. \"plural of dollar\""
+  ],
+  "marker_date_lead": [
+   "Words that open a date or a clock time and belong to it.",
+   "Each word is shown opening a time or date phrase on the page named in brackets,",
+   "saved under knowledge/wiki/audits/chronologia/parity-fixes/marker-strand/sources/ in the workspace.",
+   "at: Wiktionary \"at\": \"at six o’clock; at dawn; at closing time\" [en-at.wikitext.txt]",
+   "on: Wiktionary \"on\": \"At or during the date or day of. On Sunday I'm busy. I'll see you on Monday.\" [en-on.wikitext.txt]"
+  ],
+  "marker_date_lead_no_deixis": [
+   "Lead words that do not open a time expression that begins with this, next",
+   "or last and names a daypart, a period or a weekday (\"on this evening\", \"at next week\",",
+   "\"on next Friday\").",
+   "Saved under knowledge/wiki/audits/chronologia/parity-fixes/marker-strand/sources/ in the workspace:",
+   "Cambridge Dictionary, English Grammar Today, \"At, on and in (time)\": \"We don't normally use at,",
+   "on or in before time expressions beginning with each, every, next, last, some, this, that, one,",
+   "any, all\" [cambridge-at-on-and-in-time.txt]; its example \"Are you free next Monday at two",
+   "o'clock?\" names a weekday."
+  ],
+  "marker_daypart_plural": [
+   "Plural day-part words that a number before them turns into a count of days",
+   "(\"three mornings\", \"two mornings ago\"), so they name no band.  Each is a",
+   "surface of daypart_morning.voc."
+  ],
+  "marker_daypart_plural_after": [
+   "Words after a plural day-part that make it a count of days: \"two mornings",
+   "ago\", \"two mornings from now\"."
+  ],
+  "marker_dayparttoday": [
+   "bare daypart surfaces lexically fused with TODAY: \"tonight\" already names",
+   "today's night band, unlike the plain band word \"night\" (which composes",
+   "with the clock's own future-roll rule -- see test_nl_r117)."
+  ],
+  "marker_during": [
+   "\"in\" opens a calendar period as well (\"in January\", \"in the 1920s\")."
+  ],
+  "marker_future": [
+   "\"from now\" is the postposed counterpart of the preposed \"in\": \"two hours",
+   "from now\" and \"in two hours\" name the same instant.  en.wiktionary.org,",
+   "entry \"from now on\", glosses \"from now\" as the present moment used as the",
+   "reference point of a forward offset.  Multiword, matched as a phrase."
+  ],
+  "marker_holiday_indef": [
+   "English indefinite articles that cannot precede a holiday name made of",
+   "an adjective and a weekday: \"a good friday\" is any good Friday."
+  ],
+  "marker_ntolast_next": [
+   "the leading word of the \"next to last\" idiom (== \"second-to-last\", -2).",
+   "Deliberately a SEPARATE table from marker_next.voc's REL_MARKER \"next\"",
+   "(which shifts a whole scope by +1) -- \"next to last\" is not \"next\" plus",
+   "\"last\" composing an offset, it is one fixed idiom meaning -2, and reusing",
+   "REL_MARKER here would let the two collide."
+  ],
+  "marker_ordlast_article": [
+   "The article that makes \"last\" the adjective \"final\": \"the last day of",
+   "school\" is the final day of school.  Bare \"last\" before a period is the",
+   "determiner \"previous\", and an \"of\" after it is a verb's complement or \"of",
+   "course\": \"I told you last week of the change\", \"last week of course I was",
+   "busy\".  Wiktionary s.v. \"last\" (https://en.wiktionary.org/wiki/last),",
+   "adjective 1: \"Final, ultimate, coming after all others of its kind\";",
+   "determiner 1: \"The (one) immediately before the present. We went there",
+   "last year.\""
+  ],
+  "marker_ordlast_of": [
+   "\"of\" after \"the last <unit>\": \"the last day of school\" names the final day",
+   "of school, not yesterday.  Wiktionary s.v. \"last\", adjective 1: \"Final,",
+   "ultimate, coming after all others of its kind\"",
+   "(https://en.wiktionary.org/wiki/last).  Bare \"last week\" is the",
+   "determiner \"previous\" instead (``marker_ordlast_article.voc``)."
+  ],
+  "marker_past": [
+   "\"earlier\" is the postposed backward offset, the mirror of \"ago\": \"five",
+   "minutes earlier\" and \"five minutes ago\" name the same instant when the",
+   "reference point is the present.  en.wiktionary.org, entry \"earlier\",",
+   "comparative of \"early\", \"before the present time\"."
+  ],
+  "marker_penult": [
+   "\"penultimate <weekday> of every month\": a single-word synonym for",
+   "\"second-to-last\" -- Merriam-Webster s.v. \"penultimate\" (\"next to the last\").",
+   "Always -2 (the day directly before the last); it never generalises to",
+   "\"second-to-penultimate\" the way the \"<ordinal> to last\" idiom does."
+  ],
+  "marker_singular_only": [
+   "Markers that modify a singular period only: \"the following week\" is the",
+   "calendar week after, while \"the following weeks\" names no single period."
+  ],
+  "marker_to": [
+   "the \"to\" of the \"<ordinal> to last\" / \"next to last\" idiom (\"the",
+   "second-to-last friday\", \"the next-to-last friday\").  Union'd with",
+   "``_RANGE_TO``'s Python-level defaults (to/until/till/through/thru) by",
+   "``_conn_surfaces`` for range detection, and now also reachable as a plain",
+   "grammar literal so the ``scoped_ordinal`` nth-to-last orders can match it."
+  ],
+  "month_1": [
+   "Unicode CLDR 47, locale en, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/en/ca-gregorian.json): months.format.wide,",
+   "months.stand-alone.wide, months.format.abbreviated,",
+   "months.stand-alone.abbreviated.  Not covered by any of those charts, and so",
+   "unattested here: \"ianuariis\"."
+  ],
+  "month_10": [
+   "Unicode CLDR 47, locale en, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/en/ca-gregorian.json): months.format.wide,",
+   "months.stand-alone.wide, months.format.abbreviated,",
+   "months.stand-alone.abbreviated."
+  ],
+  "month_11": [
+   "Unicode CLDR 47, locale en, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/en/ca-gregorian.json): months.format.wide,",
+   "months.stand-alone.wide, months.format.abbreviated,",
+   "months.stand-alone.abbreviated."
+  ],
+  "month_12": [
+   "Unicode CLDR 47, locale en, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/en/ca-gregorian.json): months.format.wide,",
+   "months.stand-alone.wide, months.format.abbreviated,",
+   "months.stand-alone.abbreviated."
+  ],
+  "month_2": [
+   "Unicode CLDR 47, locale en, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/en/ca-gregorian.json): months.format.wide,",
+   "months.stand-alone.wide, months.format.abbreviated,",
+   "months.stand-alone.abbreviated."
+  ],
+  "month_3": [
+   "Unicode CLDR 47, locale en, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/en/ca-gregorian.json): months.format.wide,",
+   "months.stand-alone.wide, months.format.abbreviated,",
+   "months.stand-alone.abbreviated.  Not covered by any of those charts, and so",
+   "unattested here: \"martiis\", \"martias\"."
+  ],
+  "month_4": [
+   "Unicode CLDR 47, locale en, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/en/ca-gregorian.json): months.format.wide,",
+   "months.stand-alone.wide, months.format.abbreviated,",
+   "months.stand-alone.abbreviated.  Not covered by any of those charts, and so",
+   "unattested here: \"apriles\", \"aprilis\"."
+  ],
+  "month_5": [
+   "Unicode CLDR 47, locale en, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/en/ca-gregorian.json): months.format.wide,",
+   "months.stand-alone.wide, months.format.abbreviated,",
+   "months.stand-alone.abbreviated."
+  ],
+  "month_6": [
+   "Unicode CLDR 47, locale en, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/en/ca-gregorian.json): months.format.wide,",
+   "months.stand-alone.wide, months.format.abbreviated,",
+   "months.stand-alone.abbreviated."
+  ],
+  "month_7": [
+   "Unicode CLDR 47, locale en, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/en/ca-gregorian.json): months.format.wide,",
+   "months.stand-alone.wide, months.format.abbreviated,",
+   "months.stand-alone.abbreviated."
+  ],
+  "month_8": [
+   "Unicode CLDR 47, locale en, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/en/ca-gregorian.json): months.format.wide,",
+   "months.stand-alone.wide, months.format.abbreviated,",
+   "months.stand-alone.abbreviated."
+  ],
+  "month_9": [
+   "Unicode CLDR 47, locale en, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/en/ca-gregorian.json): months.format.wide,",
+   "months.stand-alone.wide, months.format.abbreviated,",
+   "months.stand-alone.abbreviated.  Not covered by any of those charts, and so",
+   "unattested here: \"sept\"."
+  ],
+  "named_day_-1": [
+   "The adjective form: \"yesterday's [...] Of or relating to yesterday.\"",
+   "(Wiktionary, s.v. \"yesterday's\", adjective)."
+  ],
+  "named_day_0": [
+   "The adjective form: \"today's [...] Relating to, or produced today.\"",
+   "(Wiktionary, s.v. \"today's\", adjective). \"today's weather\" names the day."
+  ],
+  "named_day_1": [
+   "The adjective form: \"tomorrow's [...] Of or relating to tomorrow.\"",
+   "(Wiktionary, s.v. \"tomorrow's\", adjective)."
+  ],
+  "unit_hour": [
+   "hr, hrs: \"Abbreviation of hour.\" and \"plural of hr; hours\" (Wiktionary,",
+   "s.v. \"hr\", \"hrs\")."
+  ],
+  "unit_second": [
+   "\"second\" is also the ordinal; after a count it is read as the unit",
+   "(chronologia.extract.pipeline._fold_around_counted_seconds)."
+  ],
+  "weekday_0": [
+   "Unicode CLDR 47, locale en, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/en/ca-gregorian.json): days.format.wide,",
+   "days.stand-alone.wide."
+  ],
+  "weekday_1": [
+   "Unicode CLDR 47, locale en, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/en/ca-gregorian.json): days.format.wide,",
+   "days.stand-alone.wide."
+  ],
+  "weekday_2": [
+   "Unicode CLDR 47, locale en, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/en/ca-gregorian.json): days.format.wide,",
+   "days.stand-alone.wide."
+  ],
+  "weekday_3": [
+   "Unicode CLDR 47, locale en, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/en/ca-gregorian.json): days.format.wide,",
+   "days.stand-alone.wide."
+  ],
+  "weekday_4": [
+   "Unicode CLDR 47, locale en, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/en/ca-gregorian.json): days.format.wide,",
+   "days.stand-alone.wide."
+  ],
+  "weekday_5": [
+   "Unicode CLDR 47, locale en, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/en/ca-gregorian.json): days.format.wide,",
+   "days.stand-alone.wide."
+  ],
+  "weekday_6": [
+   "Unicode CLDR 47, locale en, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/en/ca-gregorian.json): days.format.wide,",
+   "days.stand-alone.wide."
+  ],
+  "weekday_abbr_0": [
+   "Unicode CLDR 47, locale en, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/en/ca-gregorian.json): days.format.abbreviated,",
+   "days.stand-alone.abbreviated."
+  ],
+  "weekday_abbr_1": [
+   "Unicode CLDR 47, locale en, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/en/ca-gregorian.json): days.format.abbreviated,",
+   "days.stand-alone.abbreviated.  Not covered by any of those charts, and so",
+   "unattested here: \"tues\"."
+  ],
+  "weekday_abbr_2": [
+   "Unicode CLDR 47, locale en, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/en/ca-gregorian.json): days.format.abbreviated,",
+   "days.stand-alone.abbreviated."
+  ],
+  "weekday_abbr_3": [
+   "Unicode CLDR 47, locale en, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/en/ca-gregorian.json): days.format.abbreviated,",
+   "days.stand-alone.abbreviated.  Not covered by any of those charts, and so",
+   "unattested here: \"thurs\"."
+  ],
+  "weekday_abbr_4": [
+   "Unicode CLDR 47, locale en, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/en/ca-gregorian.json): days.format.abbreviated,",
+   "days.stand-alone.abbreviated."
+  ],
+  "weekday_abbr_5": [
+   "Unicode CLDR 47, locale en, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/en/ca-gregorian.json): days.format.abbreviated,",
+   "days.stand-alone.abbreviated."
+  ],
+  "weekday_abbr_6": [
+   "Unicode CLDR 47, locale en, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/en/ca-gregorian.json): days.format.abbreviated,",
+   "days.stand-alone.abbreviated."
+  ]
  }
 }

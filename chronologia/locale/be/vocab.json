@@ -483,5 +483,403 @@
   "weekday_abbr_6": [
    "нд"
   ]
+ },
+ "sources": {
+  "clock_dir_minute_10": [
+   "The genitive cardinal minute count in the subtractive clock idiom",
+   "(\"без дзесяці першая\" == 12:50).  Bound only after the direction word.",
+   "Source: Вячорка, \"Каторая гадзіна?\", Радыё Свабода; ТСБМ, s.v. \"без\"."
+  ],
+  "clock_dir_minute_15": [
+   "The genitive cardinal minute count in the subtractive clock idiom",
+   "(\"без дзесяці першая\" == 12:50).  Bound only after the direction word.",
+   "Source: Вячорка, \"Каторая гадзіна?\", Радыё Свабода; ТСБМ, s.v. \"без\"."
+  ],
+  "clock_dir_minute_20": [
+   "The genitive cardinal minute count in the subtractive clock idiom",
+   "(\"без дзесяці першая\" == 12:50).  Bound only after the direction word.",
+   "Source: Вячорка, \"Каторая гадзіна?\", Радыё Свабода; ТСБМ, s.v. \"без\"."
+  ],
+  "clock_dir_minute_5": [
+   "The genitive cardinal minute count in the subtractive clock idiom",
+   "(\"без дзесяці першая\" == 12:50).  Bound only after the direction word.",
+   "Source: Вячорка, \"Каторая гадзіна?\", Радыё Свабода; ТСБМ, s.v. \"без\"."
+  ],
+  "clock_dir_to": [
+   "The SUBTRACTIVE half of the spoken hour: \"без\" (and, with a fraction,",
+   "\"за\") subtract the stated minutes from the COMING hour.",
+   "Two independent sources, each with worked examples:",
+   "  Вінцук Вячорка, \"Каторая гадзіна?\", Радыё Свабода --",
+   "    \"безь дзесяці першая\" == 12:50, \"за квадранец восьмая\" == 07:45,",
+   "    \"без дваццаці пяці дзясятая\" == 09:35;",
+   "  Тлумачальны слоўнік беларускай мовы (Інстытут мовазнаўства імя Якуба",
+   "    Коласа), s.v. \"чвэрць\" -- \"Гадзіннік паказваў без чвэрці адзінаццаць\"",
+   "    == 10:45, and s.v. \"без\" -- \"Роўна без дваццаці восем вечара\" == 19:40.",
+   "\"да\" is deliberately absent: the same preposition opens every ordinary",
+   "range and duration in the language, and reading it as a clock direction",
+   "would turn \"да пяці гадзін\" (until five) into a subtractive clock time."
+  ],
+  "clock_fraction_15": [
+   "The quarter hour, naming a quarter of the way toward the coming hour",
+   "(\"чвэрць на сёмую\" == 06:15) and subtracting from it after \"без\"",
+   "(\"без чвэрці адзінаццаць\" == 10:45).",
+   "ТСБМ, s.v. \"чвэрць\", знач. 1: \"Чацвёртая частка гадзіны (пятнаццаць",
+   "мінут). Гадзіннік паказваў без чвэрці адзінаццаць.\"",
+   "\"квадранец\" is the older Latinism for the same quantity, attested with a",
+   "literary citation (Цішка Гартны) in Вячорка, \"Каторая гадзіна?\"."
+  ],
+  "clock_fraction_30": [
+   "The half hour, naming the middle of the COMING hour.",
+   "ТСБМ, s.v. \"палова\", знач. 2: \"Момант, які адпавядае сярэдзіне якой-н.",
+   "гадзіны. Гадзіннік паказваў палову пятай.\" -- the middle of the fifth",
+   "hour, 04:30; s.v. \"палавіна\": \"Палавіна восьмай вечара\" == 19:30.",
+   "Вячорка gives the same reading with the preposition: \"палова на пятую\"."
+  ],
+  "clock_landmark_0": [
+   "ТСБМ, s.v. \"поўнач\" (сярэдзіна ночы) and the adverb \"апоўначы\"."
+  ],
+  "clock_landmark_720": [
+   "ТСБМ, s.v. \"поўдзень\" (сярэдзіна дня) and the adverb \"апоўдні\"."
+  ],
+  "clock_meridiem_am": [
+   "The genitive daypart noun qualifying a spoken hour: \"а сёмай раніцы\"."
+  ],
+  "clock_meridiem_am_night": [
+   "\"ночы\" reads on the am half of the 12-hour clock (\"а другой ночы\" is",
+   "02:00). Over an explicit 24-hour clock it keeps 18:00-23:59 as written",
+   "(\"23:30 ночы\"), the same as ru \"ночи\". No source was found for be."
+  ],
+  "clock_meridiem_pm": [
+   "\"Роўна без дваццаці восем вечара\" == 19:40 (ТСБМ, s.v. \"без\")."
+  ],
+  "marker_after": [
+   "ТСБМ, s.v. \"пасля\" (прыназоўнік з родным склонам)."
+  ],
+  "marker_at": [
+   "Answering \"калі?\" (when), Belarusian names the hour with а/аб plus the",
+   "locative ordinal -- \"а другой\", \"аб адзінаццатай\" -- and switches to \"у\"",
+   "before a minute count (\"У дваццаць хвілін на восьмую\").",
+   "Source: Вінцук Вячорка, \"Каторая гадзіна?\", Радыё Свабода,",
+   "https://www.svaboda.org/a/katoraja-hadzina/30449819.html"
+  ],
+  "marker_before": [
+   "Тлумачальны слоўнік беларускай мовы, s.v. \"да\", \"перад\"."
+  ],
+  "marker_between": [
+   "ТСБМ, s.v. \"паміж\" / \"між\"."
+  ],
+  "marker_during": [
+   "The same locative preposition, governing a month name."
+  ],
+  "marker_every": [
+   "ТСБМ, s.v. \"кожны\": \"Аўтобус ходзіць кожныя пяць мінут. Кожны дзень.\""
+  ],
+  "marker_from": [
+   "ТСБМ, s.v. \"з\" / \"ад\"."
+  ],
+  "marker_future": [
+   "Unicode CLDR 47, locale be, cldr-dates-full/main/be/dateFields.json.",
+   "relativeTime-type-future: \"праз {0} X\" (in N units)."
+  ],
+  "marker_half": [
+   "ТСБМ, s.v. \"палова\" / \"палавіна\", знач. 2: сярэдзіна прамежка часу."
+  ],
+  "marker_last": [
+   "Unicode CLDR 47, locale be, cldr-dates-full/main/be/dateFields.json.",
+   "CLDR relative-type--1 spells the previous period with \"мінулы\" in the",
+   "locative (\"у мінулым месяцы\", \"на мінулым тыдні\"), so the adjective is",
+   "listed in the paradigm those phrases use, not in the citation form alone.",
+   "Declension: en.wiktionary.org, \"мінулы\" (hard-stem adjective)."
+  ],
+  "marker_minut": [
+   "The optional \"хвілін\" that may follow the minute count in the spoken",
+   "clock: \"за дзесяць хвілін дзявятая\" == 08:50, \"пяць хвілін на трэцюю\".",
+   "Source: Вячорка, \"Каторая гадзіна?\", Радыё Свабода."
+  ],
+  "marker_na": [
+   "The preposition that carries the FIRST half of the spoken hour: \"на\" plus",
+   "the accusative ordinal of the COMING hour -- \"палова на пятую\" == 04:30,",
+   "\"чвэрць на сёмую\" == 06:15.",
+   "Source: Вінцук Вячорка, \"Каторая гадзіна?\", Радыё Свабода,",
+   "https://www.svaboda.org/a/katoraja-hadzina/30449819.html:",
+   "  \"Для першай паловы гадзіны (ад нуля да 30 хвілін) ужываем прыназоўнік",
+   "   на: дзесяць хвілін на першую, палова на пятую.\""
+  ],
+  "marker_next": [
+   "Unicode CLDR 47, locale be, cldr-dates-full/main/be/dateFields.json.",
+   "CLDR relative-type-1: \"у наступным годзе\", \"на наступным тыдні\".",
+   "Declension: en.wiktionary.org, \"наступны\" (hard-stem adjective)."
+  ],
+  "marker_oclock": [
+   "Unicode CLDR 47, locale be, cldr-dates-full/main/be/dateFields.json.",
+   "The hour noun standing after the ordinal that names the hour: \"другая",
+   "гадзіна\" (02:00), \"а другой гадзіне\" (at two).  Only the nominative and",
+   "locative singular are listed -- the plural \"дзве гадзіны\" is a DURATION of",
+   "two hours, not a clock reading, and listing it here would read one as the",
+   "other."
+  ],
+  "marker_of": [
+   "The locative preposition naming a month or a year (\"у сакавіку\",",
+   "\"у 2020 годзе\").  Тлумачальны слоўнік беларускай мовы, s.v. \"у\"."
+  ],
+  "marker_ordinal_suffix": [
+   "The adjective endings a Belarusian ordinal written in digits carries",
+   "(\"25-га сакавіка\", \"а 2-й гадзіне\")."
+  ],
+  "marker_ordlast": [
+   "\"апошні\" -- the last weekday of a month.  ТСБМ, s.v. \"апошні\"."
+  ],
+  "marker_past": [
+   "Unicode CLDR 47, locale be, cldr-dates-full/main/be/dateFields.json.",
+   "relativeTime-type-past: \"{0} X таму\" (N units ago)."
+  ],
+  "marker_quarter_word": [
+   "The calendar quarter.  CLDR 47 dateFields, quarter: displayName \"квартал\",",
+   "and the relative-type-* wording puts it in the locative behind у (\"у мінулым",
+   "квартале\"), so that form is listed alongside the citation forms."
+  ],
+  "marker_since": [
+   "ТСБМ, s.v. \"з\" (пачатак адрэзка часу)."
+  ],
+  "marker_this": [
+   "Unicode CLDR 47, locale be, cldr-dates-full/main/be/dateFields.json.",
+   "CLDR relative-type-0: \"у гэтым месяцы\", \"на гэтым тыдні\", \"у гэту гадзіну\".",
+   "Declension: en.wiktionary.org, \"гэты\" (demonstrative)."
+  ],
+  "marker_to": [
+   "ТСБМ, s.v. \"да\" (мяжа адрэзка часу)."
+  ],
+  "marker_until": [
+   "ТСБМ, s.v. \"да\"."
+  ],
+  "marker_year_word": [
+   "Unicode CLDR 47, locale be, cldr-dates-full/main/be/ca-gregorian.json.",
+   "dateFormats.long is \"d MMMM y 'г'.\" -- the year word, spelled out or",
+   "abbreviated to the standard skarot \"г\"."
+  ],
+  "month_1": [
+   "Unicode CLDR 47, locale be, cldr-dates-full/main/be/ca-gregorian.json.",
+   "Both shipped widths: the stand-alone nominative names the bare month, the",
+   "format genitive follows a day number (\"25 сакавіка\")."
+  ],
+  "month_10": [
+   "Unicode CLDR 47, locale be, cldr-dates-full/main/be/ca-gregorian.json.",
+   "Both shipped widths: the stand-alone nominative names the bare month, the",
+   "format genitive follows a day number (\"25 сакавіка\")."
+  ],
+  "month_11": [
+   "Unicode CLDR 47, locale be, cldr-dates-full/main/be/ca-gregorian.json.",
+   "Both shipped widths: the stand-alone nominative names the bare month, the",
+   "format genitive follows a day number (\"25 сакавіка\")."
+  ],
+  "month_12": [
+   "Unicode CLDR 47, locale be, cldr-dates-full/main/be/ca-gregorian.json.",
+   "Both shipped widths: the stand-alone nominative names the bare month, the",
+   "format genitive follows a day number (\"25 сакавіка\")."
+  ],
+  "month_2": [
+   "Unicode CLDR 47, locale be, cldr-dates-full/main/be/ca-gregorian.json.",
+   "Both shipped widths: the stand-alone nominative names the bare month, the",
+   "format genitive follows a day number (\"25 сакавіка\")."
+  ],
+  "month_3": [
+   "Unicode CLDR 47, locale be, cldr-dates-full/main/be/ca-gregorian.json.",
+   "Both shipped widths: the stand-alone nominative names the bare month, the",
+   "format genitive follows a day number (\"25 сакавіка\")."
+  ],
+  "month_4": [
+   "Unicode CLDR 47, locale be, cldr-dates-full/main/be/ca-gregorian.json.",
+   "Both shipped widths: the stand-alone nominative names the bare month, the",
+   "format genitive follows a day number (\"25 сакавіка\")."
+  ],
+  "month_5": [
+   "Unicode CLDR 47, locale be, cldr-dates-full/main/be/ca-gregorian.json.",
+   "Both shipped widths: the stand-alone nominative names the bare month, the",
+   "format genitive follows a day number (\"25 сакавіка\")."
+  ],
+  "month_6": [
+   "Unicode CLDR 47, locale be, cldr-dates-full/main/be/ca-gregorian.json.",
+   "Both shipped widths: the stand-alone nominative names the bare month, the",
+   "format genitive follows a day number (\"25 сакавіка\")."
+  ],
+  "month_7": [
+   "Unicode CLDR 47, locale be, cldr-dates-full/main/be/ca-gregorian.json.",
+   "Both shipped widths: the stand-alone nominative names the bare month, the",
+   "format genitive follows a day number (\"25 сакавіка\")."
+  ],
+  "month_8": [
+   "Unicode CLDR 47, locale be, cldr-dates-full/main/be/ca-gregorian.json.",
+   "Both shipped widths: the stand-alone nominative names the bare month, the",
+   "format genitive follows a day number (\"25 сакавіка\")."
+  ],
+  "month_9": [
+   "Unicode CLDR 47, locale be, cldr-dates-full/main/be/ca-gregorian.json.",
+   "Both shipped widths: the stand-alone nominative names the bare month, the",
+   "format genitive follows a day number (\"25 сакавіка\")."
+  ],
+  "named_day_-1": [
+   "Unicode CLDR 47, locale be, cldr-dates-full/main/be/dateFields.json.",
+   "day.relative-type--1."
+  ],
+  "named_day_-2": [
+   "Unicode CLDR 47, locale be, cldr-dates-full/main/be/dateFields.json.",
+   "day.relative-type--2."
+  ],
+  "named_day_0": [
+   "Unicode CLDR 47, locale be, cldr-dates-full/main/be/dateFields.json.",
+   "day.relative-type-0."
+  ],
+  "named_day_1": [
+   "Unicode CLDR 47, locale be, cldr-dates-full/main/be/dateFields.json.",
+   "day.relative-type-1."
+  ],
+  "named_day_2": [
+   "Unicode CLDR 47, locale be, cldr-dates-full/main/be/dateFields.json.",
+   "day.relative-type-2."
+  ],
+  "season_fall": [
+   "ТСБМ, s.v. \"восень\"."
+  ],
+  "season_spring": [
+   "ТСБМ, s.v. \"вясна\"."
+  ],
+  "season_summer": [
+   "ТСБМ, s.v. \"лета\"."
+  ],
+  "season_winter": [
+   "ТСБМ, s.v. \"зіма\"; the instrumental \"зімой\" is the adverbial."
+  ],
+  "unit1_day": [
+   "Unicode CLDR 47, locale be, cldr-dates-full/main/be/dateFields.json.",
+   "day, singular nominative/accusative (\"праз дзень\")."
+  ],
+  "unit1_hour": [
+   "Unicode CLDR 47, locale be, cldr-dates-full/main/be/dateFields.json.",
+   "hour, singular: nominative and the accusative \"праз гадзіну\"."
+  ],
+  "unit1_minute": [
+   "Unicode CLDR 47, locale be, cldr-dates-full/main/be/dateFields.json.",
+   "minute, singular: nominative and the accusative \"праз хвіліну\"."
+  ],
+  "unit1_month": [
+   "Unicode CLDR 47, locale be, cldr-dates-full/main/be/dateFields.json.",
+   "month, singular nominative/accusative."
+  ],
+  "unit1_second": [
+   "Unicode CLDR 47, locale be, cldr-dates-full/main/be/dateFields.json.",
+   "second, singular nominative/accusative."
+  ],
+  "unit1_week": [
+   "Unicode CLDR 47, locale be, cldr-dates-full/main/be/dateFields.json.",
+   "week, singular nominative/accusative."
+  ],
+  "unit1_year": [
+   "Unicode CLDR 47, locale be, cldr-dates-full/main/be/dateFields.json.",
+   "year, singular nominative/accusative."
+  ],
+  "unit_century": [
+   "ТСБМ, s.v. \"стагоддзе\" / \"век\"."
+  ],
+  "unit_day": [
+   "Unicode CLDR 47, locale be, cldr-dates-full/main/be/dateFields.json.",
+   "day: displayName \"дзень\", relativeTime forms дзень / дні / дзён / дня."
+  ],
+  "unit_decade": [
+   "ТСБМ, s.v. \"дзесяцігоддзе\"."
+  ],
+  "unit_hour": [
+   "Unicode CLDR 47, locale be, cldr-dates-full/main/be/dateFields.json.",
+   "hour: displayName \"гадзіна\" and the relativeTime plural forms",
+   "(гадзіну / гадзіны / гадзін).  NOT \"час\": in the hour sense that is a",
+   "documented dialectal Russianism, and it is the ordinary word for \"time\"."
+  ],
+  "unit_minute": [
+   "Unicode CLDR 47, locale be, cldr-dates-full/main/be/dateFields.json.",
+   "minute: displayName \"хвіліна\" and the four plural forms of the",
+   "relativeTime patterns (хвіліну / хвіліны / хвілін).  NOT the Russian",
+   "cognate \"мінута\" -- Belarusian names the minute хвіліна."
+  ],
+  "unit_month": [
+   "Unicode CLDR 47, locale be, cldr-dates-full/main/be/dateFields.json.",
+   "month: relativeTime forms месяц / месяцы / месяцаў / месяца."
+  ],
+  "unit_second": [
+   "Unicode CLDR 47, locale be, cldr-dates-full/main/be/dateFields.json.",
+   "second: displayName \"секунда\", relativeTime forms секунду / секунды /",
+   "секунд."
+  ],
+  "unit_week": [
+   "Unicode CLDR 47, locale be, cldr-dates-full/main/be/dateFields.json.",
+   "week: relativeTime forms тыдзень / тыдні / тыдняў / тыдня; the locative",
+   "\"на тыдні\" carries the ordinary this/last/next phrase."
+  ],
+  "unit_year": [
+   "Unicode CLDR 47, locale be, cldr-dates-full/main/be/dateFields.json.",
+   "year: relativeTime forms год / гады / гадоў / года; the locative",
+   "\"у годзе\"/\"у гэтым годзе\" is the ordinary temporal phrase."
+  ],
+  "weekday_0": [
+   "Unicode CLDR 47, locale be, cldr-dates-full/main/be/ca-gregorian.json.",
+   "days.format.wide; the genitive is the form a date phrase takes",
+   "(\"у панядзелак\" / \"да панядзелка\")."
+  ],
+  "weekday_1": [
+   "Unicode CLDR 47, locale be, cldr-dates-full/main/be/ca-gregorian.json.",
+   "days.format.wide; the genitive is the form a date phrase takes",
+   "(\"у панядзелак\" / \"да панядзелка\")."
+  ],
+  "weekday_2": [
+   "Unicode CLDR 47, locale be, cldr-dates-full/main/be/ca-gregorian.json.",
+   "days.format.wide; the genitive is the form a date phrase takes",
+   "(\"у панядзелак\" / \"да панядзелка\")."
+  ],
+  "weekday_3": [
+   "Unicode CLDR 47, locale be, cldr-dates-full/main/be/ca-gregorian.json.",
+   "days.format.wide; the genitive is the form a date phrase takes",
+   "(\"у панядзелак\" / \"да панядзелка\")."
+  ],
+  "weekday_4": [
+   "Unicode CLDR 47, locale be, cldr-dates-full/main/be/ca-gregorian.json.",
+   "days.format.wide; the genitive is the form a date phrase takes",
+   "(\"у панядзелак\" / \"да панядзелка\")."
+  ],
+  "weekday_5": [
+   "Unicode CLDR 47, locale be, cldr-dates-full/main/be/ca-gregorian.json.",
+   "days.format.wide; the genitive is the form a date phrase takes",
+   "(\"у панядзелак\" / \"да панядзелка\")."
+  ],
+  "weekday_6": [
+   "Unicode CLDR 47, locale be, cldr-dates-full/main/be/ca-gregorian.json.",
+   "days.format.wide; the genitive is the form a date phrase takes",
+   "(\"у панядзелак\" / \"да панядзелка\")."
+  ],
+  "weekday_abbr_0": [
+   "Unicode CLDR 47, locale be, cldr-dates-full/main/be/ca-gregorian.json.",
+   "days.format.abbreviated."
+  ],
+  "weekday_abbr_1": [
+   "Unicode CLDR 47, locale be, cldr-dates-full/main/be/ca-gregorian.json.",
+   "days.format.abbreviated."
+  ],
+  "weekday_abbr_2": [
+   "Unicode CLDR 47, locale be, cldr-dates-full/main/be/ca-gregorian.json.",
+   "days.format.abbreviated."
+  ],
+  "weekday_abbr_3": [
+   "Unicode CLDR 47, locale be, cldr-dates-full/main/be/ca-gregorian.json.",
+   "days.format.abbreviated."
+  ],
+  "weekday_abbr_4": [
+   "Unicode CLDR 47, locale be, cldr-dates-full/main/be/ca-gregorian.json.",
+   "days.format.abbreviated."
+  ],
+  "weekday_abbr_5": [
+   "Unicode CLDR 47, locale be, cldr-dates-full/main/be/ca-gregorian.json.",
+   "days.format.abbreviated."
+  ],
+  "weekday_abbr_6": [
+   "Unicode CLDR 47, locale be, cldr-dates-full/main/be/ca-gregorian.json.",
+   "days.format.abbreviated."
+  ]
  }
 }

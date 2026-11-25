@@ -270,5 +270,377 @@
   "weekday_abbr_6": [
    "lah"
   ]
+ },
+ "sources": {
+  "clock_meridiem_am": [
+   "Hausa scopes a clock reading with a following na-phrase naming the part of",
+   "the day.  Each band below is fixed by a worked example on",
+   "ha.wikipedia.org where the article's own text or its parenthetical",
+   "conversion pins the hour.",
+   "\"ƙarfe 7:59 na safiyar ranar sha ɗaya\" is the 07:59 departure of the first",
+   "aircraft on 11 September, and \"ƙarfe 09:00 na safiyar Litinin\" is 09:00.",
+   "safe and safiya are the same word's two shapes."
+  ],
+  "clock_meridiem_night": [
+   "Hausa scopes a clock reading with a following na-phrase naming the part of",
+   "the day.  Each band below is fixed by a worked example on",
+   "ha.wikipedia.org where the article's own text or its parenthetical",
+   "conversion pins the hour.",
+   "na dare is a midnight-crossing band, not a uniform twelve-hour shift.",
+   "ha.wikipedia.org writes \"ƙarfe 2 na dare\" for a death in the small hours",
+   "and \"ƙarfe 1:00 na dare\" for a night raid, but \"ƙarfe 9:05 na dare\" and",
+   "\"ƙarfe 11:30 na dare\" for the late evening.  The resolver's band split --",
+   "hours one to five stay morning, six to eleven become evening, twelve is",
+   "midnight -- is exactly that distribution."
+  ],
+  "clock_meridiem_pm": [
+   "Hausa scopes a clock reading with a following na-phrase naming the part of",
+   "the day.  Each band below is fixed by a worked example on",
+   "ha.wikipedia.org where the article's own text or its parenthetical",
+   "conversion pins the hour.",
+   "\"ƙarfe 1:00 na rana (12:00 GMT)\" is 13:00 -- Nigeria runs an hour ahead of",
+   "GMT, so the parenthetical conversion fixes na rana as the afternoon.",
+   "\"daga ƙarfe 7:30 zuwa 11:30 na safe, sai kuma 2:30 zuwa 6:00 na yamma\" is a",
+   "school day running 07:30-11:30 and again 14:30-18:00, which fixes na yamma",
+   "the same way."
+  ],
+  "marker_after": [
+   "Temporal succession: \"bayan kwanaki hudu\" (ha.wikipedia.org)."
+  ],
+  "marker_and": [
+   "da joins the bounds of a between-frame (\"tsakanin X da Y\") and, inside a",
+   "numeral, joins each component to the next (\"ashirin da biyar\" = 25;",
+   "ha.wikipedia.org, which glosses its own spelled numerals with digits)."
+  ],
+  "marker_before": [
+   "Temporal precedence: \"kafin watan Disamba\" (ha.wikipedia.org)."
+  ],
+  "marker_between": [
+   "tsakanin X da Y.  Attested in temporal use on ha.wikipedia.org: \"tsakanin",
+   "shekarar 1945 da 1947\"."
+  ],
+  "marker_day_word": [
+   "The day noun opening a date line -- \"ranar 5 ga Yuli, 2021\"",
+   "(ha.wikipedia.org)."
+  ],
+  "marker_every": [
+   "The distributive determiner, in both genders: \"kowace Litinin\", \"kowane",
+   "mako\" (ha.wikipedia.org)."
+  ],
+  "marker_from": [
+   "The opening half of a range, closed by zuwa.  Attested on ha.wikipedia.org:",
+   "\"daga Asabar zuwa laraba\", \"ƙarfe 7:30 zuwa 11:30 na safe\"."
+  ],
+  "marker_future": [
+   "Unicode CLDR, cldr-json cldr-dates-full/main/ha/dateFields.json.",
+   "Every future relativeTime pattern is \"cikin <unit> {0}\" or \"a cikin <unit>",
+   "{0}\" -- literally \"inside\", leading the unit it counts.",
+   "bayan is the ordinary \"after\", and \"bayan kwanaki hudu\" (ha.wikipedia.org)",
+   "is the same forward offset cikin names, so it reads as one too."
+  ],
+  "marker_ga": [
+   "ga stands between the day number and the month name in the ordinary Hausa",
+   "date line: \"10 ga watan Oktoba 2022\", \"26 ga Janairu, 1981\",",
+   "\"21 ga watan Afrilu\" (ha.wikipedia.org).  CLDR's date patterns omit it."
+  ],
+  "marker_last": [
+   "Unicode CLDR, cldr-json cldr-dates-full/main/ha/dateFields.json.",
+   "relative-type--1: \"watan da ya gabata\", \"satin da ya gabata\", \"Laraba da",
+   "ta gabata\", \"Asabar da ta wuce\".  The marker trails its noun and is the",
+   "same relative clause the counted past uses, so last-week and N-weeks-ago",
+   "are one vocabulary in Hausa."
+  ],
+  "marker_month_word": [
+   "The month noun standing before a month name -- \"watan Oktoba 2022\"",
+   "(ha.wikipedia.org)."
+  ],
+  "marker_next": [
+   "Unicode CLDR, cldr-json cldr-dates-full/main/ha/dateFields.json.",
+   "relative-type-1: \"sati na gaba\" / \"wata na gaba\", the week or month ahead.",
+   "The marker trails its noun.",
+   "",
+   "CLDR's weekday form \"Laraba mai zuwa\" (the coming Wednesday) is the other",
+   "half of the field and is deliberately NOT shipped: it ends in zuwa, which is",
+   "also this locale's range terminator (\"daga Litinin zuwa Jumaʼa\"), and the",
+   "range split reads the raw token stream before multiword surfaces are glued",
+   "back together.  Shipping it would let \"Litinin mai zuwa\" be read as the open",
+   "range \"up to Monday\" -- a wrong answer rather than no answer -- so the",
+   "surface stays out until the two can be told apart."
+  ],
+  "marker_oclock": [
+   "ƙarfe introduces the hour of the day and leads its number: \"ƙarfe 7:45 na",
+   "dare\", \"ƙarfe 2 na rana\".  Written Hausa spells the hooked ƙ as a plain k",
+   "about as often as not, so karfe ships beside it."
+  ],
+  "marker_of": [
+   "The genitive linker, masculine na and feminine ta: \"sati na gaba\",",
+   "\"shekara ta 1926\" (Unicode CLDR ha dateFields; ha.wikipedia.org)."
+  ],
+  "marker_past": [
+   "Unicode CLDR, cldr-json cldr-dates-full/main/ha/dateFields.json.",
+   "Every past relativeTime pattern is the unit, the count, and a trailing",
+   "relative clause: \"kwanaki {0} da suka gabata\", \"wata {0} da ya gabata\",",
+   "\"shekara {0} da ta gabata\".  The verb agrees with the unit noun -- ya for",
+   "masculine, ta for feminine, suka for the plural -- so all three ship: which",
+   "one is grammatical was settled by the noun the writer already chose.",
+   "CLDR gives wuce beside gabata for Friday and Saturday; the two verbs are",
+   "interchangeable in the frame and both ship."
+  ],
+  "marker_since": [
+   "tun opens a stretch reaching back from a point already gone; it is the",
+   "word written before daga in \"tun daga watan Fabrairun 2024\"",
+   "(ha.wikipedia.org)."
+  ],
+  "marker_this": [
+   "Unicode CLDR, cldr-json cldr-dates-full/main/ha/dateFields.json.",
+   "relative-type-0: \"wannan satin\", \"wannan Litinin\".  Unlike the other",
+   "relative markers this one leads its noun."
+  ],
+  "marker_until": [
+   "zuwa closes a range opened by daga (ha.wikipedia.org, \"daga Asabar zuwa",
+   "laraba\")."
+  ],
+  "marker_year_plural": [
+   "The plural of \"shekara\" (year).  A count of years takes the plural",
+   "(\"shekaru 988\"); the singular and its linked form name a year",
+   "(\"shekarar 988\").",
+   "Source: en.wiktionary.org, \"shekara\", Hausa noun: plural \"shekaru\"."
+  ],
+  "marker_year_word": [
+   "The year noun standing before its number -- \"shekara ta 1926\", \"shekarar",
+   "2024\" (ha.wikipedia.org)."
+  ],
+  "month_1": [
+   "Unicode CLDR, cldr-json cldr-dates-full/main/ha/ca-gregorian.json.",
+   "months.format.wide and months.format.abbreviated.",
+   "The linked form is the genitive that a month name takes inside the date",
+   "line (\"watan janairu 2027\"); harvested from ha.wikipedia.org by a corpus",
+   "count over the frame \"watan <month>\" (Janairun 14 / Janairu 8)."
+  ],
+  "month_10": [
+   "Unicode CLDR, cldr-json cldr-dates-full/main/ha/ca-gregorian.json.",
+   "months.format.wide and months.format.abbreviated.",
+   "The linked form is the genitive that a month name takes inside the date",
+   "line (\"watan oktoba 2027\"); harvested from ha.wikipedia.org by a corpus",
+   "count over the frame \"watan <month>\" (Oktoba 10 / Oktoban 9)."
+  ],
+  "month_11": [
+   "Unicode CLDR, cldr-json cldr-dates-full/main/ha/ca-gregorian.json.",
+   "months.format.wide and months.format.abbreviated.",
+   "The linked form is the genitive that a month name takes inside the date",
+   "line (\"watan nuwamba 2027\"); harvested from ha.wikipedia.org by a corpus",
+   "count over the frame \"watan <month>\" (Nuwamba 15 / Nuwamban 5)."
+  ],
+  "month_12": [
+   "Unicode CLDR, cldr-json cldr-dates-full/main/ha/ca-gregorian.json.",
+   "months.format.wide and months.format.abbreviated.",
+   "The linked form is the genitive that a month name takes inside the date",
+   "line (\"watan disamba 2027\"); harvested from ha.wikipedia.org by a corpus",
+   "count over the frame \"watan <month>\" (Disamba 13 / Disamban 6)."
+  ],
+  "month_2": [
+   "Unicode CLDR, cldr-json cldr-dates-full/main/ha/ca-gregorian.json.",
+   "months.format.wide and months.format.abbreviated.",
+   "CLDR spells February Faburairu; Nigerian written Hausa overwhelmingly",
+   "writes Fabrairu, and both spellings ship because both are attested.",
+   "The linked form is the genitive that a month name takes inside the date",
+   "line (\"watan faburairu 2027\"); harvested from ha.wikipedia.org by a corpus",
+   "count over the frame \"watan <month>\" (Fabrairu 12 / Fabrairun 8 / Faburairu 1)."
+  ],
+  "month_3": [
+   "Unicode CLDR, cldr-json cldr-dates-full/main/ha/ca-gregorian.json.",
+   "months.format.wide and months.format.abbreviated.",
+   "Maris ends in a consonant and takes no -n linker: the corpus frame",
+   "\"watan Maris\" returns the bare name in every hit."
+  ],
+  "month_4": [
+   "Unicode CLDR, cldr-json cldr-dates-full/main/ha/ca-gregorian.json.",
+   "months.format.wide and months.format.abbreviated.",
+   "CLDR spells April Afirilu, written usage prefers Afrilu; both ship.",
+   "The linked form is the genitive that a month name takes inside the date",
+   "line (\"watan afirilu 2027\"); harvested from ha.wikipedia.org by a corpus",
+   "count over the frame \"watan <month>\" (Afrilu 11 / Afrilun 9 / Afirilu 6 / Afirilun 4)."
+  ],
+  "month_5": [
+   "Unicode CLDR, cldr-json cldr-dates-full/main/ha/ca-gregorian.json.",
+   "months.format.wide and months.format.abbreviated.",
+   "The linked form is the genitive that a month name takes inside the date",
+   "line (\"watan mayu 2027\"); harvested from ha.wikipedia.org by a corpus",
+   "count over the frame \"watan <month>\" (Mayun 11 / Mayu 9)."
+  ],
+  "month_6": [
+   "Unicode CLDR, cldr-json cldr-dates-full/main/ha/ca-gregorian.json.",
+   "months.format.wide and months.format.abbreviated.",
+   "The linked form is the genitive that a month name takes inside the date",
+   "line (\"watan yuni 2027\"); harvested from ha.wikipedia.org by a corpus",
+   "count over the frame \"watan <month>\" (Yunin 11 / Yuni 9)."
+  ],
+  "month_7": [
+   "Unicode CLDR, cldr-json cldr-dates-full/main/ha/ca-gregorian.json.",
+   "months.format.wide and months.format.abbreviated.",
+   "The linked form is the genitive that a month name takes inside the date",
+   "line (\"watan yuli 2027\"); harvested from ha.wikipedia.org by a corpus",
+   "count over the frame \"watan <month>\" (Yulin 14 / Yuli 6)."
+  ],
+  "month_8": [
+   "Unicode CLDR, cldr-json cldr-dates-full/main/ha/ca-gregorian.json.",
+   "months.format.wide and months.format.abbreviated.",
+   "The linked form is the genitive that a month name takes inside the date",
+   "line (\"watan agusta 2027\"); harvested from ha.wikipedia.org by a corpus",
+   "count over the frame \"watan <month>\" (Agusta 13 / Agustan 7)."
+  ],
+  "month_9": [
+   "Unicode CLDR, cldr-json cldr-dates-full/main/ha/ca-gregorian.json.",
+   "months.format.wide and months.format.abbreviated.",
+   "The linked form is the genitive that a month name takes inside the date",
+   "line (\"watan satumba 2027\"); harvested from ha.wikipedia.org by a corpus",
+   "count over the frame \"watan <month>\" (Satumba 12 / Satumban 5)."
+  ],
+  "named_day_-1": [
+   "Unicode CLDR, cldr-json cldr-dates-full/main/ha/dateFields.json.",
+   "day relative-type--1."
+  ],
+  "named_day_-2": [
+   "CLDR carries no relative-type--2 for Hausa.  shekaranjiya is glossed",
+   "\"day-before-yesterday\" in two independent Chadic comparative wordlists on",
+   "ha.wikipedia.org (the Polci and Geranci articles), which is the attestation",
+   "this file rests on.  There is no relative-type-2 counterpart: no source",
+   "consulted attests a day-after-tomorrow word, so none ships."
+  ],
+  "named_day_0": [
+   "Unicode CLDR, cldr-json cldr-dates-full/main/ha/dateFields.json.",
+   "day relative-type-0."
+  ],
+  "named_day_1": [
+   "Unicode CLDR, cldr-json cldr-dates-full/main/ha/dateFields.json.",
+   "day relative-type-1."
+  ],
+  "unit_day": [
+   "Unicode CLDR, cldr-json cldr-dates-full/main/ha/dateFields.json.",
+   "day displayName kwana, plural kwanaki."
+  ],
+  "unit_hour": [
+   "Unicode CLDR, cldr-json cldr-dates-full/main/ha/dateFields.json.",
+   "hour displayName awa, plural awanni.  Hausa reckons the hour of the day on",
+   "the Western clock (see clock_meridiem_pm.voc), so unlike the Swahili saa",
+   "this noun carries no competing traditional count."
+  ],
+  "unit_minute": [
+   "Unicode CLDR, cldr-json cldr-dates-full/main/ha/dateFields.json.",
+   "minute displayName minti, plural mintuna; mintin is the definite form of",
+   "relative-type-0 (\"wannan mintin\")."
+  ],
+  "unit_month": [
+   "Unicode CLDR, cldr-json cldr-dates-full/main/ha/dateFields.json.",
+   "month displayName wata, plural watanni.  watan is the linked form the",
+   "relativeTime pattern uses (\"a cikin watan {0}\") and the form that stands",
+   "before a month name in the date line."
+  ],
+  "unit_second": [
+   "Unicode CLDR, cldr-json cldr-dates-full/main/ha/dateFields.json.",
+   "second displayName daƙiƙa; the relativeTime patterns spell the same word",
+   "dakika in the singular and dakiku in the plural, without the hooked ƙ.",
+   "All three surfaces are CLDR's own and all three ship."
+  ],
+  "unit_week": [
+   "Unicode CLDR, cldr-json cldr-dates-full/main/ha/dateFields.json.",
+   "week displayName mako, plural makonni.  sati is CLDR's own second word for",
+   "a week -- it is what relative-type--1 (\"satin da ya gabata\") and",
+   "relativePeriod (\"sati na {0}\") are built on -- and en.wiktionary.org gives",
+   "the two as synonyms.  satin is the definite form CLDR itself writes in",
+   "\"satin da ya gabata\" and \"wannan satin\"."
+  ],
+  "unit_year": [
+   "Unicode CLDR, cldr-json cldr-dates-full/main/ha/dateFields.json.",
+   "year displayName shekara, plural shekaru; shekarar is the linked form",
+   "CLDR's future pattern uses (\"a shekarar {0}\")."
+  ],
+  "weekday_0": [
+   "Unicode CLDR, cldr-json cldr-dates-full/main/ha/ca-gregorian.json.",
+   "days.format.wide."
+  ],
+  "weekday_1": [
+   "Unicode CLDR, cldr-json cldr-dates-full/main/ha/ca-gregorian.json.",
+   "days.format.wide."
+  ],
+  "weekday_2": [
+   "Unicode CLDR, cldr-json cldr-dates-full/main/ha/ca-gregorian.json.",
+   "days.format.wide."
+  ],
+  "weekday_3": [
+   "Unicode CLDR, cldr-json cldr-dates-full/main/ha/ca-gregorian.json.",
+   "days.format.wide."
+  ],
+  "weekday_4": [
+   "Unicode CLDR, cldr-json cldr-dates-full/main/ha/ca-gregorian.json.",
+   "days.format.wide.",
+   "ca-gregorian spells Friday Jummaʼa with a doubled m, dateFields spells",
+   "it Jumaʼa; the two CLDR files disagree, so both ship.  The modifier",
+   "apostrophe U+02BC folds to a plain apostrophe in the tokenizer."
+  ],
+  "weekday_5": [
+   "Unicode CLDR, cldr-json cldr-dates-full/main/ha/ca-gregorian.json.",
+   "days.format.wide."
+  ],
+  "weekday_6": [
+   "Unicode CLDR, cldr-json cldr-dates-full/main/ha/ca-gregorian.json.",
+   "days.format.wide."
+  ],
+  "weekday_abbr_0": [
+   "Unicode CLDR, cldr-json cldr-dates-full/main/ha/ca-gregorian.json.",
+   "days.format.abbreviated.  An abbreviation binds a marker-ed order but",
+   "never a bare weekday, so a three-letter form cannot claim a span on its",
+   "own.  The two-letter days.format.short series (Li, Ta, Lr, Al, Ju, As,",
+   "Lh) is deliberately not shipped: Ta collides with the feminine genitive",
+   "linker and the rest are equally ordinary letter pairs."
+  ],
+  "weekday_abbr_1": [
+   "Unicode CLDR, cldr-json cldr-dates-full/main/ha/ca-gregorian.json.",
+   "days.format.abbreviated.  An abbreviation binds a marker-ed order but",
+   "never a bare weekday, so a three-letter form cannot claim a span on its",
+   "own.  The two-letter days.format.short series (Li, Ta, Lr, Al, Ju, As,",
+   "Lh) is deliberately not shipped: Ta collides with the feminine genitive",
+   "linker and the rest are equally ordinary letter pairs."
+  ],
+  "weekday_abbr_2": [
+   "Unicode CLDR, cldr-json cldr-dates-full/main/ha/ca-gregorian.json.",
+   "days.format.abbreviated.  An abbreviation binds a marker-ed order but",
+   "never a bare weekday, so a three-letter form cannot claim a span on its",
+   "own.  The two-letter days.format.short series (Li, Ta, Lr, Al, Ju, As,",
+   "Lh) is deliberately not shipped: Ta collides with the feminine genitive",
+   "linker and the rest are equally ordinary letter pairs."
+  ],
+  "weekday_abbr_3": [
+   "Unicode CLDR, cldr-json cldr-dates-full/main/ha/ca-gregorian.json.",
+   "days.format.abbreviated.  An abbreviation binds a marker-ed order but",
+   "never a bare weekday, so a three-letter form cannot claim a span on its",
+   "own.  The two-letter days.format.short series (Li, Ta, Lr, Al, Ju, As,",
+   "Lh) is deliberately not shipped: Ta collides with the feminine genitive",
+   "linker and the rest are equally ordinary letter pairs."
+  ],
+  "weekday_abbr_4": [
+   "Unicode CLDR, cldr-json cldr-dates-full/main/ha/ca-gregorian.json.",
+   "days.format.abbreviated.  An abbreviation binds a marker-ed order but",
+   "never a bare weekday, so a three-letter form cannot claim a span on its",
+   "own.  The two-letter days.format.short series (Li, Ta, Lr, Al, Ju, As,",
+   "Lh) is deliberately not shipped: Ta collides with the feminine genitive",
+   "linker and the rest are equally ordinary letter pairs."
+  ],
+  "weekday_abbr_5": [
+   "Unicode CLDR, cldr-json cldr-dates-full/main/ha/ca-gregorian.json.",
+   "days.format.abbreviated.  An abbreviation binds a marker-ed order but",
+   "never a bare weekday, so a three-letter form cannot claim a span on its",
+   "own.  The two-letter days.format.short series (Li, Ta, Lr, Al, Ju, As,",
+   "Lh) is deliberately not shipped: Ta collides with the feminine genitive",
+   "linker and the rest are equally ordinary letter pairs."
+  ],
+  "weekday_abbr_6": [
+   "Unicode CLDR, cldr-json cldr-dates-full/main/ha/ca-gregorian.json.",
+   "days.format.abbreviated.  An abbreviation binds a marker-ed order but",
+   "never a bare weekday, so a three-letter form cannot claim a span on its",
+   "own.  The two-letter days.format.short series (Li, Ta, Lr, Al, Ju, As,",
+   "Lh) is deliberately not shipped: Ta collides with the feminine genitive",
+   "linker and the rest are equally ordinary letter pairs."
+  ]
  }
 }

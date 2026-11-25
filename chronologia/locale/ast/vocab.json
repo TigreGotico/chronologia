@@ -814,5 +814,195 @@
   "weekday_6": [
    "domingu"
   ]
+ },
+ "sources": {
+  "clock_meridiem_night": [
+   "The NIGHT daypart is a midnight-crossing BAND in colloquial clock usage,",
+   "not a uniform +12 PM shift: \"la una de la nueche\" is 01:00, \"les diez de",
+   "la nueche\" is 22:00, twelve is midnight 00:00.  Small hours 1..5 stay AM,",
+   "evening hours 6..11 are PM, twelve is midnight (band-split in resolver",
+   "_clock_hms).  AST is Ibero-Romance and shares the same madrugada band",
+   "[00:00, 06:00) as es/ca/pt (chronologia/dayparts.py); the 5|6 cut is",
+   "inherited from the RAE/DIEC/Priberam-cited boundary for the sibling",
+   "Ibero-Romance locales (see chronologia/locale/es/clock_meridiem_night.voc)",
+   "pending native confirmation for Asturian (tracked in issue #266)."
+  ],
+  "daypart_morning": [
+   "\"la mañana\" is the morning: DALLA s.v. \"mañana, la\": \"Parte [del día] que va",
+   "dende l'amanecida hasta'l meudía.\"  The adverb \"mañana\" is tomorrow (DALLA",
+   "s.v. \"mañana\": \"Nel día que sigue al de güei\"), so the morning reading needs",
+   "a demonstrative, an article, \"de\" (DALLA: \"|| De mañana, na parte del día que",
+   "va dende l'amanecida hasta'l meudía\") or \"pela\" before it.  No CLDR",
+   "day-period rules exist for ast; the band is the library default morning,",
+   "[06:00, 12:00)."
+  ],
+  "marker_at_counts": [
+   "Clock prepositions that also introduce a counted group: a bare hour behind one",
+   "is doubtful only right before a word of marker_counted_noun.voc.  Attested in",
+   "the parity acceptance rows; no dictionary source checked, a native reviewer is to confirm."
+  ],
+  "marker_counted_noun": [
+   "Nouns that count people or things a clock never takes: a bare hour behind a",
+   "clock preposition and directly before one of them is a count (\"wave at 5",
+   "people\").  Each word is quoted from its Wiktionary Noun entry",
+   "(https://en.wiktionary.org/wiki/<word>); the fetched pages are kept with the audit.",
+   "persona: Noun. \"person\"",
+   "persones: Noun. \"plural of persona\"",
+   "neños: Noun. \"plural of neñu\"",
+   "neñes: Noun. \"plural of neña\"",
+   "amigos: Noun. \"form of amigu\"",
+   "amigues: Noun. \"plural of amiga\"",
+   "rapazos: Noun. \"plural of rapaz\"",
+   "xugadores: Noun. \"plural of xugador\"",
+   "asientos: Noun. \"plural of asientu\"",
+   "cuartos: Noun. \"plural of cuartu\""
+  ],
+  "marker_day_early": [
+   "A day word followed by \"ceo\" names the first hours of that day: \"mañana",
+   "ceo\" is tomorrow morning.  DALLA s.v. \"ceo\": \"Nes primeres hores del día.",
+   "Los periódicos repártense ceo.\"  Without a day word it names no date."
+  ],
+  "marker_dayframe": [
+   "\"per\" with the article frames a part of the day.  DALLA s.v. \"per\":",
+   "\"allugamientu nel tiempu: Vémonos pela mañana\"; s.v. \"pel, pela, pelo\":",
+   "\"contr. de la preposición per y l'artículu\"."
+  ],
+  "marker_daypart_after_day": [
+   "\"de\" opens the morning only right after a day: \"el llunes de mañana\",",
+   "\"mañana de mañana\".  DALLA lists \"De mañana, na parte del día que va dende",
+   "l'amanecida hasta'l meudía\" (s.v. \"mañana, la\").  The adverb \"mañana\" is",
+   "\"Nel día que sigue al de güei\" (s.v. \"mañana\"), and that is its reading in",
+   "\"a partir de mañana\" and \"el día de mañana\": tomorrow."
+  ],
+  "marker_past": [
+   "\"atrás\" closing a counted length is the postposed past marker, beside the",
+   "preposed \"hai\"/\"fai\": ast.wikipedia has \"10,000 años atrás\" (Pleistocenu),",
+   "\"sieglos atrás\" (Malí) and \"meses atrás\" (Israel).  Portuguese lists the",
+   "same pair in this file."
+  ],
+  "marker_sharp": [
+   "The exact hour, trailing the clock: DALLA s.v. \"puntu\", \"|| En puntu, a la",
+   "hora exauta. 2 Exauta [una hora].\""
+  ],
+  "month_1": [
+   "Unicode CLDR 47, locale ast, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/ast/ca-gregorian.json): months.stand-alone.wide,",
+   "months.format.abbreviated, months.stand-alone.abbreviated."
+  ],
+  "month_10": [
+   "Unicode CLDR 47, locale ast, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/ast/ca-gregorian.json): months.stand-alone.wide,",
+   "months.format.abbreviated, months.stand-alone.abbreviated."
+  ],
+  "month_11": [
+   "Unicode CLDR 47, locale ast, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/ast/ca-gregorian.json): months.stand-alone.wide.  Not",
+   "covered by any of those charts, and so unattested here: \"noviembre\", \"nov\"."
+  ],
+  "month_12": [
+   "Unicode CLDR 47, locale ast, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/ast/ca-gregorian.json): months.stand-alone.wide.  Not",
+   "covered by any of those charts, and so unattested here: \"diciembre\", \"dic\"."
+  ],
+  "month_2": [
+   "Unicode CLDR 47, locale ast, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/ast/ca-gregorian.json): months.stand-alone.wide,",
+   "months.format.abbreviated, months.stand-alone.abbreviated."
+  ],
+  "month_3": [
+   "Unicode CLDR 47, locale ast, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/ast/ca-gregorian.json): months.stand-alone.wide,",
+   "months.format.abbreviated, months.stand-alone.abbreviated."
+  ],
+  "month_4": [
+   "Unicode CLDR 47, locale ast, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/ast/ca-gregorian.json): months.stand-alone.wide,",
+   "months.format.abbreviated, months.stand-alone.abbreviated."
+  ],
+  "month_5": [
+   "Unicode CLDR 47, locale ast, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/ast/ca-gregorian.json): months.stand-alone.wide."
+  ],
+  "month_6": [
+   "Unicode CLDR 47, locale ast, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/ast/ca-gregorian.json): months.stand-alone.wide."
+  ],
+  "month_7": [
+   "Unicode CLDR 47, locale ast, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/ast/ca-gregorian.json): months.stand-alone.wide."
+  ],
+  "month_8": [
+   "Unicode CLDR 47, locale ast, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/ast/ca-gregorian.json): months.stand-alone.wide,",
+   "months.format.abbreviated, months.stand-alone.abbreviated."
+  ],
+  "month_9": [
+   "Unicode CLDR 47, locale ast, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/ast/ca-gregorian.json): months.stand-alone.wide,",
+   "months.format.abbreviated, months.stand-alone.abbreviated."
+  ],
+  "roman_anchor_ides": [
+   "Asturian vernacular forms added; Latin classical forms retained.",
+   "Source: Wikipedia \"Calendariu romanu\" (ast):",
+   "  \"Calendes ... Nones ... Idus\".",
+   "  https://ast.wikipedia.org/wiki/Calendariu_romanu"
+  ],
+  "roman_anchor_kalends": [
+   "Asturian vernacular forms added; Latin classical forms retained.",
+   "Source: Wikipedia \"Calendariu romanu\" (ast):",
+   "  \"Calendes ... Nones ... Idus\".",
+   "  https://ast.wikipedia.org/wiki/Calendariu_romanu"
+  ],
+  "roman_anchor_nones": [
+   "Asturian vernacular forms added; Latin classical forms retained.",
+   "Source: Wikipedia \"Calendariu romanu\" (ast):",
+   "  \"Calendes ... Nones ... Idus\".",
+   "  https://ast.wikipedia.org/wiki/Calendariu_romanu"
+  ],
+  "unit1_second": [
+   "Unicode CLDR 47, locale ast, cldr-units-full/main/ast/units.json,",
+   "duration-second, unitPattern-count-one \"segundu\" (short \"seg\")."
+  ],
+  "unit_second": [
+   "Unicode CLDR 47, locale ast, cldr-units-full/main/ast/units.json,",
+   "duration-second: one \"segundu\", other \"segundos\", short \"seg\"/\"segs\"."
+  ],
+  "weekday_0": [
+   "Unicode CLDR 47, locale ast, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/ast/ca-gregorian.json): days.format.wide,",
+   "days.stand-alone.wide."
+  ],
+  "weekday_1": [
+   "Unicode CLDR 47, locale ast, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/ast/ca-gregorian.json): days.format.wide,",
+   "days.stand-alone.wide."
+  ],
+  "weekday_2": [
+   "Unicode CLDR 47, locale ast, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/ast/ca-gregorian.json): days.format.wide,",
+   "days.stand-alone.wide.  Not covered by any of those charts, and so",
+   "unattested here: \"miercoles\"."
+  ],
+  "weekday_3": [
+   "Unicode CLDR 47, locale ast, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/ast/ca-gregorian.json): days.format.wide,",
+   "days.stand-alone.wide."
+  ],
+  "weekday_4": [
+   "Unicode CLDR 47, locale ast, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/ast/ca-gregorian.json): days.format.wide,",
+   "days.stand-alone.wide."
+  ],
+  "weekday_5": [
+   "Unicode CLDR 47, locale ast, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/ast/ca-gregorian.json): days.format.wide,",
+   "days.stand-alone.wide.  Not covered by any of those charts, and so",
+   "unattested here: \"sabadu\"."
+  ],
+  "weekday_6": [
+   "Unicode CLDR 47, locale ast, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/ast/ca-gregorian.json): days.format.wide,",
+   "days.stand-alone.wide."
+  ]
  }
 }

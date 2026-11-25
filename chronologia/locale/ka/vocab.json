@@ -202,5 +202,343 @@
   "weekday_6": [
    "კვირა"
   ]
+ },
+ "sources": {
+  "clock_fraction_30": [
+   "The half of the toward-the-hour clock.  The hour it follows stands in the",
+   "GENITIVE and is the hour being APPROACHED, so ორის ნახევარი is half toward",
+   "two == 01:30 -- en.wiktionary.org glosses that very phrase \"half past one\".",
+   "https://en.wiktionary.org/wiki/%E1%83%9C%E1%83%90%E1%83%AE%E1%83%94%E1%83%95%E1%83%90%E1%83%A0%E1%83%98"
+  ],
+  "clock_landmark_0": [
+   "Nominative and dative; the dative is the form CLDR lists for the",
+   "midnight day-period.  en.wiktionary.org, შუაღამე (\"midnight\") --",
+   "https://en.wiktionary.org/wiki/%E1%83%A8%E1%83%A3%E1%83%90%E1%83%A6%E1%83%90%E1%83%9B%E1%83%94"
+  ],
+  "clock_landmark_720": [
+   "Nominative and dative; the dative is the form CLDR lists for the noon",
+   "day-period.  en.wiktionary.org, შუადღე (\"noon, midday\") --",
+   "https://en.wiktionary.org/wiki/%E1%83%A8%E1%83%A3%E1%83%90%E1%83%93%E1%83%A6%E1%83%94"
+  ],
+  "daypart_afternoon_ka": [
+   "Band boundaries: Unicode CLDR 47 dayPeriodRuleSet for ka (cldr-json",
+   "cldr-core/supplemental/dayPeriods.json), transcribed in",
+   "chronologia/dayparts.py.",
+   "Unicode CLDR 47, locale ka, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/ka/ca-gregorian.json).",
+   "dayPeriod \"afternoon1\": the stand-alone wide form and the format wide form,",
+   "the latter being the case-marked adverbial one.  Declension:",
+   "en.wiktionary.org, ნაშუადღევი -- https://en.wiktionary.org/wiki/%E1%83%9C%E1%83%90%E1%83%A8%E1%83%A3%E1%83%90%E1%83%93%E1%83%A6%E1%83%94%E1%83%95%E1%83%98"
+  ],
+  "daypart_evening_ka": [
+   "Band boundaries: Unicode CLDR 47 dayPeriodRuleSet for ka (cldr-json",
+   "cldr-core/supplemental/dayPeriods.json), transcribed in",
+   "chronologia/dayparts.py.",
+   "Unicode CLDR 47, locale ka, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/ka/ca-gregorian.json).",
+   "dayPeriod \"evening1\": the stand-alone wide form and the format wide form,",
+   "the latter being the case-marked adverbial one.  Declension:",
+   "en.wiktionary.org, საღამო -- https://en.wiktionary.org/wiki/%E1%83%A1%E1%83%90%E1%83%A6%E1%83%90%E1%83%9B%E1%83%9D"
+  ],
+  "daypart_morning_ka": [
+   "Band boundaries: Unicode CLDR 47 dayPeriodRuleSet for ka (cldr-json",
+   "cldr-core/supplemental/dayPeriods.json), transcribed in",
+   "chronologia/dayparts.py.",
+   "Unicode CLDR 47, locale ka, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/ka/ca-gregorian.json).",
+   "dayPeriod \"morning1\": the stand-alone wide form and the format wide form,",
+   "the latter being the case-marked adverbial one.  Declension:",
+   "en.wiktionary.org, დილა -- https://en.wiktionary.org/wiki/%E1%83%93%E1%83%98%E1%83%9A%E1%83%90"
+  ],
+  "daypart_night_ka": [
+   "Band boundaries: Unicode CLDR 47 dayPeriodRuleSet for ka (cldr-json",
+   "cldr-core/supplemental/dayPeriods.json), transcribed in",
+   "chronologia/dayparts.py.",
+   "Unicode CLDR 47, locale ka, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/ka/ca-gregorian.json).",
+   "dayPeriod \"night1\": the stand-alone wide form and the format wide form,",
+   "the latter being the case-marked adverbial one.  Declension:",
+   "en.wiktionary.org, ღამე -- https://en.wiktionary.org/wiki/%E1%83%A6%E1%83%90%E1%83%9B%E1%83%94"
+  ],
+  "marker_future": [
+   "შემდეგ is წინ's antonym and its mirror in every respect: a postposition",
+   "governing the genitive, so \"სამი თვის შემდეგ\" is three months from now.",
+   "en.wiktionary.org, შემდეგ (\"+ genitive case\", \"after\") --",
+   "https://en.wiktionary.org/wiki/%E1%83%A8%E1%83%94%E1%83%9B%E1%83%93%E1%83%94%E1%83%92"
+  ],
+  "marker_last": [
+   "The antonym of მომავალი, likewise prenominal: \"გასული წელი\" == last year.",
+   "en.wiktionary.org, გასული --",
+   "https://en.wiktionary.org/wiki/%E1%83%92%E1%83%90%E1%83%A1%E1%83%A3%E1%83%9A%E1%83%98"
+  ],
+  "marker_next": [
+   "An adjective standing BEFORE its noun -- Georgian is postpositional in its",
+   "adposition system, not in its modifiers.  The dative/adverbial form მომავალ",
+   "is the one a case-marked noun takes: \"მომავალ წელს\" == next year.",
+   "en.wiktionary.org, მომავალი, sense \"next\" with that example --",
+   "https://en.wiktionary.org/wiki/%E1%83%9B%E1%83%9D%E1%83%9B%E1%83%90%E1%83%95%E1%83%90%E1%83%9A%E1%83%98"
+  ],
+  "marker_past": [
+   "წინ is a postposition governing the genitive, and it TRAILS the noun it",
+   "governs: \"სამი თვის წინ\" == three months ago.  en.wiktionary.org, წინ,",
+   "which glosses the sense \"ago\" on that very example and states the case",
+   "government -- https://en.wiktionary.org/wiki/%E1%83%AC%E1%83%98%E1%83%9C"
+  ],
+  "marker_this": [
+   "The proximal demonstrative, prenominal: \"ეს თვე\" == this month.",
+   "en.wiktionary.org, ეს --",
+   "https://en.wiktionary.org/wiki/%E1%83%94%E1%83%A1"
+  ],
+  "marker_weekday_counted_ambiguous": [
+   "კვირა names both Sunday and the week, so a COUNT before it (\"ორი კვირა\")",
+   "can only be a span of weeks -- nobody counts Sundays that way -- and this",
+   "locale ships no week duration unit, because the two senses share one",
+   "declension and no source disambiguates them.  The count therefore vetoes",
+   "the weekday reading: answering \"Sunday\" to \"two weeks\" would give a caller",
+   "who asked for a duration one specific day.  Declining the false weekday",
+   "reading is not the same as asserting the unsourced week one, which stays",
+   "unavailable.  en.wiktionary.org, კვირა --",
+   "https://en.wiktionary.org/wiki/%E1%83%99%E1%83%95%E1%83%98%E1%83%A0%E1%83%90"
+  ],
+  "month_1": [
+   "Unicode CLDR 47, locale ka, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/ka/ca-gregorian.json).",
+   "Wide and abbreviated stand-alone forms; both are identical to the",
+   "format forms in this locale."
+  ],
+  "month_10": [
+   "Unicode CLDR 47, locale ka, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/ka/ca-gregorian.json).",
+   "Wide and abbreviated stand-alone forms; both are identical to the",
+   "format forms in this locale."
+  ],
+  "month_11": [
+   "Unicode CLDR 47, locale ka, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/ka/ca-gregorian.json).",
+   "Wide and abbreviated stand-alone forms; both are identical to the",
+   "format forms in this locale."
+  ],
+  "month_12": [
+   "Unicode CLDR 47, locale ka, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/ka/ca-gregorian.json).",
+   "Wide and abbreviated stand-alone forms; both are identical to the",
+   "format forms in this locale."
+  ],
+  "month_2": [
+   "Unicode CLDR 47, locale ka, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/ka/ca-gregorian.json).",
+   "Wide and abbreviated stand-alone forms; both are identical to the",
+   "format forms in this locale."
+  ],
+  "month_3": [
+   "Unicode CLDR 47, locale ka, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/ka/ca-gregorian.json).",
+   "Wide and abbreviated stand-alone forms; both are identical to the",
+   "format forms in this locale."
+  ],
+  "month_4": [
+   "Unicode CLDR 47, locale ka, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/ka/ca-gregorian.json).",
+   "Wide and abbreviated stand-alone forms; both are identical to the",
+   "format forms in this locale."
+  ],
+  "month_5": [
+   "Unicode CLDR 47, locale ka, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/ka/ca-gregorian.json).",
+   "Wide and abbreviated stand-alone forms; both are identical to the",
+   "format forms in this locale."
+  ],
+  "month_6": [
+   "Unicode CLDR 47, locale ka, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/ka/ca-gregorian.json).",
+   "Wide and abbreviated stand-alone forms; both are identical to the",
+   "format forms in this locale."
+  ],
+  "month_7": [
+   "Unicode CLDR 47, locale ka, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/ka/ca-gregorian.json).",
+   "Wide and abbreviated stand-alone forms; both are identical to the",
+   "format forms in this locale."
+  ],
+  "month_8": [
+   "Unicode CLDR 47, locale ka, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/ka/ca-gregorian.json).",
+   "Wide and abbreviated stand-alone forms; both are identical to the",
+   "format forms in this locale."
+  ],
+  "month_9": [
+   "Unicode CLDR 47, locale ka, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/ka/ca-gregorian.json).",
+   "Wide and abbreviated stand-alone forms; both are identical to the",
+   "format forms in this locale."
+  ],
+  "named_day_-1": [
+   "yesterday.  Georgian names three days out on each side of today, one",
+   "further than most languages do.  en.wiktionary.org, გუშინ, and the",
+   "day-sequence coordinate-term list every one of these entries carries."
+  ],
+  "named_day_-2": [
+   "the day before yesterday.  Georgian names three days out on each side of today, one",
+   "further than most languages do.  en.wiktionary.org, გუშინწინ, and the",
+   "day-sequence coordinate-term list every one of these entries carries."
+  ],
+  "named_day_-3": [
+   "The third day before today, marked colloquial and rare.  Georgian names",
+   "three days out on each side of today, one further than most languages do.",
+   "en.wiktionary.org, გუშინწინისწინ, and the day-sequence coordinate-term list",
+   "every one of these entries carries --",
+   "https://en.wiktionary.org/wiki/%E1%83%92%E1%83%A3%E1%83%A8%E1%83%98%E1%83%9C%E1%83%AC%E1%83%98%E1%83%9C%E1%83%98%E1%83%A1%E1%83%AC%E1%83%98%E1%83%9C"
+  ],
+  "named_day_0": [
+   "today.  Georgian names three days out on each side of today, one",
+   "further than most languages do.  en.wiktionary.org, დღეს, and the",
+   "day-sequence coordinate-term list every one of these entries carries."
+  ],
+  "named_day_1": [
+   "tomorrow.  Georgian names three days out on each side of today, one",
+   "further than most languages do.  en.wiktionary.org, ხვალ, and the",
+   "day-sequence coordinate-term list every one of these entries carries."
+  ],
+  "named_day_2": [
+   "the day after tomorrow.  Georgian names three days out on each side of today, one",
+   "further than most languages do.  en.wiktionary.org, ზეგ, and the",
+   "day-sequence coordinate-term list every one of these entries carries."
+  ],
+  "named_day_3": [
+   "the third day after today.  Georgian names three days out on each side of today, one",
+   "further than most languages do.  en.wiktionary.org, მაზეგ, and the",
+   "day-sequence coordinate-term list every one of these entries carries."
+  ],
+  "unit1_day": [
+   "Nominative and genitive singular.  A counted noun stays SINGULAR in",
+   "Georgian, and the postpositions წინ (\"ago\") and შემდეგ (\"after\")",
+   "govern the genitive -- \"სამი თვის წინ\" is three months ago.",
+   "Declension table: en.wiktionary.org, დღე -- https://en.wiktionary.org/wiki/%E1%83%93%E1%83%A6%E1%83%94"
+  ],
+  "unit1_decade": [
+   "Nominative and genitive singular.  A counted noun stays SINGULAR in",
+   "Georgian, and the postpositions წინ (\"ago\") and შემდეგ (\"after\")",
+   "govern the genitive -- \"სამი თვის წინ\" is three months ago.",
+   "Declension table: en.wiktionary.org, ათწლეული -- https://en.wiktionary.org/wiki/%E1%83%90%E1%83%97%E1%83%AC%E1%83%9A%E1%83%94%E1%83%A3%E1%83%9A%E1%83%98"
+  ],
+  "unit1_hour": [
+   "Nominative and genitive singular.  A counted noun stays SINGULAR in",
+   "Georgian, and the postpositions წინ (\"ago\") and შემდეგ (\"after\")",
+   "govern the genitive -- \"სამი თვის წინ\" is three months ago.",
+   "Declension table: en.wiktionary.org, საათი -- https://en.wiktionary.org/wiki/%E1%83%A1%E1%83%90%E1%83%90%E1%83%97%E1%83%98"
+  ],
+  "unit1_millennium": [
+   "Nominative and genitive singular.  A counted noun stays SINGULAR in",
+   "Georgian, and the postpositions წინ (\"ago\") and შემდეგ (\"after\")",
+   "govern the genitive -- \"სამი თვის წინ\" is three months ago.",
+   "Declension table: en.wiktionary.org, ათასწლეული -- https://en.wiktionary.org/wiki/%E1%83%90%E1%83%97%E1%83%90%E1%83%A1%E1%83%AC%E1%83%9A%E1%83%94%E1%83%A3%E1%83%9A%E1%83%98"
+  ],
+  "unit1_minute": [
+   "Nominative and genitive singular.  A counted noun stays SINGULAR in",
+   "Georgian, and the postpositions წინ (\"ago\") and შემდეგ (\"after\")",
+   "govern the genitive -- \"სამი თვის წინ\" is three months ago.",
+   "Declension table: en.wiktionary.org, წუთი -- https://en.wiktionary.org/wiki/%E1%83%AC%E1%83%A3%E1%83%97%E1%83%98"
+  ],
+  "unit1_month": [
+   "Nominative and genitive singular.  A counted noun stays SINGULAR in",
+   "Georgian, and the postpositions წინ (\"ago\") and შემდეგ (\"after\")",
+   "govern the genitive -- \"სამი თვის წინ\" is three months ago.",
+   "Declension table: en.wiktionary.org, თვე -- https://en.wiktionary.org/wiki/%E1%83%97%E1%83%95%E1%83%94"
+  ],
+  "unit1_second": [
+   "Nominative and genitive singular.  A counted noun stays SINGULAR in",
+   "Georgian, and the postpositions წინ (\"ago\") and შემდეგ (\"after\")",
+   "govern the genitive -- \"სამი თვის წინ\" is three months ago.",
+   "Declension table: en.wiktionary.org, წამი -- https://en.wiktionary.org/wiki/%E1%83%AC%E1%83%90%E1%83%9B%E1%83%98"
+  ],
+  "unit1_year": [
+   "Nominative and genitive singular.  A counted noun stays SINGULAR in",
+   "Georgian, and the postpositions წინ (\"ago\") and შემდეგ (\"after\")",
+   "govern the genitive -- \"სამი თვის წინ\" is three months ago.",
+   "Declension table: en.wiktionary.org, წელი -- https://en.wiktionary.org/wiki/%E1%83%AC%E1%83%94%E1%83%9A%E1%83%98"
+  ],
+  "unit_day": [
+   "Nominative and genitive singular.  A counted noun stays SINGULAR in",
+   "Georgian, and the postpositions წინ (\"ago\") and შემდეგ (\"after\")",
+   "govern the genitive -- \"სამი თვის წინ\" is three months ago.",
+   "Declension table: en.wiktionary.org, დღე -- https://en.wiktionary.org/wiki/%E1%83%93%E1%83%A6%E1%83%94"
+  ],
+  "unit_decade": [
+   "Nominative and genitive singular.  A counted noun stays SINGULAR in",
+   "Georgian, and the postpositions წინ (\"ago\") and შემდეგ (\"after\")",
+   "govern the genitive -- \"სამი თვის წინ\" is three months ago.",
+   "Declension table: en.wiktionary.org, ათწლეული -- https://en.wiktionary.org/wiki/%E1%83%90%E1%83%97%E1%83%AC%E1%83%9A%E1%83%94%E1%83%A3%E1%83%9A%E1%83%98"
+  ],
+  "unit_hour": [
+   "Nominative and genitive singular.  A counted noun stays SINGULAR in",
+   "Georgian, and the postpositions წინ (\"ago\") and შემდეგ (\"after\")",
+   "govern the genitive -- \"სამი თვის წინ\" is three months ago.",
+   "Declension table: en.wiktionary.org, საათი -- https://en.wiktionary.org/wiki/%E1%83%A1%E1%83%90%E1%83%90%E1%83%97%E1%83%98"
+  ],
+  "unit_millennium": [
+   "Nominative and genitive singular.  A counted noun stays SINGULAR in",
+   "Georgian, and the postpositions წინ (\"ago\") and შემდეგ (\"after\")",
+   "govern the genitive -- \"სამი თვის წინ\" is three months ago.",
+   "Declension table: en.wiktionary.org, ათასწლეული -- https://en.wiktionary.org/wiki/%E1%83%90%E1%83%97%E1%83%90%E1%83%A1%E1%83%AC%E1%83%9A%E1%83%94%E1%83%A3%E1%83%9A%E1%83%98"
+  ],
+  "unit_minute": [
+   "Nominative and genitive singular.  A counted noun stays SINGULAR in",
+   "Georgian, and the postpositions წინ (\"ago\") and შემდეგ (\"after\")",
+   "govern the genitive -- \"სამი თვის წინ\" is three months ago.",
+   "Declension table: en.wiktionary.org, წუთი -- https://en.wiktionary.org/wiki/%E1%83%AC%E1%83%A3%E1%83%97%E1%83%98"
+  ],
+  "unit_month": [
+   "Nominative and genitive singular.  A counted noun stays SINGULAR in",
+   "Georgian, and the postpositions წინ (\"ago\") and შემდეგ (\"after\")",
+   "govern the genitive -- \"სამი თვის წინ\" is three months ago.",
+   "Declension table: en.wiktionary.org, თვე -- https://en.wiktionary.org/wiki/%E1%83%97%E1%83%95%E1%83%94"
+  ],
+  "unit_second": [
+   "Nominative and genitive singular.  A counted noun stays SINGULAR in",
+   "Georgian, and the postpositions წინ (\"ago\") and შემდეგ (\"after\")",
+   "govern the genitive -- \"სამი თვის წინ\" is three months ago.",
+   "Declension table: en.wiktionary.org, წამი -- https://en.wiktionary.org/wiki/%E1%83%AC%E1%83%90%E1%83%9B%E1%83%98"
+  ],
+  "unit_year": [
+   "Nominative and genitive singular.  A counted noun stays SINGULAR in",
+   "Georgian, and the postpositions წინ (\"ago\") and შემდეგ (\"after\")",
+   "govern the genitive -- \"სამი თვის წინ\" is three months ago.",
+   "Declension table: en.wiktionary.org, წელი -- https://en.wiktionary.org/wiki/%E1%83%AC%E1%83%94%E1%83%9A%E1%83%98"
+  ],
+  "weekday_0": [
+   "Unicode CLDR 47, locale ka, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/ka/ca-gregorian.json)."
+  ],
+  "weekday_1": [
+   "Unicode CLDR 47, locale ka, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/ka/ca-gregorian.json)."
+  ],
+  "weekday_2": [
+   "Unicode CLDR 47, locale ka, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/ka/ca-gregorian.json)."
+  ],
+  "weekday_3": [
+   "Unicode CLDR 47, locale ka, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/ka/ca-gregorian.json)."
+  ],
+  "weekday_4": [
+   "Unicode CLDR 47, locale ka, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/ka/ca-gregorian.json)."
+  ],
+  "weekday_5": [
+   "Unicode CLDR 47, locale ka, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/ka/ca-gregorian.json)."
+  ],
+  "weekday_6": [
+   "Unicode CLDR 47, locale ka, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/ka/ca-gregorian.json).",
+   "კვირა names BOTH the weekday Sunday and the duration \"week\", under a",
+   "single Wiktionary entry whose seven-case declension is identical for the",
+   "two senses -- there is no morphological cue to tell them apart.  The",
+   "ambiguity is resolved by CONSTRUCTION rather than guessed: კვირა binds",
+   "the weekday slot only, and this locale ships no week duration unit at",
+   "all, so a counted \"two weeks\" refuses instead of silently picking a",
+   "sense.  en.wiktionary.org, კვირა -- https://en.wiktionary.org/wiki/%E1%83%99%E1%83%95%E1%83%98%E1%83%A0%E1%83%90"
+  ]
  }
 }

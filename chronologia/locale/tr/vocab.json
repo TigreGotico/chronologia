@@ -300,5 +300,241 @@
   "weekday_6": [
    "pazar"
   ]
+ },
+ "sources": {
+  "clock_dir_past": [
+   "Turkish spoken-clock \"past\" marker -- \"geçe\" (additive), with the hour in",
+   "the ACCUSATIVE case: \"saat dokuzu beş geçe\" = 9:05, \"üçü çeyrek geçe\" = 3:15,",
+   "\"üçü yirmi geçe\" = 3:20. Order is HOUR(-acc) MINUTE/FRACTION geçe.",
+   "Source: Türk Dil Kurumu (TDK), Güncel Türkçe Sözlük, s.v. \"geçe\"",
+   "(belirtilen zamandan sonra; \"saati beş geçe\")."
+  ],
+  "clock_dir_to": [
+   "Turkish spoken-clock \"to\" marker -- \"kala\" (subtractive from the named/next",
+   "hour), with the hour in the DATIVE case: \"saat yediye çeyrek kala\" = 6:45",
+   "(quarter to seven), \"dörde yirmi kala\" = 3:40 (twenty to four). Order is",
+   "HOUR(-dat) MINUTE/FRACTION kala.",
+   "Source: Türk Dil Kurumu (TDK), Güncel Türkçe Sözlük, s.v. \"kala\"",
+   "(belirtilen zamana varmaya belli bir süre varken; \"saat üçe on kala\")."
+  ],
+  "clock_fraction_15": [
+   "Turkish clock quarter -- \"çeyrek\" = 15 minutes in the spoken-clock",
+   "fraction slot (\"üçü çeyrek geçe\" = 3:15, \"yediye çeyrek kala\" = 6:45).",
+   "Source: Türk Dil Kurumu (TDK), Güncel Türkçe Sözlük, s.v. \"çeyrek\"",
+   "(dörtte bir; saatte on beş dakika)."
+  ],
+  "clock_fraction_30": [
+   "Turkish \"and-a-half\" clock word -- \"buçuk\" = 30 minutes, ADDITIVE on the",
+   "named (current) hour (\"üç buçuk\" = 3:30, \"yedi buçuk\" = 7:30). A dedicated",
+   "half-past word, not the generic half fraction.",
+   "Source: Türk Dil Kurumu (TDK), Güncel Türkçe Sözlük, s.v. \"buçuk\"",
+   "(bir bütünü oluşturan iki yarımdan biri; saat yarımı).",
+   "TDK lists buçuk as an ADJECTIVE meaning \"... ve yarım\" -- it joins the",
+   "preceding cardinal into one numeral (\"Üç buçuk senedir...\", Peyami Safa),",
+   "so \"üç buçuk\" is a single reading of the clock and not an hour with a",
+   "stray word after it. The hour-introducing noun \"saat\" (TDK s.v. \"saat\":",
+   "\"bir işin yapıldığı belli bir zaman\") frames that whole reading, which is",
+   "why the \"at HOUR FRACTION\" order exists: \"saat üç buçuk\" is 3:30, not",
+   "3:00 with \"buçuk\" left over."
+  ],
+  "clock_meridiem_pm": [
+   "Turkish puts the daypart adverbial in FRONT of the time phrase it scopes:",
+   "\"öğleden sonra saat üç\" is the plain way to say three in the afternoon, and",
+   "TDK carries the mirror compound \"akşam saati\" (zarf, = akşamleyin) with the",
+   "daypart word leading the hour noun (Güncel Türkçe Sözlük, s.v. \"akşam\",",
+   "https://sozluk.gov.tr/). The postposed order occurs too, so the clock",
+   "construction reads the marker on either side of the hour."
+  ],
+  "daypart_evening_tr": [
+   "Band boundaries: Unicode CLDR 47 Day Period Rules, locale tr",
+   "(https://www.unicode.org/cldr/charts/47/supplemental/day_periods.html),",
+   "transcribed in chronologia/dayparts.py as the evening band.",
+   "Surface: noun 'evening' -- the deictic form these phrases use.",
+   "Source: Wiktionary, akşam — https://en.wiktionary.org/wiki/akşam",
+   "Surface: 3rd-person possessive \"akşamı\" (\"its evening\" / \"the evening of",
+   "<day>\") -- the form the \"<weekday> akşamı [saat ...]\" construction uses",
+   "(\"salı akşamı saat 9'da\" = \"Tuesday evening at 9\"). Same band as \"akşam\";",
+   "Source: TDK Güncel Türkçe Sözlük, \"akşam\" + 3sg possessive -ı."
+  ],
+  "daypart_morning_tr": [
+   "Band boundaries: Unicode CLDR 47 Day Period Rules, locale tr",
+   "(https://www.unicode.org/cldr/charts/47/supplemental/day_periods.html),",
+   "transcribed in chronologia/dayparts.py as the morning band.",
+   "Surface: noun/adverb 'morning' (distinct from 'yarın' = tomorrow) -- the deictic form these phrases use.",
+   "Source: Wiktionary, sabah — https://en.wiktionary.org/wiki/sabah#Turkish",
+   "Surface: 3rd-person possessive \"sabahı\" (\"its morning\" / \"the morning of",
+   "<day>\") -- the form the \"<weekday> sabahı [saat ...]\" construction uses",
+   "(\"salı sabahı saat 9'da\" = \"Tuesday morning at 9\"). Same band as \"sabah\";",
+   "Source: TDK Güncel Türkçe Sözlük, \"sabah\" + 3sg possessive -ı."
+  ],
+  "daypart_night_tr": [
+   "Band boundaries: Unicode CLDR 47 Day Period Rules, locale tr",
+   "(https://www.unicode.org/cldr/charts/47/supplemental/day_periods.html),",
+   "transcribed in chronologia/dayparts.py as the night band.",
+   "Surface: noun 'night' -- the deictic form these phrases use.",
+   "Source: Wiktionary, gece — https://en.wiktionary.org/wiki/gece"
+  ],
+  "marker_half": [
+   "Turkish period noun \"half\" for \"<year>'s first/second half\" (half_period).",
+   "\"yarı\"/\"yarısı\": TDK Güncel Türkçe Sözlük -- \"yarı\" = bir bütünü oluşturan iki",
+   "  eşit parçadan her biri; \"yarısı\" = yarı + 3. tekil iyelik eki, as in",
+   "  \"2020'nin ilk yarısı\".  https://sozluk.gov.tr  (search: yarı)",
+   "\"yarım\" is the standalone half-fraction kept for the clock/quantifier path."
+  ],
+  "marker_poss": [
+   "Turkish genitive suffix -(n)In marking the possessor year in \"2020'nin ilk",
+   "yarısı\" (\"2020's first half\"): the tokenizer splits it off the apostrophe as a",
+   "standalone token, so it is bound as the optional connector ``poss`` in the",
+   "year-first half_period order.  TDK, İmla Kılavuzu: ilgi durumu eki -(n)In with",
+   "vowel harmony (nin/nın/nun/nün).  https://sozluk.gov.tr"
+  ],
+  "marker_year_word": [
+   "Turkish noun \"year\" naming the year a period belongs to (\"2020 yılının ilk",
+   "yarısı\" -- the first half of the year 2020).  TDK Güncel Türkçe Sözlük: yıl =",
+   "dünyanın güneş çevresinde bir kez dönmesi için geçen süre.  https://sozluk.gov.tr",
+   "The possessed forms carry the regular 3rd-person possessive -(s)I (\"yılı\")",
+   "and the genitive on top of it (\"yılının\"), written as one word -- the",
+   "tokenizer only splits an apostrophe-marked suffix, so each attested form is",
+   "listed on its own.  TDK, İmla Kılavuzu: iyelik eki -(s)I, ilgi durumu eki",
+   "-(n)In with vowel harmony."
+  ],
+  "month_1": [
+   "Unicode CLDR 47, locale tr, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/tr/ca-gregorian.json): months.format.wide,",
+   "months.stand-alone.wide."
+  ],
+  "month_10": [
+   "Unicode CLDR 47, locale tr, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/tr/ca-gregorian.json): months.format.wide,",
+   "months.stand-alone.wide."
+  ],
+  "month_11": [
+   "Unicode CLDR 47, locale tr, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/tr/ca-gregorian.json): months.format.wide,",
+   "months.stand-alone.wide."
+  ],
+  "month_12": [
+   "Unicode CLDR 47, locale tr, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/tr/ca-gregorian.json): months.format.wide,",
+   "months.stand-alone.wide."
+  ],
+  "month_2": [
+   "Unicode CLDR 47, locale tr, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/tr/ca-gregorian.json): months.format.wide,",
+   "months.stand-alone.wide."
+  ],
+  "month_3": [
+   "Unicode CLDR 47, locale tr, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/tr/ca-gregorian.json): months.format.wide,",
+   "months.stand-alone.wide."
+  ],
+  "month_4": [
+   "Unicode CLDR 47, locale tr, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/tr/ca-gregorian.json): months.format.wide,",
+   "months.stand-alone.wide."
+  ],
+  "month_5": [
+   "Unicode CLDR 47, locale tr, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/tr/ca-gregorian.json): months.format.wide,",
+   "months.stand-alone.wide."
+  ],
+  "month_6": [
+   "Unicode CLDR 47, locale tr, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/tr/ca-gregorian.json): months.format.wide,",
+   "months.stand-alone.wide."
+  ],
+  "month_7": [
+   "Unicode CLDR 47, locale tr, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/tr/ca-gregorian.json): months.format.wide,",
+   "months.stand-alone.wide."
+  ],
+  "month_8": [
+   "Unicode CLDR 47, locale tr, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/tr/ca-gregorian.json): months.format.wide,",
+   "months.stand-alone.wide."
+  ],
+  "month_9": [
+   "Unicode CLDR 47, locale tr, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/tr/ca-gregorian.json): months.format.wide,",
+   "months.stand-alone.wide."
+  ],
+  "scope_unit_century": [
+   "TDK Guncel Turkce Sozluk (sozluk.gov.tr): \"yuzyil\" = \"yuz yillik zaman",
+   "parcasi\" (a hundred-year span). \"asir\" (Arabic loan, also TDK-listed as",
+   "a century synonym) is deliberately left out -- one attested surface is",
+   "enough and keeping the set small keeps the false-positive risk down."
+  ],
+  "season_fall": [
+   "Turkish 3rd-person possessive suffix -(s)I marks the season in the",
+   "year-first construction (\"2020 sonbaharı\" == \"2020's autumn\"). \"sonbahar\"",
+   "ends in a consonant with a back unrounded last vowel (a), giving -ı:",
+   "sonbaharı. \"güz\" ends in a consonant with a front rounded last vowel (ü),",
+   "giving -ü: güzü. TDK, İyelik ekleri: https://sozluk.gov.tr"
+  ],
+  "season_spring": [
+   "Turkish 3rd-person possessive suffix -(s)I marks the season in the",
+   "year-first construction (\"2020 ilkbaharı\" == \"2020's spring\"). \"ilkbahar\"",
+   "and \"bahar\" end in a consonant with a back unrounded last vowel (a), so",
+   "vowel harmony gives -ı: ilkbaharı, baharı.",
+   "TDK, İyelik ekleri (possessive suffixes): https://sozluk.gov.tr"
+  ],
+  "season_summer": [
+   "Turkish 3rd-person possessive suffix -(s)I marks the season in the",
+   "year-first construction (\"2020 yazı\" == \"2020's summer\"). \"yaz\" ends in a",
+   "consonant with a back unrounded last vowel (a), so vowel harmony gives -ı:",
+   "yazı. TDK, İyelik ekleri (possessive suffixes): https://sozluk.gov.tr"
+  ],
+  "season_winter": [
+   "Turkish 3rd-person possessive suffix -(s)I marks the season in the",
+   "year-first construction (\"2020 kışı\" == \"2020's winter\"). \"kış\" ends in a",
+   "consonant with a back unrounded last vowel (ı), so vowel harmony gives -ı:",
+   "kışı. TDK, İyelik ekleri (possessive suffixes): https://sozluk.gov.tr"
+  ],
+  "unit_century": [
+   "TDK Guncel Turkce Sozluk (sozluk.gov.tr): \"yuzyil\" = \"yuz yillik zaman",
+   "parcasi\" (a hundred-year span). \"asir\" (Arabic loan, also TDK-listed as",
+   "a century synonym) is deliberately left out -- one attested surface is",
+   "enough and keeping the set small keeps the false-positive risk down."
+  ],
+  "unit_second": [
+   "Unicode CLDR 47, locale tr, cldr-units-full/main/tr/units.json,",
+   "duration-second: one and other are both \"saniye\" -- Turkish leaves a",
+   "counted noun in the singular, as unit_minute.voc's \"dakika\" already does."
+  ],
+  "weekday_0": [
+   "Unicode CLDR 47, locale tr, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/tr/ca-gregorian.json): days.format.wide,",
+   "days.stand-alone.wide."
+  ],
+  "weekday_1": [
+   "Unicode CLDR 47, locale tr, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/tr/ca-gregorian.json): days.format.wide,",
+   "days.stand-alone.wide."
+  ],
+  "weekday_2": [
+   "Unicode CLDR 47, locale tr, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/tr/ca-gregorian.json): days.format.wide,",
+   "days.stand-alone.wide."
+  ],
+  "weekday_3": [
+   "Unicode CLDR 47, locale tr, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/tr/ca-gregorian.json): days.format.wide,",
+   "days.stand-alone.wide."
+  ],
+  "weekday_4": [
+   "Unicode CLDR 47, locale tr, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/tr/ca-gregorian.json): days.format.wide,",
+   "days.stand-alone.wide."
+  ],
+  "weekday_5": [
+   "Unicode CLDR 47, locale tr, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/tr/ca-gregorian.json): days.format.wide,",
+   "days.stand-alone.wide."
+  ],
+  "weekday_6": [
+   "Unicode CLDR 47, locale tr, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/tr/ca-gregorian.json): days.format.wide,",
+   "days.stand-alone.wide."
+  ]
  }
 }

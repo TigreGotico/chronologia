@@ -465,5 +465,242 @@
    "nedelje",
    "nedeljo"
   ]
+ },
+ "sources": {
+  "clock_fraction_30": [
+   "Slovenian toward-hour HALF: \"pol devetih\" == half toward the ninth == 08:30,",
+   "\"ob pol enih\" == half toward one == 12:30 (bare_half_to + toward_hour_12h;",
+   "\"ob\" is the ordinary \"at\" connector).  Citation: ZRC SAZU Jezikovna",
+   "svetovalnica (Fran/ISJFR), telling the time -- \"pol <genitive plural",
+   "ordinal>\" counts toward the coming hour."
+  ],
+  "clock_landmark_0": [
+   "The adverb \"opolnoči\" (at midnight): \"univerzalni dan se začne opolnoči v",
+   "Greenwichu\" (Časovni pas), \"norveška vojska opolnoči kapitulira\" (1940)."
+  ],
+  "clock_landmark_720": [
+   "The adverb \"opoldne\" (at noon) is the form running prose uses, beside the",
+   "bare noun: \"nastopi opoldne 31. oktobra\" (1918), \"1. januar 2000 opoldne\"",
+   "(Epoha (astronomija)), \"Vsako opoldne top izstreli iz trdnjave prazen",
+   "strel\" (Sankt Peterburg), \"25. maja točno opoldne\" (Maturantska parada)."
+  ],
+  "clock_meridiem_am": [
+   "\"dopoldne\" (before noon) is the ante-meridiem mirror of \"popoldne\", which",
+   "this locale already lists in clock_meridiem_pm.voc.  Running prose on",
+   "sl.wikipedia: \"ob deseti uri dopoldne\" (Trbovlje), \"8. maja dopoldne se je",
+   "skozi Maribor ... umaknil\" (Maribor)."
+  ],
+  "clock_meridiem_night": [
+   "The NIGHT daypart is a BAND that crosses midnight, not a uniform +12 PM",
+   "shift: SSKJ², s.v. ponoči, \"v času teme od sončnega zahoda do vzhoda\", with",
+   "the example \"ob dvanajstih ponoči\".  Small hours 1..5 stay AM, evening hours",
+   "6..11 are PM, twelve is midnight (the band-split lives in the resolver",
+   "_clock_hms).  https://fran.si/iskanje?View=1&Query=ponoči"
+  ],
+  "daypart_afternoon_sl": [
+   "Band boundaries: Unicode CLDR 47 Day Period Rules, locale sl",
+   "(https://www.unicode.org/cldr/charts/47/supplemental/day_periods.html),",
+   "transcribed in chronologia/dayparts.py as the afternoon band.",
+   "Surface: adverb 'in the afternoon' -- the deictic form these phrases use.",
+   "Source: Wiktionary, popoldne — https://en.wiktionary.org/wiki/popoldne"
+  ],
+  "daypart_evening_sl": [
+   "Band boundaries: Unicode CLDR 47 Day Period Rules, locale sl",
+   "(https://www.unicode.org/cldr/charts/47/supplemental/day_periods.html),",
+   "transcribed in chronologia/dayparts.py as the evening band.",
+   "Surface: adverb 'in the evening' -- the deictic form these phrases use.",
+   "Source: Wiktionary, zvečer — https://en.wiktionary.org/wiki/zvečer"
+  ],
+  "daypart_morning_sl": [
+   "Band boundaries: Unicode CLDR 47 Day Period Rules, locale sl",
+   "(https://www.unicode.org/cldr/charts/47/supplemental/day_periods.html),",
+   "transcribed in chronologia/dayparts.py as the morning band.",
+   "Surface: adverb 'in the morning' -- the deictic form these phrases use.",
+   "Source: Wiktionary, zjutraj — https://en.wiktionary.org/wiki/zjutraj"
+  ],
+  "daypart_night_sl": [
+   "Band boundaries: Unicode CLDR 47 Day Period Rules, locale sl",
+   "(https://www.unicode.org/cldr/charts/47/supplemental/day_periods.html),",
+   "transcribed in chronologia/dayparts.py as the night band.",
+   "Surface: adverb 'at night' -- the deictic form these phrases use.",
+   "Source: Wiktionary, ponoči — https://en.wiktionary.org/wiki/ponoči"
+  ],
+  "marker_ad": [
+   "Fran lists both \"n. št.\" (našega štetja) and \"po n. št.\" (po našem štetju)",
+   "as spelling-guide abbreviations (https://fran.si/iskanje?Query=n.%20%C5%A1t.)."
+  ],
+  "marker_bc": [
+   "ePravopis on Fran gives \"pr. n. št.\" for \"pred našim štetjem\" and cites it",
+   "in running text -- \"Približno leta 500 pr. n. št.\"",
+   "(https://fran.si/135/epravopis-slovenski-pravopis/4415837/pr-n-st). Only",
+   "the secular pair is listed there, so only the secular pair is read here."
+  ],
+  "marker_during": [
+   "Locative \"v\" governing a month (\"v januarju\").",
+   "Source: en.wiktionary.org, entry \"v\" (Slovene), \"in\"."
+  ],
+  "marker_last": [
+   "Slovene \"last/previous\" determiner, the full adjectival paradigm.  Slovene",
+   "agrees the determiner with the unit's gender, and the three temporal units",
+   "span all three genders -- masculine \"teden\", masculine \"mesec\", neuter \"leto\"",
+   "-- so the neuter \"prejšnje leto\" needs the neuter form the nominative-only",
+   "listing lacked.  Fran (ZRC SAZU), SSKJ2 / Slovenski pravopis: prejšnji -a -e.",
+   "https://fran.si/iskanje?View=1&Query=prej%C5%A1nji"
+  ],
+  "marker_next": [
+   "Slovene \"next/following\" determiner, the full adjectival paradigm for both the",
+   "\"naslednji\" and the \"prihodnji\" stems; the neuter \"naslednje leto\" is the",
+   "ordinary \"next year\".  Fran (ZRC SAZU), SSKJ2: naslednji -a -e.",
+   "https://fran.si/iskanje?View=1&Query=naslednji"
+  ],
+  "marker_ordlast": [
+   "Slovene \"last\" ordinal determiner, the soft adjective \"zadnji\" in concord",
+   "with the scoped weekday.  \"zadnji petek v novembru\" = last Friday of November.",
+   "Soft adjectival paradigm zadnji -a -e (Fran / SSKJ2, ZRC SAZU).",
+   "https://fran.si/iskanje?Query=zadnji"
+  ],
+  "marker_this": [
+   "Slovene \"this\" demonstrative, the full pronominal paradigm.  Fran (ZRC SAZU),",
+   "SSKJ2: ta ta to.",
+   "https://fran.si/iskanje?View=1&Query=ta"
+  ],
+  "month_1": [
+   "Unicode CLDR 47, locale sl, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/sl/ca-gregorian.json): months.format.wide,",
+   "months.stand-alone.wide.  Not covered by any of those charts, and so",
+   "unattested here: \"januarja\", \"januarjem\", \"januarju\"."
+  ],
+  "month_10": [
+   "Unicode CLDR 47, locale sl, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/sl/ca-gregorian.json): months.format.wide,",
+   "months.stand-alone.wide.  Not covered by any of those charts, and so",
+   "unattested here: \"oktobra\", \"oktobrom\", \"oktobru\"."
+  ],
+  "month_11": [
+   "Unicode CLDR 47, locale sl, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/sl/ca-gregorian.json): months.format.wide,",
+   "months.stand-alone.wide.  Not covered by any of those charts, and so",
+   "unattested here: \"novembra\", \"novembrom\", \"novembru\"."
+  ],
+  "month_12": [
+   "Unicode CLDR 47, locale sl, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/sl/ca-gregorian.json): months.format.wide,",
+   "months.stand-alone.wide.  Not covered by any of those charts, and so",
+   "unattested here: \"decembra\", \"decembrom\", \"decembru\"."
+  ],
+  "month_2": [
+   "Unicode CLDR 47, locale sl, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/sl/ca-gregorian.json): months.format.wide,",
+   "months.stand-alone.wide.  Not covered by any of those charts, and so",
+   "unattested here: \"februarja\", \"februarjem\", \"februarju\"."
+  ],
+  "month_3": [
+   "Unicode CLDR 47, locale sl, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/sl/ca-gregorian.json): months.format.wide,",
+   "months.stand-alone.wide.  Not covered by any of those charts, and so",
+   "unattested here: \"marca\", \"marcem\", \"marcu\"."
+  ],
+  "month_4": [
+   "Unicode CLDR 47, locale sl, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/sl/ca-gregorian.json): months.format.wide,",
+   "months.stand-alone.wide.  Not covered by any of those charts, and so",
+   "unattested here: \"aprila\", \"aprilom\", \"aprilu\"."
+  ],
+  "month_5": [
+   "Unicode CLDR 47, locale sl, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/sl/ca-gregorian.json): months.format.wide,",
+   "months.stand-alone.wide, months.format.abbreviated,",
+   "months.stand-alone.abbreviated.  Not covered by any of those charts, and so",
+   "unattested here: \"maja\", \"majem\", \"maju\"."
+  ],
+  "month_6": [
+   "Unicode CLDR 47, locale sl, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/sl/ca-gregorian.json): months.format.wide,",
+   "months.stand-alone.wide.  Not covered by any of those charts, and so",
+   "unattested here: \"junija\", \"junijem\", \"juniju\"."
+  ],
+  "month_7": [
+   "Unicode CLDR 47, locale sl, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/sl/ca-gregorian.json): months.format.wide,",
+   "months.stand-alone.wide.  Not covered by any of those charts, and so",
+   "unattested here: \"julija\", \"julijem\", \"juliju\"."
+  ],
+  "month_8": [
+   "Unicode CLDR 47, locale sl, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/sl/ca-gregorian.json): months.format.wide,",
+   "months.stand-alone.wide.  Not covered by any of those charts, and so",
+   "unattested here: \"avgusta\", \"avgustom\", \"avgustu\"."
+  ],
+  "month_9": [
+   "Unicode CLDR 47, locale sl, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/sl/ca-gregorian.json): months.format.wide,",
+   "months.stand-alone.wide.  Not covered by any of those charts, and so",
+   "unattested here: \"septembra\", \"septembrom\", \"septembru\"."
+  ],
+  "unit1_second": [
+   "Slovene \"sekunda\" singular surfaces: nominative and accusative."
+  ],
+  "unit_month": [
+   "Slovene \"mesec\", full paradigm.  Fran (ZRC SAZU), SSKJ2."
+  ],
+  "unit_second": [
+   "Slovene \"sekunda\", matching the depth of unit_minute.voc: nominative",
+   "singular after 1, the DUAL after 2, the plural after 3-4, the genitive",
+   "plural after 5+, and the accusative \"cez sekundo\".",
+   "Unicode CLDR 47, locale sl, cldr-units-full/main/sl/units.json,",
+   "duration-second: one \"sekunda\", two \"sekundi\", few \"sekunde\",",
+   "other \"sekund\"."
+  ],
+  "unit_week": [
+   "Slovene \"teden\", fleeting-vowel stem (teden / tedna).  Full paradigm; the dual",
+   "nominative is syncretic with the genitive singular \"tedna\".",
+   "Fran (ZRC SAZU), SSKJ2."
+  ],
+  "unit_year": [
+   "Slovene \"leto\", neuter, full paradigm.  The locative \"letu\" and the dative",
+   "\"letu\" carry \"v prejšnjem letu\".  Fran (ZRC SAZU), SSKJ2."
+  ],
+  "weekday_0": [
+   "Unicode CLDR 47, locale sl, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/sl/ca-gregorian.json): days.format.wide,",
+   "days.stand-alone.wide.  Not covered by any of those charts, and so",
+   "unattested here: \"ponedeljka\"."
+  ],
+  "weekday_1": [
+   "Unicode CLDR 47, locale sl, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/sl/ca-gregorian.json): days.format.wide,",
+   "days.stand-alone.wide.  Not covered by any of those charts, and so",
+   "unattested here: \"torka\"."
+  ],
+  "weekday_2": [
+   "Unicode CLDR 47, locale sl, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/sl/ca-gregorian.json): days.format.wide,",
+   "days.stand-alone.wide.  Not covered by any of those charts, and so",
+   "unattested here: \"sredo\", \"srede\"."
+  ],
+  "weekday_3": [
+   "Unicode CLDR 47, locale sl, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/sl/ca-gregorian.json): days.format.wide,",
+   "days.stand-alone.wide.  Not covered by any of those charts, and so",
+   "unattested here: \"četrtka\"."
+  ],
+  "weekday_4": [
+   "Unicode CLDR 47, locale sl, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/sl/ca-gregorian.json): days.format.wide,",
+   "days.stand-alone.wide.  Not covered by any of those charts, and so",
+   "unattested here: \"petka\"."
+  ],
+  "weekday_5": [
+   "Unicode CLDR 47, locale sl, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/sl/ca-gregorian.json): days.format.wide,",
+   "days.stand-alone.wide.  Not covered by any of those charts, and so",
+   "unattested here: \"soboto\", \"sobote\"."
+  ],
+  "weekday_6": [
+   "Unicode CLDR 47, locale sl, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/sl/ca-gregorian.json): days.format.wide,",
+   "days.stand-alone.wide.  Not covered by any of those charts, and so",
+   "unattested here: \"nedeljo\", \"nedelje\"."
+  ]
  }
 }

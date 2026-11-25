@@ -338,5 +338,229 @@
   "weekday_6": [
    "یکشنبه"
   ]
+ },
+ "sources": {
+  "clock_dir_past": [
+   "The Persian clock connector \"و\" (\"and\") always counts the fraction PAST",
+   "the stated hour -- unlike Arabic, which reuses the same \"و\" for its",
+   "past reading too, Persian has no symmetric \"to\" connector in ordinary",
+   "speech, so only the past direction is wired.  Citations: see",
+   "clock_fraction_15.voc / clock_fraction_30.voc."
+  ],
+  "clock_fraction_15": [
+   "Persian additive clock quarter: \"ساعت سه و ربع\" == three-and-a-quarter ==",
+   "03:15, the quarter counted PAST the named hour (not toward the next one).",
+   "Citation 1: UT Austin, Persian Online Resources, \"To Tell the Time\" --",
+   "\"ساعت یک و ربع است\" (sa'at yek-o rob' ast) == \"It is one-fifteen.\"",
+   "https://sites.la.utexas.edu/persian_online_resources/numbers-1/to-tell-the-time/",
+   "Citation 2: talkpal.ai, \"Telling Time in Persian Language\" -- \"3:15 -",
+   "ساعت سه و ربع (sa'at-e seh va rob')\".",
+   "https://talkpal.ai/vocabulary/telling-time-in-persian-language/"
+  ],
+  "clock_fraction_30": [
+   "Persian additive clock half: \"ساعت دو و نیم\" == two-and-a-half == 02:30,",
+   "the half counted PAST the named hour.",
+   "Citation 1: UT Austin, Persian Online Resources, \"To Tell the Time\" --",
+   "\"ساعت دو و نیم است\" (sa'at do-vo nim ast) == \"It is two-thirty.\"",
+   "https://sites.la.utexas.edu/persian_online_resources/numbers-1/to-tell-the-time/",
+   "Citation 2: talkpal.ai, \"Telling Time in Persian Language\" -- \"4:30 -",
+   "ساعت چهار و نیم (sa'at-e chahar va nim)\".",
+   "https://talkpal.ai/vocabulary/telling-time-in-persian-language/"
+  ],
+  "clock_meridiem_night": [
+   "The night is a band that crosses midnight, not an am marker: Wiktionary",
+   "\"شب\" (Persian) gives the senses \"night\" and \"evening\", so \"ساعت هشت شب\" is",
+   "20:00 and \"ساعت سه شب\" is 03:00.  The band-split lives in the resolver.",
+   "https://en.wiktionary.org/wiki/شب"
+  ],
+  "daypart_afternoon_fa": [
+   "Band boundaries: Unicode CLDR 47 Day Period Rules, locale fa",
+   "(https://www.unicode.org/cldr/charts/47/supplemental/day_periods.html),",
+   "transcribed in chronologia/dayparts.py as the afternoon band.",
+   "Surface: 'baad-az-zohr' / 'asr' — afternoon -- the deictic form these phrases use.",
+   "Source: CLDR 47 dayPeriods (fa) afternoon1/afternoon2"
+  ],
+  "daypart_morning_fa": [
+   "Band boundaries: Unicode CLDR 47 Day Period Rules, locale fa",
+   "(https://www.unicode.org/cldr/charts/47/supplemental/day_periods.html),",
+   "transcribed in chronologia/dayparts.py as the morning band.",
+   "Surface: 'sobh' — morning -- the deictic form these phrases use.",
+   "Source: CLDR 47 dayPeriods (fa) morning2; Wiktionary صبح — https://en.wiktionary.org/wiki/صبح"
+  ],
+  "daypart_night_fa": [
+   "Band boundaries: Unicode CLDR 47 Day Period Rules, locale fa",
+   "(https://www.unicode.org/cldr/charts/47/supplemental/day_periods.html),",
+   "transcribed in chronologia/dayparts.py as the night band.",
+   "Surface: 'shab' — night -- the deictic form these phrases use.",
+   "Source: CLDR 47 dayPeriods (fa) night1; Wiktionary شب — https://en.wiktionary.org/wiki/شب"
+  ],
+  "marker_between": [
+   "Persian \"between\" framing -- \"بین ... و ...\" / \"میان ... و ...\" (\"between",
+   "2010 and 2020\").  Pairs with marker_and (و), mirroring Arabic بين.",
+   "\"بین\" and \"میان\" (beyn, miyân): Dehkhoda Dictionary and Sokhan Comprehensive",
+   "Dictionary, s.vv. \"بین\" and \"میان\" -- both govern two coordinated terms",
+   "joined by و."
+  ],
+  "marker_clock_lead": [
+   "Words that open a clock time and belong to it. They fold only in front of",
+   "a number, a clock time, a clock fraction or a clock landmark.",
+   "Each word is shown opening a clock time on the page named in brackets,",
+   "saved under knowledge/wiki/audits/chronologia/parity-fixes/marker-strand/sources/ in the workspace.",
+   "ساعت: Wiktionary \"ساعت\": \"hour; o’clock: ساعتِ دو (two o’clock)\" [fa-ساعت.wikitext.txt]"
+  ],
+  "marker_during": [
+   "\"dar\" is the locative preposition used with months.",
+   "Source: en.wiktionary.org, entry \"در\" (Persian), \"in\"."
+  ],
+  "marker_from": [
+   "Persian range \"from\" lead -- opens the bounded interval \"از ... تا ...\".",
+   "  \"از\": Dehkhoda Dictionary and Sokhan Comprehensive Dictionary, s.v. \"از\"",
+   "  (حرف اضافه) -- مبدأ و نقطهٔ آغاز در زمان و مکان; correlative of \"تا\" for the",
+   "  term, as in \"از ۵ ژوئن تا ۱۲ ژوئن\". It is also the \"since\" marker",
+   "  (marker_since), which is the open reading of the same starting point."
+  ],
+  "month_1": [
+   "Unicode CLDR 47, locale fa, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/fa/ca-gregorian.json): months.stand-alone.wide,",
+   "months.format.abbreviated, months.stand-alone.abbreviated."
+  ],
+  "month_10": [
+   "Unicode CLDR 47, locale fa, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/fa/ca-gregorian.json): months.format.wide,",
+   "months.stand-alone.wide, months.format.abbreviated,",
+   "months.stand-alone.abbreviated."
+  ],
+  "month_11": [
+   "Unicode CLDR 47, locale fa, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/fa/ca-gregorian.json): months.format.wide,",
+   "months.stand-alone.wide, months.format.abbreviated,",
+   "months.stand-alone.abbreviated."
+  ],
+  "month_12": [
+   "Unicode CLDR 47, locale fa, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/fa/ca-gregorian.json): months.format.wide,",
+   "months.stand-alone.wide, months.format.abbreviated,",
+   "months.stand-alone.abbreviated."
+  ],
+  "month_2": [
+   "Unicode CLDR 47, locale fa, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/fa/ca-gregorian.json): months.stand-alone.wide,",
+   "months.format.abbreviated, months.stand-alone.abbreviated."
+  ],
+  "month_3": [
+   "Unicode CLDR 47, locale fa, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/fa/ca-gregorian.json): months.format.wide,",
+   "months.stand-alone.wide, months.format.abbreviated,",
+   "months.stand-alone.abbreviated."
+  ],
+  "month_4": [
+   "Unicode CLDR 47, locale fa, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/fa/ca-gregorian.json): months.format.wide,",
+   "months.stand-alone.wide, months.format.abbreviated,",
+   "months.stand-alone.abbreviated."
+  ],
+  "month_5": [
+   "Unicode CLDR 47, locale fa, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/fa/ca-gregorian.json): months.stand-alone.wide,",
+   "months.format.abbreviated, months.stand-alone.abbreviated.  Not covered by",
+   "any of those charts, and so unattested here: \"می\"."
+  ],
+  "month_6": [
+   "Unicode CLDR 47, locale fa, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/fa/ca-gregorian.json): months.format.wide,",
+   "months.stand-alone.wide, months.format.abbreviated,",
+   "months.stand-alone.abbreviated."
+  ],
+  "month_7": [
+   "Unicode CLDR 47, locale fa, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/fa/ca-gregorian.json): months.stand-alone.wide,",
+   "months.format.abbreviated, months.stand-alone.abbreviated."
+  ],
+  "month_8": [
+   "Unicode CLDR 47, locale fa, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/fa/ca-gregorian.json): months.format.wide,",
+   "months.stand-alone.wide, months.format.abbreviated,",
+   "months.stand-alone.abbreviated.  Not covered by any of those charts, and so",
+   "unattested here: \"آگوست\"."
+  ],
+  "month_9": [
+   "Unicode CLDR 47, locale fa, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/fa/ca-gregorian.json): months.format.wide,",
+   "months.stand-alone.wide, months.format.abbreviated,",
+   "months.stand-alone.abbreviated."
+  ],
+  "scope_unit_century": [
+   "قرن (qarn) is the standard Persian dictionary word for \"century\"."
+  ],
+  "scope_unit_decade": [
+   "دهه (dahe) derives from ده (dah, \"ten\") and is the standard Persian",
+   "dictionary word for a ten-year period."
+  ],
+  "season_fall": [
+   "Persian \"fall/autumn\" -- Dehkhoda Dictionary and Sokhan Comprehensive",
+   "Dictionary, s.v. \"پاییز\".  \"پائیز\" is a common orthographic variant (ئ vs ی",
+   "before the ی of \"پاییز\"); both are listed since the tokenizer performs no",
+   "hamza normalisation."
+  ],
+  "season_spring": [
+   "Persian \"spring\" -- Dehkhoda Dictionary and Sokhan Comprehensive",
+   "Dictionary, s.v. \"بهار\"."
+  ],
+  "season_summer": [
+   "Persian \"summer\" -- Dehkhoda Dictionary and Sokhan Comprehensive",
+   "Dictionary, s.v. \"تابستان\"."
+  ],
+  "season_winter": [
+   "Persian \"winter\" -- Dehkhoda Dictionary and Sokhan Comprehensive",
+   "Dictionary, s.v. \"زمستان\"."
+  ],
+  "unit_century": [
+   "قرن (qarn) is the standard Persian dictionary word for \"century\"."
+  ],
+  "unit_decade": [
+   "دهه (dahe) derives from ده (dah, \"ten\") and is the standard Persian",
+   "dictionary word for a ten-year period."
+  ],
+  "unit_second": [
+   "Unicode CLDR 47, locale fa, cldr-units-full/main/fa/units.json,",
+   "duration-second: one and other are both \"ثانیه\" -- Persian leaves a counted",
+   "noun in the singular, as unit_minute.voc's \"دقیقه\" already does."
+  ],
+  "weekday_0": [
+   "Unicode CLDR 47, locale fa, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/fa/ca-gregorian.json): days.format.wide,",
+   "days.stand-alone.wide, days.format.abbreviated,",
+   "days.stand-alone.abbreviated."
+  ],
+  "weekday_1": [
+   "Unicode CLDR 47, locale fa, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/fa/ca-gregorian.json): days.format.wide,",
+   "days.stand-alone.wide, days.format.abbreviated,",
+   "days.stand-alone.abbreviated."
+  ],
+  "weekday_2": [
+   "Unicode CLDR 47, locale fa, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/fa/ca-gregorian.json): days.format.wide,",
+   "days.stand-alone.wide, days.format.abbreviated,",
+   "days.stand-alone.abbreviated."
+  ],
+  "weekday_4": [
+   "Unicode CLDR 47, locale fa, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/fa/ca-gregorian.json): days.format.wide,",
+   "days.stand-alone.wide, days.format.abbreviated,",
+   "days.stand-alone.abbreviated."
+  ],
+  "weekday_5": [
+   "Unicode CLDR 47, locale fa, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/fa/ca-gregorian.json): days.format.wide,",
+   "days.stand-alone.wide, days.format.abbreviated,",
+   "days.stand-alone.abbreviated."
+  ],
+  "weekday_6": [
+   "Unicode CLDR 47, locale fa, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/fa/ca-gregorian.json): days.format.wide,",
+   "days.stand-alone.wide, days.format.abbreviated,",
+   "days.stand-alone.abbreviated."
+  ]
  }
 }

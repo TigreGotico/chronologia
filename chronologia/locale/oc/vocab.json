@@ -777,5 +777,100 @@
   "weekday_6": [
    "dimenge"
   ]
+ },
+ "sources": {
+  "clock_meridiem_night": [
+   "The NIGHT daypart is a midnight-crossing BAND in colloquial clock usage,",
+   "not a uniform +12 PM shift: small hours 1..5 stay AM, evening hours 6..11",
+   "are PM, twelve is midnight (the band-split lives in the resolver",
+   "_clock_hms via night_meridiems; see chronologia/locale/es/",
+   "clock_meridiem_night.voc for the shared Romance mechanism).",
+   "Surfaces + their a-initial twins per native-speaker review, source:",
+   "https://github.com/OpenVoiceOS/ovos-date-parser/issues/300"
+  ],
+  "clock_meridiem_pm": [
+   "Additional afternoon forms, source:",
+   "https://github.com/OpenVoiceOS/ovos-date-parser/issues/300",
+   "\"aprvèspre\" not added (looks like a typo in the source, ambiguous surface)."
+  ],
+  "marker_at": [
+   "The definite article of the elliptical clock idiom (\"es las dètz manca un",
+   "quart\", oc.wikipedia s.v. \"Auvernhat\") sits in the at-slot, as in the",
+   "sibling Romance locales."
+  ],
+  "marker_during": [
+   "\"en\" is the locative preposition used with months (\"en genier\").",
+   "Source: Diccionari general occitan, entry \"en\"."
+  ],
+  "marker_future": [
+   "\"dins\" is the future-offset preposition (\"dins 7 jorns\"); \"en\" is NOT --",
+   "it reads as an elapsed duration, oc.wikipedia \"Titan (luna)\": \"orbita a",
+   "l'entorn de Saturne en 15 jorns e 22 oras\".",
+   "\"d'aquí\" and \"d'aicí\", with or without \"a\", front the same future offset:",
+   "oc.wiktionary s.v. \"lèu\" glosses it \"dins un temps cort, d'aicí a pauc,",
+   "d'aquí un moment\", and s.v. \"aicí\" lists \"d'aicí a lèu\", \"d'aicí a pauc\",",
+   "\"d'aicí lèu\", \"d'aicí pauc\" side by side."
+  ],
+  "marker_half": [
+   "clock/adjectival \"mièja/mieja\" plus period noun \"mitat\" (una de las doas parts egalas) -- Congrès Permanent de la Lenga Occitana, dicod'Oc, s.v. \"mitat\"."
+  ],
+  "marker_last": [
+   "Additional native-attested \"last/previous\" forms, source:",
+   "https://github.com/OpenVoiceOS/ovos-date-parser/issues/300",
+   "darrèr/darrièir attested masculine only; feminine spelling not attested.",
+   "precedent(s) is invariable in gender (standard Occitan -ent adjective)."
+  ],
+  "month_1": [
+   "\"genier\" is the provençau and vivaroaupenc variant of the lengadocian",
+   "\"genièr\", oc.wiktionary s.v. \"genièr\" (-var-)."
+  ],
+  "unit_second": [
+   "Unicode CLDR 47, locale oc, cldr-units-full/main/oc/units.json,",
+   "duration-second, unitPattern-count-other \"{0} segondas\"; the singular is",
+   "the feminine noun \"segonda\", oc.wiktionary.org, segonda (\"femenin",
+   "singular de segond\")."
+  ],
+  "weekday_0": [
+   "Unicode CLDR 47, locale oc, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/oc/ca-gregorian.json): days.format.wide,",
+   "days.stand-alone.wide, days.format.abbreviated,",
+   "days.stand-alone.abbreviated, days.format.short, days.stand-alone.short."
+  ],
+  "weekday_1": [
+   "Unicode CLDR 47, locale oc, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/oc/ca-gregorian.json): days.format.wide,",
+   "days.stand-alone.wide, days.format.abbreviated,",
+   "days.stand-alone.abbreviated, days.format.short, days.stand-alone.short."
+  ],
+  "weekday_2": [
+   "Unicode CLDR 47, locale oc, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/oc/ca-gregorian.json): days.format.wide,",
+   "days.stand-alone.wide, days.format.abbreviated,",
+   "days.stand-alone.abbreviated, days.format.short, days.stand-alone.short."
+  ],
+  "weekday_3": [
+   "Unicode CLDR 47, locale oc, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/oc/ca-gregorian.json): days.format.wide,",
+   "days.stand-alone.wide, days.format.abbreviated,",
+   "days.stand-alone.abbreviated, days.format.short, days.stand-alone.short."
+  ],
+  "weekday_4": [
+   "Unicode CLDR 47, locale oc, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/oc/ca-gregorian.json): days.format.wide,",
+   "days.stand-alone.wide, days.format.abbreviated,",
+   "days.stand-alone.abbreviated, days.format.short, days.stand-alone.short."
+  ],
+  "weekday_5": [
+   "Unicode CLDR 47, locale oc, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/oc/ca-gregorian.json): days.format.wide,",
+   "days.stand-alone.wide, days.format.abbreviated,",
+   "days.stand-alone.abbreviated, days.format.short, days.stand-alone.short."
+  ],
+  "weekday_6": [
+   "Unicode CLDR 47, locale oc, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/oc/ca-gregorian.json): days.format.wide,",
+   "days.stand-alone.wide, days.format.abbreviated,",
+   "days.stand-alone.abbreviated, days.format.short, days.stand-alone.short."
+  ]
  }
 }

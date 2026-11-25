@@ -1483,5 +1483,674 @@
   "weekday_abbr_6": [
    "dom"
   ]
+ },
+ "sources": {
+  "clock_dir_to": [
+   "fraction-first \"toward\" direction (\"um quarto para as quatro\" == 3:45),",
+   "distinct from the hour-first \"menos\" subtraction (\"quatro menos um quarto\")."
+  ],
+  "clock_fraction_45": [
+   "\"quarto\" is \"Quarta parte da hora; quinze minutos (ex.: são três e um quarto; falta um quarto para as nove)\" (Priberam s.v. \"quarto\", 3), so \"três quartos\" after the hour is 45 minutes."
+  ],
+  "clock_meridiem_am": [
+   "The part of the day after a clock: a spoken hour takes it (\"nove da",
+   "manhã, três da tarde\", Senado Federal, Manual de Comunicação, s.v.",
+   "\"Hora\"), and so does a written clock with minutes (\"São 7h30 da manhã\",",
+   "Practice Portuguese, \"Hours and Telling Time\")."
+  ],
+  "clock_meridiem_late": [
+   "\"tarde\" is also the adverb \"late\": \"Passado o tempo em que devia vir ou em",
+   "que era conveniente\", \"Depois da hora habitual\" (Dicionário Priberam da",
+   "Língua Portuguesa, s.v. \"tarde\", advérbio, senses 4 and 5)."
+  ],
+  "clock_meridiem_night": [
+   "The NIGHT daypart is a midnight-crossing BAND in colloquial clock usage,",
+   "not a uniform +12 PM shift: \"uma da noite\" is 01:00 and \"meia-noite\" edge",
+   "hour twelve is 00:00, while \"dez da noite\" is 22:00.  Small hours 1..5 stay",
+   "AM, evening hours 6..11 are PM, twelve is midnight (band-split in resolver",
+   "_clock_hms).  AM ceiling follows the madrugada band [00:00, 06:00)",
+   "transcribed for pt in chronologia/dayparts.py; colloquial \"da noite\" for",
+   "the small hours: Dicionario Priberam, s.v. \"noite\"",
+   "(https://dicionario.priberam.org/noite)."
+  ],
+  "clock_meridiem_pm_band": [
+   "The part of the day after a clock: a spoken hour takes it (\"nove da",
+   "manhã, três da tarde\", Senado Federal, Manual de Comunicação, s.v.",
+   "\"Hora\"), and so does a written clock with minutes (\"São 7h30 da manhã\",",
+   "Practice Portuguese, \"Hours and Telling Time\").",
+   "The same Senado entry pins the band: \"A tarde, das 12h às 18h. A noite,",
+   "das 18h às 24h (ou à meia-noite).\"",
+   "(https://www12.senado.leg.br/manualdecomunicacao/estilos/hora).  A 24-hour",
+   "clock outside the band names no time with \"tarde\" (\"22h da tarde\").  The",
+   "band read is tarde_pt [12:00, 19:00) in chronologia/dayparts.py, so \"18:30",
+   "da tarde\" keeps the clock."
+  ],
+  "currency": [
+   "The head nouns of the currency names, singular and plural: the first word",
+   "of displayName-count-one and displayName-count-other of every currency,",
+   "before any \"of\" phrase and after a leading \"novo\" or \"novos\".",
+   "Source: Unicode CLDR 49.0.0, cldr-json/cldr-numbers-full/main/pt/currencies.json, cldr-json/cldr-numbers-full/main/pt-PT/currencies.json.",
+   "ISO 4217 X codes (metals, funds, test codes) are left out."
+  ],
+  "currency_code": [
+   "The ISO 4217 alphabetic codes of the currencies, in capitals: a code after a",
+   "number measures it (\"three thousand USD\").",
+   "Source: Unicode CLDR 49.0.0, cldr-json/cldr-numbers-full/main/en/currencies.json, the keys.",
+   "ISO 4217 X codes of metals, funds and test codes are left out."
+  ],
+  "currency_qualifier": [
+   "The words that stand between a number and a currency noun and qualify the",
+   "currency: \"três mil mais euros\".",
+   "Source: Priberam, s.v. \"mais\", advérbio 1 (\"Em maior quantidade\")."
+  ],
+  "daypart_madrugada_pt": [
+   "Band boundaries: Unicode CLDR 47 Day Period Rules, locale pt",
+   "(https://www.unicode.org/cldr/charts/47/supplemental/day_periods.html),",
+   "transcribed in chronologia/dayparts.py as [00:00, 06:00).",
+   "Sources: Dicionario Priberam da Lingua Portuguesa",
+   "(https://dicionario.priberam.org/manha), which gives manha as the",
+   "\"periodo de tempo entre o amanhecer e o meio-dia\". The entry marks no",
+   "European/Brazilian split for these words, and none is made here: both",
+   "varieties say manha, tarde, noite and madrugada alike.",
+   "plural: Wiktionary Noun \"plural of madrugada\" (https://en.wiktionary.org/wiki/madrugadas)"
+  ],
+  "daypart_manha_pt": [
+   "Band boundaries: Unicode CLDR 47 Day Period Rules, locale pt",
+   "(https://www.unicode.org/cldr/charts/47/supplemental/day_periods.html),",
+   "transcribed in chronologia/dayparts.py as [06:00, 12:00).",
+   "Sources: Dicionario Priberam da Lingua Portuguesa",
+   "(https://dicionario.priberam.org/manha), which gives manha as the",
+   "\"periodo de tempo entre o amanhecer e o meio-dia\". The entry marks no",
+   "European/Brazilian split for these words, and none is made here: both",
+   "varieties say manha, tarde, noite and madrugada alike.",
+   "plural: Wiktionary Noun \"plural of manhã\" (https://en.wiktionary.org/wiki/manhãs)"
+  ],
+  "daypart_noite_pt": [
+   "Band boundaries: Unicode CLDR 47 Day Period Rules, locale pt",
+   "(https://www.unicode.org/cldr/charts/47/supplemental/day_periods.html),",
+   "transcribed in chronologia/dayparts.py as [19:00, 24:00).",
+   "Sources: Dicionario Priberam da Lingua Portuguesa",
+   "(https://dicionario.priberam.org/manha), which gives manha as the",
+   "\"periodo de tempo entre o amanhecer e o meio-dia\". The entry marks no",
+   "European/Brazilian split for these words, and none is made here: both",
+   "varieties say manha, tarde, noite and madrugada alike."
+  ],
+  "daypart_tarde_pt": [
+   "Band boundaries: Unicode CLDR 47 Day Period Rules, locale pt",
+   "(https://www.unicode.org/cldr/charts/47/supplemental/day_periods.html),",
+   "transcribed in chronologia/dayparts.py as [12:00, 19:00).",
+   "Sources: Dicionario Priberam da Lingua Portuguesa",
+   "(https://dicionario.priberam.org/manha), which gives manha as the",
+   "\"periodo de tempo entre o amanhecer e o meio-dia\". The entry marks no",
+   "European/Brazilian split for these words, and none is made here: both",
+   "varieties say manha, tarde, noite and madrugada alike.",
+   "\"tarde\" is also the adverb \"late\", so the bare word is not read as the",
+   "day-part: it needs an article, \"de\" or \"a\" in front, which is how the",
+   "band is actually said (\"a tarde\", \"de tarde\", \"esta tarde\")."
+  ],
+  "marker_alarm_at": [
+   "O substantivo de uma coisa que soa a uma hora marcada, e \"para\" depois",
+   "dele: \"alarme para 7\", \"despertador para 7\".  \"alarme [...] Sinal sonoro a",
+   "uma hora definida previamente.\" (Priberam, s.v. \"alarme\", 5).",
+   "\"despertador [...] relógio com mecanismo para alertar a chegada de um",
+   "horário programado\" (Wikcionário, s.v. \"despertador\").  \"para [...]",
+   "exprime fim, destino, lugar, tempo, direção etc\" (Wikcionário, s.v. \"para\")."
+  ],
+  "marker_alarm_joiner": [
+   "The words that join two hours that share one later meridiem: \"alarm for 7",
+   "or 8 pm\"."
+  ],
+  "marker_article": [
+   "The definite article opens a named period or weekday after \"próximo\" or",
+   "\"último\": \"a próxima semana\", \"o próximo sábado\", \"a última sexta-feira\".",
+   "The contraction keeps the same article: \"na próxima semana\" (Priberam s.v.",
+   "\"em\", 2: \"Usa-se para indicar tempo (ex.: em Janeiro; na próxima semana)\"),",
+   "and \"na\" is \"Contracção da preposição em e artigo ou pronome a\" (Priberam",
+   "s.v. \"na\").  Without the preposition the article stays and belongs to the",
+   "date.  Only a singular article opens one such date: see",
+   "marker_article_singular.voc.",
+   "indefinite article, needed for the clock fraction \"um quarto\"/\"uma\"",
+   "(cf. Italian \"un quarto\"); Ciberdúvidas da Língua Portuguesa, \"as horas\"."
+  ],
+  "marker_article_singular": [
+   "The singular article that opens one named period or weekday after",
+   "\"próximo\" or \"último\": \"a próxima semana\", \"o próximo sábado\", \"na última",
+   "semana\".  \"próximo\" is \"Seguinte ao actual\" (Priberam s.v. \"próximo\", 4),",
+   "so with a singular noun it names the one next period.  A plural article",
+   "opens a plural noun, and \"nos próximos dias\" or \"nos últimos anos\" names a",
+   "stretch of several days or years, not one of them.  The grammar reads",
+   "\"article_singular? REL_MARKER UNIT\" and \"article_singular? REL_MARKER",
+   "WEEKDAY\", so a plural article stays out of the date."
+  ],
+  "marker_at_counts": [
+   "Clock prepositions that also introduce a counted group: a bare hour behind one",
+   "is doubtful only right before a word of marker_counted_noun.voc.  Attested in",
+   "the parity acceptance rows; no dictionary source checked, a native reviewer is to confirm."
+  ],
+  "marker_between": [
+   "Portuguese range \"between\" framing (entre A e B).",
+   "\"entre\": Priberam, Dicionario da Lingua Portuguesa s.v. \"entre\" (preposicao) --",
+   "  no espaco ou tempo que medeia dois limites (\"entre junho e agosto\").",
+   "  Pairs with marker_and (\"e\"). https://dicionario.priberam.org/entre"
+  ],
+  "marker_clause_lead": [
+   "Words that may stand before a clause-initial \"faz\" without a subject coming",
+   "between: \"já faz dois dias\"."
+  ],
+  "marker_clock_of": [
+   "The clock suffix that ties a part of the day to an hour without \"às\": \"nove",
+   "da manhã, três da tarde\" (Senado Federal, Manual de Comunicação, s.v.",
+   "\"Hora\").  \"de manhã\" is the part of the day itself, \"Entre o amanhecer e o",
+   "meio-dia\" (Priberam, \"manhã\").  extract_timespan reads \"duas horas de",
+   "manhã\" as the clock 02:00.  extract_event reads the count as a length in",
+   "the morning only when a word that no reading takes stands before it and",
+   "this suffix does not follow it: \"reunião de duas horas de manhã\" is a",
+   "length, \"jantar nove horas da noite\" is 21:00.  Without \"horas\" the number",
+   "is no count of hours: \"duas e meia de manhã\" is 02:30."
+  ],
+  "marker_counted_noun": [
+   "Nouns that count people or things a clock never takes: a bare hour behind a",
+   "clock preposition and directly before one of them is a count (\"wave at 5",
+   "people\").  Each word is quoted from its Wiktionary Noun entry",
+   "(https://en.wiktionary.org/wiki/<word>); the fetched pages are kept with the audit.",
+   "pessoa: Noun. \"person an individual being, especially a human\"",
+   "pessoas: Noun. \"plural of pessoa\"",
+   "vizinhos: Noun. \"plural of vizinho\"",
+   "vizinhas: Noun. \"plural of vizinha\"",
+   "amigos: Noun. \"plural of amigo\"",
+   "amigas: Noun. \"plural of amiga\"",
+   "crianças: Noun. \"plural of criança\"",
+   "meninos: Noun. \"plural of menino\"",
+   "meninas: Noun. \"plural of menina\"",
+   "rapazes: Noun. \"plural of rapaz\"",
+   "raparigas: Noun. \"plural of rapariga\"",
+   "adultos: Noun. \"plural of adulto\"",
+   "jogadores: Noun. \"plural of jogador\"",
+   "jogadoras: Noun. \"plural of jogadora\"",
+   "lugares: Noun. \"plural of lugar\"",
+   "mesas: Noun. \"plural of mesa\"",
+   "bilhetes: Noun. \"plural of bilhete\"",
+   "quartos: Noun. \"plural of quarto: room (subdivision within a building)\"",
+   "alunos: Noun. \"plural of aluno\"",
+   "alunas: Noun. \"plural of aluna\"",
+   "primos: Noun. \"plural of primo\"",
+   "primas: Noun. \"plural of prima\"",
+   "gatos: Noun. \"plural of gato\"",
+   "gatas: Noun. \"plural of gata\""
+  ],
+  "marker_date_article": [
+   "The article that opens a named day: \"no sábado\", \"na segunda\", \"no dia 25",
+   "de dezembro\" (em + o / em + a), and the habitual \"ao sábado\", \"à sexta\".",
+   "\"na sexta-feira\" names a single day, \"à sexta-feira\" a habit (Svobodová,",
+   "\"Variabilidade semântica e sintática dos nomes dos dias da semana\", Acta",
+   "Universitatis Carolinae, Philologica 3, Romanistica Pragensia, 2016, p. 25).",
+   "A habitual phrase reads as the next such day, so its article belongs to",
+   "the date as well."
+  ],
+  "marker_day_label": [
+   "\"dia N\" names a numbered day of the month: Priberam s.v. \"dia\", \"dia de",
+   "Reis\": \"Dia 6 de Janeiro, no qual os cristãos celebram a adoração de Jesus",
+   "pelos Reis Magos\".  Said without a month (\"no dia 3\", \"o dia 5 do mês\"),",
+   "it is the next day with that number, or the anchor's own day when it has",
+   "that number: the month that lacks the day is skipped (\"o dia 30 do mês\"",
+   "said on 31 January is 30 March).  \"próximo\" before it (\"o próximo dia 5\")",
+   "is \"Seguinte ao actual\" (Priberam s.v. \"próximo\", 4): the next such day",
+   "after today.",
+   "Portuguese day-of-month label noun -- \"dia\" (\"day\") heads the everyday",
+   "idiom \"dia N de <mês>\" (\"day 3 of March\" == the 3rd of March), a genuine",
+   "temporal function word (Cunha e Cintra, Nova Gramatica do Portugues",
+   "Contemporaneo, cap. 12, s.v. numerais partitivos e datas; Priberam s.v.",
+   "\"dia\") -- distinct from a bare ordinal reading, and NOT itself part of the",
+   "date construction's own grammar, so it was left stranded, unconsumed, in a",
+   "range endpoint's remainder even though the date it labels bound correctly",
+   "(\"do dia 3 de março ... até ao dia 5 de abril\" -- span correct, \"dia dia\"",
+   "leaked).  Registered as its own marker so range-endpoint resolution",
+   "(:func:`chronologia.extract.timespan._resolve_endpoint`) can fold an",
+   "immediately-adjacent leading \"dia\" into the consumed set precisely when the",
+   "date it labels actually bound -- never when the date fails to resolve, so a",
+   "\"dia\" elsewhere in the sentence is untouched."
+  ],
+  "marker_dayframe": [
+   "Contractions of \"por\" with the definite article, the usual Portuguese",
+   "frame for a part of the day (\"pela manha\", \"pela tarde\"). European and",
+   "Brazilian Portuguese share these forms.",
+   "Source: Dicionario Priberam, https://dicionario.priberam.org/pela."
+  ],
+  "marker_daypart_plural": [
+   "Plural day-part words that a number before them turns into a count of days",
+   "(\"duas manhãs\", \"há duas madrugadas\"), so they name no band.  Each is a",
+   "surface of the matching daypart_*_pt.voc."
+  ],
+  "marker_during": [
+   "The locative \"in the course of\" preposition (\"em janeiro\" = \"in January\").",
+   "Source: Dicionario Priberam da Lingua Portuguesa, https://dicionario.priberam.org/em.",
+   "\"durante\" is the explicit \"during\" (\"durante o verao\"): preposicao, \"Usa-se",
+   "para designar simultaneidade de tempo ou de duracao\".",
+   "Source: Dicionario Priberam da Lingua Portuguesa, https://dicionario.priberam.org/durante."
+  ],
+  "marker_elapsed_que": [
+   "The \"que\" after an elapsed time phrase: \"faz dois meses que está",
+   "internada\".  Ciberdúvidas, \"Que excessivo em «faz dois anos que...»\"",
+   "(https://ciberduvidas.iscte-iul.pt/consultorio/perguntas/que-excessivo-em-faz-dois-anos-que/21224):",
+   "\"Aceitando que «faz dois anos» tem valor temporal, funcionando como uma",
+   "expressão adverbial, diremos que o que em «faz dois anos que eu estudo",
+   "aqui» é igualmente um que excessivo.\""
+  ],
+  "marker_fraction_noun": [
+   "The noun of a fraction named by a weekday word: \"a terça parte\" (Priberam",
+   "s.v. \"terça\", 2, https://dicionario.priberam.org/terça)."
+  ],
+  "marker_from": [
+   "Portuguese range \"from\" lead -- opens a bounded or open interval and, crucially,",
+   "disambiguates the hyper-common preposition \"a\" (marker_to) as a genuine range",
+   "boundary: a bare \"A a B\" is only trusted as a range when a \"from\" lead is present.",
+   "\"de\": Priberam s.v. \"de\" (preposicao) -- origem / ponto de partida, correlativa",
+   "  de \"a\" (\"de junho a agosto\"). Ciberduvidas, construcao \"de ... a\".",
+   "\"desde\": Priberam s.v. \"desde\" (preposicao) -- ponto de origem no tempo ou",
+   "  espaco (\"desde 2010\"). https://dicionario.priberam.org/desde",
+   "\"a partir de\": Priberam -- locucao prepositiva, ponto de inicio.",
+   "\"do\": contracao da preposicao \"de\" + o artigo \"o\" (Cunha e Cintra, Nova",
+   "  Gramatica do Portugues Contemporaneo, cap. 12; Priberam s.v. \"do\").",
+   "  Correlativa de \"ao\": \"do dia 5 ao dia 12 de junho\"."
+  ],
+  "marker_half": [
+   "period noun \"metade\" (cada uma das duas partes iguais) -- Dicionário Priberam da Língua Portuguesa, s.v. \"metade\"."
+  ],
+  "marker_hour_approx": [
+   "A word of approximation or of a start time before an hour.",
+   "por volta de, à volta de: \"à volta de [...] Cerca de, por volta de, próximo",
+   "de [...] = APROXIMADAMENTE\" (Priberam, s.v. \"volta\").",
+   "a partir de: \"Com início em determinada data; a datar de\" (Priberam, s.v.",
+   "\"partir\")."
+  ],
+  "marker_hour_statement": [
+   "The verb that states the hour: \"são 15h\", \"já são 15h\", \"é uma hora\".",
+   "\"ser [...] 14. Indica o momento, o dia, a estação, o ano, a época (ex.: já",
+   "é noite; são 18h00).\" (Priberam, s.v. \"ser\", 14)."
+  ],
+  "marker_indef": [
+   "Portuguese indefinite article (\"um\"/\"uma\"), the leading word of the",
+   "quarter-hour count \"daqui a um quarto de hora\" (Priberam s.v. \"um\")."
+  ],
+  "marker_manner_noun": [
+   "Nouns of manner.  After \"último <unit>\", \"de\" or \"da\" with one of them as",
+   "the next word or the one after it opens a manner adverbial, not the",
+   "complement of \"último\": \"no último ano de forma notável\", \"na última",
+   "semana de qualquer forma\", \"no último ano da mesma forma\" are the previous",
+   "period.  Priberam s.v. \"forma\" (https://dicionario.priberam.org/forma), 8:",
+   "\"Modo, maneira.\", with the locutions \"de forma que\", \"de forma alguma\" and",
+   "\"de qualquer forma • Sem atenção, sem cuidado ou sem ordem\".  Priberam s.v.",
+   "\"maneira\" (https://dicionario.priberam.org/maneira) lists \"de maneira que\"",
+   "and \"de qualquer maneira • Sem atenção, sem cuidado ou sem ordem\".  Priberam",
+   "s.v. \"modo\" (https://dicionario.priberam.org/modo) lists \"de modo que\" and",
+   "\"de modo algum\".  Priberam s.v. \"de\" (https://dicionario.priberam.org/de)",
+   "gives the relation \"modo (ex.: deitado de costas)\"."
+  ],
+  "marker_month_word": [
+   "Portuguese \"mês\" (\"month\"), the noun that ends \"o dia 5 do mês que vem\"",
+   "(Priberam s.v. \"mês\")."
+  ],
+  "marker_ordinal_noun": [
+   "Feminine nouns that follow an ordinal (\"a segunda dose\", \"a sexta sinfonia\",",
+   "\"pela segunda vez\").  A weekday-homonym ordinal directly before one of these",
+   "is an ordinal, not a weekday.  Machine-drafted, not native-reviewed.  Words",
+   "that also follow a weekday (\"manhã\", \"tarde\", \"noite\", \"feira\",",
+   "\"semana\") are left out.",
+   "The synthetic comparatives \"maior\", \"menor\", \"melhor\" and \"pior\" also follow",
+   "an ordinal and never a weekday: \"a segunda maior cidade\" is the city in",
+   "second place by size.  Priberam s.v. \"maior\"",
+   "(https://dicionario.priberam.org/maior): \"Que excede outro em quantidade,",
+   "volume, extensão, intensidade ou duração. ≠ MENOR\"; s.v. \"melhor\"",
+   "(https://dicionario.priberam.org/melhor): \"Comparativo de superioridade de",
+   "bom; mais bom.\""
+  ],
+  "marker_ordlast_of": [
+   "\"of\" words after \"último <unit>\": \"o último dia de escola\" names the final",
+   "day of school, not yesterday.  Priberam s.v. \"último\", 1: \"Que vem ou está",
+   "depois de todos\" (https://dicionario.priberam.org/último)."
+  ],
+  "marker_ordlast_of_locution": [
+   "A \"de\" after \"último <unit>\" that opens an adverbial locution is not the",
+   "complement of \"último\": \"na última semana de manhã\" is the previous week in",
+   "the mornings, and \"choveu na última semana de novo\" is the previous week.",
+   "Each line is the locution's first two words.  Manner locutions are matched",
+   "by noun instead (``marker_manner_noun.voc``).",
+   "",
+   "Day period: Priberam s.v. \"manhã\" (https://dicionario.priberam.org/manhã)",
+   "lists \"de manhã • Entre o amanhecer e o meio-dia\".  \"de tarde\", \"de noite\"",
+   "and \"de madrugada\" are the same locution with the other day-part words of",
+   "this locale (``daypart_*_pt.voc``), and \"manha\" is that file's spelling",
+   "without the tilde.",
+   "",
+   "Other adverbial locutions, each from its Priberam entry:",
+   "\"novo\" (https://dicionario.priberam.org/novo): \"de novo • Outra vez.\"",
+   "\"repente\" (https://dicionario.priberam.org/repente): \"de repente •",
+   "Repentinamente, inesperadamente, subitamente, de golpe\".",
+   "\"vez\" (https://dicionario.priberam.org/vez): \"de vez em quando • Com",
+   "intervalos; de tempos a tempos.\" and \"de vez • Decisivamente,",
+   "terminantemente; a valer\".",
+   "\"facto\" (https://dicionario.priberam.org/facto): \"de facto • Com efeito; na",
+   "verdade.\", with \"Grafia no Brasil: fato\".",
+   "\"resto\" (https://dicionario.priberam.org/resto): \"de resto • Demais; aliás;",
+   "além de que.\"",
+   "\"propósito\" (https://dicionario.priberam.org/propósito): \"de propósito • De",
+   "caso pensado.\"",
+   "\"todo\" (https://dicionario.priberam.org/todo): \"de todo • De modo completo",
+   "ou total\"."
+  ],
+  "marker_past_clause_initial": [
+   "\"faz\" counts back (\"faz dois dias\", \"faz dois dias que não o vejo\") only at",
+   "the start of a clause.  After a subject it is the verb \"fazer\" in the sense",
+   "\"to turn\" (\"a minha filha faz dez anos\"), which names an age, not a date."
+  ],
+  "marker_postposed_direction": [
+   "The only direction word that follows the count it governs: \"dois anos",
+   "atrás\".  \"em\", \"dentro de\" and \"daqui a\" are prepositions and precede it",
+   "(Priberam s.v. \"em\": \"preposição ... 2. Usa-se para indicar tempo\"), so",
+   "\"dois anos em maio\" is not \"in two years\".  \"atras\" is \"atrás\" without",
+   "its accent, as text typed or transcribed without diacritics writes it."
+  ],
+  "marker_rel_preposed": [
+   "A relative marker that only comes before its noun.  \"deste\" is \"Contracção",
+   "da preposição de com o pronome este\" (Priberam s.v. \"deste\"): the",
+   "preposition and the demonstrative open the noun that follows, as in \"o dia",
+   "5 deste mês\".  So \"deste\" and \"desta\" never trail a noun as a postposed",
+   "marker does (\"a semana passada\"), and no date ends on them."
+  ],
+  "marker_subject_determiner": [
+   "Singular determiners that open a subject noun phrase at the start of a",
+   "sentence before \"faz\": \"o bebé faz dois meses\", \"a minha filha faz dez",
+   "meses\", \"este bebé faz dois meses\".  The definite article (Priberam s.v.",
+   "\"o\", entry 2, https://dicionario.priberam.org/o: \"artigo definido\",",
+   "\"Usa-se antes de um nome que determina com precisão\"), the possessive",
+   "determiners (Priberam s.v. \"meu\", https://dicionario.priberam.org/meu:",
+   "\"determinante e pronome possessivo\")",
+   "and the demonstrative determiners (Priberam s.v. \"este\",",
+   "https://dicionario.priberam.org/este: \"determinante e pronome",
+   "demonstrativo\")."
+  ],
+  "marker_subject_pronoun": [
+   "Third-person singular subject pronouns that open the sentence right before",
+   "\"faz\" when it is the verb \"fazer\" with an age: \"ela faz seis meses\".",
+   "Priberam s.v. \"ele\" (https://dicionario.priberam.org/ele): \"Pronome pessoal",
+   "correspondente à terceira pessoa do singular, usado para designar a pessoa",
+   "ou aquilo de que se fala\".  The same entry shows the pronoun after a",
+   "preposition (\"vou falar com ele\"), where it is not the subject, so a",
+   "pronoun after another word does not count."
+  ],
+  "marker_this": [
+   "\"este\" is \"Designativo de pessoa ou coisa que está presente, ou mais",
+   "próxima de quem fala que outra ou outras\" (Priberam s.v. \"este\"): \"este",
+   "mês\" is the month the speaker is in, the one that contains the anchor.",
+   "\"deste\" is \"Contracção da preposição de com o pronome este\" (Priberam s.v.",
+   "\"deste\"), so \"o dia 5 deste mês\" names the 5th of the anchor's own month",
+   "and does not roll to the next month when that day has passed."
+  ],
+  "marker_to": [
+   "Portuguese range \"to\" boundary -- the term / upper limit of a bounded interval.",
+   "\"a\": Priberam, Dicionario da Lingua Portuguesa s.v. \"a\" (preposicao) -- relacao",
+   "  de termo / limite, correlativa de \"de\" (\"de junho a agosto\").",
+   "  Ciberduvidas da Lingua Portuguesa, construcao \"de ... a\".",
+   "\"ate\": Priberam s.v. \"ate\" (preposicao) -- indica o limite temporal ou espacial",
+   "  (\"de junho ate agosto\"). https://dicionario.priberam.org/ate",
+   "\"ao\": contracao da preposicao \"a\" + o artigo \"o\" (Cunha e Cintra, Nova",
+   "  Gramatica do Portugues Contemporaneo, cap. 12; Priberam s.v. \"ao\").",
+   "  Correlativa de \"do\" na construcao \"do ... ao ...\"."
+  ],
+  "marker_until": [
+   "\"até ao\"/\"até à\": \"até\" (until) stacked with the contracted article \"ao\"/\"à\"",
+   "(\"do dia 3 ... até ao dia 5\") -- the split scanner finds the bare \"até\"",
+   "first (it precedes \"ao\" in the sentence), so without the two-word surface",
+   "registered the trailing \"ao\" was left an unclaimed token, stranded in the",
+   "composed range's remainder.  Registered longest-first (see",
+   "``_conn_surfaces``) so it is tried before the bare \"até\" and swallows both",
+   "words when they actually appear together; a bare \"até o dia\" (no",
+   "contraction) is untouched, and \"até\" alone still matches when \"ao\"/\"à\"",
+   "does not follow."
+  ],
+  "marker_until_amount": [
+   "The interrogative that follows \"até\" when the limit is an amount, not a time:",
+   "\"até quantos graus vai subir?\".  \"quanto [...] Pronome: qual quantidade,",
+   "qual valor\" (Wikcionário, s.v. \"quanto\"); \"quantos\" is its plural (s.v.",
+   "\"quantos\")."
+  ],
+  "marker_weather_adjective": [
+   "Adjectives that qualify the day when \"fazer\" names the weather: \"faz um",
+   "dia lindo\".  Priberam s.v. \"fazer\", 26 (https://dicionario.priberam.org/fazer):",
+   "\"[Verbo impessoal] Haver determinada condição atmosférica\" (ex.: \"a partir",
+   "de amanhã, vai fazer frio\").  Each adjective, Priberam:",
+   "  lindo (https://dicionario.priberam.org/lindo): \"Belo; formoso.\"",
+   "  bonito (https://dicionario.priberam.org/bonito): \"Que é agradável à vista",
+   "    ou é do gosto de quem vê.\"",
+   "  quente (https://dicionario.priberam.org/quente): \"Que tem ou transmite",
+   "    calor.\"",
+   "  frio (https://dicionario.priberam.org/frio), 4: \"Em que faz frio.\"",
+   "  chuvoso (https://dicionario.priberam.org/chuvoso): \"Em que chove muito.\"",
+   "    The entry for \"ontem\" gives \"ontem esteve um dia chuvoso\".",
+   "  soalheiro (https://dicionario.priberam.org/soalheiro): \"Exposto ao sol",
+   "    (ex.: casa soalheira). = ENSOLARADO\"",
+   "  nublado (https://dicionario.priberam.org/nublado): \"Coberto de nuvens.\""
+  ],
+  "marker_weather_noun": [
+   "Nouns that qualify the day after \"de\" when \"fazer\" names the weather: \"faz",
+   "um dia de sol\" (Priberam s.v. \"fazer\", 26, https://dicionario.priberam.org/fazer:",
+   "\"Haver determinada condição atmosférica\").  Priberam s.v. \"sol\", 3",
+   "(https://dicionario.priberam.org/sol): \"Luz ou calor dessa estrela\";",
+   "s.v. \"chuva\", 1 (https://dicionario.priberam.org/chuva): \"Água que cai",
+   "das nuvens.\""
+  ],
+  "marker_week_num": [
+   "\"a primeira semana de 2026\" is ISO 8601 week 01 of that year: \"The ISO",
+   "8601 definition for calendar week 01 is the week with the first Thursday",
+   "of the Gregorian year\"; equivalently \"It has 4 January in it\" (Wikipedia,",
+   "\"ISO week date\").  \"a última semana de 2026\" is the year's last ISO week,",
+   "for which the same page gives \"It has 28 December in it\".  The weeks of a",
+   "month have no ISO definition and keep their own reading (the first Monday",
+   "on or after the 1st)."
+  ],
+  "marker_weekday_fraction_homonym": [
+   "Weekday names that are also the name of a fraction.  Priberam s.v. \"terça\"",
+   "(https://dicionario.priberam.org/terça), 2: \"Cada uma as três partes",
+   "iguais em que se pode dividir um todo\"; 3: \"Dia da semana que vem depois",
+   "de segunda-feira e antes de quarta-feira\".  The fraction reading needs its",
+   "noun (marker_fraction_noun.voc): \"a terça parte\".  Before any other noun",
+   "\"terça\" stays the weekday (\"na terça aula de piano\"), because the ordinal",
+   "a speaker uses there is \"terceira\"."
+  ],
+  "marker_weekday_ordinal_homonym": [
+   "Weekday names that are also feminine ordinals: segunda (2nd), quarta (4th),",
+   "quinta (5th), sexta (6th).  Priberam s.v. \"segunda\"",
+   "(https://dicionario.priberam.org/segunda): the ordinal \"segundo\" is \"Que ou",
+   "o que está logo depois do primeiro\", and the noun \"segunda\" is \"Dia da",
+   "semana, depois de domingo e antes de terça-feira\".  \"terça\" is not listed:",
+   "the ordinal is \"terceira\", and \"terça\" names a fraction only before",
+   "\"parte\" (see marker_weekday_fraction_homonym.voc).  The weekday reading is",
+   "vetoed only before an ordinal noun (see marker_ordinal_noun.voc)."
+  ],
+  "marker_year_plural": [
+   "The plural year noun that frames a decade (\"os anos 80\"); the singular",
+   "\"ano\" names a single year (\"o ano 1980\", the ordinary way to write a",
+   "year) and must not reach the decade slot.",
+   "Source: Dicionario Priberam da Lingua Portuguesa, s.v. \"ano\"",
+   "(https://dicionario.priberam.org/ano), which lists the plural as its own",
+   "entry: \"anos, nome masculino plural\"."
+  ],
+  "month_1": [
+   "Unicode CLDR 47, locale pt, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/pt/ca-gregorian.json): months.format.wide,",
+   "months.stand-alone.wide, months.format.abbreviated,",
+   "months.stand-alone.abbreviated.  CLDR spells the abbreviations with a",
+   "trailing period; the surfaces here drop it."
+  ],
+  "month_10": [
+   "Unicode CLDR 47, locale pt, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/pt/ca-gregorian.json): months.format.wide,",
+   "months.stand-alone.wide, months.format.abbreviated,",
+   "months.stand-alone.abbreviated.  CLDR spells the abbreviations with a",
+   "trailing period; the surfaces here drop it."
+  ],
+  "month_11": [
+   "Unicode CLDR 47, locale pt, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/pt/ca-gregorian.json): months.format.wide,",
+   "months.stand-alone.wide, months.format.abbreviated,",
+   "months.stand-alone.abbreviated.  CLDR spells the abbreviations with a",
+   "trailing period; the surfaces here drop it."
+  ],
+  "month_12": [
+   "Unicode CLDR 47, locale pt, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/pt/ca-gregorian.json): months.format.wide,",
+   "months.stand-alone.wide, months.format.abbreviated,",
+   "months.stand-alone.abbreviated.  CLDR spells the abbreviations with a",
+   "trailing period; the surfaces here drop it."
+  ],
+  "month_2": [
+   "Unicode CLDR 47, locale pt, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/pt/ca-gregorian.json): months.format.wide,",
+   "months.stand-alone.wide, months.format.abbreviated,",
+   "months.stand-alone.abbreviated.  CLDR spells the abbreviations with a",
+   "trailing period; the surfaces here drop it."
+  ],
+  "month_3": [
+   "Unicode CLDR 47, locale pt, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/pt/ca-gregorian.json): months.format.wide,",
+   "months.stand-alone.wide, months.format.abbreviated,",
+   "months.stand-alone.abbreviated.  CLDR spells the abbreviations with a",
+   "trailing period; the surfaces here drop it.  Not covered by any of those",
+   "charts, and so unattested here: \"marco\"."
+  ],
+  "month_4": [
+   "Unicode CLDR 47, locale pt, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/pt/ca-gregorian.json): months.format.wide,",
+   "months.stand-alone.wide, months.format.abbreviated,",
+   "months.stand-alone.abbreviated.  CLDR spells the abbreviations with a",
+   "trailing period; the surfaces here drop it."
+  ],
+  "month_5": [
+   "Unicode CLDR 47, locale pt, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/pt/ca-gregorian.json): months.format.wide,",
+   "months.stand-alone.wide, months.format.abbreviated,",
+   "months.stand-alone.abbreviated.  CLDR spells the abbreviations with a",
+   "trailing period; the surfaces here drop it."
+  ],
+  "month_6": [
+   "Unicode CLDR 47, locale pt, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/pt/ca-gregorian.json): months.format.wide,",
+   "months.stand-alone.wide, months.format.abbreviated,",
+   "months.stand-alone.abbreviated.  CLDR spells the abbreviations with a",
+   "trailing period; the surfaces here drop it."
+  ],
+  "month_7": [
+   "Unicode CLDR 47, locale pt, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/pt/ca-gregorian.json): months.format.wide,",
+   "months.stand-alone.wide, months.format.abbreviated,",
+   "months.stand-alone.abbreviated.  CLDR spells the abbreviations with a",
+   "trailing period; the surfaces here drop it."
+  ],
+  "month_8": [
+   "Unicode CLDR 47, locale pt, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/pt/ca-gregorian.json): months.format.wide,",
+   "months.stand-alone.wide, months.format.abbreviated,",
+   "months.stand-alone.abbreviated.  CLDR spells the abbreviations with a",
+   "trailing period; the surfaces here drop it."
+  ],
+  "month_9": [
+   "Unicode CLDR 47, locale pt, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/pt/ca-gregorian.json): months.format.wide,",
+   "months.stand-alone.wide, months.format.abbreviated,",
+   "months.stand-alone.abbreviated.  CLDR spells the abbreviations with a",
+   "trailing period; the surfaces here drop it."
+  ],
+  "named_day_-2": [
+   "Priberam s.v. \"anteontem\": \"No dia que precedeu o dia de ontem. = ANTES DE",
+   "ONTEM [...] Origem: ante- + ontem.\"  \"anteontem\" is the standard form, and",
+   "Priberam gives \"antes de ontem\" as its synonym.  Priberam does not list",
+   "\"ante ontem\".  It is a non-standard split spelling that speech-to-text",
+   "writes, accepted here as input only."
+  ],
+  "named_day_1": [
+   "A weekday beside a day word is an apposition (\"amanhã, domingo\"): an",
+   "\"aposto\" is a \"Nome ou locução nominal que se junta a outro nome para melhor",
+   "o caracterizar\" (Priberam s.v. \"aposto\", 5).  It names the same day, so it",
+   "folds into the day word; when the weekday is not that day's (\"amanhã",
+   "segunda-feira\" said on a Saturday) the phrase names no day and is refused."
+  ],
+  "roman_anchor_ides": [
+   "Portuguese vernacular Roman-calendar anchor names.",
+   "Source: Wikipedia \"Calendário romano\" (pt):",
+   "  \"Calendas (Kalendae) ... Nonas (Nonae) ... Idos (Idus)\".",
+   "  https://pt.wikipedia.org/wiki/Calend%C3%A1rio_romano"
+  ],
+  "roman_anchor_kalends": [
+   "Portuguese vernacular Roman-calendar anchor names.",
+   "Source: Wikipedia \"Calendário romano\" (pt):",
+   "  \"Calendas (Kalendae) ... Nonas (Nonae) ... Idos (Idus)\".",
+   "  https://pt.wikipedia.org/wiki/Calend%C3%A1rio_romano"
+  ],
+  "roman_anchor_nones": [
+   "Portuguese vernacular Roman-calendar anchor names.",
+   "Source: Wikipedia \"Calendário romano\" (pt):",
+   "  \"Calendas (Kalendae) ... Nonas (Nonae) ... Idos (Idus)\".",
+   "  https://pt.wikipedia.org/wiki/Calend%C3%A1rio_romano"
+  ],
+  "unit_minute": [
+   "min: \"símbolo de minuto\" (Wikcionário, s.v. \"min\")."
+  ],
+  "unit_second": [
+   "Unicode CLDR 47, locale pt, cldr-units-full/main/pt/units.json,",
+   "duration-second: one \"segundo\", other \"segundos\"."
+  ],
+  "weekday_5": [
+   "Unicode CLDR 47, locale pt, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/pt/ca-gregorian.json): days.format.wide,",
+   "days.stand-alone.wide.  Not covered by any of those charts, and so",
+   "unattested here: \"sabado\"."
+  ],
+  "weekday_6": [
+   "Unicode CLDR 47, locale pt, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/pt/ca-gregorian.json): days.format.wide,",
+   "days.stand-alone.wide."
+  ],
+  "weekday_abbr_0": [
+   "Unicode CLDR 47, locale pt, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/pt/ca-gregorian.json): days.format.abbreviated,",
+   "days.stand-alone.abbreviated, days.format.short, days.stand-alone.short.",
+   "CLDR spells the abbreviations with a trailing period; the surfaces here drop",
+   "it."
+  ],
+  "weekday_abbr_1": [
+   "Unicode CLDR 47, locale pt, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/pt/ca-gregorian.json): days.format.abbreviated,",
+   "days.stand-alone.abbreviated, days.format.short, days.stand-alone.short.",
+   "CLDR spells the abbreviations with a trailing period; the surfaces here drop",
+   "it."
+  ],
+  "weekday_abbr_2": [
+   "Unicode CLDR 47, locale pt, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/pt/ca-gregorian.json): days.format.abbreviated,",
+   "days.stand-alone.abbreviated, days.format.short, days.stand-alone.short.",
+   "CLDR spells the abbreviations with a trailing period; the surfaces here drop",
+   "it."
+  ],
+  "weekday_abbr_3": [
+   "Unicode CLDR 47, locale pt, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/pt/ca-gregorian.json): days.format.abbreviated,",
+   "days.stand-alone.abbreviated, days.format.short, days.stand-alone.short.",
+   "CLDR spells the abbreviations with a trailing period; the surfaces here drop",
+   "it."
+  ],
+  "weekday_abbr_4": [
+   "Unicode CLDR 47, locale pt, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/pt/ca-gregorian.json): days.format.abbreviated,",
+   "days.stand-alone.abbreviated, days.format.short, days.stand-alone.short.",
+   "CLDR spells the abbreviations with a trailing period; the surfaces here drop",
+   "it."
+  ],
+  "weekday_abbr_6": [
+   "Unicode CLDR 47, locale pt, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/pt/ca-gregorian.json): days.format.abbreviated,",
+   "days.stand-alone.abbreviated, days.format.short, days.stand-alone.short.",
+   "CLDR spells the abbreviations with a trailing period; the surfaces here drop",
+   "it."
+  ]
  }
 }

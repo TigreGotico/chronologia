@@ -331,5 +331,146 @@
   "weekday_abbr_6": [
    "die"
   ]
+ },
+ "sources": {
+  "month_1": [
+   "Unicode CLDR 47, locale sq, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/sq/ca-gregorian.json): months.format.wide,",
+   "months.stand-alone.wide, months.format.abbreviated,",
+   "months.stand-alone.abbreviated."
+  ],
+  "month_10": [
+   "Unicode CLDR 47, locale sq, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/sq/ca-gregorian.json): months.format.wide,",
+   "months.stand-alone.wide, months.format.abbreviated,",
+   "months.stand-alone.abbreviated."
+  ],
+  "month_11": [
+   "Unicode CLDR 47, locale sq, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/sq/ca-gregorian.json): months.format.wide,",
+   "months.stand-alone.wide, months.format.abbreviated,",
+   "months.stand-alone.abbreviated."
+  ],
+  "month_12": [
+   "Unicode CLDR 47, locale sq, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/sq/ca-gregorian.json): months.format.wide,",
+   "months.stand-alone.wide, months.format.abbreviated,",
+   "months.stand-alone.abbreviated."
+  ],
+  "month_2": [
+   "Unicode CLDR 47, locale sq, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/sq/ca-gregorian.json): months.format.wide,",
+   "months.stand-alone.wide, months.format.abbreviated,",
+   "months.stand-alone.abbreviated."
+  ],
+  "month_3": [
+   "Unicode CLDR 47, locale sq, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/sq/ca-gregorian.json): months.format.wide,",
+   "months.stand-alone.wide, months.format.abbreviated,",
+   "months.stand-alone.abbreviated."
+  ],
+  "month_4": [
+   "Unicode CLDR 47, locale sq, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/sq/ca-gregorian.json): months.format.wide,",
+   "months.stand-alone.wide, months.format.abbreviated,",
+   "months.stand-alone.abbreviated."
+  ],
+  "month_5": [
+   "Unicode CLDR 47, locale sq, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/sq/ca-gregorian.json): months.format.wide,",
+   "months.stand-alone.wide, months.format.abbreviated,",
+   "months.stand-alone.abbreviated."
+  ],
+  "month_6": [
+   "Unicode CLDR 47, locale sq, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/sq/ca-gregorian.json): months.format.wide,",
+   "months.stand-alone.wide, months.format.abbreviated,",
+   "months.stand-alone.abbreviated."
+  ],
+  "month_7": [
+   "Unicode CLDR 47, locale sq, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/sq/ca-gregorian.json): months.format.wide,",
+   "months.stand-alone.wide, months.format.abbreviated,",
+   "months.stand-alone.abbreviated."
+  ],
+  "month_8": [
+   "Unicode CLDR 47, locale sq, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/sq/ca-gregorian.json): months.format.wide,",
+   "months.stand-alone.wide, months.format.abbreviated,",
+   "months.stand-alone.abbreviated."
+  ],
+  "month_9": [
+   "Unicode CLDR 47, locale sq, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/sq/ca-gregorian.json): months.format.wide,",
+   "months.stand-alone.wide, months.format.abbreviated,",
+   "months.stand-alone.abbreviated."
+  ],
+  "weekday_0": [
+   "Unicode CLDR 47, locale sq, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/sq/ca-gregorian.json): days.format.wide,",
+   "days.stand-alone.wide.  Not covered by any of those charts, and so",
+   "unattested here: \"të hënë\", \"të hënën\"."
+  ],
+  "weekday_1": [
+   "Unicode CLDR 47, locale sq, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/sq/ca-gregorian.json): days.format.wide,",
+   "days.stand-alone.wide.  Not covered by any of those charts, and so",
+   "unattested here: \"të martë\", \"të martën\"."
+  ],
+  "weekday_2": [
+   "Unicode CLDR 47, locale sq, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/sq/ca-gregorian.json): days.format.wide,",
+   "days.stand-alone.wide.  Not covered by any of those charts, and so",
+   "unattested here: \"të mërkurë\", \"të mërkurën\"."
+  ],
+  "weekday_3": [
+   "Unicode CLDR 47, locale sq, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/sq/ca-gregorian.json): days.format.wide,",
+   "days.stand-alone.wide.  Not covered by any of those charts, and so",
+   "unattested here: \"të enjte\", \"të enjten\"."
+  ],
+  "weekday_4": [
+   "Unicode CLDR 47, locale sq, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/sq/ca-gregorian.json): days.format.wide,",
+   "days.stand-alone.wide.  Not covered by any of those charts, and so",
+   "unattested here: \"të premte\", \"të premten\"."
+  ],
+  "weekday_5": [
+   "Unicode CLDR 47, locale sq, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/sq/ca-gregorian.json): days.format.wide,",
+   "days.stand-alone.wide.  Not covered by any of those charts, and so",
+   "unattested here: \"të shtunë\", \"të shtunën\"."
+  ],
+  "weekday_6": [
+   "Unicode CLDR 47, locale sq, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/sq/ca-gregorian.json): days.format.wide,",
+   "days.stand-alone.wide.  Not covered by any of those charts, and so",
+   "unattested here: \"të diel\", \"të dielën\"."
+  ],
+  "weekday_abbr_0": [
+   "Unicode CLDR 47, locale sq, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/sq/ca-gregorian.json): days.format.abbreviated,",
+   "days.stand-alone.abbreviated, days.format.short, days.stand-alone.short."
+  ],
+  "weekday_abbr_2": [
+   "Unicode CLDR 47, locale sq, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/sq/ca-gregorian.json): days.format.abbreviated,",
+   "days.stand-alone.abbreviated, days.format.short, days.stand-alone.short."
+  ],
+  "weekday_abbr_3": [
+   "Unicode CLDR 47, locale sq, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/sq/ca-gregorian.json): days.format.abbreviated,",
+   "days.stand-alone.abbreviated, days.format.short, days.stand-alone.short."
+  ],
+  "weekday_abbr_4": [
+   "Unicode CLDR 47, locale sq, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/sq/ca-gregorian.json): days.format.abbreviated,",
+   "days.stand-alone.abbreviated, days.format.short, days.stand-alone.short."
+  ],
+  "weekday_abbr_6": [
+   "Unicode CLDR 47, locale sq, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/sq/ca-gregorian.json): days.format.abbreviated,",
+   "days.stand-alone.abbreviated, days.format.short, days.stand-alone.short."
+  ]
  }
 }

@@ -196,5 +196,358 @@
   "weekday_6": [
    "linggo"
   ]
+ },
+ "sources": {
+  "clock_dir_past": [
+   "makalipas, \"after\", the ADDITIVE direction of the native clock: the count",
+   "of minutes runs forward from the ordinal-named hour (\"limang minuto",
+   "makalipas ang ika-anim ng umaga\" == 06:05).  en.wikipedia.org, \"Date and time notation in the Philippines\"."
+  ],
+  "clock_dir_to": [
+   "bago, \"before\", the SUBTRACTIVE direction of the native clock: the count",
+   "runs back from the UPCOMING ordinal-named hour (\"labinlimang minuto bago",
+   "ang ika-apat ng hapon\" == 15:45).  The same source states that this is how",
+   "Filipino tells a time past the half hour -- the additive native frame is",
+   "not used there.  en.wiktionary.org, bago (preposition, \"before\"); en.wikipedia.org, \"Date and time notation in the Philippines\"."
+  ],
+  "clock_fraction_30": [
+   "medya, the half in the Spanish-lexified clock, which attaches ADDITIVELY to",
+   "the hour already named: \"alas otso y medya ng gabi\" == 20:30 and \"alas",
+   "kuwatro y medya ng hapon\" == 16:30, both worked examples in the source.",
+   "That is the opposite direction from the Continental-Germanic bare half, so",
+   "the locale sets bare_half_past rather than bare_half_to.  The source spells",
+   "the word med'ya/mediya; the apostrophe form is not shipped because the",
+   "tokenizer would shear it.  medya has no Wiktionary Tagalog entry -- the",
+   "citation is the worked clock examples alone.  en.wikipedia.org, \"Date and time notation in the Philippines\"."
+  ],
+  "clock_landmark_0": [
+   "hatinggabi, \"midnight\".  en.wiktionary.org, hatinggabi."
+  ],
+  "clock_landmark_720": [
+   "tanghali, \"noon\".  tanghaling-tapat is CLDR's wide label for the same",
+   "point; only the bare noun is shipped, the attributive -ng form being a",
+   "linker inflection rather than a separate surface.  en.wiktionary.org, tanghali;",
+   "Unicode CLDR 47, fil."
+  ],
+  "clock_meridiem_am": [
+   "umaga, \"morning\", the day-part that fixes an hour in the AM half",
+   "(\"alas sais ng umaga\" == 06:05's hour).  en.wiktionary.org, umaga; en.wikipedia.org, \"Date and time notation in the Philippines\"."
+  ],
+  "clock_meridiem_night": [
+   "hatinggabi, \"midnight\".  Night here is the band that crosses midnight, so",
+   "the hour twelve under it is 00:00, not noon: \"alas dose ng hatinggabi\" ==",
+   "00:00.  en.wiktionary.org, hatinggabi; en.wikipedia.org, \"Date and time notation in the Philippines\"."
+  ],
+  "clock_meridiem_pm": [
+   "hapon, \"afternoon\"; gabi, \"evening/night\"; tanghali, \"noon\".  All three fix",
+   "their hour in the PM half: \"alas kuwatro y medya ng hapon\" == 16:30, \"alas",
+   "otso y medya ng gabi\" == 20:30, \"alas dose ng tanghali\" == 12:00.  gabi is a",
+   "plain PM marker, not a midnight-crossing band: CLDR fil runs it from 16:00",
+   "to 24:00 and gives the small hours to umaga/madaling-araw instead, so it",
+   "never has to name a 1am.  en.wiktionary.org, hapon; en.wiktionary.org, gabi; en.wiktionary.org, tanghali;",
+   "Unicode CLDR 47, fil; en.wikipedia.org, \"Date and time notation in the Philippines\"."
+  ],
+  "daypart_afternoon_fil": [
+   "Band boundaries: Unicode CLDR 47 Day Period Rules, locale fil, transcribed",
+   "in chronologia/dayparts.py as the afternoon band (12:00-16:00).",
+   "Surface: hapon, \"afternoon\".  en.wiktionary.org, hapon."
+  ],
+  "daypart_morning_fil": [
+   "Band boundaries: Unicode CLDR 47 Day Period Rules, locale fil, transcribed",
+   "in chronologia/dayparts.py as the morning band (CLDR morning1 + morning2,",
+   "00:00-12:00).  Surface: umaga, \"morning\".  madaling-araw is NOT shipped:",
+   "CLDR fil labels its 06:00-12:00 band with it and its 00:00-06:00 band with",
+   "umaga, which inverts the dictionary senses (madaling-araw is glossed as the",
+   "period between midnight and sunrise), so which band the word names is",
+   "unresolved.  en.wiktionary.org, umaga."
+  ],
+  "daypart_night_fil": [
+   "Band boundaries: Unicode CLDR 47 Day Period Rules, locale fil, transcribed",
+   "in chronologia/dayparts.py as the night band (18:00-00:00).  Surface: gabi,",
+   "\"evening/night\".  CLDR fil labels BOTH its evening band (16:00-18:00) and",
+   "its night band with gabi; the word is bound to night alone, the wider of",
+   "the two, and the evening band ships no surface rather than a second reading",
+   "of one word.  en.wiktionary.org, gabi."
+  ],
+  "marker_after": [
+   "pagkatapos, \"after\"/\"afterwards\".  en.wiktionary.org, pagkatapos."
+  ],
+  "marker_and": [
+   "y, the Spanish-derived \"and\" that joins an hour to its half in the",
+   "Spanish-lexified clock (\"alas kuwatro y medya\").  It is optional before a",
+   "minute count (\"alas tres (y) kuwarenta singko\").  en.wiktionary.org, y; en.wikipedia.org, \"Date and time notation in the Philippines\"."
+  ],
+  "marker_ang": [
+   "ang, the subject case marker, which introduces the target hour of a",
+   "subtractive or additive minute count (\"bago ang ika-apat\").  en.wiktionary.org, ang;",
+   "en.wikipedia.org, \"Date and time notation in the Philippines\"."
+  ],
+  "marker_at": [
+   "The clock lead-in.  alas and ala are both glossed as the adverb \"o'clock\":",
+   "ala stands before the hour one (\"ala una\"), alas before every other hour",
+   "(\"alas dose\").  Wiktionary's ika- entry names alas as the synonym of the",
+   "ordinal-hour construction, which is the other half of this locale's clock.",
+   "en.wiktionary.org, alas; en.wiktionary.org, ala; en.wiktionary.org, ika-."
+  ],
+  "marker_before": [
+   "bago, \"before\"/\"prior to\".  en.wiktionary.org, bago."
+  ],
+  "marker_every": [
+   "tuwing, \"every time\".  The rival mechanism -- reduplicating the unit noun",
+   "(araw-araw, buwan-buwan, taon-taon) -- is not shipped: it is a closed set of",
+   "derived adverbs rather than a marker, linggo-linggo has no entry at all, and",
+   "nothing sources whether the two are interchangeable.  en.wiktionary.org, tuwing."
+  ],
+  "marker_from": [
+   "mula, \"from\".  en.wiktionary.org, mula."
+  ],
+  "marker_future": [
+   "sa, the oblique marker, glossed for \"the time of occurrence: at; on; in;",
+   "during\", with the worked example \"Sa Lunes kami uuwi\" (\"We're going home on",
+   "Monday\").  en.wiktionary.org, sa."
+  ],
+  "marker_last": [
+   "nakaraan, \"past\"/\"last\", with its linker form; and noong, the adverb that",
+   "\"indicates past time\", which is what selects the PRECEDING instance of a",
+   "named day (\"noong Lunes\" == the Monday just gone, not the coming one).",
+   "en.wiktionary.org, nakaraan; en.wiktionary.org, noon."
+  ],
+  "marker_mag": [
+   "mag, the verbal particle the subtractive clock optionally takes before its",
+   "target hour: both \"bago ang ika-apat\" and \"bago mag ika-anim\" are attested",
+   "for the same construction.  en.wikipedia.org, \"Date and time notation in the Philippines\"."
+  ],
+  "marker_minute_word": [
+   "minuto, spoken between the count and the direction word in the native",
+   "clock (\"labinlimang minuto bago ang ika-apat\").  en.wikipedia.org, \"Date and time notation in the Philippines\"."
+  ],
+  "marker_na": [
+   "na, the linker in its free-standing form.  A Filipino modifier takes the",
+   "ligature written onto itself after a vowel (\"dalawang araw\") but written as",
+   "a separate word after a consonant (\"anim na buwan\", \"apat na araw\"); the two",
+   "are one morpheme, so the counted-unit orders accept either shape.",
+   "en.wiktionary.org, na."
+  ],
+  "marker_next": [
+   "susunod, \"next\", with its linker form.  en.wiktionary.org, susunod."
+  ],
+  "marker_ng": [
+   "ng, the oblique linker.  It stands between a day-ordinal and its month",
+   "(\"ika-24 ng Agosto\") and between an hour and its day-part (\"alas sais ng",
+   "umaga\").  en.wiktionary.org, ng; en.wikipedia.org, \"Date and time notation in the Philippines\"."
+  ],
+  "marker_past": [
+   "noon, the adverb that \"indicates past time\", and noong, the same word",
+   "carrying the regular -ng linker before what it marks.  en.wiktionary.org, noon."
+  ],
+  "marker_until": [
+   "hanggang, \"until\"/\"till\".  en.wiktionary.org, hanggang."
+  ],
+  "marker_weekday_counted_ambiguous": [
+   "linggo names both Sunday and the week, so a count before it (\"dalawang",
+   "linggo\") is ambiguous between a span of weeks and a number of Sundays.  The",
+   "count vetoes the weekday reading -- handing back one specific Sunday to a",
+   "caller who asked for a duration would be a worse answer than none -- and",
+   "the duration reading is not asserted in its place: the week unit this",
+   "locale ships is semana, not linggo.  en.wiktionary.org, linggo (noun, \"week\");",
+   "en.wiktionary.org, Linggo (noun, \"Sunday\")."
+  ],
+  "marker_year_word": [
+   "taon, \"year\", and taong, its linker form, which introduces a spelled year",
+   "in a date (\"(taong) dalawang libo't dalawampu't dalawa\").  en.wiktionary.org, taon;",
+   "en.wikipedia.org, \"Date and time notation in the Philippines\"."
+  ],
+  "month_1": [
+   "Unicode CLDR 47, cldr-json cldr-dates-full/main/fil/ca-gregorian.json",
+   "(wide form).  The CLDR abbreviations are deliberately not shipped:",
+   "every one of them is a live Tagalog word or a rival month/weekday",
+   "abbreviation -- \"may\" is the existential \"there is\", \"mar\"",
+   "abbreviates both Marso and Martes, \"ago\" and \"set\" and \"dis\"",
+   "read as ordinary text far more often than as a month."
+  ],
+  "month_10": [
+   "Unicode CLDR 47, cldr-json cldr-dates-full/main/fil/ca-gregorian.json",
+   "(wide form).  The CLDR abbreviations are deliberately not shipped:",
+   "every one of them is a live Tagalog word or a rival month/weekday",
+   "abbreviation -- \"may\" is the existential \"there is\", \"mar\"",
+   "abbreviates both Marso and Martes, \"ago\" and \"set\" and \"dis\"",
+   "read as ordinary text far more often than as a month."
+  ],
+  "month_11": [
+   "Unicode CLDR 47, cldr-json cldr-dates-full/main/fil/ca-gregorian.json",
+   "(wide form).  The CLDR abbreviations are deliberately not shipped:",
+   "every one of them is a live Tagalog word or a rival month/weekday",
+   "abbreviation -- \"may\" is the existential \"there is\", \"mar\"",
+   "abbreviates both Marso and Martes, \"ago\" and \"set\" and \"dis\"",
+   "read as ordinary text far more often than as a month."
+  ],
+  "month_12": [
+   "Unicode CLDR 47, cldr-json cldr-dates-full/main/fil/ca-gregorian.json",
+   "(wide form).  The CLDR abbreviations are deliberately not shipped:",
+   "every one of them is a live Tagalog word or a rival month/weekday",
+   "abbreviation -- \"may\" is the existential \"there is\", \"mar\"",
+   "abbreviates both Marso and Martes, \"ago\" and \"set\" and \"dis\"",
+   "read as ordinary text far more often than as a month."
+  ],
+  "month_2": [
+   "Unicode CLDR 47, cldr-json cldr-dates-full/main/fil/ca-gregorian.json",
+   "(wide form).  The CLDR abbreviations are deliberately not shipped:",
+   "every one of them is a live Tagalog word or a rival month/weekday",
+   "abbreviation -- \"may\" is the existential \"there is\", \"mar\"",
+   "abbreviates both Marso and Martes, \"ago\" and \"set\" and \"dis\"",
+   "read as ordinary text far more often than as a month."
+  ],
+  "month_3": [
+   "Unicode CLDR 47, cldr-json cldr-dates-full/main/fil/ca-gregorian.json",
+   "(wide form).  The CLDR abbreviations are deliberately not shipped:",
+   "every one of them is a live Tagalog word or a rival month/weekday",
+   "abbreviation -- \"may\" is the existential \"there is\", \"mar\"",
+   "abbreviates both Marso and Martes, \"ago\" and \"set\" and \"dis\"",
+   "read as ordinary text far more often than as a month."
+  ],
+  "month_4": [
+   "Unicode CLDR 47, cldr-json cldr-dates-full/main/fil/ca-gregorian.json",
+   "(wide form).  The CLDR abbreviations are deliberately not shipped:",
+   "every one of them is a live Tagalog word or a rival month/weekday",
+   "abbreviation -- \"may\" is the existential \"there is\", \"mar\"",
+   "abbreviates both Marso and Martes, \"ago\" and \"set\" and \"dis\"",
+   "read as ordinary text far more often than as a month."
+  ],
+  "month_5": [
+   "Unicode CLDR 47, cldr-json cldr-dates-full/main/fil/ca-gregorian.json",
+   "(wide form).  The CLDR abbreviations are deliberately not shipped:",
+   "every one of them is a live Tagalog word or a rival month/weekday",
+   "abbreviation -- \"may\" is the existential \"there is\", \"mar\"",
+   "abbreviates both Marso and Martes, \"ago\" and \"set\" and \"dis\"",
+   "read as ordinary text far more often than as a month."
+  ],
+  "month_6": [
+   "Unicode CLDR 47, cldr-json cldr-dates-full/main/fil/ca-gregorian.json",
+   "(wide form).  The CLDR abbreviations are deliberately not shipped:",
+   "every one of them is a live Tagalog word or a rival month/weekday",
+   "abbreviation -- \"may\" is the existential \"there is\", \"mar\"",
+   "abbreviates both Marso and Martes, \"ago\" and \"set\" and \"dis\"",
+   "read as ordinary text far more often than as a month."
+  ],
+  "month_7": [
+   "Unicode CLDR 47, cldr-json cldr-dates-full/main/fil/ca-gregorian.json",
+   "(wide form).  The CLDR abbreviations are deliberately not shipped:",
+   "every one of them is a live Tagalog word or a rival month/weekday",
+   "abbreviation -- \"may\" is the existential \"there is\", \"mar\"",
+   "abbreviates both Marso and Martes, \"ago\" and \"set\" and \"dis\"",
+   "read as ordinary text far more often than as a month."
+  ],
+  "month_8": [
+   "Unicode CLDR 47, cldr-json cldr-dates-full/main/fil/ca-gregorian.json",
+   "(wide form).  The CLDR abbreviations are deliberately not shipped:",
+   "every one of them is a live Tagalog word or a rival month/weekday",
+   "abbreviation -- \"may\" is the existential \"there is\", \"mar\"",
+   "abbreviates both Marso and Martes, \"ago\" and \"set\" and \"dis\"",
+   "read as ordinary text far more often than as a month."
+  ],
+  "month_9": [
+   "Unicode CLDR 47, cldr-json cldr-dates-full/main/fil/ca-gregorian.json",
+   "(wide form).  The CLDR abbreviations are deliberately not shipped:",
+   "every one of them is a live Tagalog word or a rival month/weekday",
+   "abbreviation -- \"may\" is the existential \"there is\", \"mar\"",
+   "abbreviates both Marso and Martes, \"ago\" and \"set\" and \"dis\"",
+   "read as ordinary text far more often than as a month."
+  ],
+  "named_day_-1": [
+   "kahapon, \"yesterday\".  en.wiktionary.org, kahapon."
+  ],
+  "named_day_-2": [
+   "kamakalawa, \"the day before yesterday\".  Its mirror, makalawa (\"the day",
+   "after tomorrow\"), is NOT shipped: the same bare word is also the frequency",
+   "adverb \"twice\", the named-day grammar matches it bare, and no source gives",
+   "a disambiguator that survives tokenization.  en.wiktionary.org, kamakalawa;",
+   "en.wiktionary.org, makalawa."
+  ],
+  "named_day_0": [
+   "ngayon, \"today\"/\"now\".  en.wiktionary.org, ngayon."
+  ],
+  "named_day_1": [
+   "bukas, \"tomorrow\".  en.wiktionary.org, bukas."
+  ],
+  "unit_century": [
+   "siglo, \"century\".  en.wiktionary.org, siglo."
+  ],
+  "unit_day": [
+   "araw, \"day\" -- and also \"sun\", the same word for both.  The two senses",
+   "never compete for one reading here: \"sun\" is not a temporal quantity, so a",
+   "counted \"dalawang araw\" can only be the duration and a bare \"araw\" names no",
+   "date at all.  en.wiktionary.org, araw."
+  ],
+  "unit_decade": [
+   "dekada, \"decade\".  en.wiktionary.org, dekada."
+  ],
+  "unit_hour": [
+   "oras, \"hour\"/\"time\".  en.wiktionary.org, oras."
+  ],
+  "unit_millennium": [
+   "milenyo, \"millennium\".  en.wiktionary.org, milenyo."
+  ],
+  "unit_minute": [
+   "minuto, \"minute\".  en.wiktionary.org, minuto."
+  ],
+  "unit_month": [
+   "buwan, \"month\" -- and also \"moon\".  As with araw/sun, the non-temporal sense",
+   "competes for no reading: it is not a quantity anything is counted in.",
+   "en.wiktionary.org, buwan."
+  ],
+  "unit_second": [
+   "segundo, \"second\".  en.wiktionary.org, segundo."
+  ],
+  "unit_week": [
+   "semana, the Spanish-derived week noun.  The native week word, linggo, is",
+   "NOT shipped as a unit: it is also the name of Sunday, and no source gives a",
+   "disambiguator, so a counted \"dalawang linggo\" refuses rather than picking a",
+   "sense (marker_weekday_counted_ambiguous.voc).  en.wiktionary.org, semana."
+  ],
+  "unit_year": [
+   "taon, \"year\".  en.wiktionary.org, taon."
+  ],
+  "weekday_0": [
+   "Unicode CLDR 47, cldr-json cldr-dates-full/main/fil/ca-gregorian.json",
+   "(wide form).  Every Filipino weekday name is a Spanish loan; the CLDR",
+   "abbreviations (Lin, Lun, Mar, ...) are not shipped -- \"mar\" is also",
+   "the Marso abbreviation and \"lin\"/\"lun\" carry no independent sense."
+  ],
+  "weekday_1": [
+   "Unicode CLDR 47, cldr-json cldr-dates-full/main/fil/ca-gregorian.json",
+   "(wide form).  Every Filipino weekday name is a Spanish loan; the CLDR",
+   "abbreviations (Lin, Lun, Mar, ...) are not shipped -- \"mar\" is also",
+   "the Marso abbreviation and \"lin\"/\"lun\" carry no independent sense."
+  ],
+  "weekday_2": [
+   "Unicode CLDR 47, cldr-json cldr-dates-full/main/fil/ca-gregorian.json",
+   "(wide form).  Every Filipino weekday name is a Spanish loan; the CLDR",
+   "abbreviations (Lin, Lun, Mar, ...) are not shipped -- \"mar\" is also",
+   "the Marso abbreviation and \"lin\"/\"lun\" carry no independent sense."
+  ],
+  "weekday_3": [
+   "Unicode CLDR 47, cldr-json cldr-dates-full/main/fil/ca-gregorian.json",
+   "(wide form).  Every Filipino weekday name is a Spanish loan; the CLDR",
+   "abbreviations (Lin, Lun, Mar, ...) are not shipped -- \"mar\" is also",
+   "the Marso abbreviation and \"lin\"/\"lun\" carry no independent sense."
+  ],
+  "weekday_4": [
+   "Unicode CLDR 47, cldr-json cldr-dates-full/main/fil/ca-gregorian.json",
+   "(wide form).  Every Filipino weekday name is a Spanish loan; the CLDR",
+   "abbreviations (Lin, Lun, Mar, ...) are not shipped -- \"mar\" is also",
+   "the Marso abbreviation and \"lin\"/\"lun\" carry no independent sense."
+  ],
+  "weekday_5": [
+   "Unicode CLDR 47, cldr-json cldr-dates-full/main/fil/ca-gregorian.json",
+   "(wide form).  Every Filipino weekday name is a Spanish loan; the CLDR",
+   "abbreviations (Lin, Lun, Mar, ...) are not shipped -- \"mar\" is also",
+   "the Marso abbreviation and \"lin\"/\"lun\" carry no independent sense."
+  ],
+  "weekday_6": [
+   "Unicode CLDR 47, cldr-json cldr-dates-full/main/fil/ca-gregorian.json",
+   "(wide form).  Every Filipino weekday name is a Spanish loan; the CLDR",
+   "abbreviations (Lin, Lun, Mar, ...) are not shipped -- \"mar\" is also",
+   "the Marso abbreviation and \"lin\"/\"lun\" carry no independent sense."
+  ]
  }
 }

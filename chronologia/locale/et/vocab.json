@@ -403,5 +403,180 @@
    "pühapäev",
    "pühapäeval"
   ]
+ },
+ "sources": {
+  "clock_fraction_15": [
+   "Estonian counting-toward-the-hour clock: \"veerand <H>\" == a quarter of the",
+   "way toward hour H, i.e. (H-1):15 -- \"veerand uheksa\" == 08:15.  Citation:",
+   "Erelt, Mati (ed.) \"Estonian Language\", Linguistica Uralica Suppl. Series 1,",
+   "Estonian Academy Publishers 2003, time-expression sec.; EKI Eesti Keele",
+   "Instituut \"Sonaveeb\" entry \"veerand\", clock sense."
+  ],
+  "clock_fraction_30": [
+   "Estonian counting-toward-the-hour clock: \"pool <H>\" == half of the way",
+   "toward hour H, i.e. (H-1):30 -- \"pool uheksa\" == 08:30 (half before nine).",
+   "Citation: Erelt, Mati (ed.) \"Estonian Language\", Estonian Academy",
+   "Publishers 2003, time-expression sec.; EKI \"Sonaveeb\" entry \"pool\"."
+  ],
+  "clock_fraction_45": [
+   "Estonian counting-toward-the-hour clock: \"kolmveerand <H>\" == three",
+   "quarters of the way toward hour H, i.e. (H-1):45 -- \"kolmveerand uheksa\"",
+   "== 08:45.  Citation: Erelt, Mati (ed.) \"Estonian Language\", Estonian",
+   "Academy Publishers 2003, time-expression sec.; EKI \"Sonaveeb\" entry",
+   "\"kolmveerand\", clock sense."
+  ],
+  "daypart_afternoon_et": [
+   "Band boundaries: Unicode CLDR 47 Day Period Rules, locale et",
+   "(https://www.unicode.org/cldr/charts/47/supplemental/day_periods.html),",
+   "transcribed in chronologia/dayparts.py as the afternoon band.",
+   "Surface: adessive adverb 'in the afternoon' -- the deictic form these phrases use.",
+   "Source: Sõnaveeb (EKI), pärastlõuna — https://sonaveeb.ee/search/unif/dlall/dsall/pärastlõuna"
+  ],
+  "daypart_evening_et": [
+   "Band boundaries: Unicode CLDR 47 Day Period Rules, locale et",
+   "(https://www.unicode.org/cldr/charts/47/supplemental/day_periods.html),",
+   "transcribed in chronologia/dayparts.py as the evening band.",
+   "Surface: adessive adverb 'in the evening' -- the deictic form these phrases use.",
+   "Source: Wiktionary, õhtu — https://en.wiktionary.org/wiki/õhtu (adessive õhtul)"
+  ],
+  "daypart_morning_et": [
+   "Band boundaries: Unicode CLDR 47 Day Period Rules, locale et",
+   "(https://www.unicode.org/cldr/charts/47/supplemental/day_periods.html),",
+   "transcribed in chronologia/dayparts.py as the morning band.",
+   "Surface: adessive adverb 'in the morning' -- the deictic form these phrases use.",
+   "Source: Wiktionary, hommik — https://en.wiktionary.org/wiki/hommik (adessive hommikul)"
+  ],
+  "daypart_night_et": [
+   "Band boundaries: Unicode CLDR 47 Day Period Rules, locale et",
+   "(https://www.unicode.org/cldr/charts/47/supplemental/day_periods.html),",
+   "transcribed in chronologia/dayparts.py as the night band.",
+   "Surface: adessive adverb 'at night' -- the deictic form these phrases use.",
+   "Source: Wiktionary, öö — https://en.wiktionary.org/wiki/öö (adessive öösel)"
+  ],
+  "marker_clock_lead": [
+   "Words that open a clock time and belong to it. They fold only in front of",
+   "a number, a clock time, a clock fraction or a clock landmark.",
+   "Each word is shown opening a clock time on the page named in brackets,",
+   "saved under knowledge/wiki/audits/chronologia/parity-fixes/marker-strand/sources/ in the workspace.",
+   "kell: EKSS \"kell\" 4.: \"aeg, mida kell näitab ... Kella kuue ajal.\" [eki-kell.txt]"
+  ],
+  "month_1": [
+   "Unicode CLDR 47, locale et, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/et/ca-gregorian.json): months.format.wide,",
+   "months.stand-alone.wide.  Not covered by any of those charts, and so",
+   "unattested here: \"jaanuari\", \"jaanuaris\", \"jaanuaril\"."
+  ],
+  "month_10": [
+   "Unicode CLDR 47, locale et, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/et/ca-gregorian.json): months.format.wide,",
+   "months.stand-alone.wide.  Not covered by any of those charts, and so",
+   "unattested here: \"oktoobri\", \"oktoobris\", \"oktoobril\"."
+  ],
+  "month_11": [
+   "Unicode CLDR 47, locale et, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/et/ca-gregorian.json): months.format.wide,",
+   "months.stand-alone.wide.  Not covered by any of those charts, and so",
+   "unattested here: \"novembri\", \"novembris\", \"novembril\"."
+  ],
+  "month_12": [
+   "Unicode CLDR 47, locale et, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/et/ca-gregorian.json): months.format.wide,",
+   "months.stand-alone.wide.  Not covered by any of those charts, and so",
+   "unattested here: \"detsembri\", \"detsembris\", \"detsembril\"."
+  ],
+  "month_2": [
+   "Unicode CLDR 47, locale et, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/et/ca-gregorian.json): months.format.wide,",
+   "months.stand-alone.wide.  Not covered by any of those charts, and so",
+   "unattested here: \"veebruari\", \"veebruaris\", \"veebruaril\"."
+  ],
+  "month_3": [
+   "Unicode CLDR 47, locale et, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/et/ca-gregorian.json): months.format.wide,",
+   "months.stand-alone.wide, months.format.abbreviated,",
+   "months.stand-alone.abbreviated.  Not covered by any of those charts, and so",
+   "unattested here: \"märtsi\", \"märtsis\", \"märtsil\"."
+  ],
+  "month_4": [
+   "Unicode CLDR 47, locale et, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/et/ca-gregorian.json): months.format.wide,",
+   "months.stand-alone.wide.  Not covered by any of those charts, and so",
+   "unattested here: \"aprilli\", \"aprillis\", \"aprillil\"."
+  ],
+  "month_5": [
+   "Unicode CLDR 47, locale et, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/et/ca-gregorian.json): months.format.wide,",
+   "months.stand-alone.wide, months.format.abbreviated,",
+   "months.stand-alone.abbreviated.  Not covered by any of those charts, and so",
+   "unattested here: \"maikuu\", \"mais\", \"mail\"."
+  ],
+  "month_6": [
+   "Unicode CLDR 47, locale et, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/et/ca-gregorian.json): months.format.wide,",
+   "months.stand-alone.wide, months.format.abbreviated,",
+   "months.stand-alone.abbreviated.  Not covered by any of those charts, and so",
+   "unattested here: \"juunis\", \"juunil\"."
+  ],
+  "month_7": [
+   "Unicode CLDR 47, locale et, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/et/ca-gregorian.json): months.format.wide,",
+   "months.stand-alone.wide, months.format.abbreviated,",
+   "months.stand-alone.abbreviated.  Not covered by any of those charts, and so",
+   "unattested here: \"juulis\", \"juulil\"."
+  ],
+  "month_8": [
+   "Unicode CLDR 47, locale et, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/et/ca-gregorian.json): months.format.wide,",
+   "months.stand-alone.wide.  Not covered by any of those charts, and so",
+   "unattested here: \"augusti\", \"augustis\", \"augustil\"."
+  ],
+  "month_9": [
+   "Unicode CLDR 47, locale et, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/et/ca-gregorian.json): months.format.wide,",
+   "months.stand-alone.wide.  Not covered by any of those charts, and so",
+   "unattested here: \"septembri\", \"septembris\", \"septembril\"."
+  ],
+  "weekday_0": [
+   "Unicode CLDR 47, locale et, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/et/ca-gregorian.json): days.format.wide,",
+   "days.stand-alone.wide.  Not covered by any of those charts, and so",
+   "unattested here: \"esmaspäeval\"."
+  ],
+  "weekday_1": [
+   "Unicode CLDR 47, locale et, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/et/ca-gregorian.json): days.format.wide,",
+   "days.stand-alone.wide.  Not covered by any of those charts, and so",
+   "unattested here: \"teisipäeval\"."
+  ],
+  "weekday_2": [
+   "Unicode CLDR 47, locale et, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/et/ca-gregorian.json): days.format.wide,",
+   "days.stand-alone.wide.  Not covered by any of those charts, and so",
+   "unattested here: \"kolmapäeval\"."
+  ],
+  "weekday_3": [
+   "Unicode CLDR 47, locale et, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/et/ca-gregorian.json): days.format.wide,",
+   "days.stand-alone.wide.  Not covered by any of those charts, and so",
+   "unattested here: \"neljapäeval\"."
+  ],
+  "weekday_4": [
+   "Unicode CLDR 47, locale et, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/et/ca-gregorian.json): days.format.wide,",
+   "days.stand-alone.wide.  Not covered by any of those charts, and so",
+   "unattested here: \"reedel\"."
+  ],
+  "weekday_5": [
+   "Unicode CLDR 47, locale et, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/et/ca-gregorian.json): days.format.wide,",
+   "days.stand-alone.wide.  Not covered by any of those charts, and so",
+   "unattested here: \"laupäeval\"."
+  ],
+  "weekday_6": [
+   "Unicode CLDR 47, locale et, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/et/ca-gregorian.json): days.format.wide,",
+   "days.stand-alone.wide.  Not covered by any of those charts, and so",
+   "unattested here: \"pühapäeval\"."
+  ]
  }
 }

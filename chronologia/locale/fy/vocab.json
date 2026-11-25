@@ -517,5 +517,168 @@
   "weekday_abbr_6": [
    "sni"
   ]
+ },
+ "sources": {
+  "daypart_joun_fy": [
+   "Band boundaries: Netherlands day-period convention (Unicode CLDR nl); West",
+   "Frisian is co-official in Fryslan and shares it. CLDR ships no fy day-period",
+   "rules. Surfaces: Frysk Wurdboek (Fryske Akademy, gtb.ivdnt.org).",
+   "'juns' (jûns) = 's avonds / in the evening; 'jun' (jûn) = evening.",
+   "The evening band is [18:00, 24:00), running to midnight."
+  ],
+  "daypart_middeis_fy": [
+   "Band boundaries: Netherlands day-period convention (Unicode CLDR nl); West",
+   "Frisian is co-official in Fryslan and shares it. CLDR ships no fy day-period",
+   "rules. Surfaces: Frysk Wurdboek (Fryske Akademy, gtb.ivdnt.org).",
+   "'middeis' = 's middags / in the afternoon; the afternoon band is [12:00, 18:00).",
+   "NOTE: the bare noun 'middei' is NOT listed -- it is midday/noon (the 12:00",
+   "clock-landmark), a point, not the afternoon band."
+  ],
+  "daypart_moarns_fy": [
+   "Band boundaries: Netherlands day-period convention (Unicode CLDR nl); West",
+   "Frisian is co-official in Fryslan and shares it. CLDR ships no fy day-period",
+   "rules. Surfaces: Frysk Wurdboek (Fryske Akademy, gtb.ivdnt.org).",
+   "'moarns' = 's morgens / in the morning; the morning band is [06:00, 12:00).",
+   "NOTE: the bare noun 'moarn' is NOT listed -- it means \"tomorrow\" (named_day_1),",
+   "so only the adverbial 'moarns' names the daypart."
+  ],
+  "daypart_nacht_fy": [
+   "Band boundaries: Netherlands day-period convention (Unicode CLDR nl); West",
+   "Frisian is co-official in Fryslan and shares it. CLDR ships no fy day-period",
+   "rules. Surfaces: Frysk Wurdboek (Fryske Akademy, gtb.ivdnt.org).",
+   "'nachts' = 's nachts / at night; the night band is [00:00, 06:00)."
+  ],
+  "marker_during": [
+   "\"yn\" is the locative preposition used with months",
+   "(\"yn jannewaris\").",
+   "Source: en.wiktionary.org, entry \"yn\" (West Frisian), \"in\"."
+  ],
+  "marker_last": [
+   "The inflected attributive \"foarige\" is the ordinary form; the uninflected",
+   "\"foarich\" is what a neuter indefinite singular takes (\"foarich jier\").",
+   "\"foarich\": en.wiktionary.org, https://en.wiktionary.org/wiki/foarich (West Frisian",
+   "adjective, \"former, previous, past\").  \"foarich jier\": CLDR dateFields,",
+   "locale \"fy\", year relative-type--1."
+  ],
+  "marker_next": [
+   "The inflected attributive \"folgjende\" is the ordinary form; the",
+   "uninflected \"folgjend\" is what a neuter indefinite singular takes",
+   "(\"folgjend jier\").  Source for the uninflected surface: CLDR dateFields,",
+   "locale \"fy\", year relative-type-1."
+  ],
+  "month_1": [
+   "Unicode CLDR 47, locale fy, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/fy/ca-gregorian.json): months.format.wide,",
+   "months.stand-alone.wide, months.format.abbreviated,",
+   "months.stand-alone.abbreviated."
+  ],
+  "month_10": [
+   "Unicode CLDR 47, locale fy, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/fy/ca-gregorian.json): months.format.wide,",
+   "months.stand-alone.wide, months.format.abbreviated,",
+   "months.stand-alone.abbreviated."
+  ],
+  "month_11": [
+   "Unicode CLDR 47, locale fy, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/fy/ca-gregorian.json): months.format.wide,",
+   "months.stand-alone.wide, months.format.abbreviated,",
+   "months.stand-alone.abbreviated."
+  ],
+  "month_12": [
+   "Unicode CLDR 47, locale fy, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/fy/ca-gregorian.json): months.format.wide,",
+   "months.stand-alone.wide, months.format.abbreviated,",
+   "months.stand-alone.abbreviated."
+  ],
+  "month_2": [
+   "Unicode CLDR 47, locale fy, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/fy/ca-gregorian.json): months.format.wide,",
+   "months.stand-alone.wide, months.format.abbreviated,",
+   "months.stand-alone.abbreviated."
+  ],
+  "month_3": [
+   "Unicode CLDR 47, locale fy, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/fy/ca-gregorian.json): months.format.wide,",
+   "months.stand-alone.wide, months.format.abbreviated,",
+   "months.stand-alone.abbreviated."
+  ],
+  "month_4": [
+   "Unicode CLDR 47, locale fy, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/fy/ca-gregorian.json): months.format.wide,",
+   "months.stand-alone.wide, months.format.abbreviated,",
+   "months.stand-alone.abbreviated."
+  ],
+  "month_5": [
+   "Unicode CLDR 47, locale fy, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/fy/ca-gregorian.json): months.format.wide,",
+   "months.stand-alone.wide."
+  ],
+  "month_6": [
+   "Unicode CLDR 47, locale fy, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/fy/ca-gregorian.json): months.format.wide,",
+   "months.stand-alone.wide, months.format.abbreviated,",
+   "months.stand-alone.abbreviated."
+  ],
+  "month_7": [
+   "Unicode CLDR 47, locale fy, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/fy/ca-gregorian.json): months.format.wide,",
+   "months.stand-alone.wide, months.format.abbreviated,",
+   "months.stand-alone.abbreviated."
+  ],
+  "month_8": [
+   "Unicode CLDR 47, locale fy, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/fy/ca-gregorian.json): months.format.wide,",
+   "months.stand-alone.wide, months.format.abbreviated,",
+   "months.stand-alone.abbreviated."
+  ],
+  "month_9": [
+   "Unicode CLDR 47, locale fy, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/fy/ca-gregorian.json): months.format.wide,",
+   "months.stand-alone.wide, months.format.abbreviated,",
+   "months.stand-alone.abbreviated."
+  ],
+  "unit1_second": [
+   "Unicode CLDR 47, locale fy, cldr-units-full/main/fy/units.json,",
+   "duration-second, unitPattern-count-one \"sekonde\"."
+  ],
+  "unit_second": [
+   "Unicode CLDR 47, locale fy, cldr-units-full/main/fy/units.json,",
+   "duration-second: one \"sekonde\", other \"sekonden\"."
+  ],
+  "weekday_0": [
+   "Unicode CLDR 47, locale fy, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/fy/ca-gregorian.json): days.format.wide,",
+   "days.stand-alone.wide."
+  ],
+  "weekday_1": [
+   "Unicode CLDR 47, locale fy, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/fy/ca-gregorian.json): days.format.wide,",
+   "days.stand-alone.wide."
+  ],
+  "weekday_2": [
+   "Unicode CLDR 47, locale fy, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/fy/ca-gregorian.json): days.format.wide,",
+   "days.stand-alone.wide."
+  ],
+  "weekday_3": [
+   "Unicode CLDR 47, locale fy, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/fy/ca-gregorian.json): days.format.wide,",
+   "days.stand-alone.wide."
+  ],
+  "weekday_4": [
+   "Unicode CLDR 47, locale fy, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/fy/ca-gregorian.json): days.format.wide,",
+   "days.stand-alone.wide."
+  ],
+  "weekday_5": [
+   "Unicode CLDR 47, locale fy, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/fy/ca-gregorian.json): days.format.wide,",
+   "days.stand-alone.wide."
+  ],
+  "weekday_6": [
+   "Unicode CLDR 47, locale fy, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/fy/ca-gregorian.json): days.format.wide,",
+   "days.stand-alone.wide."
+  ]
  }
 }

@@ -661,5 +661,439 @@
    "воскресенье",
    "воскресенья"
   ]
+ },
+ "sources": {
+  "clock_dir_minute_10": [
+   "See clock_dir_minute_5.voc: \"без десяти девять\" == without ten == 08:50."
+  ],
+  "clock_dir_minute_15": [
+   "See clock_dir_minute_5.voc: \"без пятнадцати девять\" == without fifteen ==",
+   "08:45, numerically identical to \"без четверти девять\" (clock_fraction_15.voc)."
+  ],
+  "clock_dir_minute_20": [
+   "See clock_dir_minute_5.voc: \"без двадцати девять\" == without twenty == 08:40."
+  ],
+  "clock_dir_minute_5": [
+   "Russian genitive cardinal minute count in the subtractive \"без N <hour>\"",
+   "clock idiom -- generalises the fixed quarter idiom (\"без четверти девять\")",
+   "to any minute count: \"без пяти девять\" == without five == 08:55.  Bound",
+   "only after CLOCKDIR (\"без\"); it is not a toward-hour bare-fraction word",
+   "(unlike FRACTION's \"четверть\"/\"половина\", it names no bare \"N of the",
+   "hour\" idiom on its own -- \"пять девять\" alone is not Russian for a clock",
+   "time), so it lives in its own map rather than clock_fractions.",
+   "Citation: gramota.ru, telling the time."
+  ],
+  "clock_dir_to": [
+   "Russian subtractive clock: \"без четверти десять\" == without-a-quarter ten ==",
+   "09:45 -- \"без\" subtracts the fraction from the NAMED (reached) hour.",
+   "Citation: gramota.ru, telling the time."
+  ],
+  "clock_fraction_15": [
+   "Russian toward-hour clock: \"четверть десятого\" == a quarter OF the tenth ==",
+   "09:15 (bare_quarter_to).  The genitive \"четверти\" is the subtractive form,",
+   "\"без четверти десять\" == a quarter TO ten == 09:45 (CLOCKDIR \"без\").",
+   "Citation: gramota.ru, telling the time."
+  ],
+  "clock_fraction_30": [
+   "Russian toward-hour clock: the half NAMES the coming hour with a genitive",
+   "ordinal -- \"половина девятого\" (also contracted \"полдевятого\") == half OF",
+   "the ninth == 08:30.  Handled by the bare_half_to + toward_hour_12h",
+   "conventions.  Citation: gramota.ru (Russian State Language reference",
+   "service), telling the time -- \"половина <genitive ordinal>\" counts toward",
+   "the coming hour.  The locative \"половине\" is the same half after the clock",
+   "preposition \"в\": \"Приходите в половине двенадцатого\" (Pushkin, quoted in",
+   "В. И. Максимов, \"Половина первого, полпервого?\", 1973, p. 53)."
+  ],
+  "clock_meridiem_am_night": [
+   "\"ночи\" reads on the am half of the 12-hour clock (\"два часа ночи\" is 02:00).",
+   "Over an explicit 24-hour clock it keeps 18:00-23:59 as written (\"23:30",
+   "ночи\"). No dictionary entry found pins this either way: Wiktionary gives",
+   "ночь as \"часть суток между вечером и утром (примерно от полночи до 6",
+   "часов)\" (https://ru.wiktionary.org/wiki/ночь), which names no clock hour",
+   "with \"ночи\".",
+   "13:00-17:59 is the день (Unicode CLDR Day Period Rules, locale ru,",
+   "afternoon1 [12:00, 18:00)), so \"15:30 ночи\" names no time."
+  ],
+  "clock_meridiem_night": [
+   "The NIGHT daypart is a BAND that crosses midnight, not an AM marker: the",
+   "dictionary sense of \"ночь\" is \"Часть суток от захода до восхода солнца, от",
+   "вечера до утра\" (gramota.ru, metaslovar, s.v. ночь, sense 1), so \"11 часов",
+   "ночи\" is 23:00 and \"3 часа ночи\" is 03:00.  Small hours 1..5 stay AM,",
+   "evening hours 6..11 are PM, twelve is midnight (the band-split lives in the",
+   "resolver _clock_hms).  https://gramota.ru/poisk?query=ночь&mode=slovari"
+  ],
+  "daypart_den_ru": [
+   "Band boundaries: Unicode CLDR 47 Day Period Rules, locale ru",
+   "(https://www.unicode.org/cldr/charts/47/supplemental/day_periods.html),",
+   "transcribed in chronologia/dayparts.py as день [12:00, 18:00).",
+   "Surface: the instrumental adverb \"днём\"/\"днем\" (\"in the afternoon, by day\"),",
+   "the form these deictic phrases use (\"сегодня днём\", \"завтра днём\"). Both the",
+   "ё and its e-spelling are listed.",
+   "Source: Wiktionary, \"днём\" (adverb, instrumental of день)",
+   "https://ru.wiktionary.org/wiki/днём"
+  ],
+  "daypart_noch_ru": [
+   "Band boundaries: Unicode CLDR 47 Day Period Rules, locale ru",
+   "(https://www.unicode.org/cldr/charts/47/supplemental/day_periods.html),",
+   "transcribed in chronologia/dayparts.py as ночь [00:00, 04:00).",
+   "Surface: the instrumental adverb \"ночью\" (\"at night\"), the form these deictic",
+   "phrases use (\"сегодня ночью\", \"вчера ночью\").",
+   "Source: Wiktionary, \"ночью\" (adverb, instrumental of ночь)",
+   "https://ru.wiktionary.org/wiki/ночью"
+  ],
+  "daypart_utro_ru": [
+   "Band boundaries: Unicode CLDR 47 Day Period Rules, locale ru",
+   "(https://www.unicode.org/cldr/charts/47/supplemental/day_periods.html),",
+   "transcribed in chronologia/dayparts.py as утро [04:00, 12:00).",
+   "Surface: the instrumental adverb \"утром\" (\"in the morning\"), the form these",
+   "deictic phrases use (\"сегодня утром\", \"вчера утром\").",
+   "Source: Wiktionary, \"утром\" (adverb, instrumental of утро)",
+   "https://ru.wiktionary.org/wiki/утром",
+   "The phrase \"каждое утро\" (every morning) names the same band; a lone hour after it keeps its spoken reading."
+  ],
+  "daypart_vecher_ru": [
+   "Band boundaries: Unicode CLDR 47 Day Period Rules, locale ru",
+   "(https://www.unicode.org/cldr/charts/47/supplemental/day_periods.html),",
+   "transcribed in chronologia/dayparts.py as вечер [18:00, 24:00).",
+   "Surface: the instrumental adverb \"вечером\" (\"in the evening\"), the form these",
+   "deictic phrases use (\"сегодня вечером\", \"вчера вечером\").",
+   "Source: Wiktionary, \"вечером\" (adverb, instrumental of вечер)",
+   "https://ru.wiktionary.org/wiki/вечером"
+  ],
+  "marker_ad": [
+   "The secular \"нашей эры\" / \"н. э.\" and the religious \"по Р. Х.\" (по",
+   "Рождестве Христовом) both name the common era; Мильчин and Чельцова,",
+   "Справочник издателя и автора, §7.1.6 gives \"29 авг. 284 г. н. э.\" as the",
+   "model, and Викисловарь records \"по Р. Х.\" as its Christian equivalent",
+   "(https://ru.wiktionary.org/wiki/до_Р._Х.)."
+  ],
+  "marker_alarm_at": [
+   "The noun of a clock that sounds at a set time, and \"на\" after it: \"будильник",
+   "на семь\".  \"будильник [...] часы, подающие звуковой сигнал в заданное время\",",
+   "example \"Он ставит будильник мобильного телефона на 7:30\" (Wiktionary, s.v.",
+   "\"будильник\").  Alice voice commands give the same shape: \"Поставь будильник",
+   "на 8 утра по будням\", \"Переведи будильник на 10 утра\"",
+   "(https://alice.yandex.ru/support/ru/station/alarm)."
+  ],
+  "marker_bc": [
+   "Russian dates the pre-Christian past with the secular \"до нашей эры\",",
+   "abbreviated \"до н. э.\" with a space after each letter; that spaced form is",
+   "the norm set by Мильчин and Чельцова, Справочник издателя и автора, §7.1.6",
+   "(https://orfogrammka.ru/типографика/употребление_слов_до_н._э._или_н._э./).",
+   "The unspaced \"до н.э.\" is what people type in practice, so it is read too.",
+   "The religious counterpart \"до Р. Х.\" (до Рождества Христова) is equally",
+   "current and means the same span of years."
+  ],
+  "marker_day_label": [
+   "Day-of-month label noun: \"двадцатого числа\" names the twentieth day of the",
+   "month, the genitive of \"число\" in its calendar sense.  Bound only after a",
+   "spelled day ordinal (WORDORD), so \"три числа\" (\"three numbers\") stays a",
+   "count.  Source: Wiktionary, s.v. число, sense 3, \"день календарного",
+   "месяца\" (https://ru.wiktionary.org/wiki/число)."
+  ],
+  "marker_during": [
+   "Prepositional \"v\"/\"vo\" governing a month (\"v yanvare\").",
+   "Source: en.wiktionary.org, entry \"в\" (Russian), \"in\"."
+  ],
+  "marker_for_date": [
+   "\"на\" + accusative names the day a thing is meant for: \"на завтра\",",
+   "\"на пятницу\". Source: Ожегов, Толковый словарь, s.v. НА, II.1: \"(на) что.",
+   "употр. при обозначении срока, промежутка времени. ... План на год. ...",
+   "Положение на сегодняшний день.\"",
+   "\"на\" + prepositional names the span a thing happens in: \"на выходных\".",
+   "Source: ru.wiktionary.org, s.v. на, sense 2.4: \"(при указании промежутка",
+   "времени) [в]\" (Я зайду к тебе на следующей неделе)."
+  ],
+  "marker_hour_span": [
+   "Russian \"в N-ом часу\": the locative of \"час\" after an ordinal names the",
+   "N-th hour of the clock face, the span from N-1 o'clock to N o'clock.  \"в",
+   "восьмом часу\" is 7:00 to 8:00, the hour that \"в половине восьмого\" (7:30)",
+   "falls in.  The HOURSPAN order of clock_time reads it.",
+   "Sources: Ефремова, Современный толковый словарь, s.v. \"восьмой\", sense III,",
+   "\"Приближающийся к восьми (о единицах исчисления времени)\"",
+   "(https://gufo.me/dict/efremova/восьмой); ru.wiktionary s.v. \"шестой\",",
+   "\"шестой час — интервал времени между пятью и шестью часами дня или ночи\".",
+   "The digit form \"в 8-м часу\" reads as the spelled ordinal.  The inverted",
+   "order \"часу в восьмом\" (\"about the eighth hour\") reads as the same span:",
+   "ru.wiktionary s.v. \"час\", sense 1, \"Обещался зайти часу в двенадцатом.\"",
+   "(Гончаров, \"Обыкновенная история\").  The bare cardinal \"в 8 часу\" has no",
+   "source and stays unread.",
+   "Usage: Dostoevsky, \"Преступление и наказание\" I.5, \"— В седьмом часу,",
+   "завтра\"."
+  ],
+  "marker_last": [
+   "Russian \"last/previous\" determiner, the full adjectival paradigm.  The",
+   "temporal phrase almost never stands in the nominative: \"на прошлой неделе\"",
+   "takes the prepositional, \"в прошлом месяце\" and \"в прошлом году\" take the",
+   "prepositional masculine/neuter, and \"прошлым летом\" takes the instrumental.",
+   "Shipping only the nominative would leave the ordinary spoken register",
+   "unreadable, so the whole hard-stem adjective paradigm (Грамота.ру,",
+   "\"Склонение прилагательных\": твёрдая разновидность, тип \"новый\") is listed.",
+   "https://gramota.ru/biblioteka/spravochniki/pismovnik/kak-pravilno-upotreblyat-chislitelnye"
+  ],
+  "marker_minut": [
+   "Russian optional \"минут\" (genitive plural \"minutes\") that may follow the",
+   "minute count in the subtractive clock idiom: \"без пяти минут девять\" ==",
+   "\"без пяти девять\" == 08:55.  Citation: gramota.ru, telling the time."
+  ],
+  "marker_month_word": [
+   "The noun \"месяц\" in the genitive after a day: \"пятого числа прошлого",
+   "месяца\" names the fifth day of the previous month.  Bound only after",
+   "\"<ordinal> числа REL_MARKER\", where the marker names the month outright.",
+   "Source: Wiktionary, s.v. месяц, sense 1, \"период времени — двенадцатая",
+   "часть года\" (https://ru.wiktionary.org/wiki/месяц); declension class м 5a",
+   "in the same entry, genitive singular \"месяца\"."
+  ],
+  "marker_na": [
+   "The preposition the week phrases take: Russian frames a relative week with",
+   "\"на\" and the prepositional case, where the month and year take \"в\".",
+   "CLDR 47 gives \"на прошлой неделе\", \"на этой неделе\", \"на следующей неделе\"",
+   "for the ru week field (cldr-dates-full/main/ru/dateFields.json,",
+   "week relative-type--1/0/1)."
+  ],
+  "marker_next": [
+   "Russian \"next/following\" determiner, the full adjectival paradigm.  As with",
+   "\"прошлый\" the temporal phrase is normally oblique -- \"на следующей неделе\",",
+   "\"в следующем месяце\", \"в следующем году\" -- so the soft-stem paradigm",
+   "(Грамота.ру, \"Склонение прилагательных\": мягкая разновидность, тип \"синий\")",
+   "is listed in full rather than the citation form alone.",
+   "https://gramota.ru/biblioteka/spravochniki/pismovnik/kak-pravilno-upotreblyat-chislitelnye"
+  ],
+  "marker_ordlast": [
+   "Russian \"last\" ordinal determiner, the soft-stem adjective paradigm \"posledniy\".",
+   "\"posledniy ponedelnik maya\" = last Monday of May.  Gramota.ru, sklonenie."
+  ],
+  "marker_this": [
+   "Russian \"this\" demonstrative, the full pronominal paradigm.  \"на этой неделе\",",
+   "\"в этом месяце\" and \"в этом году\" are the ordinary ways to say it, and all",
+   "three are oblique, so the whole paradigm of \"этот\" (Грамота.ру, \"Склонение",
+   "местоимений\": указательные) is listed.",
+   "https://gramota.ru/biblioteka/spravochniki/pismovnik/kak-pravilno-upotreblyat-chislitelnye",
+   "The quarter is the one field CLDR frames with \"текущий\" (current) rather",
+   "than \"этот\": \"в текущем квартале\", short \"текущий кв.\"",
+   "(cldr-dates-full/main/ru/dateFields.json, quarter and quarter-short",
+   "relative-type-0).  Only those two attested forms ship."
+  ],
+  "marker_to": [
+   "\"по\" с винительным падежом -- предел интервала, названный день входит в него.",
+   "  Ожегов, Шведова, Толковый словарь русского языка, s.v. \"по\", II (с вин. п.),",
+   "  знач. 1: \"Вплоть до (какого-н. места или времени)\"; примеры \"Прочитать с",
+   "  первой по десятую главу\", \"Отпуск по воскресенье\" -- десятая глава прочитана,",
+   "  воскресенье в отпуске.",
+   "  Большой толковый словарь русского языка (С. А. Кузнецов, ред.), s.v. \"по\",",
+   "  II.2: \"при указании временного предела действия, состояния\"; \"Проездной",
+   "  действителен по март месяц\", \"Оплата с января по апрель\".",
+   "  Отсюда \"с 5 по 12 июня\" -- по 12 июня включительно, то есть конец интервала",
+   "  приходится на конец 12 июня."
+  ],
+  "marker_year_count_few": [
+   "The form of \"год\" that a count of years ending in two, three or four takes:",
+   "\"102 года назад\" is 102 years ago.",
+   "Source: en.wiktionary.org, \"два\", Russian usage notes: два and две, \"when",
+   "in the nominative case or accusative case\", \"even in compounds (22, 32,",
+   "42, 102, etc.)\", \"govern the genitive of the noun\"; \"Три (Tri) and четы́ре",
+   "(četýre) obey the same rules.\"  Example under \"год\": \"Ему́ два́дцать три",
+   "го́да.\""
+  ],
+  "marker_year_count_one": [
+   "The form of \"год\" that a count of years ending in one takes: \"101 год",
+   "назад\" is 101 years ago, where the year 988 is \"988 год\".",
+   "Source: en.wiktionary.org, \"один\", Russian usage notes: \"оди́н (odín),",
+   "одна́ (odná) and одно́ (odnó), whether alone or in compounds (21, 31, 41,",
+   "101, etc.), govern the singular.\"  Example under \"год\": \"Ему́ два́дцать",
+   "оди́н год.\""
+  ],
+  "month_1": [
+   "Unicode CLDR 47, locale ru, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/ru/ca-gregorian.json): months.format.wide,",
+   "months.stand-alone.wide.  Not covered by any of those charts, and so",
+   "unattested here: \"январём\", \"январе\"."
+  ],
+  "month_10": [
+   "Unicode CLDR 47, locale ru, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/ru/ca-gregorian.json): months.format.wide,",
+   "months.stand-alone.wide.  Not covered by any of those charts, and so",
+   "unattested here: \"октябрём\", \"октябре\"."
+  ],
+  "month_11": [
+   "Unicode CLDR 47, locale ru, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/ru/ca-gregorian.json): months.format.wide,",
+   "months.stand-alone.wide.  Not covered by any of those charts, and so",
+   "unattested here: \"ноябрём\", \"ноябре\"."
+  ],
+  "month_12": [
+   "Unicode CLDR 47, locale ru, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/ru/ca-gregorian.json): months.format.wide,",
+   "months.stand-alone.wide.  Not covered by any of those charts, and so",
+   "unattested here: \"декабрём\", \"декабре\"."
+  ],
+  "month_2": [
+   "Unicode CLDR 47, locale ru, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/ru/ca-gregorian.json): months.format.wide,",
+   "months.stand-alone.wide.  Not covered by any of those charts, and so",
+   "unattested here: \"февралём\", \"феврале\"."
+  ],
+  "month_3": [
+   "Unicode CLDR 47, locale ru, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/ru/ca-gregorian.json): months.format.wide,",
+   "months.stand-alone.wide, months.stand-alone.abbreviated.  Not covered by any",
+   "of those charts, and so unattested here: \"мартом\", \"марте\"."
+  ],
+  "month_4": [
+   "Unicode CLDR 47, locale ru, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/ru/ca-gregorian.json): months.format.wide,",
+   "months.stand-alone.wide.  Not covered by any of those charts, and so",
+   "unattested here: \"апрелем\", \"апреле\"."
+  ],
+  "month_5": [
+   "Unicode CLDR 47, locale ru, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/ru/ca-gregorian.json): months.format.wide,",
+   "months.stand-alone.wide, months.format.abbreviated,",
+   "months.stand-alone.abbreviated.  Not covered by any of those charts, and so",
+   "unattested here: \"маем\", \"мае\"."
+  ],
+  "month_6": [
+   "Unicode CLDR 47, locale ru, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/ru/ca-gregorian.json): months.format.wide,",
+   "months.stand-alone.wide, months.stand-alone.abbreviated.  Not covered by any",
+   "of those charts, and so unattested here: \"июнем\", \"июне\"."
+  ],
+  "month_7": [
+   "Unicode CLDR 47, locale ru, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/ru/ca-gregorian.json): months.format.wide,",
+   "months.stand-alone.wide, months.stand-alone.abbreviated.  Not covered by any",
+   "of those charts, and so unattested here: \"июлем\", \"июле\"."
+  ],
+  "month_8": [
+   "Unicode CLDR 47, locale ru, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/ru/ca-gregorian.json): months.format.wide,",
+   "months.stand-alone.wide.  Not covered by any of those charts, and so",
+   "unattested here: \"августом\", \"августе\"."
+  ],
+  "month_9": [
+   "Unicode CLDR 47, locale ru, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/ru/ca-gregorian.json): months.format.wide,",
+   "months.stand-alone.wide.  Not covered by any of those charts, and so",
+   "unattested here: \"сентябрём\", \"сентябре\"."
+  ],
+  "scope_unit_century": [
+   "The prepositional (locative) singular \"в\"/\"во\" takes -- \"в 20 веке\", \"в 20",
+   "столетии\" (\"in the 20th century\").  Distinct from the genitive plural",
+   "\"веков\"/\"столетий\" a bare count uses (\"пять веков\")."
+  ],
+  "unit1_century": [
+   "Russian \"century\", nominative singular (native + calque).",
+   "Грамота.ру.",
+   "The prepositional (locative) singular -- singular forms, so they are not",
+   "read as the genitive plural a count takes."
+  ],
+  "unit1_decade": [
+   "Russian \"decade\", nominative singular.",
+   "Грамота.ру."
+  ],
+  "unit1_minute": [
+   "Russian \"minute\" singular surfaces: nominative (ordinal readings) and",
+   "accusative (relative-offset \"через минуту\")."
+  ],
+  "unit1_second": [
+   "Russian \"second\" singular surfaces: nominative (ordinal readings) and",
+   "accusative (relative-offset \"через секунду\")."
+  ],
+  "unit1_week": [
+   "Russian \"week\" singular surfaces: nominative (ordinal readings) and",
+   "accusative (relative-offset \"через неделю\")."
+  ],
+  "unit_century": [
+   "Russian \"century\".  Both the native \"век\" and the calque \"столетие\" are used;",
+   "\"в прошлом веке\" is the locative, which the nominative-plus-genitive listing",
+   "did not cover.  Грамота.ру, \"Склонение существительных\"."
+  ],
+  "unit_day": [
+   "Russian \"day\", full paradigm.  \"днём\" is also spelled \"днем\" wherever ё is",
+   "not typed, which is the majority of running text, so both surfaces are listed.",
+   "Грамота.ру, \"Склонение существительных\": тип \"день\"."
+  ],
+  "unit_decade": [
+   "Russian \"decade\", full neuter -ие paradigm.",
+   "Грамота.ру, \"Склонение существительных\": тип \"десятилетие\"."
+  ],
+  "unit_hour": [
+   "Russian \"час\", full paradigm including the locative \"в первом часу\", which is",
+   "distinct from the prepositional \"о часе\".  The nominative plural \"часы\" is",
+   "withheld: it is the ordinary word for a clock or a wristwatch, and folding it",
+   "into the duration unit would read a mention of the object as a span of time.",
+   "Грамота.ру, \"Склонение существительных\": тип \"час\"."
+  ],
+  "unit_minute": [
+   "Russian \"минута\", full first-declension paradigm.",
+   "Грамота.ру, \"Склонение существительных\": 1-е склонение."
+  ],
+  "unit_month": [
+   "Russian \"month\", full second-declension paradigm; \"в этом месяце\" is the",
+   "prepositional, which the nominative-plus-genitive listing did not cover.",
+   "Грамота.ру, \"Склонение существительных\": 2-е склонение, тип \"месяц\"."
+  ],
+  "unit_second": [
+   "Russian \"секунда\", full first-declension paradigm, matching the depth of",
+   "unit_minute.voc.",
+   "Unicode CLDR 47, locale ru, cldr-units-full/main/ru/units.json,",
+   "duration-second: one \"секунда\", few \"секунды\", many \"секунд\".",
+   "Грамота.ру, \"Склонение существительных\": 1-е склонение."
+  ],
+  "unit_week": [
+   "Russian \"week\".  The prepositional \"неделе\" carries the single most common",
+   "temporal phrase in the language (\"на этой/прошлой/следующей неделе\"), so the",
+   "full first-declension paradigm is listed, not the nominative and genitive",
+   "alone.  Грамота.ру, \"Склонение существительных\": 1-е склонение, тип \"неделя\"."
+  ],
+  "unit_year": [
+   "Russian \"year\".  The noun is suppletive: the plural is built on the stem",
+   "лет-/год-, and the locative \"в году\" differs from the plain prepositional",
+   "\"о годе\".  \"лето\" (summer) is deliberately absent even though \"лет\" belongs",
+   "here -- the instrumental \"летом\" is the season, not the year, and lives in",
+   "season_summer.  Грамота.ру, \"Склонение существительных\": тип \"год\"."
+  ],
+  "weekday_0": [
+   "Unicode CLDR 47, locale ru, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/ru/ca-gregorian.json): days.format.wide,",
+   "days.stand-alone.wide.  Not covered by any of those charts, and so",
+   "unattested here: \"понедельника\"."
+  ],
+  "weekday_1": [
+   "Unicode CLDR 47, locale ru, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/ru/ca-gregorian.json): days.format.wide,",
+   "days.stand-alone.wide.  Not covered by any of those charts, and so",
+   "unattested here: \"вторника\"."
+  ],
+  "weekday_2": [
+   "Unicode CLDR 47, locale ru, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/ru/ca-gregorian.json): days.format.wide,",
+   "days.stand-alone.wide.  Not covered by any of those charts, and so",
+   "unattested here: \"среду\", \"среды\"."
+  ],
+  "weekday_3": [
+   "Unicode CLDR 47, locale ru, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/ru/ca-gregorian.json): days.format.wide,",
+   "days.stand-alone.wide.  Not covered by any of those charts, and so",
+   "unattested here: \"четверга\"."
+  ],
+  "weekday_4": [
+   "Unicode CLDR 47, locale ru, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/ru/ca-gregorian.json): days.format.wide,",
+   "days.stand-alone.wide.  Not covered by any of those charts, and so",
+   "unattested here: \"пятницу\", \"пятницы\"."
+  ],
+  "weekday_5": [
+   "Unicode CLDR 47, locale ru, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/ru/ca-gregorian.json): days.format.wide,",
+   "days.stand-alone.wide.  Not covered by any of those charts, and so",
+   "unattested here: \"субботу\", \"субботы\"."
+  ],
+  "weekday_6": [
+   "Unicode CLDR 47, locale ru, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/ru/ca-gregorian.json): days.format.wide,",
+   "days.stand-alone.wide.  Not covered by any of those charts, and so",
+   "unattested here: \"воскресенья\"."
+  ]
  }
 }

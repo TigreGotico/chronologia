@@ -273,5 +273,389 @@
   "weekday_abbr_6": [
    "Domh"
   ]
+ },
+ "sources": {
+  "clock_dir_past": [
+   "\"tar éis\" (after, past) counts UP from the named hour: \"leathuair tar éis",
+   "a trí\" is 03:30 and \"ceathrú tar éis a trí\" is 03:15.  Ulster substitutes",
+   "\"i ndiaidh\".  Sources: en.wiktionary.org, https://en.wiktionary.org/wiki/tar_éis and",
+   "https://en.wiktionary.org/wiki/i_ndiaidh; omniglot.com \"Time in Irish\";",
+   "bitesize.irish \"How To Say What Time It Is in Irish\"."
+  ],
+  "clock_dir_to": [
+   "\"chun\" (to) counts DOWN to the named hour: \"ceathrú chun a dó\" is 01:45.",
+   "Ulster substitutes \"go dtí\".  Sources: en.wiktionary.org,",
+   "https://en.wiktionary.org/wiki/chun; omniglot.com \"Time in Irish\"."
+  ],
+  "clock_fraction_15": [
+   "\"ceathrú\" (a quarter, of an hour), which likewise takes its direction from",
+   "\"tar éis\"/\"chun\".  Source: en.wiktionary.org, https://en.wiktionary.org/wiki/ceathrú."
+  ],
+  "clock_fraction_30": [
+   "\"leathuair\" (half-hour), which takes its direction from \"tar éis\"/\"chun\"",
+   "and never stands bare: \"leathuair tar éis a trí\" is 03:30, an hour LATER",
+   "than the toward-the-coming-hour reading some of Irish's neighbours use.",
+   "Source: en.wiktionary.org, https://en.wiktionary.org/wiki/leathuair."
+  ],
+  "clock_landmark_0": [
+   "\"meán oíche\" (midnight).  Source: en.wiktionary.org,",
+   "https://en.wiktionary.org/wiki/meán_oíche"
+  ],
+  "clock_landmark_720": [
+   "\"meán lae\" (midday, noon).  Source: en.wiktionary.org,",
+   "https://en.wiktionary.org/wiki/meán_lae"
+  ],
+  "clock_meridiem_am": [
+   "Unicode CLDR 47, locale ga, gregorian calendar: the am marker."
+  ],
+  "clock_meridiem_pm": [
+   "Unicode CLDR 47, locale ga, gregorian calendar: the pm marker."
+  ],
+  "marker_and": [
+   "\"agus\" (and), with its clitic form \"is\"."
+  ],
+  "marker_article": [
+   "The definite article, singular \"an\" and plural \"na\"."
+  ],
+  "marker_at": [
+   "The particle \"a\" that introduces a clock hour: \"a trí a chlog\" (three",
+   "o'clock), \"a haon a chlog\" (one o'clock).  The hour after it is the",
+   "DISJUNCTIVE cardinal, never the counting form.  Source: omniglot.com",
+   "\"Time in Irish\"; bitesize.irish \"How To Say What Time It Is in Irish\".",
+   "",
+   "The same particle enumerates: \"uimhir a 3\" is number 3 and \"seomra a 5\" is",
+   "room 5, neither of them a time.  Nothing in the surface tells the two uses",
+   "apart, so the clock orders that read this particle all require corroborating",
+   "clock context -- \"a chlog\", a meridiem, or a fraction and its direction."
+  ],
+  "marker_between": [
+   "\"idir\" (between), paired with \"agus\".  In its plain spatial and temporal",
+   "sense it leaves both bounds unmutated (\"idir Corcaigh agus Gaillimh\"); the",
+   "separate \"both ... and ...\" sense that lenites them is not a date range and",
+   "is not read here.  Source: en.wiktionary.org, https://en.wiktionary.org/wiki/idir"
+  ],
+  "marker_every": [
+   "\"gach\" (each, every).  Source: en.wiktionary.org,",
+   "https://en.wiktionary.org/wiki/gach.  Only the unmarked collocation is read:",
+   "\"gach\" imposes h-prothesis on some following nouns and lenition on others",
+   "with no rule any source states, so no mutated surface is listed for it."
+  ],
+  "marker_for": [
+   "\"ar feadh\" (for, over a period of time): \"ar feadh trí lá\" (for three",
+   "days).  It governs the genitive and mutates nothing itself.  Source:",
+   "en.wiktionary.org, https://en.wiktionary.org/wiki/ar_feadh"
+  ],
+  "marker_from": [
+   "\"ó\" (from, since): \"ó Luan seo chugainn\" (from next Monday).  Source:",
+   "teanglann.ie, \"ó\"."
+  ],
+  "marker_in": [
+   "The locative preposition \"i\" (in), which eclipses the month name that",
+   "follows it (\"i mBealtaine\"); \"in\" is its form before a vowel."
+  ],
+  "marker_last": [
+   "\"seo caite\" (last), glossed for nouns denoting a period of time and",
+   "TRAILING the noun.  Source: en.wiktionary.org,",
+   "https://en.wiktionary.org/wiki/seo_caite"
+  ],
+  "marker_minute_word": [
+   "The minute noun spoken between a count and a clock direction: \"deich",
+   "nóiméad tar éis a hocht\" (ten past eight)."
+  ],
+  "marker_next": [
+   "\"seo chugainn\" (next), glossed for nouns denoting a period of time and",
+   "TRAILING the noun: \"an Luan seo chugainn\" (next Monday).  Source:",
+   "en.wiktionary.org, https://en.wiktionary.org/wiki/seo_chugainn"
+  ],
+  "marker_oclock": [
+   "\"a chlog\" (o'clock).  Source: en.wiktionary.org,",
+   "https://en.wiktionary.org/wiki/a_chlog"
+  ],
+  "marker_past": [
+   "\"ó shin\" (ago), an adverb that TRAILS the quantity it counts back:",
+   "\"cúig lá ó shin\" (five days ago).  Source: en.wiktionary.org,",
+   "https://en.wiktionary.org/wiki/ó_shin"
+  ],
+  "marker_this": [
+   "\"seo\" (this), the demonstrative the two period markers above are built on."
+  ],
+  "marker_to": [
+   "\"go dtí\" closes a range as well as an open bound."
+  ],
+  "marker_until": [
+   "\"go dtí\" (until, up to): \"tá sé dúnta go dtí an Luan\" (it is closed until",
+   "Monday).  Source: en.wiktionary.org, https://en.wiktionary.org/wiki/go_dtí"
+  ],
+  "month_1": [
+   "Unicode CLDR 47, locale ga, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/ga/ca-gregorian.json).",
+   "The month name stands bare, follows the noun \"mí\" in the",
+   "genitive (\"mí Aibreáin\"), or follows the bare preposition \"i\"",
+   "eclipsed (\"i mBealtaine\").  Declension: en.wiktionary.org, the",
+   "headword's own table; eclipsis: its own mutation table."
+  ],
+  "month_10": [
+   "Unicode CLDR 47, locale ga, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/ga/ca-gregorian.json).",
+   "The month name stands bare, follows the noun \"mí\" in the",
+   "genitive (\"mí Aibreáin\"), or follows the bare preposition \"i\"",
+   "eclipsed (\"i mBealtaine\").  Declension: en.wiktionary.org, the",
+   "headword's own table; eclipsis: its own mutation table."
+  ],
+  "month_11": [
+   "Unicode CLDR 47, locale ga, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/ga/ca-gregorian.json).",
+   "The month name stands bare, follows the noun \"mí\" in the",
+   "genitive (\"mí Aibreáin\"), or follows the bare preposition \"i\"",
+   "eclipsed (\"i mBealtaine\").  Declension: en.wiktionary.org, the",
+   "headword's own table; eclipsis: its own mutation table."
+  ],
+  "month_12": [
+   "Unicode CLDR 47, locale ga, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/ga/ca-gregorian.json).",
+   "The month name stands bare, follows the noun \"mí\" in the",
+   "genitive (\"mí Aibreáin\"), or follows the bare preposition \"i\"",
+   "eclipsed (\"i mBealtaine\").  Declension: en.wiktionary.org, the",
+   "headword's own table; eclipsis: its own mutation table."
+  ],
+  "month_2": [
+   "Unicode CLDR 47, locale ga, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/ga/ca-gregorian.json).",
+   "The month name stands bare, follows the noun \"mí\" in the",
+   "genitive (\"mí Aibreáin\"), or follows the bare preposition \"i\"",
+   "eclipsed (\"i mBealtaine\").  Declension: en.wiktionary.org, the",
+   "headword's own table; eclipsis: its own mutation table."
+  ],
+  "month_3": [
+   "Unicode CLDR 47, locale ga, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/ga/ca-gregorian.json).",
+   "The month name stands bare, follows the noun \"mí\" in the",
+   "genitive (\"mí Aibreáin\"), or follows the bare preposition \"i\"",
+   "eclipsed (\"i mBealtaine\").  Declension: en.wiktionary.org, the",
+   "headword's own table; eclipsis: its own mutation table."
+  ],
+  "month_4": [
+   "Unicode CLDR 47, locale ga, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/ga/ca-gregorian.json).",
+   "The month name stands bare, follows the noun \"mí\" in the",
+   "genitive (\"mí Aibreáin\"), or follows the bare preposition \"i\"",
+   "eclipsed (\"i mBealtaine\").  Declension: en.wiktionary.org, the",
+   "headword's own table; eclipsis: its own mutation table."
+  ],
+  "month_5": [
+   "Unicode CLDR 47, locale ga, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/ga/ca-gregorian.json).",
+   "The month name stands bare, follows the noun \"mí\" in the",
+   "genitive (\"mí Aibreáin\"), or follows the bare preposition \"i\"",
+   "eclipsed (\"i mBealtaine\").  Declension: en.wiktionary.org, the",
+   "headword's own table; eclipsis: its own mutation table."
+  ],
+  "month_6": [
+   "Unicode CLDR 47, locale ga, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/ga/ca-gregorian.json).",
+   "The month name stands bare, follows the noun \"mí\" in the",
+   "genitive (\"mí Aibreáin\"), or follows the bare preposition \"i\"",
+   "eclipsed (\"i mBealtaine\").  Declension: en.wiktionary.org, the",
+   "headword's own table; eclipsis: its own mutation table."
+  ],
+  "month_7": [
+   "Unicode CLDR 47, locale ga, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/ga/ca-gregorian.json).",
+   "The month name stands bare, follows the noun \"mí\" in the",
+   "genitive (\"mí Aibreáin\"), or follows the bare preposition \"i\"",
+   "eclipsed (\"i mBealtaine\").  Declension: en.wiktionary.org, the",
+   "headword's own table; eclipsis: its own mutation table."
+  ],
+  "month_8": [
+   "Unicode CLDR 47, locale ga, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/ga/ca-gregorian.json).",
+   "The month name stands bare, follows the noun \"mí\" in the",
+   "genitive (\"mí Aibreáin\"), or follows the bare preposition \"i\"",
+   "eclipsed (\"i mBealtaine\").  Declension: en.wiktionary.org, the",
+   "headword's own table; eclipsis: its own mutation table."
+  ],
+  "month_9": [
+   "Unicode CLDR 47, locale ga, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/ga/ca-gregorian.json).",
+   "The month name stands bare, follows the noun \"mí\" in the",
+   "genitive (\"mí Aibreáin\"), or follows the bare preposition \"i\"",
+   "eclipsed (\"i mBealtaine\").  Declension: en.wiktionary.org, the",
+   "headword's own table; eclipsis: its own mutation table."
+  ],
+  "named_day_-1": [
+   "Adverb \"yesterday\".  Source: en.wiktionary.org, https://en.wiktionary.org/wiki/inné"
+  ],
+  "named_day_-2": [
+   "Adverb \"day before yesterday\".  Source: en.wiktionary.org,",
+   "https://en.wiktionary.org/wiki/arú_inné"
+  ],
+  "named_day_0": [
+   "Adverb \"today\".  Source: en.wiktionary.org, https://en.wiktionary.org/wiki/inniu"
+  ],
+  "named_day_1": [
+   "Adverb \"tomorrow\".  Source: en.wiktionary.org, https://en.wiktionary.org/wiki/amárach"
+  ],
+  "named_day_2": [
+   "Adverb \"day after tomorrow\".  Source: en.wiktionary.org,",
+   "https://en.wiktionary.org/wiki/arú_amárach (with the Cois Fharraige and",
+   "Ulster spelling \"arú amáireach\" listed there as an alternative form)."
+  ],
+  "special_weekend": [
+   "\"deireadh seachtaine\" (weekend).  Source: en.wiktionary.org,",
+   "https://en.wiktionary.org/wiki/deireadh_seachtaine"
+  ],
+  "unit1_day": [
+   "Declension: en.wiktionary.org, https://en.wiktionary.org/wiki/lá."
+  ],
+  "unit1_hour": [
+   "Declension: en.wiktionary.org, https://en.wiktionary.org/wiki/uair."
+  ],
+  "unit1_minute": [
+   "Declension: en.wiktionary.org, https://en.wiktionary.org/wiki/nóiméad."
+  ],
+  "unit1_month": [
+   "Declension: en.wiktionary.org, https://en.wiktionary.org/wiki/mí."
+  ],
+  "unit1_second": [
+   "Declension: en.wiktionary.org, https://en.wiktionary.org/wiki/soicind.",
+   "Singular only: the form a count of one, spoken or unspoken, takes."
+  ],
+  "unit1_week": [
+   "Declension: en.wiktionary.org, https://en.wiktionary.org/wiki/seachtain."
+  ],
+  "unit1_year": [
+   "Declension: en.wiktionary.org, https://en.wiktionary.org/wiki/bliain.",
+   "The lenited \"bhliain\" is the singular the numeral two imposes."
+  ],
+  "unit_day": [
+   "Declension: en.wiktionary.org, https://en.wiktionary.org/wiki/lá",
+   "(irregular m.: genitive \"lae\", plural \"laethanta\").",
+   "\"lá\" begins with a consonant the modern standard spells no lenition on, so",
+   "the counted phrase shows the radical throughout: \"ar feadh trí lá\" (for",
+   "three days) is the attested worked example on en.wiktionary.org \"ar feadh\"."
+  ],
+  "unit_hour": [
+   "Declension: en.wiktionary.org, https://en.wiktionary.org/wiki/uair",
+   "(f., 2nd declension: genitive \"uaire\", plural \"uaireanta\").",
+   "The counted plural is the irregular \"uaire\", which the same entry's usage",
+   "note gives with its mutations spelled out -- h-prothesis after three to",
+   "six (\"trí huaire\", \"cúig huaire\") and eclipsis after seven to ten",
+   "(\"seacht n-uaire\").  Both mutated surfaces are listed, so a counted phrase",
+   "matches whichever the numeral before it imposes."
+  ],
+  "unit_minute": [
+   "Declension: en.wiktionary.org, https://en.wiktionary.org/wiki/nóiméad",
+   "(m., 1st declension: genitive singular and nominative plural \"nóiméid\").",
+   "No counted form after a numeral is attested for this noun."
+  ],
+  "unit_month": [
+   "Declension: en.wiktionary.org, https://en.wiktionary.org/wiki/mí",
+   "(irregular f.: genitive \"míosa\", plural \"míonna\").",
+   "The lenited \"mhí\" is the form of the same entry's mutation table, and the",
+   "one the attested \"ar feadh trí mhí\" (for three months) shows."
+  ],
+  "unit_second": [
+   "Declension: en.wiktionary.org, https://en.wiktionary.org/wiki/soicind",
+   "(m., 4th declension: genitive singular unchanged, plural \"soicindí\").",
+   "No counted form after a numeral is attested for this noun, so none is",
+   "listed and a mutated surface for it is not read."
+  ],
+  "unit_week": [
+   "Declension: en.wiktionary.org, https://en.wiktionary.org/wiki/seachtain",
+   "(f., 2nd declension: genitive \"seachtaine\", plural \"seachtainí\").",
+   "No counted form after a numeral is attested for this noun."
+  ],
+  "unit_year": [
+   "Declension: en.wiktionary.org, https://en.wiktionary.org/wiki/bliain",
+   "(f., 3rd declension: genitive \"bliana\", plural \"blianta\").",
+   "The counted plural is the irregular \"bliana\", which the same entry's usage",
+   "note gives with its mutations spelled out -- \"trí bliana\" (three years)",
+   "bare after three to six, \"seacht mbliana\" (seven years) eclipsed after",
+   "seven to ten -- while the lenited \"bhliain\" of the entry's mutation table",
+   "is the form the numeral two imposes (\"dhá bhliain\").  Every one of those",
+   "surfaces is listed, so a counted phrase matches whichever mutation the",
+   "numeral before it imposes."
+  ],
+  "weekday_0": [
+   "Unicode CLDR 47, locale ga, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/ga/ca-gregorian.json).",
+   "The CLDR citation form is already the adverbial \"Dé\" + day",
+   "compound (\"on <day>\"); the bare radical noun is the form a",
+   "modified reference uses (\"an Luan seo chugainn\").  Both are",
+   "listed.  Radical and genitive: en.wiktionary.org, the day's own",
+   "headword entry."
+  ],
+  "weekday_1": [
+   "Unicode CLDR 47, locale ga, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/ga/ca-gregorian.json).",
+   "The CLDR citation form is already the adverbial \"Dé\" + day",
+   "compound (\"on <day>\"); the bare radical noun is the form a",
+   "modified reference uses (\"an Luan seo chugainn\").  Both are",
+   "listed.  Radical and genitive: en.wiktionary.org, the day's own",
+   "headword entry."
+  ],
+  "weekday_2": [
+   "Unicode CLDR 47, locale ga, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/ga/ca-gregorian.json).",
+   "The CLDR citation form is already the adverbial \"Dé\" + day",
+   "compound (\"on <day>\"); the bare radical noun is the form a",
+   "modified reference uses (\"an Luan seo chugainn\").  Both are",
+   "listed.  Radical and genitive: en.wiktionary.org, the day's own",
+   "headword entry."
+  ],
+  "weekday_3": [
+   "Unicode CLDR 47, locale ga, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/ga/ca-gregorian.json).",
+   "The CLDR citation form is already the adverbial \"Dé\" + day",
+   "compound (\"on <day>\"); the bare radical noun is the form a",
+   "modified reference uses (\"an Luan seo chugainn\").  Both are",
+   "listed.  Radical and genitive: en.wiktionary.org, the day's own",
+   "headword entry."
+  ],
+  "weekday_4": [
+   "Unicode CLDR 47, locale ga, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/ga/ca-gregorian.json).",
+   "The CLDR citation form is already the adverbial \"Dé\" + day",
+   "compound (\"on <day>\"); the bare radical noun is the form a",
+   "modified reference uses (\"an Luan seo chugainn\").  Both are",
+   "listed.  Radical and genitive: en.wiktionary.org, the day's own",
+   "headword entry."
+  ],
+  "weekday_5": [
+   "Unicode CLDR 47, locale ga, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/ga/ca-gregorian.json).",
+   "The CLDR citation form is already the adverbial \"Dé\" + day",
+   "compound (\"on <day>\"); the bare radical noun is the form a",
+   "modified reference uses (\"an Luan seo chugainn\").  Both are",
+   "listed.  Radical and genitive: en.wiktionary.org, the day's own",
+   "headword entry."
+  ],
+  "weekday_6": [
+   "Unicode CLDR 47, locale ga, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/ga/ca-gregorian.json).",
+   "The CLDR citation form is already the adverbial \"Dé\" + day",
+   "compound (\"on <day>\"); the bare radical noun is the form a",
+   "modified reference uses (\"an Luan seo chugainn\").  Both are",
+   "listed.  Radical and genitive: en.wiktionary.org, the day's own",
+   "headword entry."
+  ],
+  "weekday_abbr_3": [
+   "Unicode CLDR 47, locale ga, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/ga/ca-gregorian.json).",
+   "The calendar's short form.  \"Céad\" (Wednesday) is deliberately",
+   "absent: it is spelled exactly like the numeral \"céad\" (hundred)."
+  ],
+  "weekday_abbr_5": [
+   "Unicode CLDR 47, locale ga, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/ga/ca-gregorian.json).",
+   "The calendar's short form.  \"Céad\" (Wednesday) is deliberately",
+   "absent: it is spelled exactly like the numeral \"céad\" (hundred)."
+  ],
+  "weekday_abbr_6": [
+   "Unicode CLDR 47, locale ga, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/ga/ca-gregorian.json).",
+   "The calendar's short form.  \"Céad\" (Wednesday) is deliberately",
+   "absent: it is spelled exactly like the numeral \"céad\" (hundred)."
+  ]
  }
 }

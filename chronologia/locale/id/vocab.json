@@ -294,5 +294,215 @@
    "hari ahad",
    "hari minggu"
   ]
+ },
+ "sources": {
+  "clock_fraction_30": [
+   "Indonesian toward-the-hour half: \"setengah <H>\" == the half *before* hour H,",
+   "i.e. (H-1):30 -- \"setengah tiga\" / \"pukul setengah tiga\" == 02:30 (half toward",
+   "three), NOT 03:30. This is the German-style toward-hour reading, corroborated",
+   "across Indonesian usage. KBBI (Kamus Besar Bahasa Indonesia) gives \"setengah",
+   "jam\" == 30 minutes (half an hour); the toward-hour clock reading (\"setengah",
+   "tiga\" == 02:30) is corroborated across Indonesian usage sources -- a",
+   "DBP/KBBI-canonical clock-reading passage was not obtained, stated honestly.",
+   "The quarter (suku/seperempat) is deliberately omitted: its direction is",
+   "UNCONFIRMED (documented follow-up), so only the unambiguous half is added."
+  ],
+  "clock_meridiem_night": [
+   "The NIGHT daypart is a midnight-crossing BAND in colloquial clock usage,",
+   "not a uniform +12 PM shift: \"pukul satu malam\"/\"jam satu malam\" (one at",
+   "night) is 01:00, \"pukul sebelas malam\" (eleven at night) is 23:00, twelve",
+   "is midnight 00:00.  Small hours 1..5 stay AM, evening hours 6..11 are PM,",
+   "twelve is midnight (band-split in resolver _clock_hms).  Evening \"malam\"",
+   "opens at 18:00 (CLDR id night [18:00, 00:00), transcribed in chronologia/",
+   "dayparts.py); the small hours read as \"malam\" colloquially.  Source:",
+   "Wiktionary, malam (https://en.wiktionary.org/wiki/malam)."
+  ],
+  "daypart_afternoon_id": [
+   "Band boundaries: Unicode CLDR 47 Day Period Rules, locale id",
+   "(https://www.unicode.org/cldr/charts/47/supplemental/day_periods.html),",
+   "transcribed in chronologia/dayparts.py as the afternoon band.",
+   "Surface: noun 'midday/early afternoon' -- the deictic form these phrases use.",
+   "Source: Wiktionary, siang — https://en.wiktionary.org/wiki/siang"
+  ],
+  "daypart_evening_id": [
+   "Band boundaries: Unicode CLDR 47 Day Period Rules, locale id",
+   "(https://www.unicode.org/cldr/charts/47/supplemental/day_periods.html),",
+   "transcribed in chronologia/dayparts.py as the evening band.",
+   "Surface: noun 'late afternoon/evening' -- the deictic form these phrases use.",
+   "Source: Wiktionary, sore — https://en.wiktionary.org/wiki/sore"
+  ],
+  "daypart_morning_id": [
+   "Band boundaries: Unicode CLDR 47 Day Period Rules, locale id",
+   "(https://www.unicode.org/cldr/charts/47/supplemental/day_periods.html),",
+   "transcribed in chronologia/dayparts.py as the morning band.",
+   "Surface: noun 'morning' -- the deictic form these phrases use.",
+   "Source: Wiktionary, pagi — https://en.wiktionary.org/wiki/pagi"
+  ],
+  "daypart_night_id": [
+   "Band boundaries: Unicode CLDR 47 Day Period Rules, locale id",
+   "(https://www.unicode.org/cldr/charts/47/supplemental/day_periods.html),",
+   "transcribed in chronologia/dayparts.py as the night band.",
+   "Surface: noun 'night' -- the deictic form these phrases use.",
+   "Source: Wiktionary, malam — https://en.wiktionary.org/wiki/malam"
+  ],
+  "marker_after": [
+   "Indonesian \"after\" -- refused per the bare-direction veto (no open-ended-",
+   "future representation; mirrors Spanish \"después\"/English \"after\").",
+   "\"sesudah\"/\"setelah\": KBBI s.v. \"sesudah\", \"setelah\" -- menyatakan waktu",
+   "  yang mengikuti suatu peristiwa atau titik waktu."
+  ],
+  "marker_before": [
+   "Indonesian \"before\" -- opens the bare-before open-range binding (mirrors",
+   "Spanish \"antes\"/English \"before\"): \"sebelum 2020\" -> [now, 2020's start).",
+   "\"sebelum\": KBBI (Kamus Besar Bahasa Indonesia) s.v. \"sebelum\" -- lebih",
+   "  dahulu (waktunya) daripada; menyatakan waktu yang mendahului."
+  ],
+  "marker_between": [
+   "Indonesian range \"between\" framing (\"antara A dan B\"). Pairs with",
+   "marker_and (\"dan\").",
+   "\"antara\": KBBI s.v. \"antara\" -- menyatakan hal berada di tengah dua batas",
+   "  (waktu, tempat, jumlah)."
+  ],
+  "marker_daypart_future": [
+   "Deictic daypart selector: the NEAREST FUTURE occurrence of a time-of-day band.",
+   "\"nanti malam\" = tonight (band still ahead today); \"nanti pagi\" = tomorrow",
+   "morning (today's morning already passed).",
+   "Source: Wiktionary, nanti — https://en.wiktionary.org/wiki/nanti"
+  ],
+  "marker_daypart_past": [
+   "Deictic daypart selector: the NEAREST PAST occurrence of a time-of-day band.",
+   "\"tadi pagi\" = this (past) morning (today, already begun); \"tadi malam\" = last",
+   "night (tonight's band has not begun, so the nearest past night is yesterday's).",
+   "Source: Wiktionary, tadi — https://en.wiktionary.org/wiki/tadi"
+  ],
+  "marker_from": [
+   "Indonesian range \"from\" lead -- opens a bounded interval (\"dari A sampai/",
+   "hingga B\").",
+   "\"dari\": KBBI s.v. \"dari\" -- menyatakan asal atau titik permulaan (waktu,",
+   "  tempat)."
+  ],
+  "marker_ordinal_prefix": [
+   "\"ke-\" makes a numeral ordinal (\"abad ke-20\", \"bulan kelima\").  The",
+   "tokenizer splits the hyphenated digit form into this prefix plus the",
+   "numeral; the spelled form is one word the number fold reads whole.",
+   "en.wiktionary.org, https://en.wiktionary.org/wiki/ke-."
+  ],
+  "month_1": [
+   "Unicode CLDR 47, locale id, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/id/ca-gregorian.json): months.format.wide,",
+   "months.stand-alone.wide."
+  ],
+  "month_10": [
+   "Unicode CLDR 47, locale id, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/id/ca-gregorian.json): months.format.wide,",
+   "months.stand-alone.wide."
+  ],
+  "month_11": [
+   "Unicode CLDR 47, locale id, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/id/ca-gregorian.json): months.format.wide,",
+   "months.stand-alone.wide."
+  ],
+  "month_12": [
+   "Unicode CLDR 47, locale id, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/id/ca-gregorian.json): months.format.wide,",
+   "months.stand-alone.wide."
+  ],
+  "month_2": [
+   "Unicode CLDR 47, locale id, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/id/ca-gregorian.json): months.format.wide,",
+   "months.stand-alone.wide."
+  ],
+  "month_3": [
+   "Unicode CLDR 47, locale id, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/id/ca-gregorian.json): months.format.wide,",
+   "months.stand-alone.wide."
+  ],
+  "month_4": [
+   "Unicode CLDR 47, locale id, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/id/ca-gregorian.json): months.format.wide,",
+   "months.stand-alone.wide."
+  ],
+  "month_5": [
+   "Unicode CLDR 47, locale id, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/id/ca-gregorian.json): months.format.wide,",
+   "months.stand-alone.wide, months.format.abbreviated,",
+   "months.stand-alone.abbreviated."
+  ],
+  "month_6": [
+   "Unicode CLDR 47, locale id, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/id/ca-gregorian.json): months.format.wide,",
+   "months.stand-alone.wide."
+  ],
+  "month_7": [
+   "Unicode CLDR 47, locale id, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/id/ca-gregorian.json): months.format.wide,",
+   "months.stand-alone.wide."
+  ],
+  "month_8": [
+   "Unicode CLDR 47, locale id, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/id/ca-gregorian.json): months.format.wide,",
+   "months.stand-alone.wide."
+  ],
+  "month_9": [
+   "Unicode CLDR 47, locale id, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/id/ca-gregorian.json): months.format.wide,",
+   "months.stand-alone.wide."
+  ],
+  "scope_unit_century": [
+   "KBBI (kbbi.web.id): \"abad\" = a period of 100 years. Indonesian nouns",
+   "do not inflect for number, so no separate plural surface."
+  ],
+  "scope_unit_decade": [
+   "KBBI (kbbi.web.id/dekade): \"dekade\" = masa 10 tahun (a period of 10",
+   "years), equated by KBBI with \"dasawarsa\" (Sanskrit-derived: dasa \"ten\"",
+   "+ warsa \"year\"). Both are standard, interchangeable headwords."
+  ],
+  "unit_century": [
+   "KBBI (kbbi.web.id): \"abad\" = a period of 100 years. Indonesian nouns",
+   "do not inflect for number, so no separate plural surface."
+  ],
+  "unit_decade": [
+   "KBBI (kbbi.web.id/dekade): \"dekade\" = masa 10 tahun (a period of 10",
+   "years), equated by KBBI with \"dasawarsa\" (Sanskrit-derived: dasa \"ten\"",
+   "+ warsa \"year\"). Both are standard, interchangeable headwords."
+  ],
+  "unit_second": [
+   "Unicode CLDR 47, locale id, cldr-units-full/main/id/units.json,",
+   "duration-second: the single form \"detik\" -- Indonesian has no count plural,",
+   "as unit_minute.voc's \"menit\" already shows."
+  ],
+  "weekday_0": [
+   "Indonesian names a weekday with the classifier \"hari\" in front of it: KBBI",
+   "defines Senin as \"hari ke-2 dalam jangka waktu satu minggu\" and every other",
+   "day name the same way, so \"hari Senin\" is one name and not the noun \"hari\"",
+   "followed by something else (KBBI, Badan Pengembangan dan Pembinaan Bahasa).",
+   "Listing the classifier form as a surface is what keeps \"setiap hari Senin\"",
+   "from being read as \"setiap hari\" (every day) with the weekday discarded;",
+   "bare \"setiap hari\" still means daily, because both readings are real."
+  ],
+  "weekday_1": [
+   "The classifier form \"hari <day>\" is one name (KBBI, s.v. the day name);",
+   "see weekday_0.voc for why it is listed."
+  ],
+  "weekday_2": [
+   "The classifier form \"hari <day>\" is one name (KBBI, s.v. the day name);",
+   "see weekday_0.voc for why it is listed."
+  ],
+  "weekday_3": [
+   "The classifier form \"hari <day>\" is one name (KBBI, s.v. the day name);",
+   "see weekday_0.voc for why it is listed."
+  ],
+  "weekday_4": [
+   "The classifier form \"hari <day>\" is one name (KBBI, s.v. the day name);",
+   "see weekday_0.voc for why it is listed."
+  ],
+  "weekday_5": [
+   "The classifier form \"hari <day>\" is one name (KBBI, s.v. the day name);",
+   "see weekday_0.voc for why it is listed."
+  ],
+  "weekday_6": [
+   "The classifier form \"hari <day>\" is one name (KBBI, s.v. the day name);",
+   "see weekday_0.voc for why it is listed."
+  ]
  }
 }

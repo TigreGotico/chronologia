@@ -998,5 +998,344 @@
   "weekday_abbr_6": [
    "dim"
   ]
+ },
+ "sources": {
+  "clock_meridiem_night": [
+   "\"nuit\" after an hour is the night band that crosses midnight: \"À deux heures",
+   "de nuit.\" and \"À une heure avancée de la nuit.\" (CNRTL, \"nuit\",",
+   "https://www.cnrtl.fr/definition/nuit).  Small hours 1 to 5 stay AM, evening",
+   "hours 6 to 11 are PM, and twelve is midnight (the band split lives in the",
+   "resolver)."
+  ],
+  "daypart_apres_midi_fr": [
+   "Band boundaries: Unicode CLDR 47 Day Period Rules, locale fr",
+   "(https://www.unicode.org/cldr/charts/47/supplemental/day_periods.html),",
+   "transcribed in chronologia/dayparts.py as [12:00, 18:00).",
+   "The hyphenated surface is tokenizer-canonicalised to \"après midi\" (the",
+   "hyphen splits into two tokens the loader re-glues); ascii-folded twin kept",
+   "for the same reason clock_meridiem_pm.voc keeps one."
+  ],
+  "daypart_matin_fr": [
+   "Band boundaries: Unicode CLDR 47 Day Period Rules, locale fr",
+   "(https://www.unicode.org/cldr/charts/47/supplemental/day_periods.html),",
+   "transcribed in chronologia/dayparts.py as [04:00, 12:00).",
+   "Sources: Tresor de la langue francaise informatise, CNRTL",
+   "(https://www.cnrtl.fr/definition/apres-midi).",
+   "French opens the matin at 04:00, two hours before English morning."
+  ],
+  "daypart_nuit_fr": [
+   "Band boundaries: Unicode CLDR 47 Day Period Rules, locale fr",
+   "(https://www.unicode.org/cldr/charts/47/supplemental/day_periods.html),",
+   "transcribed in chronologia/dayparts.py as [00:00, 04:00).",
+   "Sources: Tresor de la langue francaise informatise, CNRTL",
+   "(https://www.cnrtl.fr/definition/apres-midi).",
+   "The nuit is the small hours, before the matin opens -- not an",
+   "English-shaped night beginning the previous evening."
+  ],
+  "daypart_soir_fr": [
+   "Band boundaries: Unicode CLDR 47 Day Period Rules, locale fr",
+   "(https://www.unicode.org/cldr/charts/47/supplemental/day_periods.html),",
+   "transcribed in chronologia/dayparts.py as [18:00, 24:00).",
+   "Sources: Tresor de la langue francaise informatise, CNRTL",
+   "(https://www.cnrtl.fr/definition/apres-midi).",
+   "The soir runs to midnight; there is no band between it and the nuit."
+  ],
+  "marker_alarm_at": [
+   "Le nom d'un dispositif qui sonne à une heure réglée, et \"pour\" après lui :",
+   "\"un réveil pour 7\", \"une alarme pour 7\".  \"réveil [...] (Technologie)",
+   "Appareil produisant un son à l'heure choisie.\" (Wiktionnaire, s.v.",
+   "\"réveil\", 2.1).  \"alarme [...] (Par atténuation) Avertissement sonore et",
+   "visuel pour rappeler un événement, un rendez-vous, de la part du logiciel",
+   "(application) gestionnaire d'emploi du temps\" (Wiktionnaire, s.v.",
+   "\"alarme\", 7).  \"pour [...] Ce sera pour demain, pour après-demain.\"",
+   "(Wiktionnaire, s.v. \"pour\", 16)."
+  ],
+  "marker_alarm_joiner": [
+   "The words that join two hours that share one later meridiem: \"alarm for 7",
+   "or 8 pm\"."
+  ],
+  "marker_at_counts": [
+   "Clock prepositions that also introduce a counted group: a bare hour behind one",
+   "is doubtful only right before a word of marker_counted_noun.voc.  Attested in",
+   "the parity acceptance rows; no dictionary source checked, a native reviewer is to confirm."
+  ],
+  "marker_clock_of": [
+   "The clock suffix that ties a part of the day to an hour: \"deux heures du",
+   "matin, dix heures du soir\" (Larousse, \"heure\").  \"le matin\" without it is",
+   "the part of the day itself, so \"réunion de deux heures le matin\" is a length."
+  ],
+  "marker_counted_noun": [
+   "Nouns that count people or things a clock never takes: a bare hour behind a",
+   "clock preposition and directly before one of them is a count (\"wave at 5",
+   "people\").  Each word is quoted from its Wiktionary Noun entry",
+   "(https://en.wiktionary.org/wiki/<word>); the fetched pages are kept with the audit.",
+   "personnes: Noun. \"plural of personne\"",
+   "invités: Noun. \"plural of invité\"",
+   "voisins: Noun. \"plural of voisin\"",
+   "voisines: Noun. \"\"",
+   "amis: Noun. \"plural of ami\"",
+   "amies: Noun. \"plural of amie\"",
+   "enfants: Noun. \"plural of enfant\"",
+   "joueurs: Noun. \"plural of joueur\"",
+   "places: Noun. \"plural of place\"",
+   "tables: Noun. \"plural of table\"",
+   "billets: Noun. \"plural of billet\"",
+   "chambres: Noun. \"plural of chambre\"",
+   "euros: Noun. \"plural of euro\""
+  ],
+  "marker_date_article": [
+   "The article that opens a weekday: \"le mardi\".  \"Dans un texte suivi, on met",
+   "un déterminant défini devant le jour de la semaine et non devant la date\"",
+   "(OQLF, Banque de dépannage linguistique, \"Lieu et date dans la lettre\",",
+   "section \"Jour de la semaine devant la date\").  Alone, \"le mardi\" is",
+   "also the habit; a habitual phrase reads as the next such day."
+  ],
+  "marker_defart": [
+   "The definite article a date takes, and only that.  A French date is",
+   "masculine singular -- \"le 15 juin\", \"le 1er janvier\" -- so the feminine and",
+   "the plural are not dates and are not listed: \"les\" opens the recurrence",
+   "\"tous les 10 mai\", and an article slot that eats it takes the recurrence",
+   "with it.",
+   "",
+   "marker_article.voc is the wrong slot here for a second reason.  It also",
+   "carries the contracted prepositions \"du/des/au/aux\", and a slot wide enough",
+   "to take those swallows the \"du\" of \"la semaine du 20 juillet\" -- the week OF",
+   "the twentieth, which then loses its week."
+  ],
+  "marker_half": [
+   "clock/adjectival \"demi/demie\" plus period noun \"moitié\" (l'une des deux parties égales) -- TLFi/Larousse, s.v. \"moitié\"."
+  ],
+  "marker_hour_approx": [
+   "A word of approximation or of a start time before an hour.",
+   "vers: \"À peu près (à telle époque). ➙ environ, sur. Vers (les) cinq",
+   "heures.\" (Le Robert, s.v. \"vers\"); \"l'approximation, devant l'expression",
+   "d'une heure, d'une date\" (Larousse, s.v. \"vers\", 4).",
+   "sur les: \"(approximation) ➙ vers. Sur le soir.\" (Le Robert, s.v. \"sur\").",
+   "dès: \"(temps) Immédiatement, à partir de.\" (Le Robert, s.v. \"dès\").",
+   "\"pour\" is not listed: the same entry gives a length too, \"Pour six mois,",
+   "pendant six mois\" (Le Robert, s.v. \"pour\"), so \"je pars pour 3 heures\" is",
+   "a length, not a clock.",
+   "aux alentours de: \"Aux alentours de (marque l'approximation). [...] ➙ vers.\"",
+   "(Le Robert, s.v. \"alentours\")."
+  ],
+  "marker_hour_statement": [
+   "The verb that states the hour: \"il est 3 heures\", \"c'est 3 heures\", \"il",
+   "était 3 heures\".  \"Il est une heure, midi, etc., sert à indiquer l'heure.\"",
+   "(Larousse, s.v. \"être\", Expressions avec être.)  \"était\" is the same verb.",
+   "The adverb \"déjà\" can stand between the verb and the hour: \"déjà, adverbe.",
+   "Dès maintenant. [...] Il est déjà midi.\" (Le Robert, s.v. \"déjà\".)"
+  ],
+  "marker_participle_aux": [
+   "Forms of the auxiliary \"avoir\" (Larousse, conjugaison du verbe \"avoir\").",
+   "\"été\" right behind one is the past participle of \"être\" (\"il a été\",",
+   "\"il avait été\", \"ils ont été\", Larousse, conjugaison du verbe \"être\"), never the",
+   "season, which follows a determiner or a preposition (\"l'été\", \"cet été\", \"en été\")."
+  ],
+  "marker_recur_habitual": [
+   "Bare PLURAL definite article marking habitual weekday recurrence -- \"les",
+   "lundis\" (\"on Mondays\"), mirroring French's ordinary way of stating a",
+   "recurring weekday. Larousse/Grevisse: the plural article on a day-of-the-",
+   "week noun reads habitually, while the singular (\"le lundi\") is ambiguous",
+   "between \"next Monday\" and a habitual \"on Mondays\" and is deliberately",
+   "excluded from this vocabulary so only the unambiguous plural fires here."
+  ],
+  "month_1": [
+   "Unicode CLDR 47, locale fr, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/fr/ca-gregorian.json): months.format.wide,",
+   "months.stand-alone.wide, months.format.abbreviated,",
+   "months.stand-alone.abbreviated.  CLDR spells the abbreviations with a",
+   "trailing period; the surfaces here drop it.  Not covered by any of those",
+   "charts, and so unattested here: \"jan\"."
+  ],
+  "month_10": [
+   "Unicode CLDR 47, locale fr, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/fr/ca-gregorian.json): months.format.wide,",
+   "months.stand-alone.wide, months.format.abbreviated,",
+   "months.stand-alone.abbreviated.  CLDR spells the abbreviations with a",
+   "trailing period; the surfaces here drop it."
+  ],
+  "month_11": [
+   "Unicode CLDR 47, locale fr, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/fr/ca-gregorian.json): months.format.wide,",
+   "months.stand-alone.wide, months.format.abbreviated,",
+   "months.stand-alone.abbreviated.  CLDR spells the abbreviations with a",
+   "trailing period; the surfaces here drop it."
+  ],
+  "month_12": [
+   "Unicode CLDR 47, locale fr, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/fr/ca-gregorian.json): months.format.wide,",
+   "months.stand-alone.wide, months.format.abbreviated,",
+   "months.stand-alone.abbreviated.  CLDR spells the abbreviations with a",
+   "trailing period; the surfaces here drop it.  Not covered by any of those",
+   "charts, and so unattested here: \"decembre\", \"dec\"."
+  ],
+  "month_2": [
+   "Unicode CLDR 47, locale fr, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/fr/ca-gregorian.json): months.format.wide,",
+   "months.stand-alone.wide, months.format.abbreviated,",
+   "months.stand-alone.abbreviated.  CLDR spells the abbreviations with a",
+   "trailing period; the surfaces here drop it.  Not covered by any of those",
+   "charts, and so unattested here: \"fevrier\", \"fevr\", \"fév\", \"fev\"."
+  ],
+  "month_3": [
+   "Unicode CLDR 47, locale fr, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/fr/ca-gregorian.json): months.format.wide,",
+   "months.stand-alone.wide, months.format.abbreviated,",
+   "months.stand-alone.abbreviated."
+  ],
+  "month_4": [
+   "Unicode CLDR 47, locale fr, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/fr/ca-gregorian.json): months.format.wide,",
+   "months.stand-alone.wide, months.format.abbreviated,",
+   "months.stand-alone.abbreviated.  CLDR spells the abbreviations with a",
+   "trailing period; the surfaces here drop it."
+  ],
+  "month_5": [
+   "Unicode CLDR 47, locale fr, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/fr/ca-gregorian.json): months.format.wide,",
+   "months.stand-alone.wide, months.format.abbreviated,",
+   "months.stand-alone.abbreviated."
+  ],
+  "month_6": [
+   "Unicode CLDR 47, locale fr, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/fr/ca-gregorian.json): months.format.wide,",
+   "months.stand-alone.wide, months.format.abbreviated,",
+   "months.stand-alone.abbreviated."
+  ],
+  "month_7": [
+   "Unicode CLDR 47, locale fr, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/fr/ca-gregorian.json): months.format.wide,",
+   "months.stand-alone.wide, months.format.abbreviated,",
+   "months.stand-alone.abbreviated.  CLDR spells the abbreviations with a",
+   "trailing period; the surfaces here drop it."
+  ],
+  "month_8": [
+   "Unicode CLDR 47, locale fr, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/fr/ca-gregorian.json): months.format.wide,",
+   "months.stand-alone.wide, months.format.abbreviated,",
+   "months.stand-alone.abbreviated.  Not covered by any of those charts, and so",
+   "unattested here: \"aout\"."
+  ],
+  "month_9": [
+   "Unicode CLDR 47, locale fr, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/fr/ca-gregorian.json): months.format.wide,",
+   "months.stand-alone.wide, months.format.abbreviated,",
+   "months.stand-alone.abbreviated.  CLDR spells the abbreviations with a",
+   "trailing period; the surfaces here drop it.  Not covered by any of those",
+   "charts, and so unattested here: \"sep\"."
+  ],
+  "roman_anchor_ides": [
+   "French vernacular forms added; Latin classical forms retained.",
+   "Source: Wikipedia \"Calendrier romain\" (fr):",
+   "  \"... des jours de référence : les calendes, les ides et les nones\".",
+   "  https://fr.wikipedia.org/wiki/Calendrier_romain"
+  ],
+  "roman_anchor_kalends": [
+   "French vernacular forms added; Latin classical forms retained.",
+   "Source: Wikipedia \"Calendrier romain\" (fr):",
+   "  \"... des jours de référence : les calendes, les ides et les nones\".",
+   "  https://fr.wikipedia.org/wiki/Calendrier_romain"
+  ],
+  "roman_anchor_nones": [
+   "French vernacular forms added; Latin classical forms retained.",
+   "Source: Wikipedia \"Calendrier romain\" (fr):",
+   "  \"... des jours de référence : les calendes, les ides et les nones\".",
+   "  https://fr.wikipedia.org/wiki/Calendrier_romain"
+  ],
+  "unit_hour": [
+   "\"h\" is the symbol of the hour: OQLF, Banque de dépannage linguistique,",
+   "\"Écriture des nombres exprimant une durée\": \"2 heures 28 minutes (ou :",
+   "2 h 28 min)\".  The fold reads \"20h\" as a clock elsewhere, so \"h\" reaches",
+   "this unit only after \"dans\" or \"il y a\".",
+   "After \"dans\" or \"il y a\", a count of hours and the minutes after it are one",
+   "length: \"2 h 28 min\" (OQLF, as above).  \"et demie\" adds half an hour: \"Qui a",
+   "la valeur d'une moitié s'ajoutant à la quantité exprimée par le substantif.",
+   "Il a deux ans et demi\" (TLFi, s.v. \"demi\", I.A).  \"et quart\" adds a quarter:",
+   "\"Quart d'heure\" : \"Une des quatre parties égales d'une heure, quinze",
+   "minutes.\" (TLFi, s.v. \"quart\", B.1.a).  \"moins\" takes the minutes away:",
+   "\"Pour indiquer une soustraction\" (TLFi, s.v. \"moins\", II.A), so \"dans 2 h",
+   "moins le quart\" is a length of 1 h 45 min."
+  ],
+  "unit_second": [
+   "Unicode CLDR 47, locale fr, cldr-units-full/main/fr/units.json,",
+   "duration-second: one \"seconde\", other \"secondes\"."
+  ],
+  "weekday_0": [
+   "Unicode CLDR 47, locale fr, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/fr/ca-gregorian.json): days.format.wide,",
+   "days.stand-alone.wide."
+  ],
+  "weekday_1": [
+   "Unicode CLDR 47, locale fr, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/fr/ca-gregorian.json): days.format.wide,",
+   "days.stand-alone.wide."
+  ],
+  "weekday_2": [
+   "Unicode CLDR 47, locale fr, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/fr/ca-gregorian.json): days.format.wide,",
+   "days.stand-alone.wide."
+  ],
+  "weekday_3": [
+   "Unicode CLDR 47, locale fr, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/fr/ca-gregorian.json): days.format.wide,",
+   "days.stand-alone.wide."
+  ],
+  "weekday_4": [
+   "Unicode CLDR 47, locale fr, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/fr/ca-gregorian.json): days.format.wide,",
+   "days.stand-alone.wide."
+  ],
+  "weekday_5": [
+   "Unicode CLDR 47, locale fr, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/fr/ca-gregorian.json): days.format.wide,",
+   "days.stand-alone.wide."
+  ],
+  "weekday_6": [
+   "Unicode CLDR 47, locale fr, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/fr/ca-gregorian.json): days.format.wide,",
+   "days.stand-alone.wide."
+  ],
+  "weekday_abbr_0": [
+   "Unicode CLDR 47, locale fr, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/fr/ca-gregorian.json): days.format.abbreviated,",
+   "days.stand-alone.abbreviated.  CLDR spells the abbreviations with a trailing",
+   "period; the surfaces here drop it."
+  ],
+  "weekday_abbr_1": [
+   "Unicode CLDR 47, locale fr, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/fr/ca-gregorian.json): days.format.abbreviated,",
+   "days.stand-alone.abbreviated.  CLDR spells the abbreviations with a trailing",
+   "period; the surfaces here drop it."
+  ],
+  "weekday_abbr_2": [
+   "Unicode CLDR 47, locale fr, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/fr/ca-gregorian.json): days.format.abbreviated,",
+   "days.stand-alone.abbreviated.  CLDR spells the abbreviations with a trailing",
+   "period; the surfaces here drop it."
+  ],
+  "weekday_abbr_3": [
+   "Unicode CLDR 47, locale fr, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/fr/ca-gregorian.json): days.format.abbreviated,",
+   "days.stand-alone.abbreviated.  CLDR spells the abbreviations with a trailing",
+   "period; the surfaces here drop it."
+  ],
+  "weekday_abbr_4": [
+   "Unicode CLDR 47, locale fr, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/fr/ca-gregorian.json): days.format.abbreviated,",
+   "days.stand-alone.abbreviated.  CLDR spells the abbreviations with a trailing",
+   "period; the surfaces here drop it."
+  ],
+  "weekday_abbr_5": [
+   "Unicode CLDR 47, locale fr, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/fr/ca-gregorian.json): days.format.abbreviated,",
+   "days.stand-alone.abbreviated.  CLDR spells the abbreviations with a trailing",
+   "period; the surfaces here drop it."
+  ],
+  "weekday_abbr_6": [
+   "Unicode CLDR 47, locale fr, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/fr/ca-gregorian.json): days.format.abbreviated,",
+   "days.stand-alone.abbreviated.  CLDR spells the abbreviations with a trailing",
+   "period; the surfaces here drop it."
+  ]
  }
 }

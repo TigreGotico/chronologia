@@ -14,7 +14,7 @@ see: docs/extraction.md, docs/languages/index.md
 
 **How long it takes:** a first, useful version, months, weekdays, and the common "next / last / in / ago" phrases, is an afternoon's work. You can stop there and it will be genuinely useful, then come back and add more later.
 
-**The one rule that matters most:** every word you add must come from a *real source*. A source is a dictionary, a grammar book or your own knowledge as a native speaker. Note the source in the language page. This is how the project stays trustworthy. We come back to it near the end, but keep it in mind from the start.
+**The one rule that matters most:** every word you add must come from a *real source*. A source is a dictionary, a grammar book or your own knowledge as a native speaker. Note the source in `vocab.json`, next to the words. This is how the project stays trustworthy. We come back to it near the end, but keep it in mind from the start.
 
 > Already a developer and just want the terse reference? The
 > ["How a language works"](extraction.md) section of the extraction guide is the
@@ -89,7 +89,7 @@ The rules for `vocab.json` are short:
 - **Every form in full**. The file holds no shorthand such as `(a|b)`. If two spellings differ by one letter, write both.
 - **Multi-word surfaces are fine**. A phrase like `hari ini` (Malay for "today") or `day after tomorrow` is one item, spaces and all.
 - **The file has a version**. `"format_version": 1` stays at the top. The loader refuses any other version.
-- **No comments**. JSON has none. You write your **source** in the language page and in the pull request (more on that below).
+- **Sources in `sources`**. JSON has no comments. You write your **source** under the same name in the `sources` object, as one or more lines of text (more on that below).
 
 That is genuinely all there is to `vocab.json`. The *name* of each list tells chronologia which idea the words belong to, `month_1` for January, `weekday_0` for Monday, and so on. The next sections give you the exact list of names to create.
 
@@ -487,20 +487,32 @@ A green run, no failures, means your language works. That's the moment you're ai
 
 Here is the rule the project cares about most, and the reason for it.
 
-Every word you add must trace to a **real source**. This holds for a month name, a marker and a season word. A real source is a dictionary, a published grammar, a language authority or your own confirmation as a native speaker. And you *write that source down*, in the language page `docs/languages/<your code>.md` and in the pull request.
+Every word you add must trace to a **real source**. This holds for a month name, a marker and a season word. A real source is a dictionary, a published grammar, a language authority or your own confirmation as a native speaker. And you *write that source down*, in the `sources` object of `vocab.json`, under the name of the list it supports.
 
 **Why.** chronologia is used to read dates people wrote, in dozens of languages its maintainers cannot all speak. The only thing that makes a Kabyle or Tagalog month list trustworthy to someone who doesn't speak it is a **source they can check**. A citation turns "someone typed this in" into "this is documented." That is the difference between data people can rely on and data they cannot.
 
-**How**. Name the source in one or two sentences next to the words it covers:
+**How**. Add the name of the list to the `sources` object, with one or two lines of text:
 
-```text
-Month names: Dewan Bahasa dan Pustaka standard dictionary (2015 ed.), https://prpm.dbp.gov.my/
+```json
+"sources": {
+ "month_1": [
+  "Month names from the Dewan Bahasa dan Pustaka standard dictionary (2015 ed.).",
+  "https://prpm.dbp.gov.my/"
+ ]
+}
 ```
+
+Every name in `sources` must also be a name in `words`. A test checks this.
 
 **A native speaker's confirmation counts**: you are a valid source for your own language. Just say so plainly:
 
-```text
-Colloquial forms confirmed by a native speaker. Standard forms cross-checked against Wiktionary.
+```json
+"sources": {
+ "named_day_1": [
+  "Colloquial forms confirmed by a native speaker.",
+  "Standard forms cross-checked against Wiktionary."
+ ]
+}
 ```
 
 The goal is not bureaucracy. It's that the next person, maintainer or contributor, can see *where this came from* and trust it.
@@ -517,13 +529,15 @@ So that word answers neither, and the unambiguous *sedmica* carries the week rea
 
 The one thing that is never acceptable is a form you made up because the neighbouring language has one. That produces a confident wrong answer, which the caller cannot detect and cannot argue with.
 
-**Pin the refusal, don't just omit it**. An empty gap looks identical to an oversight, and the next contributor will helpfully fill it. Two habits prevent that. Write the reason in the language page, next to the list that *does* ship. Name the source you consulted and what it failed to establish:
+**Pin the refusal, don't just omit it**. An empty gap looks identical to an oversight, and the next contributor will helpfully fill it. Two habits prevent that. Write the reason in `sources`, under the nearest list that *does* ship. Name the source you consulted and what it failed to establish:
 
-```text
-pitgħada, "the day after tomorrow", with its attested variant bitgħada.
-There is no named_day_-2 list: Maltese has no sourced word for the day
-before yesterday, CLDR carries no relative-type--2 field for mt, and none
-is invented here.  en.wiktionary.org, pitgħada.
+```json
+"named_day_2": [
+ "pitgħada, \"the day after tomorrow\", with its attested variant bitgħada.",
+ "There is no named_day_-2 list: Maltese has no sourced word for the day",
+ "before yesterday, CLDR carries no relative-type--2 field for mt, and none",
+ "is invented here.  en.wiktionary.org, pitgħada."
+]
 ```
 
 Then assert the refusal in your corpus, the same way you assert the readings that work. Some locales keep a dedicated `test_<code>_refusals.py` module for exactly this:
@@ -571,7 +585,7 @@ Let's walk the smallest possible change end to end, so you can see the whole loo
 ]
 ```
 
-Note where the spelling comes from in the pull request and in `docs/languages/ms.md`.
+Note where the spelling comes from in the lines under `month_4` in `sources`.
 
 **Step 3, add a test that proves it reads**. Open the Malay calendar test, `test/nl_corpus_ms/test_nl_calendar.py`. Add a case that uses the spelling you add in a full date, with the date you know it means.
 

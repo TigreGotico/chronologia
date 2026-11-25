@@ -570,5 +570,247 @@
   "weekday_abbr_6": [
    "søn"
   ]
+ },
+ "sources": {
+  "clock_meridiem_am": [
+   "Morning words that follow a clock and fix its half of the day (offset 0):",
+   "\"klokka sju om morgenen\" is 07:00.  The bare words \"morgen\" and \"morgon\" are",
+   "the day after today, so only the definite forms are listed.",
+   "Bokmålsordboka (https://ordbokene.no/bm), \"morgen\": \"klokka sju om morgenen\"; \"kveld\": \"klokka ni om kvelden\", \"i kveld er det fullmåne\"; \"ettermiddag\": \"tidsrom fra klokka 12 eller middag og til kveld\", \"om ettermiddagen\"; \"formiddag\": \"utpå formiddagen\"."
+  ],
+  "clock_meridiem_pm": [
+   "Afternoon and evening words that follow a clock and fix its half of the day",
+   "(offset +12): \"klokka ni om kvelden\" is 21:00 and \"klokka åtte i kveld\" is",
+   "20:00.",
+   "Bokmålsordboka (https://ordbokene.no/bm), \"morgen\": \"klokka sju om morgenen\"; \"kveld\": \"klokka ni om kvelden\", \"i kveld er det fullmåne\"; \"ettermiddag\": \"tidsrom fra klokka 12 eller middag og til kveld\", \"om ettermiddagen\"; \"formiddag\": \"utpå formiddagen\"."
+  ],
+  "daypart_ettermiddag_nb": [
+   "Band boundaries: Unicode CLDR 47 Day Period Rules, locale no",
+   "(https://www.unicode.org/cldr/charts/47/supplemental/day_periods.html),",
+   "transcribed in chronologia/dayparts.py as [12:00, 18:00).",
+   "Sources: Bokmalsordboka, Sprakradet and the University of Bergen",
+   "(https://ordbokene.no/bm/search?q=formiddag), which gives formiddag as",
+   "the \"tid mellom frokost og klokka tolv eller middagstid\"."
+  ],
+  "daypart_formiddag_nb": [
+   "Band boundaries: Unicode CLDR 47 Day Period Rules, locale no",
+   "(https://www.unicode.org/cldr/charts/47/supplemental/day_periods.html),",
+   "transcribed in chronologia/dayparts.py as [10:00, 12:00).",
+   "Sources: Bokmalsordboka, Sprakradet and the University of Bergen",
+   "(https://ordbokene.no/bm/search?q=formiddag), which gives formiddag as",
+   "the \"tid mellom frokost og klokka tolv eller middagstid\"."
+  ],
+  "daypart_kveld_nb": [
+   "Band boundaries: Unicode CLDR 47 Day Period Rules, locale no",
+   "(https://www.unicode.org/cldr/charts/47/supplemental/day_periods.html),",
+   "transcribed in chronologia/dayparts.py as [18:00, 24:00).",
+   "Sources: Bokmalsordboka, Sprakradet and the University of Bergen",
+   "(https://ordbokene.no/bm/search?q=formiddag), which gives formiddag as",
+   "the \"tid mellom frokost og klokka tolv eller middagstid\"."
+  ],
+  "daypart_natt_nb": [
+   "Band boundaries: Unicode CLDR 47 Day Period Rules, locale no",
+   "(https://www.unicode.org/cldr/charts/47/supplemental/day_periods.html),",
+   "transcribed in chronologia/dayparts.py as [00:00, 06:00).",
+   "Sources: Bokmalsordboka, Sprakradet and the University of Bergen",
+   "(https://ordbokene.no/bm/search?q=formiddag), which gives formiddag as",
+   "the \"tid mellom frokost og klokka tolv eller middagstid\"."
+  ],
+  "marker_clock_lead": [
+   "Words that open a clock time and belong to it. They fold only in front of",
+   "a number, a clock time, a clock fraction or a clock landmark.",
+   "Each word is shown opening a clock time on the page named in brackets,",
+   "saved under knowledge/wiki/audits/chronologia/parity-fixes/marker-strand/sources/ in the workspace.",
+   "klokka: Wiktionary \"klokka\": \"time on a clock: o'clock: klokka seks\" [nb-klokka.wikitext.txt]",
+   "klokken: Wiktionary \"klokken\": \"time on a clock: o'clock: klokken seks\" [nb-klokken.wikitext.txt]",
+   "kl: Wiktionary \"kl.\": \"Møtet er kl. 12.\" [nb-kl.wikitext.txt]"
+  ],
+  "marker_date_lead": [
+   "Words that open a date or a clock time and belong to it.",
+   "Each word is shown opening a time or date phrase on the page named in brackets,",
+   "saved under knowledge/wiki/audits/chronologia/parity-fixes/marker-strand/sources/ in the workspace.",
+   "på: Wiktionary \"på\": \"on (a certain day)\" [nb-på.wikitext.txt]; Bokmålsordboka \"på\": \"brukt i tidsuttrykk\" [ordbokene-på.txt]"
+  ],
+  "marker_ordlast": [
+   "Norwegian Bokmål \"last\" ordinal determiner.  \"siste mandag i mai\".",
+   "Bokmålsordboka, \"siste\"."
+  ],
+  "month_1": [
+   "Unicode CLDR 47, locale nb, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/nb/ca-gregorian.json): months.format.wide,",
+   "months.stand-alone.wide, months.format.abbreviated,",
+   "months.stand-alone.abbreviated."
+  ],
+  "month_10": [
+   "Unicode CLDR 47, locale nb, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/nb/ca-gregorian.json): months.format.wide,",
+   "months.stand-alone.wide, months.format.abbreviated,",
+   "months.stand-alone.abbreviated."
+  ],
+  "month_11": [
+   "Unicode CLDR 47, locale nb, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/nb/ca-gregorian.json): months.format.wide,",
+   "months.stand-alone.wide, months.format.abbreviated,",
+   "months.stand-alone.abbreviated."
+  ],
+  "month_12": [
+   "Unicode CLDR 47, locale nb, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/nb/ca-gregorian.json): months.format.wide,",
+   "months.stand-alone.wide, months.format.abbreviated,",
+   "months.stand-alone.abbreviated."
+  ],
+  "month_2": [
+   "Unicode CLDR 47, locale nb, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/nb/ca-gregorian.json): months.format.wide,",
+   "months.stand-alone.wide, months.format.abbreviated,",
+   "months.stand-alone.abbreviated."
+  ],
+  "month_3": [
+   "Unicode CLDR 47, locale nb, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/nb/ca-gregorian.json): months.format.wide,",
+   "months.stand-alone.wide, months.format.abbreviated,",
+   "months.stand-alone.abbreviated."
+  ],
+  "month_4": [
+   "Unicode CLDR 47, locale nb, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/nb/ca-gregorian.json): months.format.wide,",
+   "months.stand-alone.wide, months.format.abbreviated,",
+   "months.stand-alone.abbreviated."
+  ],
+  "month_5": [
+   "Unicode CLDR 47, locale nb, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/nb/ca-gregorian.json): months.format.wide,",
+   "months.stand-alone.wide, months.format.abbreviated,",
+   "months.stand-alone.abbreviated."
+  ],
+  "month_6": [
+   "Unicode CLDR 47, locale nb, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/nb/ca-gregorian.json): months.format.wide,",
+   "months.stand-alone.wide, months.format.abbreviated,",
+   "months.stand-alone.abbreviated."
+  ],
+  "month_7": [
+   "Unicode CLDR 47, locale nb, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/nb/ca-gregorian.json): months.format.wide,",
+   "months.stand-alone.wide, months.format.abbreviated,",
+   "months.stand-alone.abbreviated."
+  ],
+  "month_8": [
+   "Unicode CLDR 47, locale nb, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/nb/ca-gregorian.json): months.format.wide,",
+   "months.stand-alone.wide, months.format.abbreviated,",
+   "months.stand-alone.abbreviated."
+  ],
+  "month_9": [
+   "Unicode CLDR 47, locale nb, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/nb/ca-gregorian.json): months.format.wide,",
+   "months.stand-alone.wide, months.format.abbreviated,",
+   "months.stand-alone.abbreviated."
+  ],
+  "named_day_-1": [
+   "Unicode CLDR 47, locale nb, cldr-dates-full/main/nb/dateFields.json.",
+   "day.relative-type--1."
+  ],
+  "named_day_-2": [
+   "Unicode CLDR 47, locale nb, cldr-dates-full/main/nb/dateFields.json.",
+   "day.relative-type--2."
+  ],
+  "named_day_0": [
+   "Unicode CLDR 47, locale nb, cldr-dates-full/main/nb/dateFields.json.",
+   "day.relative-type-0."
+  ],
+  "named_day_1": [
+   "Unicode CLDR 47, locale nb, cldr-dates-full/main/nb/dateFields.json.",
+   "day.relative-type-1."
+  ],
+  "named_day_2": [
+   "Unicode CLDR 47, locale nb, cldr-dates-full/main/nb/dateFields.json.",
+   "day.relative-type-2."
+  ],
+  "unit1_second": [
+   "Unicode CLDR 47, locale nb, cldr-units-full/main/nb/units.json,",
+   "duration-second, unitPattern-count-one \"sekund\"."
+  ],
+  "unit_second": [
+   "Unicode CLDR 47, locale nb, cldr-units-full/main/nb/units.json,",
+   "duration-second: one \"sekund\", other \"sekunder\"."
+  ],
+  "weekday_0": [
+   "Unicode CLDR 47, locale nb, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/nb/ca-gregorian.json): days.format.wide,",
+   "days.stand-alone.wide."
+  ],
+  "weekday_1": [
+   "Unicode CLDR 47, locale nb, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/nb/ca-gregorian.json): days.format.wide,",
+   "days.stand-alone.wide."
+  ],
+  "weekday_2": [
+   "Unicode CLDR 47, locale nb, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/nb/ca-gregorian.json): days.format.wide,",
+   "days.stand-alone.wide."
+  ],
+  "weekday_3": [
+   "Unicode CLDR 47, locale nb, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/nb/ca-gregorian.json): days.format.wide,",
+   "days.stand-alone.wide."
+  ],
+  "weekday_4": [
+   "Unicode CLDR 47, locale nb, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/nb/ca-gregorian.json): days.format.wide,",
+   "days.stand-alone.wide."
+  ],
+  "weekday_5": [
+   "Unicode CLDR 47, locale nb, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/nb/ca-gregorian.json): days.format.wide,",
+   "days.stand-alone.wide."
+  ],
+  "weekday_6": [
+   "Unicode CLDR 47, locale nb, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/nb/ca-gregorian.json): days.format.wide,",
+   "days.stand-alone.wide."
+  ],
+  "weekday_abbr_0": [
+   "Unicode CLDR 47, locale nb, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/nb/ca-gregorian.json): days.format.abbreviated,",
+   "days.stand-alone.abbreviated.  CLDR spells the abbreviations with a trailing",
+   "period; the surfaces here drop it."
+  ],
+  "weekday_abbr_1": [
+   "Unicode CLDR 47, locale nb, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/nb/ca-gregorian.json): days.format.abbreviated,",
+   "days.stand-alone.abbreviated.  CLDR spells the abbreviations with a trailing",
+   "period; the surfaces here drop it."
+  ],
+  "weekday_abbr_2": [
+   "Unicode CLDR 47, locale nb, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/nb/ca-gregorian.json): days.format.abbreviated,",
+   "days.stand-alone.abbreviated.  CLDR spells the abbreviations with a trailing",
+   "period; the surfaces here drop it."
+  ],
+  "weekday_abbr_3": [
+   "Unicode CLDR 47, locale nb, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/nb/ca-gregorian.json): days.format.abbreviated,",
+   "days.stand-alone.abbreviated.  CLDR spells the abbreviations with a trailing",
+   "period; the surfaces here drop it."
+  ],
+  "weekday_abbr_4": [
+   "Unicode CLDR 47, locale nb, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/nb/ca-gregorian.json): days.format.abbreviated,",
+   "days.stand-alone.abbreviated.  CLDR spells the abbreviations with a trailing",
+   "period; the surfaces here drop it."
+  ],
+  "weekday_abbr_5": [
+   "Unicode CLDR 47, locale nb, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/nb/ca-gregorian.json): days.format.abbreviated,",
+   "days.stand-alone.abbreviated.  CLDR spells the abbreviations with a trailing",
+   "period; the surfaces here drop it."
+  ],
+  "weekday_abbr_6": [
+   "Unicode CLDR 47, locale nb, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/nb/ca-gregorian.json): days.format.abbreviated,",
+   "days.stand-alone.abbreviated.  CLDR spells the abbreviations with a trailing",
+   "period; the surfaces here drop it."
+  ]
  }
 }

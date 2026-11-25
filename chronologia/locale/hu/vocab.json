@@ -416,5 +416,198 @@
    "vasárnapja",
    "vasárnapon"
   ]
+ },
+ "sources": {
+  "clock_fraction_15": [
+   "Hungarian counting-toward-the-hour clock: \"negyed <H>\" == the first",
+   "quarter of the way toward hour H, i.e. (H-1):15 -- \"negyed kilenc\" == 08:15.",
+   "Citation: Rounds, Carol H. \"Hungarian: An Essential Grammar\", 2nd ed.,",
+   "Routledge 2009, sec. on telling the time (\"negyed\", \"fel\", \"haromnegyed\"",
+   "counted toward the coming hour); Wiktionary \"negyed\" (Hungarian), sense",
+   "\"quarter toward the named hour\"."
+  ],
+  "clock_fraction_30": [
+   "Hungarian counting-toward-the-hour clock: \"fel <H>\" == half of the way",
+   "toward hour H, i.e. (H-1):30 -- \"fel kilenc\" == 08:30 (half before nine).",
+   "Citation: Rounds, Carol H. \"Hungarian: An Essential Grammar\", 2nd ed.,",
+   "Routledge 2009, sec. on telling the time; Wiktionary \"fel\" (Hungarian)."
+  ],
+  "clock_fraction_45": [
+   "Hungarian counting-toward-the-hour clock: \"haromnegyed <H>\" == three",
+   "quarters of the way toward hour H, i.e. (H-1):45 -- \"haromnegyed kilenc\"",
+   "== 08:45.  Citation: Rounds, Carol H. \"Hungarian: An Essential Grammar\",",
+   "2nd ed., Routledge 2009, sec. on telling the time; Wiktionary",
+   "\"haromnegyed\" (Hungarian), sense \"three quarters toward the named hour\"."
+  ],
+  "clock_meridiem_night": [
+   "The NIGHT daypart is a BAND that crosses midnight: hu.wikipedia prose has",
+   "\"ejjel 11-kor\" (23:00), and \"éjjel\" glosses as \"at night\" (en.wiktionary,",
+   "s.v. éjjel), so \"éjjel 2-kor\" is 02:00.  Small hours 1..5 stay AM, evening",
+   "hours 6..11 are PM, twelve is midnight (the band-split lives in the",
+   "resolver _clock_hms).  https://en.wiktionary.org/wiki/éjjel"
+  ],
+  "daypart_afternoon_hu": [
+   "Band boundaries: Unicode CLDR 47 Day Period Rules, locale hu",
+   "(https://www.unicode.org/cldr/charts/47/supplemental/day_periods.html),",
+   "transcribed in chronologia/dayparts.py as the afternoon band.",
+   "Surface: adverb 'in the afternoon' -- the deictic form these phrases use.",
+   "Source: Wiktionary, délután — https://en.wiktionary.org/wiki/délután"
+  ],
+  "daypart_evening_hu": [
+   "Band boundaries: Unicode CLDR 47 Day Period Rules, locale hu",
+   "(https://www.unicode.org/cldr/charts/47/supplemental/day_periods.html),",
+   "transcribed in chronologia/dayparts.py as the evening band.",
+   "Surface: adverb 'in the evening' -- the deictic form these phrases use.",
+   "Source: Wiktionary, este — https://en.wiktionary.org/wiki/este"
+  ],
+  "daypart_morning_hu": [
+   "Band boundaries: Unicode CLDR 47 Day Period Rules, locale hu",
+   "(https://www.unicode.org/cldr/charts/47/supplemental/day_periods.html),",
+   "transcribed in chronologia/dayparts.py as the morning band.",
+   "Surface: adverbs 'in the morning' / 'in the forenoon' -- the deictic form these phrases use.",
+   "Source: Wiktionary, reggel — https://en.wiktionary.org/wiki/reggel ; délelőtt — https://en.wiktionary.org/wiki/délelőtt"
+  ],
+  "daypart_night_hu": [
+   "Band boundaries: Unicode CLDR 47 Day Period Rules, locale hu",
+   "(https://www.unicode.org/cldr/charts/47/supplemental/day_periods.html),",
+   "transcribed in chronologia/dayparts.py as the night band.",
+   "Surface: adverbs 'at night' / 'at dawn' -- the deictic form these phrases use.",
+   "Source: Wiktionary, éjjel — https://en.wiktionary.org/wiki/éjjel ; hajnal — https://en.wiktionary.org/wiki/hajnal"
+  ],
+  "marker_oclock": [
+   "sublative of \"óra\" (\"három órára\", to three o'clock): Wiktionary, hu \"óra\", declension table."
+  ],
+  "month_1": [
+   "Unicode CLDR 47, locale hu, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/hu/ca-gregorian.json): months.format.wide,",
+   "months.stand-alone.wide.  Not covered by any of those charts, and so",
+   "unattested here: \"januárban\"."
+  ],
+  "month_10": [
+   "Unicode CLDR 47, locale hu, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/hu/ca-gregorian.json): months.format.wide,",
+   "months.stand-alone.wide.  Not covered by any of those charts, and so",
+   "unattested here: \"októberben\"."
+  ],
+  "month_11": [
+   "Unicode CLDR 47, locale hu, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/hu/ca-gregorian.json): months.format.wide,",
+   "months.stand-alone.wide.  Not covered by any of those charts, and so",
+   "unattested here: \"novemberben\"."
+  ],
+  "month_12": [
+   "Unicode CLDR 47, locale hu, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/hu/ca-gregorian.json): months.format.wide,",
+   "months.stand-alone.wide.  Not covered by any of those charts, and so",
+   "unattested here: \"decemberben\"."
+  ],
+  "month_2": [
+   "Unicode CLDR 47, locale hu, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/hu/ca-gregorian.json): months.format.wide,",
+   "months.stand-alone.wide.  Not covered by any of those charts, and so",
+   "unattested here: \"februárban\"."
+  ],
+  "month_3": [
+   "Unicode CLDR 47, locale hu, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/hu/ca-gregorian.json): months.format.wide,",
+   "months.stand-alone.wide.  Not covered by any of those charts, and so",
+   "unattested here: \"márciusban\"."
+  ],
+  "month_4": [
+   "Unicode CLDR 47, locale hu, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/hu/ca-gregorian.json): months.format.wide,",
+   "months.stand-alone.wide.  Not covered by any of those charts, and so",
+   "unattested here: \"áprilisban\"."
+  ],
+  "month_5": [
+   "Unicode CLDR 47, locale hu, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/hu/ca-gregorian.json): months.format.wide,",
+   "months.stand-alone.wide.  Not covered by any of those charts, and so",
+   "unattested here: \"májusban\"."
+  ],
+  "month_6": [
+   "Unicode CLDR 47, locale hu, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/hu/ca-gregorian.json): months.format.wide,",
+   "months.stand-alone.wide.  Not covered by any of those charts, and so",
+   "unattested here: \"júniusban\"."
+  ],
+  "month_7": [
+   "Unicode CLDR 47, locale hu, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/hu/ca-gregorian.json): months.format.wide,",
+   "months.stand-alone.wide.  Not covered by any of those charts, and so",
+   "unattested here: \"júliusban\"."
+  ],
+  "month_8": [
+   "Unicode CLDR 47, locale hu, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/hu/ca-gregorian.json): months.format.wide,",
+   "months.stand-alone.wide.  Not covered by any of those charts, and so",
+   "unattested here: \"augusztusban\"."
+  ],
+  "month_9": [
+   "Unicode CLDR 47, locale hu, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/hu/ca-gregorian.json): months.format.wide,",
+   "months.stand-alone.wide.  Not covered by any of those charts, and so",
+   "unattested here: \"szeptemberben\"."
+  ],
+  "unit_day": [
+   "sublative (\"for N nap\", -ra/-re): Wiktionary, hu \"nap\", declension table."
+  ],
+  "unit_hour": [
+   "sublative (\"for N óra\", -ra/-re): Wiktionary, hu \"óra\", declension table."
+  ],
+  "unit_minute": [
+   "sublative (\"for N perc\", -ra/-re): Wiktionary, hu \"perc\", declension table."
+  ],
+  "unit_month": [
+   "sublative (\"for N hónap\", -ra/-re): Wiktionary, hu \"hónap\", declension table."
+  ],
+  "unit_second": [
+   "sublative (\"for N másodperc\", -ra/-re): Wiktionary, hu \"másodperc\", declension table."
+  ],
+  "unit_year": [
+   "sublative (\"for N év\", -ra/-re): Wiktionary, hu \"év\", declension table."
+  ],
+  "weekday_0": [
+   "Unicode CLDR 47, locale hu, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/hu/ca-gregorian.json): days.format.wide,",
+   "days.stand-alone.wide.  Not covered by any of those charts, and so",
+   "unattested here: \"hétfőn\", \"hétfője\"."
+  ],
+  "weekday_1": [
+   "Unicode CLDR 47, locale hu, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/hu/ca-gregorian.json): days.format.wide,",
+   "days.stand-alone.wide.  Not covered by any of those charts, and so",
+   "unattested here: \"kedden\", \"keddje\"."
+  ],
+  "weekday_2": [
+   "Unicode CLDR 47, locale hu, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/hu/ca-gregorian.json): days.format.wide,",
+   "days.stand-alone.wide.  Not covered by any of those charts, and so",
+   "unattested here: \"szerdán\", \"szerdája\"."
+  ],
+  "weekday_3": [
+   "Unicode CLDR 47, locale hu, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/hu/ca-gregorian.json): days.format.wide,",
+   "days.stand-alone.wide.  Not covered by any of those charts, and so",
+   "unattested here: \"csütörtökön\", \"csütörtökje\"."
+  ],
+  "weekday_4": [
+   "Unicode CLDR 47, locale hu, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/hu/ca-gregorian.json): days.format.wide,",
+   "days.stand-alone.wide.  Not covered by any of those charts, and so",
+   "unattested here: \"pénteken\", \"péntekje\"."
+  ],
+  "weekday_5": [
+   "Unicode CLDR 47, locale hu, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/hu/ca-gregorian.json): days.format.wide,",
+   "days.stand-alone.wide.  Not covered by any of those charts, and so",
+   "unattested here: \"szombaton\", \"szombatja\"."
+  ],
+  "weekday_6": [
+   "Unicode CLDR 47, locale hu, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/hu/ca-gregorian.json): days.format.wide,",
+   "days.stand-alone.wide.  Not covered by any of those charts, and so",
+   "unattested here: \"vasárnapon\", \"vasárnapja\"."
+  ]
  }
 }

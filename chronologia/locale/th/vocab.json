@@ -219,5 +219,295 @@
   "weekday_abbr_6": [
    "อาทิตย์"
   ]
+ },
+ "sources": {
+  "clock_landmark_0": [
+   "เที่ยงคืน, midnight. Unicode CLDR supplemental dayPeriods, ruleset th."
+  ],
+  "clock_landmark_720": [
+   "เที่ยง, noon. Unicode CLDR supplemental dayPeriods, ruleset th."
+  ],
+  "daypart_bai_th": [
+   "Unicode CLDR supplemental dayPeriods, ruleset th; labels from",
+   "cldr-dates-full/main/th/ca-gregorian.json, dayPeriods.format.wide.",
+   "afternoon1 + afternoon2, both labelled บ่าย, 12:00-16:00."
+  ],
+  "daypart_chao_th": [
+   "Unicode CLDR supplemental dayPeriods, ruleset th; labels from",
+   "cldr-dates-full/main/th/ca-gregorian.json, dayPeriods.format.wide.",
+   "morning1, 06:00-12:00."
+  ],
+  "daypart_kham_th": [
+   "Unicode CLDR supplemental dayPeriods, ruleset th; labels from",
+   "cldr-dates-full/main/th/ca-gregorian.json, dayPeriods.format.wide.",
+   "evening2, 18:00-21:00 -- its own word, not a late เย็น."
+  ],
+  "daypart_klangkhuen_th": [
+   "Unicode CLDR supplemental dayPeriods, ruleset th; labels from",
+   "cldr-dates-full/main/th/ca-gregorian.json, dayPeriods.format.wide.",
+   "night1, 21:00-06:00, wrapping midnight."
+  ],
+  "daypart_yen_th": [
+   "Unicode CLDR supplemental dayPeriods, ruleset th; labels from",
+   "cldr-dates-full/main/th/ca-gregorian.json, dayPeriods.format.wide.",
+   "evening1, 16:00-18:00."
+  ],
+  "marker_after": [
+   "Wiktionary, Thai entry for หลัง (\"after; past\")."
+  ],
+  "marker_at": [
+   "Wiktionary, Thai entry for ใน (\"in; inside; within\"; of time \"on; at; during\") and เมื่อ (\"when\")."
+  ],
+  "marker_before": [
+   "Wiktionary, Thai entry for ก่อน (\"before\")."
+  ],
+  "marker_between": [
+   "Wiktionary, Thai entry for ระหว่าง (\"between\", \"during\")."
+  ],
+  "marker_day_word": [
+   "วันที่ (\"the day\") introduces the day of the month; CLDR's full date",
+   "pattern is EEEEที่ d MMMM G y.",
+   "Unicode CLDR, cldr-dates-full/main/th/ca-gregorian.json, dateFormats.full."
+  ],
+  "marker_every": [
+   "Wiktionary, Thai entry for ทุก (\"every, each\")."
+  ],
+  "marker_from": [
+   "Wiktionary, Thai entry for ตั้งแต่ (\"from; since\")."
+  ],
+  "marker_future": [
+   "Unicode CLDR, cldr-dates-full/main/th/dateFields.json, field every unit, future (\"ในอีก {0} ...\")."
+  ],
+  "marker_last": [
+   "Unicode CLDR, cldr-dates-full/main/th/dateFields.json, field year/month/week and mon/sun, relative-type--1."
+  ],
+  "marker_next": [
+   "Unicode CLDR, cldr-dates-full/main/th/dateFields.json, field year/month/week and mon/sun, relative-type-1."
+  ],
+  "marker_past": [
+   "Unicode CLDR, cldr-dates-full/main/th/dateFields.json, field year/month/week/day/hour/minute/second, past.",
+   "CLDR writes the past year with ที่แล้ว and every shorter unit with",
+   "ที่ผ่านมา. The split matters only when generating text; on input both",
+   "forms occur for every unit, so both are read for all of them."
+  ],
+  "marker_since": [
+   "Wiktionary, Thai entry for ตั้งแต่ (\"from; since\")."
+  ],
+  "marker_this": [
+   "Unicode CLDR, cldr-dates-full/main/th/dateFields.json, field year/month/week and mon/sun, relative-type-0."
+  ],
+  "marker_until": [
+   "Wiktionary, Thai entry for ถึง (\"until\", also \"to, up to\")."
+  ],
+  "marker_year_word": [
+   "Wiktionary, Thai entry for ปี (\"year\")."
+  ],
+  "month_1": [
+   "Unicode CLDR, cldr-dates-full/main/th/ca-gregorian.json, months.format.wide and months.format.abbreviated.",
+   "The abbreviation is dot-internal and dot-final; the loader also",
+   "registers its token-canonical spelling, so both forms match."
+  ],
+  "month_10": [
+   "Unicode CLDR, cldr-dates-full/main/th/ca-gregorian.json, months.format.wide and months.format.abbreviated.",
+   "The abbreviation is dot-internal and dot-final; the loader also",
+   "registers its token-canonical spelling, so both forms match."
+  ],
+  "month_11": [
+   "Unicode CLDR, cldr-dates-full/main/th/ca-gregorian.json, months.format.wide and months.format.abbreviated.",
+   "The abbreviation is dot-internal and dot-final; the loader also",
+   "registers its token-canonical spelling, so both forms match."
+  ],
+  "month_12": [
+   "Unicode CLDR, cldr-dates-full/main/th/ca-gregorian.json, months.format.wide and months.format.abbreviated.",
+   "The abbreviation is dot-internal and dot-final; the loader also",
+   "registers its token-canonical spelling, so both forms match."
+  ],
+  "month_2": [
+   "Unicode CLDR, cldr-dates-full/main/th/ca-gregorian.json, months.format.wide and months.format.abbreviated.",
+   "The abbreviation is dot-internal and dot-final; the loader also",
+   "registers its token-canonical spelling, so both forms match."
+  ],
+  "month_3": [
+   "Unicode CLDR, cldr-dates-full/main/th/ca-gregorian.json, months.format.wide and months.format.abbreviated.",
+   "The abbreviation is dot-internal and dot-final; the loader also",
+   "registers its token-canonical spelling, so both forms match."
+  ],
+  "month_4": [
+   "Unicode CLDR, cldr-dates-full/main/th/ca-gregorian.json, months.format.wide and months.format.abbreviated.",
+   "The abbreviation is dot-internal and dot-final; the loader also",
+   "registers its token-canonical spelling, so both forms match."
+  ],
+  "month_5": [
+   "Unicode CLDR, cldr-dates-full/main/th/ca-gregorian.json, months.format.wide and months.format.abbreviated.",
+   "The abbreviation is dot-internal and dot-final; the loader also",
+   "registers its token-canonical spelling, so both forms match."
+  ],
+  "month_6": [
+   "Unicode CLDR, cldr-dates-full/main/th/ca-gregorian.json, months.format.wide and months.format.abbreviated.",
+   "The abbreviation is dot-internal and dot-final; the loader also",
+   "registers its token-canonical spelling, so both forms match."
+  ],
+  "month_7": [
+   "Unicode CLDR, cldr-dates-full/main/th/ca-gregorian.json, months.format.wide and months.format.abbreviated.",
+   "The abbreviation is dot-internal and dot-final; the loader also",
+   "registers its token-canonical spelling, so both forms match."
+  ],
+  "month_8": [
+   "Unicode CLDR, cldr-dates-full/main/th/ca-gregorian.json, months.format.wide and months.format.abbreviated.",
+   "The abbreviation is dot-internal and dot-final; the loader also",
+   "registers its token-canonical spelling, so both forms match."
+  ],
+  "month_9": [
+   "Unicode CLDR, cldr-dates-full/main/th/ca-gregorian.json, months.format.wide and months.format.abbreviated.",
+   "The abbreviation is dot-internal and dot-final; the loader also",
+   "registers its token-canonical spelling, so both forms match."
+  ],
+  "named_day_-1": [
+   "Unicode CLDR, cldr-dates-full/main/th/dateFields.json, field day, relative-type--1."
+  ],
+  "named_day_-2": [
+   "Unicode CLDR, cldr-dates-full/main/th/dateFields.json, field day, relative-type--2."
+  ],
+  "named_day_0": [
+   "Unicode CLDR, cldr-dates-full/main/th/dateFields.json, field day, relative-type-0."
+  ],
+  "named_day_1": [
+   "Unicode CLDR, cldr-dates-full/main/th/dateFields.json, field day, relative-type-1."
+  ],
+  "named_day_2": [
+   "Unicode CLDR, cldr-dates-full/main/th/dateFields.json, field day, relative-type-2."
+  ],
+  "unit1_day": [
+   "Thai nouns do not inflect for number, so the counted form is the",
+   "citation form and every unit surface this locale ships is singular."
+  ],
+  "unit1_hour": [
+   "Thai nouns do not inflect for number, so the counted form is the",
+   "citation form and every unit surface this locale ships is singular."
+  ],
+  "unit1_minute": [
+   "Thai nouns do not inflect for number, so the counted form is the",
+   "citation form and every unit surface this locale ships is singular."
+  ],
+  "unit1_month": [
+   "Thai nouns do not inflect for number, so the counted form is the",
+   "citation form and every unit surface this locale ships is singular."
+  ],
+  "unit1_second": [
+   "Thai nouns do not inflect for number, so the counted form is the",
+   "citation form and every unit surface this locale ships is singular."
+  ],
+  "unit1_week": [
+   "Thai nouns do not inflect for number, so the counted form is the",
+   "citation form and every unit surface this locale ships is singular."
+  ],
+  "unit1_year": [
+   "Thai nouns do not inflect for number, so the counted form is the",
+   "citation form and every unit surface this locale ships is singular."
+  ],
+  "unit_day": [
+   "Unicode CLDR, cldr-dates-full/main/th/dateFields.json, field day.",
+   "วัน is also the prefix of every weekday name; the segmenter",
+   "takes the longest surface, so วันจันทร์ reads as Monday and",
+   "วันนี้ as today, never as this noun plus a leftover."
+  ],
+  "unit_hour": [
+   "Unicode CLDR, cldr-dates-full/main/th/dateFields.json, field hour."
+  ],
+  "unit_minute": [
+   "Unicode CLDR, cldr-dates-full/main/th/dateFields.json, field minute."
+  ],
+  "unit_month": [
+   "Unicode CLDR, cldr-dates-full/main/th/dateFields.json, field month."
+  ],
+  "unit_second": [
+   "Unicode CLDR, cldr-dates-full/main/th/dateFields.json, field second."
+  ],
+  "unit_week": [
+   "Unicode CLDR, cldr-dates-full/main/th/dateFields.json, field week.",
+   "Only สัปดาห์. Thai's other word for the week, อาทิตย์, is",
+   "equally the name of Sunday, and nothing in a bare occurrence",
+   "tells the two apart, so the week reading is not offered for it."
+  ],
+  "unit_year": [
+   "Unicode CLDR, cldr-dates-full/main/th/dateFields.json, field year."
+  ],
+  "weekday_0": [
+   "Unicode CLDR, cldr-dates-full/main/th/ca-gregorian.json, days.format.wide.",
+   "The wide form carries the วัน (\"day\") prefix."
+  ],
+  "weekday_1": [
+   "Unicode CLDR, cldr-dates-full/main/th/ca-gregorian.json, days.format.wide.",
+   "The wide form carries the วัน (\"day\") prefix."
+  ],
+  "weekday_2": [
+   "Unicode CLDR, cldr-dates-full/main/th/ca-gregorian.json, days.format.wide.",
+   "The wide form carries the วัน (\"day\") prefix."
+  ],
+  "weekday_3": [
+   "Unicode CLDR, cldr-dates-full/main/th/ca-gregorian.json, days.format.wide.",
+   "The wide form carries the วัน (\"day\") prefix."
+  ],
+  "weekday_4": [
+   "Unicode CLDR, cldr-dates-full/main/th/ca-gregorian.json, days.format.wide.",
+   "The wide form carries the วัน (\"day\") prefix."
+  ],
+  "weekday_5": [
+   "Unicode CLDR, cldr-dates-full/main/th/ca-gregorian.json, days.format.wide.",
+   "The wide form carries the วัน (\"day\") prefix."
+  ],
+  "weekday_6": [
+   "Unicode CLDR, cldr-dates-full/main/th/ca-gregorian.json, days.format.wide.",
+   "The wide form carries the วัน (\"day\") prefix."
+  ],
+  "weekday_abbr_0": [
+   "Unicode CLDR, cldr-dates-full/main/th/ca-gregorian.json, days.format.abbreviated.",
+   "The prefixless form. Bound only where a marker or a date frames it:",
+   "จันทร์ is equally the moon and อาทิตย์ equally the week, so a bare one",
+   "names no day. CLDR's own relative-time data writes จันทร์ที่แล้ว for",
+   "\"last Monday\", which is why the short form must read at all."
+  ],
+  "weekday_abbr_1": [
+   "Unicode CLDR, cldr-dates-full/main/th/ca-gregorian.json, days.format.abbreviated.",
+   "The prefixless form. Bound only where a marker or a date frames it:",
+   "จันทร์ is equally the moon and อาทิตย์ equally the week, so a bare one",
+   "names no day. CLDR's own relative-time data writes จันทร์ที่แล้ว for",
+   "\"last Monday\", which is why the short form must read at all."
+  ],
+  "weekday_abbr_2": [
+   "Unicode CLDR, cldr-dates-full/main/th/ca-gregorian.json, days.format.abbreviated.",
+   "The prefixless form. Bound only where a marker or a date frames it:",
+   "จันทร์ is equally the moon and อาทิตย์ equally the week, so a bare one",
+   "names no day. CLDR's own relative-time data writes จันทร์ที่แล้ว for",
+   "\"last Monday\", which is why the short form must read at all."
+  ],
+  "weekday_abbr_3": [
+   "Unicode CLDR, cldr-dates-full/main/th/ca-gregorian.json, days.format.abbreviated.",
+   "The prefixless form. Bound only where a marker or a date frames it:",
+   "จันทร์ is equally the moon and อาทิตย์ equally the week, so a bare one",
+   "names no day. CLDR's own relative-time data writes จันทร์ที่แล้ว for",
+   "\"last Monday\", which is why the short form must read at all."
+  ],
+  "weekday_abbr_4": [
+   "Unicode CLDR, cldr-dates-full/main/th/ca-gregorian.json, days.format.abbreviated.",
+   "The prefixless form. Bound only where a marker or a date frames it:",
+   "จันทร์ is equally the moon and อาทิตย์ equally the week, so a bare one",
+   "names no day. CLDR's own relative-time data writes จันทร์ที่แล้ว for",
+   "\"last Monday\", which is why the short form must read at all."
+  ],
+  "weekday_abbr_5": [
+   "Unicode CLDR, cldr-dates-full/main/th/ca-gregorian.json, days.format.abbreviated.",
+   "The prefixless form. Bound only where a marker or a date frames it:",
+   "จันทร์ is equally the moon and อาทิตย์ equally the week, so a bare one",
+   "names no day. CLDR's own relative-time data writes จันทร์ที่แล้ว for",
+   "\"last Monday\", which is why the short form must read at all."
+  ],
+  "weekday_abbr_6": [
+   "Unicode CLDR, cldr-dates-full/main/th/ca-gregorian.json, days.format.abbreviated.",
+   "The prefixless form. Bound only where a marker or a date frames it:",
+   "จันทร์ is equally the moon and อาทิตย์ equally the week, so a bare one",
+   "names no day. CLDR's own relative-time data writes จันทร์ที่แล้ว for",
+   "\"last Monday\", which is why the short form must read at all."
+  ]
  }
 }

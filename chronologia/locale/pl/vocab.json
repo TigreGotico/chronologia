@@ -570,5 +570,296 @@
    "niedzielą",
    "niedzielę"
   ]
+ },
+ "sources": {
+  "clock_dir_past": [
+   "Polish \"po <hour>\" == past the hour: \"kwadrans po dziewiątej\" == 09:15.",
+   "Citation: Poradnia Językowa PWN (sjp.pwn.pl)."
+  ],
+  "clock_dir_to": [
+   "Polish \"za <fraction> <hour>\" == to/before the hour: \"za kwadrans dziesiąta\"",
+   "== a quarter to ten == 09:45.  Citation: Poradnia Językowa PWN (sjp.pwn.pl)."
+  ],
+  "clock_fraction_15": [
+   "Polish QUARTER runs the ordinary past/to clock (NOT toward-hour): \"kwadrans",
+   "po dziewiątej\" == a quarter PAST nine == 09:15, \"za kwadrans dziesiąta\" == a",
+   "quarter TO ten == 09:45.  Citation: Poradnia Językowa PWN (sjp.pwn.pl);",
+   "PAN wsjp.pl, \"kwadrans\"."
+  ],
+  "clock_fraction_30": [
+   "Polish toward-hour HALF: \"wpół do dziewiątej\" == half toward nine == 08:30",
+   "(bare_half_to + toward_hour_12h; the \"do\" is the ordinary \"to\" connector).",
+   "NB Polish splits the system: only the HALF counts toward the coming hour;",
+   "the QUARTER uses the ordinary past/to reading (see clock_fraction_15), so",
+   "bare_quarter_to is deliberately NOT set.  Citation: Poradnia Językowa PWN",
+   "(sjp.pwn.pl) and PAN Wielki słownik języka polskiego (wsjp.pl), \"wpół do\"."
+  ],
+  "clock_landmark_0": [
+   "\"o północy\" (at midnight): pl.wiktionary, s.v. północ, sense 1.1 \"godzina",
+   "24:00\", example \"o północy w starym zamku straszy duch\".  The locative",
+   "\"północy\" is also \"in the north\" (\"na północy kraju\"), so it is listed only",
+   "with its clock preposition.  https://pl.wiktionary.org/wiki/północ"
+  ],
+  "clock_meridiem_night": [
+   "The NIGHT daypart is a BAND that crosses midnight: pl.wiktionary, s.v. noc,",
+   "sense 1.1, \"okres od zmierzchu do świtu\", so \"o drugiej w nocy\" is 02:00",
+   "and \"o 11 w nocy\" is 23:00.  Small hours 1..5 stay AM, evening hours 6..11",
+   "are PM, twelve is midnight (the band-split lives in the resolver",
+   "_clock_hms).  https://pl.wiktionary.org/wiki/noc"
+  ],
+  "daypart_afternoon_pl": [
+   "Unicode CLDR 47, locale pl, cldr-dates-full/main/pl/ca-gregorian.json.",
+   "dayPeriods format-wide afternoon1 is \"po południu\", the phrase a speaker",
+   "uses when placing an event; the stand-alone chart gives the bare noun",
+   "\"popołudnie\", which names the part of the day itself.  Both are listed,",
+   "with the locative the preposition governs."
+  ],
+  "daypart_evening_pl": [
+   "Band boundaries: Unicode CLDR 47 Day Period Rules, locale pl",
+   "(https://www.unicode.org/cldr/charts/47/supplemental/day_periods.html),",
+   "transcribed in chronologia/dayparts.py as the evening band.",
+   "Surface: adverb 'in the evening' (instrumental of wieczór) -- the deictic form these phrases use.",
+   "Source: Wiktionary, wieczorem — https://en.wiktionary.org/wiki/wieczorem"
+  ],
+  "daypart_morning_pl": [
+   "Band boundaries: Unicode CLDR 47 Day Period Rules, locale pl",
+   "(https://www.unicode.org/cldr/charts/47/supplemental/day_periods.html),",
+   "transcribed in chronologia/dayparts.py as the morning band.",
+   "Surface: adverb 'in the morning' -- the deictic form these phrases use.",
+   "Source: Wiktionary, rano — https://en.wiktionary.org/wiki/rano#Polish"
+  ],
+  "daypart_night_pl": [
+   "Unicode CLDR 47, locale pl, cldr-dates-full/main/pl/ca-gregorian.json.",
+   "dayPeriods format-wide night1 is \"w nocy\"; the stand-alone chart gives the",
+   "bare noun \"noc\".  The locative \"nocy\" carries the same reading after the",
+   "preposition and is listed so the phrase reads without it."
+  ],
+  "decade_word_20": [
+   "Polish spoken-decade ordinal adjective, nominative plural, agreeing with",
+   "\"lata\" (years).  Wiktionary declension table, entry \"dwudziesty\"."
+  ],
+  "decade_word_30": [
+   "Wiktionary declension table, entry \"trzydziesty\"."
+  ],
+  "decade_word_40": [
+   "Wiktionary declension table, entry \"czterdziesty\"."
+  ],
+  "decade_word_50": [
+   "Wiktionary declension table, entry \"pięćdziesiąty\"."
+  ],
+  "decade_word_60": [
+   "Wiktionary declension table, entry \"sześćdziesiąty\"."
+  ],
+  "decade_word_70": [
+   "Wiktionary declension table, entry \"siedemdziesiąty\"."
+  ],
+  "decade_word_80": [
+   "Wiktionary declension table, entry \"osiemdziesiąty\"."
+  ],
+  "decade_word_90": [
+   "Wiktionary declension table, entry \"dziewięćdziesiąty\"."
+  ],
+  "marker_ad": [
+   "\"n.e.\" abbreviates \"naszej ery\", spelled with a dot after each element like",
+   "its counterpart \"p.n.e.\"; Wielki słownik ortograficzny PWN records it",
+   "(https://sjp.pwn.pl/so/n.e..html)."
+  ],
+  "marker_bc": [
+   "\"p.n.e.\" abbreviates \"przed naszą erą\" and keeps a dot after every element",
+   "because the following words begin with vowels; Wielki słownik ortograficzny",
+   "PWN records the spelling (https://sjp.pwn.pl/so/p.n.e..html)."
+  ],
+  "marker_during": [
+   "Locative \"w\"/\"we\" governing a month (\"w styczniu\").",
+   "Source: en.wiktionary.org, entry \"w\" (Polish), \"in\"."
+  ],
+  "marker_half": [
+   "Polish period noun \"half\" for \"first/second half of <year>\" (half_period).",
+   "\"połowa\": PWN, Słownik języka polskiego -- \"połowa\" = jedna z dwóch równych",
+   "  części całości (\"pierwsza połowa roku\").  https://sjp.pwn.pl/slowniki/po%C5%82owa",
+   "\"pół\" is the bound/prefixal form kept for the clock half-hour path."
+  ],
+  "marker_last": [
+   "Polish \"last/previous\" determiner, the full adjectival paradigm.  The temporal",
+   "phrase is locative in ordinary speech -- \"w zeszłym tygodniu\", \"w ubiegłym",
+   "miesiącu\", \"w poprzednim roku\" -- so listing the nominative alone left the",
+   "normal register unreadable.  Hard-stem \"zeszły\"/\"ubiegły\", soft-stem",
+   "\"poprzedni\" and soft-stem \"ostatni\" (\"ostatni piątek\" = last Friday) follow",
+   "the regular adjective declension described in the PWN",
+   "*Wielki słownik ortograficzny* rules on inflection.",
+   "https://sjp.pwn.pl/zasady/"
+  ],
+  "marker_next": [
+   "Polish \"next/following\" determiner, the full adjectival paradigm.  \"w przyszłym",
+   "tygodniu\" and \"w następnym miesiącu\" are locative, the ordinary spoken forms.",
+   "Regular adjective declension per the PWN inflection rules.",
+   "https://sjp.pwn.pl/zasady/"
+  ],
+  "marker_ordlast": [
+   "Polish \"last\" ordinal determiner, the soft-stem adjective paradigm \"ostatni\".",
+   "\"ostatni poniedzialek maja\" = last Monday of May.  PWN, odmiana \"ostatni\".",
+   "https://sjp.pwn.pl/"
+  ],
+  "marker_quarter_word": [
+   "The locative \"kwartale\" is the case the relative-quarter phrases take:",
+   "CLDR 47 gives \"w zeszłym kwartale\", \"w tym kwartale\", \"w przyszłym",
+   "kwartale\" (cldr-dates-full/main/pl/dateFields.json, quarter",
+   "relative-type--1/0/1)."
+  ],
+  "marker_this": [
+   "Polish \"this\" demonstrative, the full pronominal paradigm.  \"w tym tygodniu\"",
+   "is the instrumental/locative \"tym\", \"tego roku\" the genitive.  The dative",
+   "\"temu\" is deliberately withheld: in Polish \"temu\" is the ago-marker (\"dwa dni",
+   "temu\"), so admitting it here would read a past offset as a present one.",
+   "Regular pronoun declension per the PWN inflection rules.",
+   "https://sjp.pwn.pl/zasady/"
+  ],
+  "marker_year_plural": [
+   "\"lata\" is the plural of \"rok\" (year); Polish decades are spoken",
+   "\"lata <ordinal>\" (\"lata osiemdziesiąte\" = the eighties)."
+  ],
+  "month_1": [
+   "Unicode CLDR 47, locale pl, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/pl/ca-gregorian.json): months.format.wide,",
+   "months.stand-alone.wide.  Not covered by any of those charts, and so",
+   "unattested here: \"styczniem\", \"styczniu\"."
+  ],
+  "month_10": [
+   "Unicode CLDR 47, locale pl, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/pl/ca-gregorian.json): months.format.wide,",
+   "months.stand-alone.wide.  Not covered by any of those charts, and so",
+   "unattested here: \"październikiem\", \"październiku\"."
+  ],
+  "month_11": [
+   "Unicode CLDR 47, locale pl, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/pl/ca-gregorian.json): months.format.wide,",
+   "months.stand-alone.wide.  Not covered by any of those charts, and so",
+   "unattested here: \"listopadem\", \"listopadzie\"."
+  ],
+  "month_12": [
+   "Unicode CLDR 47, locale pl, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/pl/ca-gregorian.json): months.format.wide,",
+   "months.stand-alone.wide.  Not covered by any of those charts, and so",
+   "unattested here: \"grudniem\", \"grudniu\"."
+  ],
+  "month_2": [
+   "Unicode CLDR 47, locale pl, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/pl/ca-gregorian.json): months.format.wide,",
+   "months.stand-alone.wide.  Not covered by any of those charts, and so",
+   "unattested here: \"lutym\"."
+  ],
+  "month_3": [
+   "Unicode CLDR 47, locale pl, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/pl/ca-gregorian.json): months.format.wide,",
+   "months.stand-alone.wide.  Not covered by any of those charts, and so",
+   "unattested here: \"marcem\", \"marcu\"."
+  ],
+  "month_4": [
+   "Unicode CLDR 47, locale pl, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/pl/ca-gregorian.json): months.format.wide,",
+   "months.stand-alone.wide.  Not covered by any of those charts, and so",
+   "unattested here: \"kwietniem\", \"kwietniu\"."
+  ],
+  "month_5": [
+   "Unicode CLDR 47, locale pl, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/pl/ca-gregorian.json): months.format.wide,",
+   "months.stand-alone.wide, months.format.abbreviated,",
+   "months.stand-alone.abbreviated.  Not covered by any of those charts, and so",
+   "unattested here: \"majem\", \"maju\"."
+  ],
+  "month_6": [
+   "Unicode CLDR 47, locale pl, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/pl/ca-gregorian.json): months.format.wide,",
+   "months.stand-alone.wide.  Not covered by any of those charts, and so",
+   "unattested here: \"czerwcem\", \"czerwcu\"."
+  ],
+  "month_7": [
+   "Unicode CLDR 47, locale pl, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/pl/ca-gregorian.json): months.format.wide,",
+   "months.stand-alone.wide.  Not covered by any of those charts, and so",
+   "unattested here: \"lipcem\", \"lipcu\"."
+  ],
+  "month_8": [
+   "Unicode CLDR 47, locale pl, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/pl/ca-gregorian.json): months.format.wide,",
+   "months.stand-alone.wide.  Not covered by any of those charts, and so",
+   "unattested here: \"sierpniem\", \"sierpniu\"."
+  ],
+  "month_9": [
+   "Unicode CLDR 47, locale pl, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/pl/ca-gregorian.json): months.format.wide,",
+   "months.stand-alone.wide.  Not covered by any of those charts, and so",
+   "unattested here: \"wrześniem\", \"wrześniu\"."
+  ],
+  "scope_unit_century": [
+   "The locative singular \"w\"/\"we\" takes -- \"w 20. wieku\" (\"in the 20th",
+   "century\").  Distinct from the plural \"wieki\"/\"wieków\" a bare count uses."
+  ],
+  "unit1_second": [
+   "Polish \"sekunda\" singular surfaces: nominative and accusative."
+  ],
+  "unit_month": [
+   "Polish \"miesiąc\", full paradigm; the locative \"miesiącu\" carries",
+   "\"w tym/zeszłym/przyszłym miesiącu\".",
+   "https://sjp.pwn.pl/szukaj/miesi%C4%85c.html"
+  ],
+  "unit_second": [
+   "Polish \"sekunda\", matching the depth of unit_minute.voc: nominative",
+   "singular after 1, nominative plural after 2-4, genitive plural after 5+,",
+   "and the accusative \"za sekundę\".",
+   "Unicode CLDR 47, locale pl, cldr-units-full/main/pl/units.json,",
+   "duration-second: one \"sekunda\", few \"sekundy\", many \"sekund\"."
+  ],
+  "unit_week": [
+   "Polish \"tydzień\", whose stem alternates (tydzień / tygodnia).  Full paradigm;",
+   "the locative \"tygodniu\" carries \"w tym/zeszłym/przyszłym tygodniu\".",
+   "https://sjp.pwn.pl/szukaj/tydzie%C5%84.html"
+  ],
+  "unit_year": [
+   "Polish \"rok\", suppletive in the plural (rok / lata).  Full paradigm; the",
+   "locative \"roku\" carries \"w tym/zeszłym/przyszłym roku\".",
+   "https://sjp.pwn.pl/szukaj/rok.html"
+  ],
+  "weekday_0": [
+   "Unicode CLDR 47, locale pl, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/pl/ca-gregorian.json): days.format.wide,",
+   "days.stand-alone.wide.  Not covered by any of those charts, and so",
+   "unattested here: \"poniedziałku\", \"poniedziałkiem\"."
+  ],
+  "weekday_1": [
+   "Unicode CLDR 47, locale pl, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/pl/ca-gregorian.json): days.format.wide,",
+   "days.stand-alone.wide.  Not covered by any of those charts, and so",
+   "unattested here: \"wtorku\", \"wtorkiem\"."
+  ],
+  "weekday_2": [
+   "\"środą\" is the instrumental singular, the case Polish \"między X a Y\"",
+   "(between) and bare adverbial weekday phrases govern.",
+   "Source: en.wiktionary.org, entry \"środa\" (Polish), declension table."
+  ],
+  "weekday_3": [
+   "Unicode CLDR 47, locale pl, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/pl/ca-gregorian.json): days.format.wide,",
+   "days.stand-alone.wide.  Not covered by any of those charts, and so",
+   "unattested here: \"czwartku\", \"czwartkiem\"."
+  ],
+  "weekday_4": [
+   "Unicode CLDR 47, locale pl, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/pl/ca-gregorian.json): days.format.wide,",
+   "days.stand-alone.wide.  Not covered by any of those charts, and so",
+   "unattested here: \"piątku\", \"piątkiem\"."
+  ],
+  "weekday_5": [
+   "Unicode CLDR 47, locale pl, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/pl/ca-gregorian.json): days.format.wide,",
+   "days.stand-alone.wide.  Not covered by any of those charts, and so",
+   "unattested here: \"sobotę\", \"soboty\", \"sobotą\"."
+  ],
+  "weekday_6": [
+   "Unicode CLDR 47, locale pl, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/pl/ca-gregorian.json): days.format.wide,",
+   "days.stand-alone.wide.  Not covered by any of those charts, and so",
+   "unattested here: \"niedzielę\", \"niedzieli\", \"niedzielą\"."
+  ]
  }
 }

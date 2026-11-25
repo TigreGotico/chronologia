@@ -336,5 +336,360 @@
    "կիրակի",
    "կիրակին"
   ]
+ },
+ "sources": {
+  "clock_dir_past": [
+   "անց (\"past\") counts UP from the named hour, which is the CURRENT hour:",
+   "\"ութ անց կես\" is 08:30.  ու (\"and\") fills the same slot in the standard",
+   "modern phrasing \"ժամը վեցն ու կեսն է\" (06:30).  Source: en.wiktionary.org,",
+   "անց (postposition, worked example \"ութ անց կես\" -- half past eight)."
+  ],
+  "clock_fraction_15": [
+   "A quarter of an hour, taking its direction from անց.",
+   "Source: en.wiktionary.org, քառորդ (the fractional of չորս)."
+  ],
+  "clock_fraction_30": [
+   "The spoken half hour names the hour already reached: \"ութ անց կես\" is",
+   "08:30, not 07:30.  կեսն is the same word with the definite article, the",
+   "form the \"ու կես\" phrasing uses.  Source: en.wiktionary.org, կես",
+   "(the fractional of երկու) and անց."
+  ],
+  "clock_landmark_0": [
+   "Unicode CLDR 47, locale hy, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/hy/ca-gregorian.json).",
+   "dayPeriod \"midnight\".  Declension: en.wiktionary.org, կեսգիշեր."
+  ],
+  "clock_landmark_720": [
+   "Unicode CLDR 47, locale hy, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/hy/ca-gregorian.json).",
+   "dayPeriod \"noon\".  Declension: en.wiktionary.org, կեսօր."
+  ],
+  "clock_meridiem_am": [
+   "Unicode CLDR 47, locale hy, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/hy/ca-gregorian.json).",
+   "dayPeriod \"am\", which this locale writes with the Latin abbreviation."
+  ],
+  "clock_meridiem_pm": [
+   "Unicode CLDR 47, locale hy, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/hy/ca-gregorian.json).",
+   "dayPeriod \"pm\", which this locale writes with the Latin abbreviation."
+  ],
+  "daypart_afternoon_hy": [
+   "Band boundaries: Unicode CLDR 47 dayPeriodRuleSet for hy (cldr-json",
+   "cldr-core/supplemental/dayPeriods.json), transcribed in",
+   "chronologia/dayparts.py.",
+   "Unicode CLDR 47, locale hy, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/hy/ca-gregorian.json).",
+   "dayPeriod \"afternoon1\": ցերեկ stand-alone, ցերեկը/ցերեկվա in format context."
+  ],
+  "daypart_evening_hy": [
+   "Band boundaries: Unicode CLDR 47 dayPeriodRuleSet for hy (cldr-json",
+   "cldr-core/supplemental/dayPeriods.json), transcribed in",
+   "chronologia/dayparts.py.",
+   "Unicode CLDR 47, locale hy, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/hy/ca-gregorian.json).",
+   "dayPeriod \"evening1\": երեկո stand-alone, երեկոյան in format context.",
+   "Declension: en.wiktionary.org, երեկո."
+  ],
+  "daypart_morning_hy": [
+   "Band boundaries: Unicode CLDR 47 dayPeriodRuleSet for hy (cldr-json",
+   "cldr-core/supplemental/dayPeriods.json), transcribed in",
+   "chronologia/dayparts.py.",
+   "Unicode CLDR 47, locale hy, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/hy/ca-gregorian.json).",
+   "dayPeriod \"morning1\": առավոտ stand-alone, առավոտյան in format context.",
+   "Declension: en.wiktionary.org, առավոտ."
+  ],
+  "daypart_night_hy": [
+   "Band boundaries: Unicode CLDR 47 dayPeriodRuleSet for hy (cldr-json",
+   "cldr-core/supplemental/dayPeriods.json), transcribed in",
+   "chronologia/dayparts.py.",
+   "Unicode CLDR 47, locale hy, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/hy/ca-gregorian.json).",
+   "dayPeriod \"night1\": գիշեր stand-alone, գիշերը/գիշերվա in format context.",
+   "Declension: en.wiktionary.org, գիշեր."
+  ],
+  "marker_and": [
+   "Coordinating \"and\".  Sources: en.wiktionary.org, ու; the conjunction և",
+   "as used in the worked example \"Քո և նրա միջև\"."
+  ],
+  "marker_at": [
+   "ժամը, literally \"the hour\", opens a spoken clock time (\"ժամը քանի՞սն է\"",
+   "-- what time is it?).  Source: en.wiktionary.org, ժամ."
+  ],
+  "marker_every": [
+   "ամեն (\"every\", \"each\"), prenominal, no case suffix on the noun.",
+   "Source: en.wiktionary.org, օր (\"ամեն օր\" -- every day) and շաբաթ",
+   "(\"ամեն շաբաթ\" -- each week)."
+  ],
+  "marker_future": [
+   "Armenian marks the forward offset three ways, all postposed.  ից is the",
+   "ablative case suffix on the unit noun itself (\"{0} օրից\" -- in N days),",
+   "split off the fused surface by the locale's number fold.  անց and հետո are",
+   "free-standing postpositions after a bare duration.  Sources:",
+   "# Unicode CLDR 47, locale hy (cldr-json cldr-dates-full/main/hy/dateFields.json).",
+   "relativeTime-type-future (ից) and relativeTime-type-future for the weekday",
+   "fields (հետո); en.wiktionary.org, անց (postposition: \"հինգ տարի անց\" --",
+   "five years later)."
+  ],
+  "marker_last": [
+   "Unicode CLDR 47, locale hy (cldr-json cldr-dates-full/main/hy/dateFields.json).",
+   "relative-type--1 (\"նախորդ շաբաթ\" -- last week).  անցյալ and անցած are the",
+   "two adjectival synonyms en.wiktionary.org attests in the same slot",
+   "(\"անցյալ ձմեռ\" at անցյալ, \"անցած ամիս\" at ամիս)."
+  ],
+  "marker_minute_word": [
+   "The optional \"րոպե\" between a minute count and the clock direction.",
+   "Source: en.wiktionary.org, րոպե."
+  ],
+  "marker_next": [
+   "Unicode CLDR 47, locale hy (cldr-json cldr-dates-full/main/hy/dateFields.json).",
+   "relative-type-1 for day/week/month/year and the weekday fields",
+   "(\"հաջորդ շաբաթ\" -- next week).  Prenominal, no case suffix on the noun."
+  ],
+  "marker_past": [
+   "առաջ (\"ago\", \"before\") is a POSTPOSITION: it follows the phrase it",
+   "governs.  With a bare duration the counted noun is unmarked -- \"{0} օր",
+   "առաջ\" (N days ago).  Sources: # Unicode CLDR 47, locale hy (cldr-json cldr-dates-full/main/hy/dateFields.json).",
+   "relativeTime-type-past for every unit; en.wiktionary.org, առաջ (postposition)."
+  ],
+  "marker_this": [
+   "Unicode CLDR 47, locale hy (cldr-json cldr-dates-full/main/hy/dateFields.json).",
+   "relative-type-0 (\"այս շաբաթ\" -- this week), corroborated by",
+   "en.wiktionary.org, տարի (\"այս տարի\" -- this year)."
+  ],
+  "marker_until": [
+   "մինչև (\"until\", \"up to\"), a PREPOSITION -- it leads its object, unlike",
+   "առաջ/հետո.  Source: en.wiktionary.org, մինչև (\"մինչև օրս\" -- up to now)."
+  ],
+  "marker_year_word": [
+   "թ. is the standard abbreviation of թվական (\"year\") and TRAILS the year in",
+   "the written date (\"dd MMMM, y թ.\").  Source: # Unicode CLDR 47, locale hy, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/hy/ca-gregorian.json).",
+   "թվականի is the genitive the full word takes inside a date, where the month follows in its own",
+   "genitive: hy.wikipedia.org, \"Հնդկաստանի միացյալ ազգային օրացույց\" -- \"Ընդունվել է 1957 թվականի",
+   "մարտի 22-ին։\""
+  ],
+  "month_1": [
+   "Unicode CLDR 47, locale hy, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/hy/ca-gregorian.json).",
+   "The stand-alone wide name is the nominative, the format wide name the",
+   "genitive the written date uses (\"MMMM d\" -- հունվարի 5); the abbreviation is",
+   "the calendar's own short form from the same table."
+  ],
+  "month_10": [
+   "Unicode CLDR 47, locale hy, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/hy/ca-gregorian.json).",
+   "The stand-alone wide name is the nominative, the format wide name the",
+   "genitive the written date uses (\"MMMM d\" -- հունվարի 5); the abbreviation is",
+   "the calendar's own short form from the same table."
+  ],
+  "month_11": [
+   "Unicode CLDR 47, locale hy, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/hy/ca-gregorian.json).",
+   "The stand-alone wide name is the nominative, the format wide name the",
+   "genitive the written date uses (\"MMMM d\" -- հունվարի 5); the abbreviation is",
+   "the calendar's own short form from the same table."
+  ],
+  "month_12": [
+   "Unicode CLDR 47, locale hy, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/hy/ca-gregorian.json).",
+   "The stand-alone wide name is the nominative, the format wide name the",
+   "genitive the written date uses (\"MMMM d\" -- հունվարի 5); the abbreviation is",
+   "the calendar's own short form from the same table."
+  ],
+  "month_2": [
+   "Unicode CLDR 47, locale hy, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/hy/ca-gregorian.json).",
+   "The stand-alone wide name is the nominative, the format wide name the",
+   "genitive the written date uses (\"MMMM d\" -- հունվարի 5); the abbreviation is",
+   "the calendar's own short form from the same table."
+  ],
+  "month_3": [
+   "Unicode CLDR 47, locale hy, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/hy/ca-gregorian.json).",
+   "The stand-alone wide name is the nominative, the format wide name the",
+   "genitive the written date uses (\"MMMM d\" -- հունվարի 5); the abbreviation is",
+   "the calendar's own short form from the same table."
+  ],
+  "month_4": [
+   "Unicode CLDR 47, locale hy, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/hy/ca-gregorian.json).",
+   "The stand-alone wide name is the nominative, the format wide name the",
+   "genitive the written date uses (\"MMMM d\" -- հունվարի 5); the abbreviation is",
+   "the calendar's own short form from the same table."
+  ],
+  "month_5": [
+   "Unicode CLDR 47, locale hy, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/hy/ca-gregorian.json).",
+   "The stand-alone wide name is the nominative, the format wide name the",
+   "genitive the written date uses (\"MMMM d\" -- հունվարի 5); the abbreviation is",
+   "the calendar's own short form from the same table."
+  ],
+  "month_6": [
+   "Unicode CLDR 47, locale hy, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/hy/ca-gregorian.json).",
+   "The stand-alone wide name is the nominative, the format wide name the",
+   "genitive the written date uses (\"MMMM d\" -- հունվարի 5); the abbreviation is",
+   "the calendar's own short form from the same table."
+  ],
+  "month_7": [
+   "Unicode CLDR 47, locale hy, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/hy/ca-gregorian.json).",
+   "The stand-alone wide name is the nominative, the format wide name the",
+   "genitive the written date uses (\"MMMM d\" -- հունվարի 5); the abbreviation is",
+   "the calendar's own short form from the same table."
+  ],
+  "month_8": [
+   "Unicode CLDR 47, locale hy, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/hy/ca-gregorian.json).",
+   "The stand-alone wide name is the nominative, the format wide name the",
+   "genitive the written date uses (\"MMMM d\" -- հունվարի 5); the abbreviation is",
+   "the calendar's own short form from the same table."
+  ],
+  "month_9": [
+   "Unicode CLDR 47, locale hy, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/hy/ca-gregorian.json).",
+   "The stand-alone wide name is the nominative, the format wide name the",
+   "genitive the written date uses (\"MMMM d\" -- հունվարի 5); the abbreviation is",
+   "the calendar's own short form from the same table."
+  ],
+  "named_day_-1": [
+   "Adverb \"yesterday\".  Sources: en.wiktionary.org, երեկ;",
+   "# Unicode CLDR 47, locale hy (cldr-json cldr-dates-full/main/hy/dateFields.json). relative-type--1 of the day field."
+  ],
+  "named_day_-2": [
+   "\"The day before yesterday\", a two-word phrase.",
+   "Source: # Unicode CLDR 47, locale hy (cldr-json cldr-dates-full/main/hy/dateFields.json). relative-type--2 of the day field."
+  ],
+  "named_day_0": [
+   "Adverb \"today\".  Sources: en.wiktionary.org, այսօր;",
+   "# Unicode CLDR 47, locale hy (cldr-json cldr-dates-full/main/hy/dateFields.json). relative-type-0 of the day field."
+  ],
+  "named_day_1": [
+   "Adverb \"tomorrow\", վաղն before a vowel.  Sources: en.wiktionary.org,",
+   "վաղը; # Unicode CLDR 47, locale hy (cldr-json cldr-dates-full/main/hy/dateFields.json). relative-type-1 of the day field."
+  ],
+  "named_day_2": [
+   "\"The day after tomorrow\", literally \"not tomorrow, the other day\" -- a",
+   "four-word phrase, not a single lexeme.",
+   "Source: # Unicode CLDR 47, locale hy (cldr-json cldr-dates-full/main/hy/dateFields.json). relative-type-2 of the day field."
+  ],
+  "scope_unit_century": [
+   "Declension: en.wiktionary.org, https://en.wiktionary.org/wiki/դար.",
+   "Century as a scoping period noun."
+  ],
+  "scope_unit_decade": [
+   "Declension: en.wiktionary.org, https://en.wiktionary.org/wiki/տասնամյակ.",
+   "Decade as a scoping period noun."
+  ],
+  "season_fall": [
+   "Declension: en.wiktionary.org, աշուն."
+  ],
+  "season_spring": [
+   "Declension: en.wiktionary.org, գարուն."
+  ],
+  "season_summer": [
+   "Declension: en.wiktionary.org, ամառ."
+  ],
+  "season_winter": [
+   "Declension: en.wiktionary.org, ձմեռ."
+  ],
+  "unit1_century": [
+   "Declension: en.wiktionary.org, https://en.wiktionary.org/wiki/դար."
+  ],
+  "unit1_day": [
+   "Declension: en.wiktionary.org, https://en.wiktionary.org/wiki/օր."
+  ],
+  "unit1_decade": [
+   "Declension: en.wiktionary.org, https://en.wiktionary.org/wiki/տասնամյակ."
+  ],
+  "unit1_hour": [
+   "Declension: en.wiktionary.org, https://en.wiktionary.org/wiki/ժամ.",
+   "ժամ is also the general word for a clock/watch (same entry)."
+  ],
+  "unit1_millennium": [
+   "Declension: en.wiktionary.org, https://en.wiktionary.org/wiki/հազարամյակ."
+  ],
+  "unit1_minute": [
+   "Declension: en.wiktionary.org, https://en.wiktionary.org/wiki/րոպե."
+  ],
+  "unit1_month": [
+   "Declension: en.wiktionary.org, https://en.wiktionary.org/wiki/ամիս."
+  ],
+  "unit1_second": [
+   "Declension: en.wiktionary.org, https://en.wiktionary.org/wiki/վայրկյան.",
+   "Eastern Armenian վայրկյան is \"second\"; Western Armenian uses it for",
+   "\"minute\", which is why only the Eastern reading is shipped."
+  ],
+  "unit1_week": [
+   "Declension: en.wiktionary.org, https://en.wiktionary.org/wiki/շաբաթ."
+  ],
+  "unit1_year": [
+   "Declension: en.wiktionary.org, https://en.wiktionary.org/wiki/տարի."
+  ],
+  "unit_century": [
+   "Declension: en.wiktionary.org, https://en.wiktionary.org/wiki/դար."
+  ],
+  "unit_day": [
+   "Declension: en.wiktionary.org, https://en.wiktionary.org/wiki/օր."
+  ],
+  "unit_decade": [
+   "Declension: en.wiktionary.org, https://en.wiktionary.org/wiki/տասնամյակ."
+  ],
+  "unit_hour": [
+   "Declension: en.wiktionary.org, https://en.wiktionary.org/wiki/ժամ."
+  ],
+  "unit_millennium": [
+   "Declension: en.wiktionary.org, https://en.wiktionary.org/wiki/հազարամյակ."
+  ],
+  "unit_minute": [
+   "Declension: en.wiktionary.org, https://en.wiktionary.org/wiki/րոպե."
+  ],
+  "unit_month": [
+   "Declension: en.wiktionary.org, https://en.wiktionary.org/wiki/ամիս."
+  ],
+  "unit_second": [
+   "Declension: en.wiktionary.org, https://en.wiktionary.org/wiki/վայրկյան."
+  ],
+  "unit_week": [
+   "Declension: en.wiktionary.org, https://en.wiktionary.org/wiki/շաբաթ."
+  ],
+  "unit_year": [
+   "Declension: en.wiktionary.org, https://en.wiktionary.org/wiki/տարի."
+  ],
+  "weekday_0": [
+   "Unicode CLDR 47, locale hy, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/hy/ca-gregorian.json)."
+  ],
+  "weekday_1": [
+   "Unicode CLDR 47, locale hy, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/hy/ca-gregorian.json)."
+  ],
+  "weekday_2": [
+   "Unicode CLDR 47, locale hy, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/hy/ca-gregorian.json)."
+  ],
+  "weekday_3": [
+   "Unicode CLDR 47, locale hy, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/hy/ca-gregorian.json)."
+  ],
+  "weekday_4": [
+   "Unicode CLDR 47, locale hy, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/hy/ca-gregorian.json).",
+   "Definite forms: en.wiktionary.org declension table on ուրբաթ."
+  ],
+  "weekday_5": [
+   "Unicode CLDR 47, locale hy, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/hy/ca-gregorian.json).",
+   "The wide name շաբաթ is also the ordinary noun \"week\", and nothing in the",
+   "surface distinguishes the two readings, so only the phrase that names the",
+   "day unambiguously is claimed here: en.wiktionary.org, շաբաթ (\"շաբաթ օրը --",
+   "on Saturday\").  A bare շաբաթ reads as the week unit."
+  ],
+  "weekday_6": [
+   "Unicode CLDR 47, locale hy, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/hy/ca-gregorian.json)."
+  ]
  }
 }

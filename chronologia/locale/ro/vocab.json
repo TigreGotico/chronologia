@@ -846,5 +846,210 @@
    "duminica",
    "duminică"
   ]
+ },
+ "sources": {
+  "daypart_dimineata_ro": [
+   "Band boundaries: Unicode CLDR 47 Day Period Rules, locale ro",
+   "(https://www.unicode.org/cldr/charts/47/supplemental/day_periods.html),",
+   "transcribed in chronologia/dayparts.py as [05:00, 12:00).",
+   "Sources: dexonline, Dictionarul explicativ al limbii romane",
+   "(https://dexonline.ro/definitie/dupa-amiaza).",
+   "Romanian opens the morning at 05:00. The articulated form dimineata is",
+   "the everyday one (\"maine dimineata\") and is listed beside the bare noun."
+  ],
+  "daypart_dupa_amiaza_ro": [
+   "Band boundaries: Unicode CLDR 47 Day Period Rules, locale ro",
+   "(https://www.unicode.org/cldr/charts/47/supplemental/day_periods.html),",
+   "transcribed in chronologia/dayparts.py as [12:00, 18:00).",
+   "The hyphenated surface is tokenizer-canonicalised to \"dupa amiaza\" (the",
+   "hyphen splits into two tokens the loader re-glues) -- the same reason",
+   "fr's daypart_apres_midi_fr.voc keeps this comment. Registering it here is",
+   "required because bare \"amiaza\" is ALSO this locale's word for noon",
+   "(clock_landmark_720.voc): without the glued multi-token surface, the",
+   "hyphen-split \"amiaza\" half of \"dupa-amiaza\" was claimed by the noon",
+   "landmark instead of the afternoon band."
+  ],
+  "daypart_noapte_ro": [
+   "Band boundaries: Unicode CLDR 47 Day Period Rules, locale ro",
+   "(https://www.unicode.org/cldr/charts/47/supplemental/day_periods.html),",
+   "transcribed in chronologia/dayparts.py as [22:00, 05:00).",
+   "Sources: dexonline, Dictionarul explicativ al limbii romane",
+   "(https://dexonline.ro/definitie/dupa-amiaza).",
+   "The chart lists noapte twice, at 00:00 and again at 22:00: one band",
+   "split only by the start-time notation, joined here into the single",
+   "midnight-crossing night it is. Romanian is the only language of the",
+   "thirteen where that join fires."
+  ],
+  "daypart_seara_ro": [
+   "Band boundaries: Unicode CLDR 47 Day Period Rules, locale ro",
+   "(https://www.unicode.org/cldr/charts/47/supplemental/day_periods.html),",
+   "transcribed in chronologia/dayparts.py as [18:00, 22:00).",
+   "Sources: dexonline, Dictionarul explicativ al limbii romane",
+   "(https://dexonline.ro/definitie/dupa-amiaza)."
+  ],
+  "marker_date_lead": [
+   "Words that open a date or a clock time and belong to it.",
+   "Each word is shown opening a time or date phrase on the page named in brackets,",
+   "saved under knowledge/wiki/audits/chronologia/parity-fixes/marker-strand/sources/ in the workspace.",
+   "pe: Wiktionary \"pe\": \"on (some time during the day of): pe zece mai\" [ro-pe.wikitext.txt]"
+  ],
+  "month_1": [
+   "Unicode CLDR 47, locale ro, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/ro/ca-gregorian.json): months.format.wide,",
+   "months.stand-alone.wide, months.format.abbreviated,",
+   "months.stand-alone.abbreviated.  CLDR spells the abbreviations with a",
+   "trailing period; the surfaces here drop it."
+  ],
+  "month_10": [
+   "Unicode CLDR 47, locale ro, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/ro/ca-gregorian.json): months.format.wide,",
+   "months.stand-alone.wide, months.format.abbreviated,",
+   "months.stand-alone.abbreviated.  CLDR spells the abbreviations with a",
+   "trailing period; the surfaces here drop it."
+  ],
+  "month_11": [
+   "Unicode CLDR 47, locale ro, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/ro/ca-gregorian.json): months.format.wide,",
+   "months.stand-alone.wide.  Not covered by any of those charts, and so",
+   "unattested here: \"noi\"."
+  ],
+  "month_12": [
+   "Unicode CLDR 47, locale ro, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/ro/ca-gregorian.json): months.format.wide,",
+   "months.stand-alone.wide, months.format.abbreviated,",
+   "months.stand-alone.abbreviated.  CLDR spells the abbreviations with a",
+   "trailing period; the surfaces here drop it."
+  ],
+  "month_2": [
+   "Unicode CLDR 47, locale ro, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/ro/ca-gregorian.json): months.format.wide,",
+   "months.stand-alone.wide, months.format.abbreviated,",
+   "months.stand-alone.abbreviated.  CLDR spells the abbreviations with a",
+   "trailing period; the surfaces here drop it."
+  ],
+  "month_3": [
+   "Unicode CLDR 47, locale ro, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/ro/ca-gregorian.json): months.format.wide,",
+   "months.stand-alone.wide, months.format.abbreviated,",
+   "months.stand-alone.abbreviated.  CLDR spells the abbreviations with a",
+   "trailing period; the surfaces here drop it."
+  ],
+  "month_4": [
+   "Unicode CLDR 47, locale ro, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/ro/ca-gregorian.json): months.format.wide,",
+   "months.stand-alone.wide, months.format.abbreviated,",
+   "months.stand-alone.abbreviated.  CLDR spells the abbreviations with a",
+   "trailing period; the surfaces here drop it."
+  ],
+  "month_5": [
+   "Unicode CLDR 47, locale ro, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/ro/ca-gregorian.json): months.format.wide,",
+   "months.stand-alone.wide, months.format.abbreviated,",
+   "months.stand-alone.abbreviated."
+  ],
+  "month_6": [
+   "Unicode CLDR 47, locale ro, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/ro/ca-gregorian.json): months.format.wide,",
+   "months.stand-alone.wide, months.format.abbreviated,",
+   "months.stand-alone.abbreviated.  CLDR spells the abbreviations with a",
+   "trailing period; the surfaces here drop it."
+  ],
+  "month_7": [
+   "Unicode CLDR 47, locale ro, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/ro/ca-gregorian.json): months.format.wide,",
+   "months.stand-alone.wide, months.format.abbreviated,",
+   "months.stand-alone.abbreviated.  CLDR spells the abbreviations with a",
+   "trailing period; the surfaces here drop it."
+  ],
+  "month_8": [
+   "Unicode CLDR 47, locale ro, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/ro/ca-gregorian.json): months.format.wide,",
+   "months.stand-alone.wide, months.format.abbreviated,",
+   "months.stand-alone.abbreviated.  CLDR spells the abbreviations with a",
+   "trailing period; the surfaces here drop it."
+  ],
+  "month_9": [
+   "Unicode CLDR 47, locale ro, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/ro/ca-gregorian.json): months.format.wide,",
+   "months.stand-alone.wide.  Not covered by any of those charts, and so",
+   "unattested here: \"sep\"."
+  ],
+  "roman_anchor_ides": [
+   "Romanian vernacular forms added; Latin classical forms retained.",
+   "Source: Wikipedia \"Calendarul roman\" (ro):",
+   "  \"... calendele, idele și nonele\".",
+   "  https://ro.wikipedia.org/wiki/Calendarul_roman"
+  ],
+  "roman_anchor_kalends": [
+   "Romanian vernacular forms added; Latin classical forms retained.",
+   "Source: Wikipedia \"Calendarul roman\" (ro):",
+   "  \"... calendele, idele și nonele\".",
+   "  https://ro.wikipedia.org/wiki/Calendarul_roman"
+  ],
+  "roman_anchor_nones": [
+   "Romanian vernacular forms added; Latin classical forms retained.",
+   "Source: Wikipedia \"Calendarul roman\" (ro):",
+   "  \"... calendele, idele și nonele\".",
+   "  https://ro.wikipedia.org/wiki/Calendarul_roman"
+  ],
+  "unit1_second": [
+   "Unicode CLDR 47, locale ro, cldr-units-full/main/ro/units.json,",
+   "duration-second, unitPattern-count-one \"secundă\" (unaccented \"secunda\")."
+  ],
+  "unit_second": [
+   "Unicode CLDR 47, locale ro, cldr-units-full/main/ro/units.json,",
+   "duration-second: one \"secundă\", few/other \"secunde\".  \"secunda\" is the",
+   "same singular with the final vowel written unaccented, the spelling",
+   "unaccented Romanian input produces -- unit_hour.voc ships \"ora\" beside",
+   "\"oră\" for the same reason."
+  ],
+  "weekday_0": [
+   "Romanian weekday, bare and with the enclitic definite article.  The",
+   "articulated form (lunea) is the ordinary written shape in",
+   "\"lunea trecută/viitoare\" (= last/next Monday).  Definite article of the",
+   "days of the week per dexonline / DOOM.",
+   "https://dexonline.ro/definitie/luni"
+  ],
+  "weekday_1": [
+   "Romanian weekday, bare and with the enclitic definite article.  The",
+   "articulated form (marțea) is the ordinary written shape in",
+   "\"marțea trecută/viitoare\" (= last/next Tuesday).  Definite article of the",
+   "days of the week per dexonline / DOOM.",
+   "https://dexonline.ro/definitie/marți"
+  ],
+  "weekday_2": [
+   "Romanian weekday, bare and with the enclitic definite article.  The",
+   "articulated form (miercurea) is the ordinary written shape in",
+   "\"miercurea trecută/viitoare\" (= last/next Wednesday).  Definite article of the",
+   "days of the week per dexonline / DOOM.",
+   "https://dexonline.ro/definitie/miercuri"
+  ],
+  "weekday_3": [
+   "Romanian weekday, bare and with the enclitic definite article.  The",
+   "articulated form (joia) is the ordinary written shape in",
+   "\"joia trecută/viitoare\" (= last/next Thursday).  Definite article of the",
+   "days of the week per dexonline / DOOM.",
+   "https://dexonline.ro/definitie/joi"
+  ],
+  "weekday_4": [
+   "Romanian weekday, bare and with the enclitic definite article.  The",
+   "articulated form (vinerea) is the ordinary written shape in",
+   "\"vinerea trecută/viitoare\" (= last/next Friday).  Definite article of the",
+   "days of the week per dexonline / DOOM.",
+   "https://dexonline.ro/definitie/vineri"
+  ],
+  "weekday_5": [
+   "Romanian weekday, bare and with the enclitic definite article.  The",
+   "articulated form (sâmbăta) is the ordinary written shape in",
+   "\"sâmbăta trecută/viitoare\" (= last/next Saturday).  Definite article of the",
+   "days of the week per dexonline / DOOM.",
+   "https://dexonline.ro/definitie/sâmbătă"
+  ],
+  "weekday_6": [
+   "Unicode CLDR 47, locale ro, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/ro/ca-gregorian.json): days.format.wide,",
+   "days.stand-alone.wide.  Not covered by any of those charts, and so",
+   "unattested here: \"duminica\"."
+  ]
  }
 }

@@ -16,6 +16,16 @@
         "uniqueItems": true,
         "items": {"type": "string", "minLength": 1}
       }
+    },
+    "sources": {
+      "description": "The comment lines of a vocabulary, in order, by base name. Every key is also a key of words.",
+      "type": "object",
+      "propertyNames": {"pattern": "^[a-z0-9_.-]+$"},
+      "additionalProperties": {
+        "type": "array",
+        "minItems": 1,
+        "items": {"type": "string"}
+      }
     }
   }
 }

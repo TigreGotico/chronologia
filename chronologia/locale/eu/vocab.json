@@ -487,5 +487,206 @@
    "igandeean",
    "igandeko"
   ]
+ },
+ "sources": {
+  "clock_meridiem_am": [
+   "The day part comes before the hour, also before a quarter or a digit",
+   "clock: \"Arratsaldeko hiru(rak) eta laurdenetan\" (Euskaltzaindia, Araua 35,",
+   "\"Orduak nola esan\", section 5c, p. 184) and \"goizeko 11,30etan\"",
+   "(decision 6, p. 185)."
+  ],
+  "clock_meridiem_pm": [
+   "The day part comes before the hour, also before a quarter or a digit",
+   "clock: \"Arratsaldeko hiru(rak) eta laurdenetan\" (Euskaltzaindia, Araua 35,",
+   "\"Orduak nola esan\", section 5c, p. 184) and \"goizeko 11,30etan\"",
+   "(decision 6, p. 185)."
+  ],
+  "daypart_afternoon_eu": [
+   "Band boundaries: Unicode CLDR 47 Day Period Rules, locale eu",
+   "(https://www.unicode.org/cldr/charts/47/supplemental/day_periods.html),",
+   "transcribed in chronologia/dayparts.py as the afternoon band.",
+   "Surface: inessive 'arratsaldean' — in the afternoon -- the deictic form these phrases use.",
+   "Source: Wiktionary, arratsalde — https://en.wiktionary.org/wiki/arratsalde",
+   "absolutive (\"atzoko arratsaldea\"): Wiktionary, arratsalde (declension)."
+  ],
+  "daypart_evening_eu": [
+   "Band boundaries: Unicode CLDR 47 Day Period Rules, locale eu",
+   "(https://www.unicode.org/cldr/charts/47/supplemental/day_periods.html),",
+   "transcribed in chronologia/dayparts.py as the evening band.",
+   "Surface: inessive 'iluntzean' — at dusk -- the deictic form these phrases use.",
+   "Source: Wiktionary, iluntze — https://en.wiktionary.org/wiki/iluntze",
+   "absolutive: eu.wikipedia \"Iluntze\" (\"Iluntzea, arratsa edo ilunsentia\")."
+  ],
+  "daypart_morning_eu": [
+   "Band boundaries: Unicode CLDR 47 Day Period Rules, locale eu",
+   "(https://www.unicode.org/cldr/charts/47/supplemental/day_periods.html),",
+   "transcribed in chronologia/dayparts.py as the morning band.",
+   "Surface: inessive 'goizean' — in the morning -- the deictic form these phrases use.",
+   "Source: Wiktionary, goiz — https://en.wiktionary.org/wiki/goiz (inessive goizean)",
+   "absolutive \"goiza\" after a -ko day word (\"biharko goiza\"): Wiktionary, goiz",
+   "(declension)."
+  ],
+  "daypart_night_eu": [
+   "Band boundaries: Unicode CLDR 47 Day Period Rules, locale eu",
+   "(https://www.unicode.org/cldr/charts/47/supplemental/day_periods.html),",
+   "transcribed in chronologia/dayparts.py as the night band.",
+   "Surface: inessive 'gauean' — at night -- the deictic form these phrases use.",
+   "Source: Wiktionary, gau — https://en.wiktionary.org/wiki/gau (inessive gauean)",
+   "absolutive \"gaua\" after a -ko day word (\"atzoko gaua\"): Wiktionary, gaua.",
+   "\"gau honetan\" (in this night) is tonight: eu.wikipedia \"Walpurgis gaua\"",
+   "(\"gau honetan sorginak bildu ohi baitziren\"); Wiktionary, honetan."
+  ],
+  "marker_dayparttoday": [
+   "a night surface fused with TODAY, as English \"tonight\" is."
+  ],
+  "month_1": [
+   "Unicode CLDR 47, locale eu, cldr-dates-full/main/eu/ca-gregorian.json.",
+   "months.format.abbreviated and months.stand-alone.abbreviated are identical;",
+   "CLDR ships the trailing dot as part of the surface, but the tokenizer strips",
+   "a trailing dot before matching, so the bare form covers both spellings."
+  ],
+  "month_10": [
+   "Unicode CLDR 47, locale eu, cldr-dates-full/main/eu/ca-gregorian.json.",
+   "months.format.abbreviated and months.stand-alone.abbreviated are identical;",
+   "CLDR ships the trailing dot as part of the surface, but the tokenizer strips",
+   "a trailing dot before matching, so the bare form covers both spellings."
+  ],
+  "month_11": [
+   "Unicode CLDR 47, locale eu, cldr-dates-full/main/eu/ca-gregorian.json.",
+   "months.format.abbreviated and months.stand-alone.abbreviated are identical;",
+   "CLDR ships the trailing dot as part of the surface, but the tokenizer strips",
+   "a trailing dot before matching, so the bare form covers both spellings."
+  ],
+  "month_12": [
+   "Unicode CLDR 47, locale eu, cldr-dates-full/main/eu/ca-gregorian.json.",
+   "months.format.abbreviated and months.stand-alone.abbreviated are identical;",
+   "CLDR ships the trailing dot as part of the surface, but the tokenizer strips",
+   "a trailing dot before matching, so the bare form covers both spellings."
+  ],
+  "month_2": [
+   "Unicode CLDR 47, locale eu, cldr-dates-full/main/eu/ca-gregorian.json.",
+   "months.format.abbreviated and months.stand-alone.abbreviated are identical;",
+   "CLDR ships the trailing dot as part of the surface, but the tokenizer strips",
+   "a trailing dot before matching, so the bare form covers both spellings."
+  ],
+  "month_3": [
+   "Unicode CLDR 47, locale eu, cldr-dates-full/main/eu/ca-gregorian.json.",
+   "months.format.abbreviated and months.stand-alone.abbreviated are identical;",
+   "CLDR ships the trailing dot as part of the surface, but the tokenizer strips",
+   "a trailing dot before matching, so the bare form covers both spellings."
+  ],
+  "month_4": [
+   "Unicode CLDR 47, locale eu, cldr-dates-full/main/eu/ca-gregorian.json.",
+   "months.format.abbreviated and months.stand-alone.abbreviated are identical;",
+   "CLDR ships the trailing dot as part of the surface, but the tokenizer strips",
+   "a trailing dot before matching, so the bare form covers both spellings."
+  ],
+  "month_5": [
+   "Unicode CLDR 47, locale eu, cldr-dates-full/main/eu/ca-gregorian.json.",
+   "months.format.abbreviated and months.stand-alone.abbreviated are identical;",
+   "CLDR ships the trailing dot as part of the surface, but the tokenizer strips",
+   "a trailing dot before matching, so the bare form covers both spellings."
+  ],
+  "month_6": [
+   "Unicode CLDR 47, locale eu, cldr-dates-full/main/eu/ca-gregorian.json.",
+   "months.format.abbreviated and months.stand-alone.abbreviated are identical;",
+   "CLDR ships the trailing dot as part of the surface, but the tokenizer strips",
+   "a trailing dot before matching, so the bare form covers both spellings."
+  ],
+  "month_7": [
+   "Unicode CLDR 47, locale eu, cldr-dates-full/main/eu/ca-gregorian.json.",
+   "months.format.abbreviated and months.stand-alone.abbreviated are identical;",
+   "CLDR ships the trailing dot as part of the surface, but the tokenizer strips",
+   "a trailing dot before matching, so the bare form covers both spellings."
+  ],
+  "month_8": [
+   "Unicode CLDR 47, locale eu, cldr-dates-full/main/eu/ca-gregorian.json.",
+   "months.format.abbreviated and months.stand-alone.abbreviated are identical;",
+   "CLDR ships the trailing dot as part of the surface, but the tokenizer strips",
+   "a trailing dot before matching, so the bare form covers both spellings."
+  ],
+  "month_9": [
+   "Unicode CLDR 47, locale eu, cldr-dates-full/main/eu/ca-gregorian.json.",
+   "months.format.abbreviated and months.stand-alone.abbreviated are identical;",
+   "CLDR ships the trailing dot as part of the surface, but the tokenizer strips",
+   "a trailing dot before matching, so the bare form covers both spellings."
+  ],
+  "named_day_-1": [
+   "genitive-locative -ko, \"yesterday's\" (\"atzoko gaua\" = last night):",
+   "Wiktionary, atzoko; Euskaltzaindia Araua 37 for the -ko link on a time word."
+  ],
+  "named_day_-2": [
+   "\"of the day before yesterday\": eu.wikipedia \"Éva Gauthier\" (\"gaurko eta",
+   "herenegungo frantsesen abestien\")."
+  ],
+  "named_day_1": [
+   "\"tomorrow's\" (\"biharko goiza\"): Wiktionary, biharko."
+  ],
+  "unit_day": [
+   "genitive-locative -ko on the unit (\"duela 3 eguneko gaua\" = the night of",
+   "three days ago): Wiktionary, egun (declension); Araua 37 (\"1995eko\")."
+  ],
+  "unit_hour": [
+   "-ko of a length (\"hamar minutuko\", of ten minutes): Wiktionary, eu \"-ko\"."
+  ],
+  "unit_minute": [
+   "-ko of a length (\"hamar minutuko\", of ten minutes): Wiktionary, eu \"-ko\"."
+  ],
+  "unit_month": [
+   "-ko of a length (\"hamar minutuko\", of ten minutes): Wiktionary, eu \"-ko\"."
+  ],
+  "unit_second": [
+   "-ko of a length (\"hamar minutuko\", of ten minutes): Wiktionary, eu \"-ko\"."
+  ],
+  "unit_week": [
+   "-ko of a length (\"hamar minutuko\", of ten minutes): Wiktionary, eu \"-ko\"."
+  ],
+  "unit_year": [
+   "-ko of a length (\"hamar minutuko\", of ten minutes): Wiktionary, eu \"-ko\"."
+  ],
+  "weekday_0": [
+   "Unicode CLDR 47, locale eu, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/eu/ca-gregorian.json): days.format.wide,",
+   "days.stand-alone.wide.  Not covered by any of those charts, and so",
+   "unattested here: \"astelehenean\", \"astelehenan\", \"astelehenaren\",",
+   "\"astelehenko\"."
+  ],
+  "weekday_1": [
+   "Unicode CLDR 47, locale eu, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/eu/ca-gregorian.json): days.format.wide,",
+   "days.stand-alone.wide.  Not covered by any of those charts, and so",
+   "unattested here: \"astearteean\", \"asteartean\", \"asteartearen\", \"astearteko\"."
+  ],
+  "weekday_2": [
+   "Unicode CLDR 47, locale eu, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/eu/ca-gregorian.json): days.format.wide,",
+   "days.stand-alone.wide.  Not covered by any of those charts, and so",
+   "unattested here: \"asteazkenean\", \"asteazkenan\", \"asteazkenaren\",",
+   "\"asteazkenko\"."
+  ],
+  "weekday_3": [
+   "Unicode CLDR 47, locale eu, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/eu/ca-gregorian.json): days.format.wide,",
+   "days.stand-alone.wide.  Not covered by any of those charts, and so",
+   "unattested here: \"ostegunean\", \"ostegunan\", \"ostegunaren\", \"ostegunko\"."
+  ],
+  "weekday_4": [
+   "Unicode CLDR 47, locale eu, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/eu/ca-gregorian.json): days.format.wide,",
+   "days.stand-alone.wide.  Not covered by any of those charts, and so",
+   "unattested here: \"ostiralean\", \"ostiralan\", \"ostiralaren\", \"ostiralko\"."
+  ],
+  "weekday_5": [
+   "Unicode CLDR 47, locale eu, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/eu/ca-gregorian.json): days.format.wide,",
+   "days.stand-alone.wide.  Not covered by any of those charts, and so",
+   "unattested here: \"larunbatean\", \"larunbatan\", \"larunbataren\", \"larunbatko\"."
+  ],
+  "weekday_6": [
+   "Unicode CLDR 47, locale eu, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/eu/ca-gregorian.json): days.format.wide,",
+   "days.stand-alone.wide.  Not covered by any of those charts, and so",
+   "unattested here: \"igandeean\", \"igandean\", \"igandearen\", \"igandeko\"."
+  ]
  }
 }

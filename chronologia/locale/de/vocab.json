@@ -830,5 +830,355 @@
   "weekday_abbr_6": [
    "so"
   ]
+ },
+ "sources": {
+  "clock_fraction_45": [
+   "South/East German and Austrian toward-the-hour quarters (REGIONAL): a bare",
+   "\"dreiviertel <H>\" names three quarters of the way toward hour H, i.e.",
+   "(H-1):45 -- \"dreiviertel neun\" == 08:45, alongside bare \"viertel neun\" ==",
+   "08:15 and \"halb neun\" == 08:30. Western/northern German never uses these bare",
+   "forms (it says \"viertel nach acht\" / \"viertel vor neun\", the CLOCKDIR path),",
+   "so enabling the bare quarters only ADDS readings for strings that were",
+   "unparsed before -- no collision with the \"nach\"/\"vor\" forms.",
+   "Source: Bastian Sick, \"Zwiebelfisch: Von Viertel nach acht bis viertel neun\"",
+   "(Spiegel Online / Der Dativ ist dem Genitiv sein Tod, Bd. 3)."
+  ],
+  "clock_meridiem_am": [
+   "\"früh\" after a clock names the morning: DWDS, \"früh\", Bedeutung 2: \"am",
+   "Morgen, morgens\", with the example \"um fünf Uhr früh fahre ich zurück\"",
+   "(https://www.dwds.de/wb/früh)."
+  ],
+  "clock_meridiem_am_night": [
+   "\"nachts\" reads on the am half of the 12-hour clock (\"drei nachts\" is 03:00).",
+   "Over an explicit 24-hour clock it keeps 18:00-23:59 as written (\"23:30",
+   "nachts\"): the night starts at nightfall, not at midnight.",
+   "Duden, \"Nacht\", Bedeutung 1: \"Zeitraum etwa zwischen Sonnenuntergang und",
+   "Sonnenaufgang, zwischen Einbruch der Dunkelheit und Beginn der",
+   "Morgendämmerung\" (https://www.duden.de/rechtschreibung/Nacht).",
+   "DWDS, \"Nacht\", Bedeutung 1 (eWDG): \"Zeit zwischen Ende der Abenddämmerung",
+   "und Beginn der Morgendämmerung\" (https://www.dwds.de/wb/Nacht).",
+   "13:00-17:59 is the Nachmittag (Unicode CLDR Day Period Rules, locale de,",
+   "nachmittag [13:00, 18:00)), so \"15:30 nachts\" names no time."
+  ],
+  "daypart_abend_de": [
+   "Band boundaries: Unicode CLDR 47 Day Period Rules, locale de",
+   "(https://www.unicode.org/cldr/charts/47/supplemental/day_periods.html),",
+   "transcribed in chronologia/dayparts.py as [18:00, 24:00).",
+   "Sources: Duden (https://www.duden.de/rechtschreibung/Vormittag), which",
+   "gives Vormittag as the \"Zeit zwischen Morgen und Mittag\"."
+  ],
+  "daypart_nachmittag_de": [
+   "Band boundaries: Unicode CLDR 47 Day Period Rules, locale de",
+   "(https://www.unicode.org/cldr/charts/47/supplemental/day_periods.html),",
+   "transcribed in chronologia/dayparts.py as [13:00, 18:00).",
+   "Sources: Duden (https://www.duden.de/rechtschreibung/Vormittag), which",
+   "gives Vormittag as the \"Zeit zwischen Morgen und Mittag\".",
+   "The Nachmittag opens at 13:00, after the hour-wide Mittag, not at noon",
+   "the way English afternoon does."
+  ],
+  "daypart_nacht_de": [
+   "Band boundaries: Unicode CLDR 47 Day Period Rules, locale de",
+   "(https://www.unicode.org/cldr/charts/47/supplemental/day_periods.html),",
+   "transcribed in chronologia/dayparts.py as [00:00, 05:00).",
+   "Sources: Duden (https://www.duden.de/rechtschreibung/Vormittag), which",
+   "gives Vormittag as the \"Zeit zwischen Morgen und Mittag\".",
+   "The Nacht is the small hours of the named day; the Abend holds the",
+   "evening through to midnight on its own."
+  ],
+  "daypart_vormittag_de": [
+   "Band boundaries: Unicode CLDR 47 Day Period Rules, locale de",
+   "(https://www.unicode.org/cldr/charts/47/supplemental/day_periods.html),",
+   "transcribed in chronologia/dayparts.py as [10:00, 12:00).",
+   "Sources: Duden (https://www.duden.de/rechtschreibung/Vormittag), which",
+   "gives Vormittag as the \"Zeit zwischen Morgen und Mittag\".",
+   "German splits what English runs together as one morning, and Vormittag",
+   "is the half English has no word for at all."
+  ],
+  "marker_alarm_at": [
+   "Das Nomen eines Geräts, das zu einer eingestellten Zeit ein Signal gibt, und",
+   "\"für\" danach: \"Wecker für 7\".  \"Wecker [1] Uhr, die zu einer vorher",
+   "eingestellten Zeit ein Signal gibt\" (Wiktionary, s.v. \"Wecker\").  \"für [8]",
+   "bestimmt oder gibt einen Zeitraum oder Zeitpunkt an\" (Wiktionary, s.v.",
+   "\"für\")."
+  ],
+  "marker_alarm_joiner": [
+   "The words that join two hours that share one later meridiem: \"alarm for 7",
+   "or 8 pm\"."
+  ],
+  "marker_at_counts": [
+   "Clock prepositions that also introduce a counted group: a bare hour behind one",
+   "is doubtful only right before a word of marker_counted_noun.voc.  Attested in",
+   "the parity acceptance rows; no dictionary source checked, a native reviewer is to confirm."
+  ],
+  "marker_at_with_unit": [
+   "\"auf\" before an hour with its unit word (\"auf 15 Uhr\") names a point in time:",
+   "Duden, \"auf\" (Präposition), Angabe des Zeitpunkts, \"das Taxi ist auf (für) 16 Uhr",
+   "bestellt\" (https://www.duden.de/rechtschreibung/auf_Praeposition).  Used only",
+   "before \"Uhr\", so \"auf 15 Grad\" is no clock.  Duden marks the use \"Gebrauch",
+   "landschaftlich\" (regional)."
+  ],
+  "marker_clock_lead": [
+   "Words that open a clock time and belong to it. They fold only in front of",
+   "a number, a clock time, a clock fraction or a clock landmark.",
+   "Each word is shown opening a clock time on the page named in brackets,",
+   "saved under knowledge/wiki/audits/chronologia/parity-fixes/marker-strand/sources/ in the workspace.",
+   "um: Wiktionary \"um\": \"at, by (when relating to time): Um acht Uhr reisen wir ab\" [de-um.wikitext.txt]"
+  ],
+  "marker_counted_noun": [
+   "Nouns that count people or things a clock never takes: a bare hour behind a",
+   "clock preposition and directly before one of them is a count (\"wave at 5",
+   "people\").  Each word is quoted from its Wiktionary Noun entry",
+   "(https://en.wiktionary.org/wiki/<word>); the fetched pages are kept with the audit.",
+   "Person: Noun. \"person, individual\"",
+   "Personen: Noun. \"plural of Person\"",
+   "Leute: Noun. \"people several individual persons, a group of people in general, esp. of one kind or another, fol...\"",
+   "Gäste: Noun. \"form of Gast\"",
+   "Nachbarn: Noun. \"form of Nachbar\"",
+   "Freunde: Noun. \"form of Freund\"",
+   "Kinder: Noun. \"form of Kind\"",
+   "Erwachsene: Noun. \"female adult\"",
+   "Spieler: Noun. \"player\"",
+   "Plätze: Noun. \"form of Platz\"",
+   "Tische: Noun. \"form of Tisch\"",
+   "Karten: Noun. \"plural of Karte (cards)\"",
+   "Zimmer: Noun. \"room separate part of a building, enclosed by walls, a floor and a ceiling\"",
+   "Euro: Noun. \"euro currency\""
+  ],
+  "marker_date_lead": [
+   "Words that open a date or a clock time and belong to it.",
+   "Each word is shown opening a time or date phrase on the page named in brackets,",
+   "saved under knowledge/wiki/audits/chronologia/parity-fixes/marker-strand/sources/ in the workspace.",
+   "am: de.Wiktionary \"am\": \"[1] Angabe eines Zeitpunkts - wann? ... am Donnerstag, am 1.11.2005\" [dewikt-am.wikitext.txt]",
+   "an: Wiktionary \"an\": \"temporal, with days or times of day: on; in; at\" [de-an.wikitext.txt]",
+   "im: de.Wiktionary \"im\": \"[1] zeitlich: Position innerhalb einer genannten Zeitspanne ... Im April blühen die Anemonen.\" [dewikt-im.wikitext.txt]"
+  ],
+  "marker_date_lead_dative": [
+   "Determiners in the dative that make a this-phrase take its lead word: \"an diesem Donnerstag\".",
+   "Before a calendar date the determiner folds with its lead word: \"an diesem 31. Januar\".",
+   "Saved under knowledge/wiki/audits/chronologia/parity-fixes/marker-strand/sources/ in the workspace:",
+   "DWDS, \"an\": \"2. zeitlich a) ... Grammatik: mit Dativ. Beispiele: das Wetter an diesem\" [de-an-dwds.txt]",
+   "Duden, \"an\": \"mit Dativ ... an diesem 31. Januar\" [de-an-duden.txt]"
+  ],
+  "marker_date_lead_no_deixis": [
+   "Lead words that do not open a time expression that begins with this, next or last and has no",
+   "determiner in the dative (\"ruf mich an nächsten Freitag\", \"mach das Licht an nächste Woche\").",
+   "\"an\" governs the dative in a time phrase, so a bare accusative phrase takes no preposition and the",
+   "\"an\" before it belongs to the verb (anrufen, anmachen).",
+   "Because German lists determiners in marker_date_lead_dative.voc, \"an\" also does not open a bare",
+   "weekday, daypart or period: the time phrase is \"am Montag\" (de.Wiktionary \"am\": \"[1] Angabe eines",
+   "Zeitpunkts - wann? ... am Donnerstag\" [dewikt-am.wikitext.txt]), so the \"an\" of \"ruf mich an Montag\"",
+   "and \"denk an Montag\" belongs to the verb.",
+   "Saved under knowledge/wiki/audits/chronologia/parity-fixes/marker-strand/sources/ in the workspace:",
+   "Duden, \"an\": \"zur Angabe des Zeitpunkts. Grammatik: mit Dativ. an einem Wintermorgen, an diesem 31. Januar\" [de-an-duden.txt]",
+   "DWDS, \"an\": \"2. zeitlich a) ... Grammatik: mit Dativ. Beispiele: das Wetter an diesem, am nächsten Tag\" [de-an-dwds.txt]"
+  ],
+  "marker_during": [
+   "\"im\" (in + dem) is the standard frame for a calendar month",
+   "(\"im Januar\"); \"waehrend\" covers the explicit \"during\" reading.",
+   "Source: en.wiktionary.org, entry \"im\" (German), \"in the\"."
+  ],
+  "marker_from": [
+   "German range \"from\" lead (von/vom/ab A bis B).",
+   "\"vom\": Duden s.v. \"von\" -- \"vom\" is the fused form of \"von dem\" and is the",
+   "  ordinary temporal range opener paired with \"bis\" (\"vom 3. bis 10. Juli\").",
+   "  https://www.duden.de/rechtschreibung/von"
+  ],
+  "marker_last": [
+   "German \"last/previous\" determiner.  Besides \"letzte\", everyday German uses",
+   "\"vorig-\" (\"vorigen Mittwoch\") and \"vergangen-\" (\"vergangenen Mittwoch\") for",
+   "the past weekday; all three take the regular attributive-adjective endings",
+   "(strong/weak/mixed), so the inflected forms are listed in full.",
+   "Duden, Flexion von \"vorig\" / \"vergangen\" / \"letzter\".",
+   "https://www.duden.de/rechtschreibung/vorig"
+  ],
+  "marker_ordlast": [
+   "German \"last\" ordinal determiner (attributive adjective, all endings).",
+   "\"der letzte Montag im Mai\" = the last Monday of May.  Duden, Flexion von \"letzter\".",
+   "https://www.duden.de/rechtschreibung/letzter"
+  ],
+  "marker_this": [
+   "Source: Duden, Die Grammatik (9th ed. 2016): \"diesem\" is the dative singular of \"dieser\" (\"an diesem Donnerstag\")."
+  ],
+  "marker_week_num": [
+   "The plural is NOT a week-number surface: a German week number is always",
+   "singular (\"die 2. Woche\", \"KW 2\", \"Kalenderwoche 2\"), and the plural names",
+   "a COUNT of weeks. Listing it let the ordinal order read the bare counted",
+   "length \"2 wochen\" as calendar week 2, answering a date six months before",
+   "the anchor."
+  ],
+  "month_1": [
+   "Unicode CLDR 47, locale de, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/de/ca-gregorian.json): months.format.wide,",
+   "months.stand-alone.wide, months.format.abbreviated,",
+   "months.stand-alone.abbreviated."
+  ],
+  "month_10": [
+   "Unicode CLDR 47, locale de, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/de/ca-gregorian.json): months.format.wide,",
+   "months.stand-alone.wide, months.format.abbreviated,",
+   "months.stand-alone.abbreviated."
+  ],
+  "month_11": [
+   "Unicode CLDR 47, locale de, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/de/ca-gregorian.json): months.format.wide,",
+   "months.stand-alone.wide, months.format.abbreviated,",
+   "months.stand-alone.abbreviated."
+  ],
+  "month_12": [
+   "Unicode CLDR 47, locale de, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/de/ca-gregorian.json): months.format.wide,",
+   "months.stand-alone.wide, months.format.abbreviated,",
+   "months.stand-alone.abbreviated."
+  ],
+  "month_2": [
+   "Unicode CLDR 47, locale de, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/de/ca-gregorian.json): months.format.wide,",
+   "months.stand-alone.wide, months.format.abbreviated,",
+   "months.stand-alone.abbreviated."
+  ],
+  "month_3": [
+   "Unicode CLDR 47, locale de, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/de/ca-gregorian.json): months.format.wide,",
+   "months.stand-alone.wide, months.format.abbreviated.  Not covered by any of",
+   "those charts, and so unattested here: \"maerz\", \"mrz\"."
+  ],
+  "month_4": [
+   "Unicode CLDR 47, locale de, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/de/ca-gregorian.json): months.format.wide,",
+   "months.stand-alone.wide, months.format.abbreviated,",
+   "months.stand-alone.abbreviated."
+  ],
+  "month_5": [
+   "Unicode CLDR 47, locale de, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/de/ca-gregorian.json): months.format.wide,",
+   "months.stand-alone.wide, months.format.abbreviated,",
+   "months.stand-alone.abbreviated."
+  ],
+  "month_6": [
+   "Unicode CLDR 47, locale de, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/de/ca-gregorian.json): months.format.wide,",
+   "months.stand-alone.wide, months.format.abbreviated,",
+   "months.stand-alone.abbreviated."
+  ],
+  "month_7": [
+   "Unicode CLDR 47, locale de, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/de/ca-gregorian.json): months.format.wide,",
+   "months.stand-alone.wide, months.format.abbreviated,",
+   "months.stand-alone.abbreviated."
+  ],
+  "month_8": [
+   "Unicode CLDR 47, locale de, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/de/ca-gregorian.json): months.format.wide,",
+   "months.stand-alone.wide, months.format.abbreviated,",
+   "months.stand-alone.abbreviated."
+  ],
+  "month_9": [
+   "Unicode CLDR 47, locale de, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/de/ca-gregorian.json): months.format.wide,",
+   "months.stand-alone.wide, months.format.abbreviated,",
+   "months.stand-alone.abbreviated.  CLDR spells the abbreviations with a",
+   "trailing period; the surfaces here drop it."
+  ],
+  "roman_anchor_ides": [
+   "German vernacular Roman-calendar anchor names.",
+   "Source: Wikipedia \"Römischer Kalender\" (de):",
+   "  \"... die religiösen Festtage Kalenden, Nonen, Iden ...\".",
+   "  https://de.wikipedia.org/wiki/R%C3%B6mischer_Kalender"
+  ],
+  "roman_anchor_kalends": [
+   "German vernacular Roman-calendar anchor names.",
+   "Source: Wikipedia \"Römischer Kalender\" (de):",
+   "  \"... die religiösen Festtage Kalenden, Nonen, Iden ...\".",
+   "  https://de.wikipedia.org/wiki/R%C3%B6mischer_Kalender"
+  ],
+  "roman_anchor_nones": [
+   "German vernacular Roman-calendar anchor names.",
+   "Source: Wikipedia \"Römischer Kalender\" (de):",
+   "  \"... die religiösen Festtage Kalenden, Nonen, Iden ...\".",
+   "  https://de.wikipedia.org/wiki/R%C3%B6mischer_Kalender"
+  ],
+  "season_summer": [
+   "\"Sommers\" is the genitive singular of \"Sommer\" (Wiktionary, entry \"Sommer\",",
+   "declension table), the case \"während des Sommers\" governs."
+  ],
+  "unit1_second": [
+   "Unicode CLDR 47, locale de, cldr-units-full/main/de/units.json,",
+   "duration-second, unitPattern-count-one \"Sekunde\"."
+  ],
+  "unit_second": [
+   "Unicode CLDR 47, locale de, cldr-units-full/main/de/units.json,",
+   "duration-second: one \"Sekunde\", other \"Sekunden\", short form \"Sek.\"."
+  ],
+  "weekday_0": [
+   "Unicode CLDR 47, locale de, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/de/ca-gregorian.json): days.format.wide,",
+   "days.stand-alone.wide."
+  ],
+  "weekday_1": [
+   "Unicode CLDR 47, locale de, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/de/ca-gregorian.json): days.format.wide,",
+   "days.stand-alone.wide."
+  ],
+  "weekday_2": [
+   "Unicode CLDR 47, locale de, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/de/ca-gregorian.json): days.format.wide,",
+   "days.stand-alone.wide."
+  ],
+  "weekday_3": [
+   "Unicode CLDR 47, locale de, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/de/ca-gregorian.json): days.format.wide,",
+   "days.stand-alone.wide."
+  ],
+  "weekday_4": [
+   "Unicode CLDR 47, locale de, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/de/ca-gregorian.json): days.format.wide,",
+   "days.stand-alone.wide."
+  ],
+  "weekday_5": [
+   "Unicode CLDR 47, locale de, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/de/ca-gregorian.json): days.format.wide,",
+   "days.stand-alone.wide.  Not covered by any of those charts, and so",
+   "unattested here: \"sonnabend\"."
+  ],
+  "weekday_6": [
+   "Unicode CLDR 47, locale de, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/de/ca-gregorian.json): days.format.wide,",
+   "days.stand-alone.wide."
+  ],
+  "weekday_abbr_0": [
+   "Unicode CLDR 47, locale de, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/de/ca-gregorian.json): days.format.abbreviated,",
+   "days.stand-alone.abbreviated, days.format.short, days.stand-alone.short."
+  ],
+  "weekday_abbr_1": [
+   "Unicode CLDR 47, locale de, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/de/ca-gregorian.json): days.format.abbreviated,",
+   "days.stand-alone.abbreviated, days.format.short, days.stand-alone.short."
+  ],
+  "weekday_abbr_2": [
+   "Unicode CLDR 47, locale de, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/de/ca-gregorian.json): days.format.abbreviated,",
+   "days.stand-alone.abbreviated, days.format.short, days.stand-alone.short."
+  ],
+  "weekday_abbr_3": [
+   "Unicode CLDR 47, locale de, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/de/ca-gregorian.json): days.format.abbreviated,",
+   "days.stand-alone.abbreviated, days.format.short, days.stand-alone.short."
+  ],
+  "weekday_abbr_4": [
+   "Unicode CLDR 47, locale de, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/de/ca-gregorian.json): days.format.abbreviated,",
+   "days.stand-alone.abbreviated, days.format.short, days.stand-alone.short."
+  ],
+  "weekday_abbr_5": [
+   "Unicode CLDR 47, locale de, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/de/ca-gregorian.json): days.format.abbreviated,",
+   "days.stand-alone.abbreviated, days.format.short, days.stand-alone.short."
+  ],
+  "weekday_abbr_6": [
+   "Unicode CLDR 47, locale de, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/de/ca-gregorian.json): days.format.abbreviated,",
+   "days.stand-alone.abbreviated, days.format.short, days.stand-alone.short."
+  ]
  }
 }

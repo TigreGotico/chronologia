@@ -533,5 +533,267 @@
    "neděle",
    "neděli"
   ]
+ },
+ "sources": {
+  "clock_fraction_30": [
+   "Czech toward-hour HALF: \"půl deváté\" == half toward the ninth == 08:30",
+   "(bare_half_to + toward_hour_12h).  The half names the coming hour with a",
+   "genitive-feminine ordinal agreeing with elided \"hodiny\".  Citation: Ústav",
+   "pro jazyk český AV ČR (Internetová jazyková příručka / dotazovna), telling",
+   "the time."
+  ],
+  "clock_fraction_45": [
+   "Czech THREE QUARTERS toward the coming hour: \"třičtvrtě na devět\" == 08:45",
+   "(bare_quarter_to + toward_hour_12h; \"na\" is the toward connector, see",
+   "marker_na.voc).  Citation: Internetová jazyková příručka (ÚJČ AV ČR),",
+   "\"Vyjadřování času\": \"tři čtvrtě na sedm\" == 6.45; the spaced spelling the",
+   "authority writes is joined onto this one by the number fold."
+  ],
+  "daypart_afternoon_cs": [
+   "Band boundaries: Unicode CLDR 47 Day Period Rules, locale cs",
+   "(https://www.unicode.org/cldr/charts/47/supplemental/day_periods.html),",
+   "transcribed in chronologia/dayparts.py as the afternoon band.",
+   "Surface: adverb 'in the afternoon' -- the deictic form these phrases use.",
+   "Source: Wiktionary, odpoledne — https://en.wiktionary.org/wiki/odpoledne"
+  ],
+  "daypart_evening_cs": [
+   "Band boundaries: Unicode CLDR 47 Day Period Rules, locale cs",
+   "(https://www.unicode.org/cldr/charts/47/supplemental/day_periods.html),",
+   "transcribed in chronologia/dayparts.py as the evening band.",
+   "Surface: adverb 'in the evening' -- the deictic form these phrases use.",
+   "Source: Wiktionary, večer — https://en.wiktionary.org/wiki/večer"
+  ],
+  "daypart_morning_cs": [
+   "Band boundaries: Unicode CLDR 47 Day Period Rules, locale cs",
+   "(https://www.unicode.org/cldr/charts/47/supplemental/day_periods.html),",
+   "transcribed in chronologia/dayparts.py as the morning band.",
+   "Surface: adverb 'in the morning' -- the deictic form these phrases use.",
+   "Source: Wiktionary, ráno — https://en.wiktionary.org/wiki/ráno"
+  ],
+  "marker_ad": [
+   "\"n. l.\" abbreviates \"našeho letopočtu\" and appears in the same list in the",
+   "Internetová jazyková příručka (https://prirucka.ujc.cas.cz/?id=780); \"po",
+   "Kr.\" is its Christian counterpart, formed like \"př. Kr.\"."
+  ],
+  "marker_bc": [
+   "The Internetová jazyková příručka of the Ústav pro jazyk český lists both",
+   "the secular \"př. n. l.\" (před naším letopočtem) and the Christian \"př. Kr.\"",
+   "(před Kristem) among the purely graphic abbreviations",
+   "(https://prirucka.ujc.cas.cz/?id=780). The spaced form is the recommended",
+   "one; the unspaced variant is read because it is widely typed."
+  ],
+  "marker_during": [
+   "Locative \"v\"/\"ve\" governing a month (\"v lednu\").",
+   "Source: en.wiktionary.org, entry \"v\" (Czech), \"in\"."
+  ],
+  "marker_for_date": [
+   "\"na\" + accusative marks the time a thing is meant for: \"na zítra\", \"na pátek\".",
+   "Source: cs.wiktionary.org, entry \"na\": \"(na + akuzativ) vyjadřuje časové",
+   "určení\" (Na podzim padá listí ze stromů)."
+  ],
+  "marker_half": [
+   "Czech period noun \"half\" for \"first/second half of <year>\" (half_period).",
+   "\"polovina\": Slovník spisovného jazyka českého (ÚJČ AV ČR) -- \"polovina\" =",
+   "  jedna ze dvou stejných částí celku (\"první polovina roku\").",
+   "  https://prirucka.ujc.cas.cz/?slovo=polovina",
+   "\"půl\" is the bound/prefixal form kept for the clock half-hour path."
+  ],
+  "marker_last": [
+   "Czech \"last/previous\" determiner, the full hard-adjective paradigm (vzor",
+   "\"mladý\").  \"v minulém týdnu\", \"v minulém měsíci\" and \"v minulém roce\" are",
+   "locative, and the instrumental \"minulým\" appears in date framings, so the",
+   "whole paradigm is listed rather than the three forms that were here.",
+   "Internetová jazyková příručka, ÚJČ AV ČR -- skloňování přídavných jmen tvrdých.",
+   "https://prirucka.ujc.cas.cz/?id=310"
+  ],
+  "marker_na": [
+   "Czech toward-hour connector \"na\" (\"onto\"): the fraction names how far the",
+   "clock has advanced INTO the hour that is coming, so the hour spoken after",
+   "\"na\" is the NEXT one -- \"čtvrt na devět\" == a quarter onto the ninth ==",
+   "08:15, \"tři čtvrtě na devět\" == three quarters onto the ninth == 08:45.",
+   "This is NOT the subtractive \"do\"/\"pred\" reading (clock_dir_to.voc), which",
+   "counts backwards from the named hour; the two must not be merged.  The same",
+   "construction is spelled with \"na\" in Slovak, Belarusian and Ukrainian.",
+   "Citation: Internetová jazyková příručka (Ústav pro jazyk český AV ČR),",
+   "\"Vyjadřování času\", worked examples \"čtvrt na sedm\" == 6.15 and",
+   "\"tři čtvrtě na sedm\" == 6.45."
+  ],
+  "marker_next": [
+   "Czech \"next\" determiner, the soft-adjective paradigm (vzor \"jarní\"), whose",
+   "forms are largely syncretic: \"příští\" covers most of the singular, with",
+   "\"příštího/příštímu/příštím\" the distinct oblique forms.",
+   "Internetová jazyková příručka, ÚJČ AV ČR -- skloňování přídavných jmen měkkých.",
+   "https://prirucka.ujc.cas.cz/?id=311"
+  ],
+  "marker_ordlast": [
+   "Czech \"last\" ordinal determiner, the soft-adjective \"poslední\" (vzor \"jarní\"),",
+   "in concord with the scoped weekday.  \"poslední pátek v květnu\" = last Friday",
+   "of May.  Soft-adjective forms are largely syncretic (poslední covers most of",
+   "the paradigm), with the distinct oblique/plural forms below.",
+   "Internetová jazyková příručka, ÚJČ AV ČR -- skloňování přídavných jmen měkkých.",
+   "https://prirucka.ujc.cas.cz/?id=311"
+  ],
+  "marker_this": [
+   "Czech \"this\" demonstrative.  Both the formal \"tento\" and the colloquial",
+   "\"tenhle\" series are used; \"v tomto týdnu\" and \"v této době\" are locative,",
+   "the ordinary written forms.  Internetová jazyková příručka, ÚJČ AV ČR --",
+   "skloňování zájmen ukazovacích.",
+   "https://prirucka.ujc.cas.cz/?id=350"
+  ],
+  "marker_to": [
+   "Czech range \"to\" connector (od A do B; A az B).",
+   "\"az\": Internetova jazykova prirucka (UJC AV CR) s.v. \"az\" -- spojka",
+   "  vymezujici horni mez rozpeti (\"tri az ctyri dny\", \"3. az 10. cervence\"),",
+   "  i.e. the \"to/up to\" of a numeric or calendar range.",
+   "  https://prirucka.ujc.cas.cz/?slovo=az"
+  ],
+  "month_1": [
+   "Unicode CLDR 47, locale cs, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/cs/ca-gregorian.json): months.format.wide,",
+   "months.stand-alone.wide, months.format.abbreviated,",
+   "months.stand-alone.abbreviated.  Not covered by any of those charts, and so",
+   "unattested here: \"lednem\", \"lednu\"."
+  ],
+  "month_10": [
+   "Unicode CLDR 47, locale cs, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/cs/ca-gregorian.json): months.format.wide,",
+   "months.stand-alone.wide, months.format.abbreviated,",
+   "months.stand-alone.abbreviated.  Not covered by any of those charts, and so",
+   "unattested here: \"říjnem\", \"říjnu\"."
+  ],
+  "month_11": [
+   "Unicode CLDR 47, locale cs, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/cs/ca-gregorian.json): months.format.wide,",
+   "months.stand-alone.wide, months.format.abbreviated,",
+   "months.stand-alone.abbreviated.  Not covered by any of those charts, and so",
+   "unattested here: \"listopadem\"."
+  ],
+  "month_12": [
+   "Unicode CLDR 47, locale cs, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/cs/ca-gregorian.json): months.format.wide,",
+   "months.stand-alone.wide, months.format.abbreviated,",
+   "months.stand-alone.abbreviated.  Not covered by any of those charts, and so",
+   "unattested here: \"prosincem\", \"prosinci\"."
+  ],
+  "month_2": [
+   "Unicode CLDR 47, locale cs, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/cs/ca-gregorian.json): months.format.wide,",
+   "months.stand-alone.wide, months.format.abbreviated,",
+   "months.stand-alone.abbreviated.  Not covered by any of those charts, and so",
+   "unattested here: \"únorem\", \"únoru\"."
+  ],
+  "month_3": [
+   "Unicode CLDR 47, locale cs, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/cs/ca-gregorian.json): months.format.wide,",
+   "months.stand-alone.wide, months.format.abbreviated,",
+   "months.stand-alone.abbreviated.  Not covered by any of those charts, and so",
+   "unattested here: \"březnem\", \"březnu\"."
+  ],
+  "month_4": [
+   "Unicode CLDR 47, locale cs, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/cs/ca-gregorian.json): months.format.wide,",
+   "months.stand-alone.wide, months.format.abbreviated,",
+   "months.stand-alone.abbreviated.  Not covered by any of those charts, and so",
+   "unattested here: \"dubnem\", \"dubnu\"."
+  ],
+  "month_5": [
+   "Unicode CLDR 47, locale cs, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/cs/ca-gregorian.json): months.format.wide,",
+   "months.stand-alone.wide, months.format.abbreviated,",
+   "months.stand-alone.abbreviated.  Not covered by any of those charts, and so",
+   "unattested here: \"květnem\", \"květnu\"."
+  ],
+  "month_6": [
+   "Unicode CLDR 47, locale cs, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/cs/ca-gregorian.json): months.format.wide,",
+   "months.stand-alone.wide, months.format.abbreviated,",
+   "months.stand-alone.abbreviated.  Not covered by any of those charts, and so",
+   "unattested here: \"červnem\", \"červnu\"."
+  ],
+  "month_7": [
+   "Unicode CLDR 47, locale cs, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/cs/ca-gregorian.json): months.format.wide,",
+   "months.stand-alone.wide, months.format.abbreviated,",
+   "months.stand-alone.abbreviated.  Not covered by any of those charts, and so",
+   "unattested here: \"červencem\", \"červenci\"."
+  ],
+  "month_8": [
+   "Unicode CLDR 47, locale cs, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/cs/ca-gregorian.json): months.format.wide,",
+   "months.stand-alone.wide, months.format.abbreviated,",
+   "months.stand-alone.abbreviated.  Not covered by any of those charts, and so",
+   "unattested here: \"srpnem\", \"srpnu\"."
+  ],
+  "month_9": [
+   "Unicode CLDR 47, locale cs, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/cs/ca-gregorian.json): months.format.wide,",
+   "months.stand-alone.wide.  Not covered by any of those charts, and so",
+   "unattested here: \"zářím\"."
+  ],
+  "named_day_0": [
+   "\"dneska\" is the colloquial variant of \"dnes\" (today).",
+   "Source: cs.wiktionary.org, entry \"dneska\": variants \"dnes\", sense \"v současný den\"."
+  ],
+  "unit1_millennium": [
+   "Neuter -í noun: the nominative singular and plural are spelled alike, so the",
+   "singular must be listed or every \"tisíciletí\" reads as a plural count."
+  ],
+  "unit1_second": [
+   "Czech \"sekunda\" singular surfaces: nominative, accusative and",
+   "instrumental.  Declension: en.wiktionary.org."
+  ],
+  "unit_month": [
+   "Czech \"měsíc\", full paradigm.",
+   "Internetová jazyková příručka, ÚJČ AV ČR -- skloňování podstatných jmen."
+  ],
+  "unit_second": [
+   "Czech \"sekunda\", full first-declension paradigm, matching the depth of",
+   "unit_minute.voc: the counted noun surfaces as the nominative singular",
+   "after 1, the nominative plural after 2-4 and the genitive plural after 5+,",
+   "and the accusative and instrumental are the forms \"za\" and \"před\" impose.",
+   "Unicode CLDR 47, locale cs, cldr-units-full/main/cs/units.json,",
+   "duration-second: one \"sekunda\", few/many \"sekundy\", other \"sekund\".",
+   "Declension: en.wiktionary.org, https://en.wiktionary.org/wiki/sekunda"
+  ],
+  "weekday_0": [
+   "Unicode CLDR 47, locale cs, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/cs/ca-gregorian.json): days.format.wide,",
+   "days.stand-alone.wide."
+  ],
+  "weekday_1": [
+   "Unicode CLDR 47, locale cs, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/cs/ca-gregorian.json): days.format.wide,",
+   "days.stand-alone.wide."
+  ],
+  "weekday_2": [
+   "Unicode CLDR 47, locale cs, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/cs/ca-gregorian.json): days.format.wide,",
+   "days.stand-alone.wide.  Not covered by any of those charts, and so",
+   "unattested here: \"středu\", \"středy\"."
+  ],
+  "weekday_3": [
+   "Unicode CLDR 47, locale cs, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/cs/ca-gregorian.json): days.format.wide,",
+   "days.stand-alone.wide.  Not covered by any of those charts, and so",
+   "unattested here: \"čtvrtka\"."
+  ],
+  "weekday_4": [
+   "Unicode CLDR 47, locale cs, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/cs/ca-gregorian.json): days.format.wide,",
+   "days.stand-alone.wide.  Not covered by any of those charts, and so",
+   "unattested here: \"pátku\"."
+  ],
+  "weekday_5": [
+   "Unicode CLDR 47, locale cs, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/cs/ca-gregorian.json): days.format.wide,",
+   "days.stand-alone.wide.  Not covered by any of those charts, and so",
+   "unattested here: \"sobotu\", \"soboty\"."
+  ],
+  "weekday_6": [
+   "Unicode CLDR 47, locale cs, gregorian calendar (cldr-json",
+   "cldr-dates-full/main/cs/ca-gregorian.json): days.format.wide,",
+   "days.stand-alone.wide.  Not covered by any of those charts, and so",
+   "unattested here: \"neděli\"."
+  ]
  }
 }
