@@ -4,10 +4,9 @@ from __future__ import annotations
 from typing import Tuple
 
 from chronologia.extract.model import Token
-from chronologia.extract.numfold_engine import with_marked_h_clock
-from chronologia.extract.numfold_romance import (_collapse_phrase, _glue,
-                                                 _merge_digit_ordinal)
-from chronologia.extract.numlayer_germanic import word_numbers
+from chronologia.extract.numlayer import (collapse_phrase, drop_digit_suffix,
+                                          glue_abbreviations,
+                                          with_marked_h_clock, word_numbers)
 from chronologia.extract.numlayer_romance import (DateWords, count_words,
                                                   fold, locale_words)
 
@@ -36,10 +35,10 @@ _ORD_SUFFIXES = frozenset({"lea", "a", "ea", "le"})
 
 def _fold_ro(tokens: Tuple[Token, ...]) -> Tuple[Token, ...]:
     for seq, surface in _PHRASES:
-        tokens = _collapse_phrase(tokens, seq, surface)
-    tokens = word_numbers(_merge_digit_ordinal(tokens, _ORD_SUFFIXES),
+        tokens = collapse_phrase(tokens, seq, surface)
+    tokens = word_numbers(drop_digit_suffix(tokens, _ORD_SUFFIXES),
                           _NO_DIACRITICS)
-    return fold(_glue(tokens), _WORDS)
+    return fold(glue_abbreviations(tokens), _WORDS)
 
 
 # The hour-letter clock is written only where a clock marker announces one:

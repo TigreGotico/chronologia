@@ -4,9 +4,9 @@ from __future__ import annotations
 from typing import Tuple
 
 from chronologia.extract.model import Token
-from chronologia.extract.numfold_engine import collapse_marked_h_clock
-from chronologia.extract.numfold_romance import (_collapse_phrase,
-                                                 _elision_split, _glue)
+from chronologia.extract.numlayer import (collapse_marked_h_clock,
+                                          collapse_phrase, elision_split,
+                                          glue_abbreviations)
 from chronologia.extract.numlayer_romance import (Claims, DateWords,
                                                   count_words, fold,
                                                   locale_words)
@@ -52,7 +52,7 @@ def split_elisions(tokens: Tuple[Token, ...]) -> Tuple[Token, ...]:
     """The Italian ``pre_hook``: split an elided proclitic from its word
     ("l'undici" gives "l" and "undici"), so the number layer finds the
     number in the word."""
-    return _elision_split(tokens, _PROCLITICS)
+    return elision_split(tokens, _PROCLITICS)
 
 
 def _prima(tokens: Tuple[Token, ...]) -> Claims:
@@ -85,5 +85,5 @@ def fold_it(tokens: Tuple[Token, ...]) -> Tuple[Token, ...]:
     """The Italian number fold."""
     tokens = split_elisions(collapse_marked_h_clock(tokens, _CLOCK_MARKERS))
     for words, surface in _PHRASES:
-        tokens = _collapse_phrase(tokens, words, surface)
-    return fold(_glue(tokens), _WORDS, _prima)
+        tokens = collapse_phrase(tokens, words, surface)
+    return fold(glue_abbreviations(tokens), _WORDS, _prima)

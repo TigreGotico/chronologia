@@ -4,9 +4,9 @@ from __future__ import annotations
 from typing import Tuple
 
 from chronologia.extract.model import Token
-from chronologia.extract.numfold_engine import with_marked_h_clock
-from chronologia.extract.numfold_romance import (_collapse_phrase,
-                                                 _elision_split, _glue)
+from chronologia.extract.numlayer import (collapse_phrase, elision_split,
+                                          glue_abbreviations,
+                                          with_marked_h_clock)
 from chronologia.extract.numlayer_romance import (DateWords, count_words,
                                                   fold, locale_words)
 
@@ -34,10 +34,10 @@ _PHRASES = [
 
 
 def _fold_ast(tokens: Tuple[Token, ...]) -> Tuple[Token, ...]:
-    tokens = _elision_split(tokens, _PROCLITICS)
+    tokens = elision_split(tokens, _PROCLITICS)
     for seq, surface in _PHRASES:
-        tokens = _collapse_phrase(tokens, seq, surface)
-    return fold(_glue(tokens), _WORDS)
+        tokens = collapse_phrase(tokens, seq, surface)
+    return fold(glue_abbreviations(tokens), _WORDS)
 
 
 # The hour-letter clock is written only where a clock marker announces one:

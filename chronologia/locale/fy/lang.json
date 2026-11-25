@@ -151,5 +151,31 @@
   "guards": {
     "bare_year_min_digits": 4
   },
-  "hook": "chronologia.extract.numlayer_fy:fold_fy"
+  "number_fold": {
+    "word_numbers": [
+      {
+        "words": {
+          "ienen": 1,
+          "twaen": 2,
+          "trijen": 3,
+          "fjouweren": 4,
+          "fiven": 5,
+          "seizen": 6,
+          "sânen": 7,
+          "achten": 8,
+          "njoggenen": 9,
+          "tsienen": 10,
+          "alven": 11,
+          "tolven": 12
+        },
+        "ordinal": false,
+        "source": "After \"healwei\", \"kertier\", \"oer\" and \"foar\" the hour takes an inflected form, which numtag does not read; https://github.com/TigreGotico/numtag/issues/143"
+      }
+    ],
+    "ordinal_suffixes": [
+      "de",
+      "e",
+      "te"
+    ]
+  }
 }

@@ -166,7 +166,19 @@
   "guards": {
     "bare_year_min_digits": 4
   },
-  "hook": "chronologia.extract.numlayer_nn:fold_nn",
+  "number_fold": {
+    "word_numbers": [
+      {
+        "words": {
+          "fyrste": 1,
+          "tjuefyrste": 21,
+          "trettifyrste": 31
+        },
+        "ordinal": true,
+        "source": "numtag reads no number in \"fyrste\" and its compounds (numtag#141)"
+      }
+    ]
+  },
   "base_grammar": {
     "disable": [
       "calendar_date"

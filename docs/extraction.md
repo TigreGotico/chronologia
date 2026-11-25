@@ -754,14 +754,13 @@ Digit runs become numeric tokens. Everything else is language-neutral. Three per
 
 **2. Normaliser** (`normaliser.py`). `Token → Token`, closed-class morphology only: a lemma map (`tygodni → tydzien`) then rule-based suffix stripping. Numbers pass through untouched. Only `text` changes, `raw` is preserved.
 
-**3. The number fold** (the language `hook` in `lang.json`). The tokenizer only sees *digit* numbers, but people write "the twenty fifth" and "the third week". This pass folds each spelled number into one digit token, so a `DAY`/`YEAR`/`ORD` slot binds the same whether the writer typed `5` or `five`.
+**3. The number fold** (the `number_fold` object of `lang.json`). The tokenizer only sees *digit* numbers, but people write "the twenty fifth" and "the third week". This pass folds each spelled number into one digit token, so a `DAY`/`YEAR`/`ORD` slot binds the same whether the writer typed `5` or `five`.
 
 numtag reads the numbers of 40 of the 61 locales. The table in [languages/index.md](languages/index.md) says which. The list is `NUMTAG_LANGS` in `numlayer.py`. `pretokens` tags the input text once, and each token inside a number mention carries that mention beside its word.
 
-Each language has a fold module that names the number words which the date grammar reads as words in their position. The modules share code:
+The generic fold lives in `numlayer.py`. A locale whose `lang.json` has a `number_fold` object (da, de, fy, id, kab, ms, nb, nl, nn and sv) reads it there, from the `.voc` files of the locale and the object (see [adding-a-language.md](adding-a-language.md)). The other locales name a fold module with `hook`:
 
-- `numlayer_<code>.py` serves one language each. The codes are an, ast, ca, da, de, el, en, es, fa, fr, fy, gl, id, it, kab, ms, mwl, nb, nl, nn, oc, pt, ro and sv.
-The modules `numlayer_en.py` and `numlayer_pt.py` stand alone. The other Romance modules build on `numlayer_romance.py`, and the rest build on `numlayer_germanic.py`.
+- `numlayer_<code>.py` serves one language each. The codes are an, ast, ca, el, en, es, fa, fr, gl, it, mwl, oc, pt and ro. `numlayer_en.py` and `numlayer_pt.py` stand alone. The other Romance modules build on `numlayer_romance.py`.
 - `numlayer_semitic.py` serves Arabic and Hebrew.
 - `numlayer_turkic.py` serves Turkish and Azerbaijani.
 - `numlayer_agglutinative.py` serves Estonian, Finnish, Hungarian and Basque.

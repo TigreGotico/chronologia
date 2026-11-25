@@ -157,7 +157,7 @@ def _num_unit_preamble(tokens: Tuple[Token, ...], i: int, spec: LangSpec) -> boo
     :func:`merge_multiword` runs, the number fold has already turned a
     spelled numeral into a digit token, so a plain ``Token.is_number`` check
     suffices (unlike the earlier, still-spelled-number stage guarded in
-    ``numfold_romance._collapse_phrase``)."""
+    ``numlayer.collapse_phrase``)."""
     if i < 2:
         return False
     unit_tok, num_tok = tokens[i - 1], tokens[i - 2]

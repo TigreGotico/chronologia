@@ -379,15 +379,28 @@ The safest approach is to copy the `constructions` block from the language close
 - the clock flags from Tier 2 (`bare_half_past`, `bare_half_to`, …).
 - `hemisphere`: `"south"` if seasons should be flipped, else leave it out.
 
-**4. `hook`**: this is the only line that names a bit of code, and most languages that need it are already covered. The hook is the **number-folding function**: it turns spelled-out numbers ("three", "twenty-five") into digits before matching. If your language reads its numbers through numtag (next section), you point `hook` at its fold function, exactly like Malay does:
+**4. `number_fold`**: the number-folding settings. They turn spelled-out numbers ("three", "twenty-five") into digits before matching. A language that numtag reads (next section) needs only the object, and it can be empty:
 
-```text
-"hook": "chronologia.extract.numlayer_ms:fold_ms"
+```json
+"number_fold": {}
 ```
 
-If your language has no number fold, leave `hook` out entirely. chronologia still reads digits, but not spelled-out number words. Nothing else in `lang.json` depends on the hook.
+The object lists what the `.voc` files cannot say. Every key is optional:
 
-Two more optional keys name code, and few languages need them. `pre_hook` runs once on the whole token stream before range detection and number folding. It takes the tokens alone. `post_hook` runs once on the whole stream after the number fold. It takes the tokens and the language spec. A rewrite that must see a number word next to the unit word after it goes there. French uses it to read "dans 2 heures moins 10 secondes" as one length:
+- `word_numbers`: rows `{"words": {word: value}, "ordinal": bool}` for words numtag does not read, as in `{"words": {"annen": 2, "annet": 2}, "ordinal": true}`.
+- `ordinal_suffixes`: the lone suffixes of a digit ordinal. The tokenizer reads "21e" as "21" and "e", and a suffix in this list merges back into an ordinal.
+- `phrase_numbers`: rows `{"words": "een paar", "value": 2}` for two words that name one number.
+- `compounds`: rows `{"heads": {head: reading}, "tails": [...]}`. A word that is exactly a head and a tail splits into two tokens before range detection, so "morgenochtend" reads as "morgen" and "ochtend".
+- `fraction_counts`: rows that fold the count 1 and a fraction word into the fraction. A row names `word` and `value`. A row with `unit` makes the fraction word name that unit ("en kvart" is a quarter of an hour), unless the next word is in `not_before`.
+- `h_clock_markers`: the words before which "21h30" is a clock time. Without a marker "21h30" is a duration.
+
+Every row may carry a `source`, a string that cites where its data comes from: a dictionary entry, a corpus sentence, a numtag issue. The schema refuses any other key in a row, so a misspelt key is an error and not a silent default.
+
+The fold also reads the `clock_fraction_*.voc`, `scale_*.voc`, `marker_since.voc`, `marker_until.voc`, `unit_*.voc`, `month_*.voc` and `currency*.voc` files of the locale. They tell a count from a year and keep the half of a clock hour a word.
+
+If your language has no number fold, leave `number_fold` out. chronologia still reads digits, but not spelled-out number words. Nothing else in `lang.json` depends on it.
+
+A few languages still name code with three other keys. `hook` points at a fold function, and a locale that sets it leaves `number_fold` out. `pre_hook` runs once on the whole token stream before range detection and number folding. `post_hook` runs once on the whole stream after the number fold, with the tokens and the language spec. French uses it to read "dans 2 heures moins 10 secondes" as one length:
 
 ```json
 "post_hook": "chronologia.extract.numlayer_fr:fold_fr_hour_length"
@@ -405,9 +418,9 @@ Most languages read their numbers through [numtag](https://github.com/TigreGotic
 
 The other languages (for example `be`, `mk`, `sr`, `cy`, `ga` and `ko`) read spelled numbers with a `numfold_*.py` module of chronologia's own, which owns its number words as closed tables.
 
-**To read your language through numtag:** first make sure numtag ships a lexicon for it. Adding one is described in numtag's [adding-a-language guide](https://github.com/TigreGotico/numtag/blob/dev/docs/adding-a-language.md). Then add the language to `NUMTAG_LANGS` and write a `numlayer_<code>.py` module with a `fold_<code>` function that names the language's date words (compare `numlayer_ms.py`. Several languages share a family module such as `numlayer_slavic.py`). Set `hook` in `lang.json` to that function.
+**To read your language through numtag:** first make sure numtag ships a lexicon for it. Adding one is described in numtag's [adding-a-language guide](https://github.com/TigreGotico/numtag/blob/dev/docs/adding-a-language.md). Then add the language to `NUMTAG_LANGS` and add a `number_fold` object to its `lang.json` (compare `locale/ms/lang.json`).
 
-**If your language has no number fold:** that is completely fine. Leave `hook` out, ship your language with digit reading only, and it still passes all its tests. Spelled-out number support is a good follow-up, not a blocker.
+**If your language has no number fold:** that is completely fine. Leave `number_fold` out, ship your language with digit reading only, and it still passes all its tests. Spelled-out number support is a good follow-up, not a blocker.
 
 ---
 
