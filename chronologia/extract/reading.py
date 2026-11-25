@@ -18,7 +18,8 @@ from chronologia.astrodate import DateSpan
 from chronologia.extract.confidence import score_candidates
 from chronologia.extract.model import Match, Token
 from chronologia.extract.pipeline import (consumed_extent, fold_tokens,
-                                          pretokens, render_remainder)
+                                          join_extents, pretokens,
+                                          render_remainder)
 from chronologia.extract.timespan import (_candidate_veto, _compose_core,
                                           _extract_directional_range,
                                           _extract_open_range, _extract_range,
@@ -32,14 +33,19 @@ from chronologia.extract.timespan import (_candidate_veto, _compose_core,
 class Reading:
     """One reading of a text.
 
-    ``kind`` is ``"span"`` or ``"point"``.  ``claimed`` holds the ``index`` of
-    each token of ``tokens`` the reading reads: a span reads the stream before
-    the number fold and claims every token inside ``chars``, a point reads the
-    folded stream, so a caller that compares a span with a point uses
-    ``chars``.  ``primary`` marks the winner of each kind: the range and the
-    composed point.  ``selected`` marks a point the matcher selected,
-    against a runner-up.  ``confidence`` is set on the points of a full read
-    only.
+    ``kind`` is ``"span"``, ``"point"`` or ``"bound"``.  ``claimed`` holds
+    the ``index`` of each token of ``tokens`` the reading reads: a span reads
+    the stream before the number fold and claims every token inside
+    ``chars``, a point reads the folded stream, so a caller that compares a
+    span with a point uses ``chars``.  ``primary`` marks the winner of each
+    kind: the range and the composed point.  ``selected`` marks a point the
+    matcher selected, against a runner-up.  ``confidence`` is set on the
+    points of a full read only.
+
+    A range carries its bounds in ``left`` and ``right``; an open range has
+    one of them.  A bound reads the stream before the number fold and claims
+    exactly the tokens its endpoint reads.  Its ``span`` is the endpoint as
+    its own slice reads it, before the range rolls it (see ``RangeBound``).
     """
 
     kind: str
@@ -53,6 +59,8 @@ class Reading:
     selected: bool = False
     match: Optional[Match] = None
     confidence: Optional[float] = None
+    left: Optional[Reading] = None
+    right: Optional[Reading] = None
 
 
 def read(text: str, lang: str, anchor: datetime,
@@ -78,18 +86,20 @@ def read(text: str, lang: str, anchor: datetime,
         construction = "open_range"
     # a bare "now" or "new year" is recognised as the whole utterance only
     if got is None and _is_now_slice(raw, spec):
-        got = _now_span(anchor), "", consumed_extent(raw)
+        got = _now_span(anchor), "", consumed_extent(raw), None, None
         construction = "now"
     if got is None and _is_new_year_slice(raw, spec):
-        got = _new_year_span(anchor), "", consumed_extent(raw)
+        got = _new_year_span(anchor), "", consumed_extent(raw), None, None
         construction = "new_year"
     if got is not None:
-        span, remainder, chars = got
+        span, remainder, chars, left, right = got
         claimed = frozenset() if chars is None else frozenset(
             t.index for t in raw if t.char_start is not None
             and chars[0] <= t.char_start and t.char_end <= chars[1])
         readings.append(Reading("span", span, remainder, construction, raw,
-                                claimed, chars, primary=True))
+                                claimed, chars, primary=True,
+                                left=_bound(left, raw, construction),
+                                right=_bound(right, raw, construction)))
         if first:
             return readings
 
@@ -153,3 +163,17 @@ def read(text: str, lang: str, anchor: datetime,
                 selected=id(scored.match) in chosen,
                 confidence=scored.confidence))
     return readings
+
+
+def _bound(bound, raw, construction):
+    """The reading of one range bound over the stream ``raw``, or ``None``.
+
+    The bound claims each token that one of its words covers, also in part:
+    an affix bound reads its host word without the suffix."""
+    if bound is None:
+        return None
+    claimed = frozenset(t.index for t in raw if t.char_start is not None
+                        and any(s < t.char_end and t.char_start < e
+                                for s, e in bound.pieces))
+    return Reading("bound", bound.span, bound.remainder, construction, raw,
+                   claimed, join_extents(*bound.pieces))

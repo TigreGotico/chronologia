@@ -100,6 +100,16 @@ def consumed_extent(tokens, consumed=None) -> Optional[Tuple[int, int]]:
     return None if lo is None else (lo, hi)
 
 
+def consumed_pieces(tokens, consumed=None) -> Tuple[Tuple[int, int], ...]:
+    """The ``[start, end)`` offsets of each of the ``tokens`` whose index is in
+    ``consumed`` (every token when ``consumed`` is ``None``): the exact words a
+    reading claims, where :func:`consumed_extent` gives only their outer
+    extent.  Tokens without a recorded extent are skipped."""
+    return tuple((t.char_start, t.char_end) for t in tokens
+                 if t.char_start is not None and t.char_end is not None
+                 and (consumed is None or t.index in consumed))
+
+
 def join_extents(*extents: Optional[Tuple[int, int]]
                  ) -> Optional[Tuple[int, int]]:
     """The smallest extent that holds every extent given; ``None`` is skipped."""
