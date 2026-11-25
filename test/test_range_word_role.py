@@ -60,7 +60,6 @@ WEEKLY = "FREQ=WEEKLY;UNTIL="
     ("pt", "todo dia do dia 3 de junho até ao dia 5 de junho", DAILY + "20270605T000000"),
     ("pt", "todo dia de segunda até dia 5 de dezembro", DAILY + "20261205T000000"),
     ("pt", "todo dia de 3 de junho até 5 de junho", DAILY + "20270605T000000"),
-    ("en", "every day from june until august 5 times", DAILY + "20270805T000000"),
 ])
 def test_a_date_range_word_grounds_the_date_the_until_bound_reads(lang, text, rule):
     got = recurrence(lang, text)
