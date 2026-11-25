@@ -67,8 +67,7 @@
       "orders": [
         "at? at? CLOCK thisdeixis MERIDIEM ZONE?",
         "at? at? HOUR thisdeixis MERIDIEM ZONE?"
-      ],
-      "prefer_future": true
+      ]
     },
     "era_bc": {
       "orders": [
