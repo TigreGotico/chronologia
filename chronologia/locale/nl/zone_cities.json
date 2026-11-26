@@ -1,5 +1,5 @@
 {
- "source": "City names: CLDR 47 timeZoneNames exemplarCity (via Babel 2.18) for nl; a zone with no exemplarCity takes the TR35 fallback, the city part of the IANA zone ID. Pattern: CLDR nl regionFormat \"tijd in {0}\", and \"<city>-tijd\" / \"<city adjective> tijd\". The adjectives in -se (\"Londense\") are not yet checked against a dictionary.",
+ "source": "City names: CLDR 47 timeZoneNames exemplarCity (via Babel 2.18) for nl; a zone with no exemplarCity takes the TR35 fallback, the city part of the IANA zone ID. Pattern: CLDR nl regionFormat \"tijd in {0}\", and \"<city>-tijd\" / \"<city adjective> tijd\". City adjectives in -se: Taaladvies, taaladvies-new-yorks.html (\"New York – New Yorker – New Yorkse\") and taaladvies-maassluise-harmonie.html (\"Parijs – Parijse\"); ANW, bijvoeglijk naamwoord: anw-londens.html (Londens, Londense) and anw-berlijns.html (Berlijns, Berlijnse).",
  "patterns": [
   "{city} tijd",
   "tijd in {city}"
@@ -7,6 +7,7 @@
  "cities": {
   "Europe/London": [
    "Londen",
+   "Londens",
    "Londense"
   ],
   "America/New_York": [
@@ -34,6 +35,7 @@
   ],
   "Europe/Berlin": [
    "Berlijn",
+   "Berlijns",
    "Berlijnse"
   ],
   "Europe/Madrid": [
@@ -46,8 +48,7 @@
    "Lissabon"
   ],
   "Europe/Moscow": [
-   "Moskou",
-   "Moskouse"
+   "Moskou"
   ],
   "Asia/Dubai": [
    "Dubai"
@@ -62,12 +63,10 @@
    "Singapore"
   ],
   "Asia/Tokyo": [
-   "Tokio",
-   "Tokiose"
+   "Tokio"
   ],
   "Australia/Sydney": [
-   "Sydney",
-   "Sydneyse"
+   "Sydney"
   ]
  }
 }
