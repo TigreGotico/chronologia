@@ -582,7 +582,107 @@ def _subtractive_clock_complete(text, sub, engine, anchor):
                for t in folded if t.char_start is not None)
 
 
+def _frame_band(text, frame, engine, anchor):
+    """The band a slice names when it is a whole daypart reference, else None.
+
+    A slice with a number, a month or a weekday names a date, not a daypart.
+
+    "heute Nachmittag", "esta tarde", "this afternoon": the slice resolves in
+    full to a span of two hours or more and less than one day.
+    """
+    spec = engine.spec
+    if any(t.is_number or t.text in spec.months or t.text in spec.weekdays
+           for t in frame):
+        return None
+    got = _range_endpoint(text, frame, engine, anchor)
+    if got is None or got[1]:
+        return None
+    span = got[0]
+    if not timedelta(hours=2) <= span.end - span.start < timedelta(days=1):
+        return None
+    return span
+
+
+def _fit_band(span, band):
+    """``span`` moved onto the day of ``band`` so that it starts inside it.
+
+    A bare hour reads the first twelve-hour half; the band picks the half.
+    The band end is inclusive: CLDR closes some afternoons at 17:00, and
+    speakers still say "this afternoon from five".  Returns ``None`` when
+    neither half starts inside the band or the span is half a day or longer.
+    """
+    if span.end - span.start >= timedelta(hours=12):
+        return None
+    moved = _rebase(span, band.start)
+    for shift in (timedelta(0), timedelta(hours=12)):
+        start = moved.start + shift
+        if band.start <= start <= band.end:
+            return DateSpan(start, moved.end + shift)
+    return None
+
+
+def _extract_daypart_range(text, tokens, engine, anchor, scale_mode):
+    """A "from A to B" range framed by a daypart before or after it.
+
+    "heute Nachmittag von zwei bis sechs Uhr", "esta tarde de tres a cinco",
+    "fra klokken fem til syv i eftermiddag": the daypart says which half of
+    the day the bare hours are in.  The range reads without the daypart, then
+    moves into the daypart's band.
+    """
+    spec = engine.spec
+    leads = _conn_surfaces(spec, "from", _RANGE_FROM) \
+        + _conn_surfaces(spec, "between", _RANGE_BETWEEN)
+    words = {w for surface in (*spec.dayparts, *spec.meridiems)
+             for w in surface.split() + surface.replace("-", " ").split()}
+    marks = [i for i, t in enumerate(tokens) if t.text in words]
+    if not marks:
+        return None
+    n = len(tokens)
+    for i in range(n):
+        if not _match_conn_at(tokens, i, leads):
+            continue
+        frames = [(j, j + k) for k in (4, 3, 2, 1) for j in (i - k,) if j >= 0]
+        frames += [(j, j + k) for j in range(i + 2, n) for k in (4, 3, 2, 1)
+                   if j + k <= n]
+        for lo, hi in frames:
+            if not any(lo <= m < hi for m in marks):
+                continue
+            band = _frame_band(text, tokens[lo:hi], engine, anchor)
+            if band is None:
+                continue
+            after = lo > i
+            inner = tokens[i:lo] if after else tokens[i:]
+            got = _extract_plain_range(text, inner, engine, anchor,
+                                       scale_mode)
+            if got is None or not all(
+                    b is not None
+                    and b.span.end - b.span.start < timedelta(days=1)
+                    for b in got[3:5]):
+                continue
+            span = _fit_band(got[0], band)
+            if span is None:
+                continue
+            head = render_remainder(text, list(tokens[:i] if after
+                                               else tokens[:lo]))
+            tail = render_remainder(text, list(tokens[hi:])) if after else ""
+            rem = " ".join(p for p in (head, got[1], tail) if p)
+            return (span, rem,
+                    join_extents(got[2], consumed_extent(tokens[lo:hi])),
+                    got[3], got[4])
+    return None
+
+
 def _extract_range(text, tokens, engine, anchor, scale_mode="short"):
+    """The range of ``tokens``, moved into the band of a daypart that frames
+    it; the plain reading wins when it already gives the same span."""
+    plain = _extract_plain_range(text, tokens, engine, anchor, scale_mode)
+    got = _extract_daypart_range(text, tokens, engine, anchor, scale_mode)
+    if got is None or (plain is not None and plain[0] == got[0]):
+        return plain
+    return got
+
+
+def _extract_plain_range(text, tokens, engine, anchor, scale_mode="short"):
     """A "from A to B" / "between A and B" span, endpoints from two sub-parses.
 
     Token-native: the connector is found on the *pre-fold* token stream (so the
