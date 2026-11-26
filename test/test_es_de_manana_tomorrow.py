@@ -50,3 +50,36 @@ def test_owner_before_of_decides(text, lang, start, end):
     got = (datetime(s.start.year, s.start.month, s.start.day, s.start.hour, s.start.minute),
            datetime(s.end.year, s.end.month, s.end.day, s.end.hour, s.end.minute))
     assert got == (start, end)
+
+
+# Diccionario Vox (Larousse 2016), «mañana» sense 5: "de mañana loc. adv. Al
+# amanecer, en las primeras horas del día"; sense 7: "muy de mañana loc. adv.
+# Muy temprano, de madrugada".  Without "<article> <noun>" before "de" it is
+# the adverb: the morning band of the anchor day.
+SUNDAY = datetime(2026, 11, 22, 9, 0)
+
+
+def _span_at(text, lang, anchor):
+    s = extract_timespan(text, lang, anchor=anchor).span
+    return (datetime(s.start.year, s.start.month, s.start.day, s.start.hour, s.start.minute),
+            datetime(s.end.year, s.end.month, s.end.day, s.end.hour, s.end.minute))
+
+
+@pytest.mark.parametrize("text", [
+    "salimos muy de mañana",
+    "nos levantamos de mañana",
+    "de mañana temprano",
+    "muy de mañana salió el tren",
+])
+def test_adverbial_de_manana_is_the_morning(text):
+    assert _span_at(text, "es", SUNDAY) == (datetime(2026, 11, 22, 6), datetime(2026, 11, 22, 12))
+
+
+@pytest.mark.parametrize("text, lang", [
+    ("léeme las alarmas de mañana", "es"),
+    ("el partido de mañana", "es"),
+    ("la reunión de mañana", "es"),
+    ("amósame as alarmas de mañá", "gl"),
+])
+def test_article_noun_de_manana_is_tomorrow(text, lang):
+    assert _span_at(text, lang, SUNDAY) == (datetime(2026, 11, 23), datetime(2026, 11, 24))
