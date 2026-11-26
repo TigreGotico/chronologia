@@ -2714,6 +2714,9 @@ def _scoped_rule(ctx, m, scope, start):
     of = head.index + 1
     if of >= len(t) or t[of].text not in ctx.of_words:
         return None
+    scope_tok = slots.get("SCOPE_UNIT")
+    if scope_tok is not None and scope_tok.index < head.index:
+        return None     # "every year on the last sunday of october"
     month = ctx.months.get(slots["MONTH"].text) if "MONTH" in slots else None
     if month is None and scope not in ("month", "year", "week"):
         return None
