@@ -1,0 +1,65 @@
+{
+ "source": "City names: CLDR 47 timeZoneNames exemplarCity (via Babel 2.18) for en; a zone with no exemplarCity takes the TR35 fallback, the city part of the IANA zone ID. Pattern: CLDR en regionFormat \"{0} Time\".",
+ "patterns": [
+  "{city} time"
+ ],
+ "cities": {
+  "Europe/London": [
+   "London"
+  ],
+  "America/New_York": [
+   "New York"
+  ],
+  "America/Los_Angeles": [
+   "Los Angeles"
+  ],
+  "America/Chicago": [
+   "Chicago"
+  ],
+  "America/Toronto": [
+   "Toronto"
+  ],
+  "America/Sao_Paulo": [
+   "Sao Paulo"
+  ],
+  "America/Mexico_City": [
+   "Mexico City"
+  ],
+  "Europe/Paris": [
+   "Paris"
+  ],
+  "Europe/Berlin": [
+   "Berlin"
+  ],
+  "Europe/Madrid": [
+   "Madrid"
+  ],
+  "Europe/Rome": [
+   "Rome"
+  ],
+  "Europe/Lisbon": [
+   "Lisbon"
+  ],
+  "Europe/Moscow": [
+   "Moscow"
+  ],
+  "Asia/Dubai": [
+   "Dubai"
+  ],
+  "Asia/Shanghai": [
+   "Shanghai"
+  ],
+  "Asia/Hong_Kong": [
+   "Hong Kong"
+  ],
+  "Asia/Singapore": [
+   "Singapore"
+  ],
+  "Asia/Tokyo": [
+   "Tokyo"
+  ],
+  "Australia/Sydney": [
+   "Sydney"
+  ]
+ }
+}

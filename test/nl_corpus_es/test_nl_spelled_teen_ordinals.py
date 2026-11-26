@@ -43,7 +43,7 @@ def test_compound_ordinal_valid_month(text, mo):
 
 #: numtag reads no mention for these fused ordinals, so the year reads alone:
 #: https://github.com/TigreGotico/numtag/issues/139
-_NUMTAG_139 = pytest.mark.xfail(reason="numtag#139", strict=True)
+_NUMTAG_139 = pytest.mark.xfail(raises=AssertionError, reason="numtag#139", strict=True)
 
 
 @pytest.mark.parametrize("text", [

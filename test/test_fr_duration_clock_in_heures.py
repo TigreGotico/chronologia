@@ -17,7 +17,7 @@ ISSUE = "https://github.com/TigreGotico/chronologia/issues/1063"
 @pytest.mark.parametrize("text", [
     "crée un rappel pour appeler maman demain à 18 heures",
     pytest.param("mets une alarme pour 7 heures demain matin",
-                 marks=pytest.mark.xfail(strict=True, reason=ISSUE)),
+                 marks=pytest.mark.xfail(raises=AssertionError, strict=True, reason=ISSUE)),
 ])
 def test_a_clock_in_heures_is_no_length(text):
     assert extract_duration(

@@ -3171,10 +3171,10 @@ class Resolver:
                           self._consumed(match))
 
     def _zone_tzinfo(self, zone_tok):
-        """Parse a bound ZONE token into a fixed-offset
-        :class:`datetime.timezone`, or ``None`` when no zone is present.
+        """Parse a bound ZONE token into a tzinfo, or ``None`` when no zone
+        is present.
 
-        Three shapes resolve, all to a *fixed* offset:
+        Three shapes resolve to a *fixed* offset:
 
         * ``"utc"`` / ``"gmt"`` optionally with a signed offset ("utc+2",
           "gmt-5:30") -- the acronym's base offset (0 for UTC/GMT) plus the tail.
@@ -3187,12 +3187,16 @@ class Resolver:
         * a bare RFC/ISO signed numeric offset ("-0500", "+05:30", "-08:00"):
           hours = the leading digits, minutes = the trailing two.
 
-        Named-city / region words ("Berlin", "Eastern time") are out of scope --
-        they never bind here and leave the wall time naive."""
+        A city phrase from ``zone_cities.json`` ("new york time") is the one
+        DST-aware shape: it gives the IANA :class:`zoneinfo.ZoneInfo`."""
         if zone_tok is None:
             return None
         from datetime import timezone
         text = zone_tok.text
+        city_zone = self.spec.zone_cities.get(text)
+        if city_zone is not None:
+            from zoneinfo import ZoneInfo
+            return ZoneInfo(city_zone)
         # bare signed numeric offset: no acronym, sign + digits only.
         num = re.fullmatch(r"([+-])(\d{1,2}):?(\d{2})", text)
         if num is not None:

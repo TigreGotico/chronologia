@@ -539,6 +539,10 @@ class LangSpec:
     # a trailing signed offset on the surface token ("utc+2") is added at
     # resolve time.  Facts from the ``clock_zone_<minutes>.voc`` convention.
     clock_zones: Mapping[str, int] = field(default_factory=dict)
+    # "<city> time" surface -> IANA zone name ("new york time" ->
+    # "America/New_York"), from ``zone_cities.json``.  The offset is
+    # resolved on the target date, so DST applies.
+    zone_cities: Mapping[str, str] = field(default_factory=dict)
     # country/region-name surface -> jurisdiction code ("portugal" -> "PT"),
     # from the ``jurisdiction_<code>.voc`` convention. Per-locale opt-in vocab
     # covering only the jurisdictions that locale names; empty for a locale

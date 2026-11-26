@@ -29,7 +29,7 @@ def test_fixed_secular_holiday_with_year():
     assert en == AstroDate(2020, 3, 9)
 
 
-@pytest.mark.xfail(strict=True, reason=(
+@pytest.mark.xfail(raises=AssertionError, strict=True, reason=(
     "The 'ayının N-dən M-dək' day-range phrasing ('<month>ın N-dən M-dək') "
     "degrades to the whole named month instead of the literal N..M day "
     "range: 'iyun ayının 5-dən 10-dək' resolves to 2017-06-01..2017-07-01 "

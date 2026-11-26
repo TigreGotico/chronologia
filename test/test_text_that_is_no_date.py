@@ -52,7 +52,7 @@ NO_DATE = [
         "a whole", "an entire", "a mere", "an extra")]
 
 
-@pytest.mark.xfail(strict=True, reason=ISSUE)
+@pytest.mark.xfail(raises=AssertionError, strict=True, reason=ISSUE)
 @pytest.mark.parametrize("lang,text,anchor", NO_DATE)
 def test_it_is_no_date(lang, text, anchor):
     assert extract_timespan(text, lang, anchor) is None
@@ -98,7 +98,7 @@ START = [
 ]
 
 
-@pytest.mark.xfail(strict=True, reason=ISSUE)
+@pytest.mark.xfail(raises=AssertionError, strict=True, reason=ISSUE)
 @pytest.mark.parametrize("lang,text,anchor,expected", START)
 def test_the_date_comes_from_the_words_that_name_one(
         lang, text, anchor, expected):
@@ -106,7 +106,7 @@ def test_the_date_comes_from_the_words_that_name_one(
     assert start == expected
 
 
-@pytest.mark.xfail(strict=True, reason=ISSUE)
+@pytest.mark.xfail(raises=AssertionError, strict=True, reason=ISSUE)
 @pytest.mark.parametrize("text,remainder", [
     ("café ☕ tomorrow", "café ☕"),
     ("☕ tomorrow", "☕"),
@@ -116,14 +116,14 @@ def test_a_symbol_beside_a_date_stays_in_the_remainder(text, remainder):
     assert found.remainder == remainder
 
 
-@pytest.mark.xfail(strict=True, reason=ISSUE)
+@pytest.mark.xfail(raises=AssertionError, strict=True, reason=ISSUE)
 def test_a_version_number_stays_in_the_remainder():
     found = extract_timespan(
         "Installiere Version 1.15.20 morgen", "de", datetime(2026, 9, 23, 12))
     assert "1.15.20" in found.remainder
 
 
-@pytest.mark.xfail(strict=True, reason=ISSUE)
+@pytest.mark.xfail(raises=AssertionError, strict=True, reason=ISSUE)
 def test_a_holiday_name_after_a_clock_stays_in_the_remainder():
     found = extract_timespan(
         "remind me at 5pm to buy christmas cards", "en",

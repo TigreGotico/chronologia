@@ -6,7 +6,7 @@ import pytest
 from chronologia import extract_timespan
 
 ANCHOR = datetime(2017, 6, 27)
-ISSUE = pytest.mark.xfail(
+ISSUE = pytest.mark.xfail(raises=AssertionError,
     strict=True, reason="https://github.com/TigreGotico/chronologia/issues/1375")
 
 

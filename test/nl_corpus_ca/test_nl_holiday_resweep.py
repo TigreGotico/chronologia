@@ -163,7 +163,7 @@ def test_movable_holiday_fresh_years(text, year, gold):
 # strict xfail, gold = the historically correct date, never a fake match.
 # ---------------------------------------------------------------------------
 
-@pytest.mark.xfail(
+@pytest.mark.xfail(raises=AssertionError,
     reason="'festa del treball' (Fiesta del Trabajo, 1 May) carries no "
            "Catalan alias in es.tab -- bare lookup returns no span",
     strict=True,
@@ -176,7 +176,7 @@ def test_festa_del_treball_unresolved(year):
     assert start("festa del treball", a) == AstroDate(gold.year, gold.month, gold.day)
 
 
-@pytest.mark.xfail(
+@pytest.mark.xfail(raises=AssertionError,
     reason="'sant joan' (San Juan, 24 Jun, ES-CT) is a decree-only regional "
            "entry with no Catalan label -- bare lookup returns no span",
     strict=True,
@@ -189,7 +189,7 @@ def test_sant_joan_unresolved(year):
     assert start("sant joan", a) == AstroDate(gold.year, gold.month, gold.day)
 
 
-@pytest.mark.xfail(
+@pytest.mark.xfail(raises=AssertionError,
     reason="'diada nacional' (Diada Nacional de Catalunya, 11 Sep) is a "
            "decree-only entry limited to 2023-2027 -- bare lookup returns "
            "no span for years outside that window",

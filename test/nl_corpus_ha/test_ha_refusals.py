@@ -84,7 +84,7 @@ def test_no_holiday_vocabulary_ships(text):
     nomatch(text)
 
 
-@pytest.mark.xfail(
+@pytest.mark.xfail(raises=AssertionError,
     reason="zuwa closes a range and the range split reads the raw token "
            "stream before multiword surfaces are merged, so the coming-"
            "weekday form is claimed by the open range 'up to Monday'",

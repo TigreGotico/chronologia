@@ -2,8 +2,8 @@
 
 A trailing UTC / GMT marker (optionally with a fixed signed offset) makes the
 clock span **aware**: its ``tzinfo`` carries the offset, so the same wall time
-in two zones is two different instants.  Named-city zones are out of scope --
-only UTC / GMT and a fixed offset resolve.  The wall clock still obeys
+in two zones is two different instants.  A bare city word
+with no "time" cue does not resolve.  The wall clock still obeys
 ``prefer_future`` on the naive time-of-day (anchor 2017-06-27 13:04): a time
 already past today rolls to tomorrow.
 """

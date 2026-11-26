@@ -79,13 +79,13 @@ _RESOLVED = [
 _LIMITATIONS = [
     pytest.param(
         'kansojen kevät',
-        marks=pytest.mark.xfail(reason='season word in figurative use binds as the season; downstream concern', strict=True)),
+        marks=pytest.mark.xfail(raises=AssertionError, reason='season word in figurative use binds as the season; downstream concern', strict=True)),
     pytest.param(
         'elämän syksy',
-        marks=pytest.mark.xfail(reason='season word in figurative use binds as the season; downstream concern', strict=True)),
+        marks=pytest.mark.xfail(raises=AssertionError, reason='season word in figurative use binds as the season; downstream concern', strict=True)),
     pytest.param(
         'joulu tuli aikaisin',
-        marks=pytest.mark.xfail(reason='temporal token inside a fixed idiom binds literally; downstream concern', strict=True)),
+        marks=pytest.mark.xfail(raises=AssertionError, reason='temporal token inside a fixed idiom binds literally; downstream concern', strict=True)),
 ]
 
 
