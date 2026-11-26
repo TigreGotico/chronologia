@@ -33,6 +33,7 @@ NO_DATE = [
     ("fa", "شکارچی تیر را در کمان گذاشت."),
     ("ro", "Vecinul meu mai are o bicicletă ruginită în pivniță."),
     ("ro", "Vara mea Ioana a deschis o mică brutărie lângă gară."),
+    ("ro", "Mai e timp."),
     ("sq", "Gjyshi im bën verë të kuqe shumë të shijshme."),
 ]
 
@@ -47,6 +48,17 @@ DATED = [
     ("ro", "plecăm pe 1 mai", datetime(2026, 5, 1)),
     ("ro", "vara aceasta plecăm la mare", datetime(2026, 6, 1)),
     ("hu", "az ősz szép volt", datetime(2026, 9, 1)),
+    ("hu", "ősz van", datetime(2026, 9, 1)),
+    ("hu", "ősz jön", datetime(2026, 9, 1)),
+    ("uk", "лютий був холодним", datetime(2027, 2, 1)),
+    ("ro", "vara asta mergem la mare", datetime(2026, 6, 1)),
+    ("ro", "mergem la mare vara asta", datetime(2026, 6, 1)),
+    ("ro", "mai anul acesta", datetime(2026, 5, 1)),
+    # Solar Hijri: 1 Tir 1405 is 2026-06-22 and 1 Mehr 1405 is 2026-09-23
+    # (Iranian calendar, 1 Farvardin 1405 = 2026-03-21, months 1-6 have 31 days).
+    ("fa", "تیر ماه", datetime(2026, 6, 22)),
+    ("fa", "تیر ماه به سفر می‌رویم", datetime(2026, 6, 22)),
+    ("fa", "مهر ماه مدرسه‌ها باز می‌شوند", datetime(2026, 9, 23)),
 ]
 
 
@@ -60,3 +72,22 @@ def test_time_cue_keeps_the_date(lang, text, start):
     found = extract_timespan(text, lang, ANCHOR)
     assert found is not None
     assert found.span.start.datetime() == start
+
+
+@pytest.mark.xfail(raises=AssertionError, strict=True,
+                   reason="ro '<season> anului <year>' drops the year, also for "
+                          "non-homograph seasons")
+@pytest.mark.parametrize("text", ["vara anului 2027", "primăvara anului 2027"])
+def test_season_of_the_year_keeps_the_year(text):
+    found = extract_timespan(text, "ro", ANCHOR)
+    assert found is not None
+    assert found.span.start.datetime().year == 2027
+
+
+@pytest.mark.xfail(raises=AssertionError, strict=True,
+                   reason="ro copula after a homograph season is no cue: 'e' "
+                          "would also keep 'mai e timp' as May")
+def test_ro_season_subject_before_copula():
+    found = extract_timespan("vara e caldă", "ro", ANCHOR)
+    assert found is not None
+    assert found.span.start.datetime() == datetime(2026, 6, 1)

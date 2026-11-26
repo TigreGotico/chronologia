@@ -3875,7 +3875,9 @@ def _homograph_veto(tokens, match, spec) -> bool:
     also "they will see", sv "vår" is also "our".  Alone, such a word takes
     its frequent sense.  A cue keeps the date sense: a connector right before
     it (a preposition, a demonstrative, an article), a relative marker right
-    after it ("vara trecută"), or a number on either side.  A cue that the match
+    after it ("vara trecută"), a word from ``marker_homograph_cue.voc`` on
+    either side (Kabyle "deg tafsut", "lḥedd-agi"), a daypart right after it
+    ("lḥedd ṣṣbeḥ"), or a number on either side.  A cue that the match
     consumes ("no verão", "verão de 2027") makes a longer match, which this
     veto leaves alone.  A word that is the whole input keeps the date sense.
     """
@@ -3892,7 +3894,9 @@ def _homograph_veto(tokens, match, spec) -> bool:
             return False
     if e < len(tokens):
         nxt = tokens[e]
-        if nxt.is_number or nxt.text in spec.rel_markers:
+        if (nxt.is_number or nxt.text in spec.rel_markers
+                or nxt.text in spec.dayparts
+                or nxt.text in spec.connectors.get("homograph_cue", ())):
             return False
     return True
 
