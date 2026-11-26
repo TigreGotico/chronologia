@@ -148,5 +148,9 @@
  },
  "base_grammar": {
   "marker_position": "post"
+ },
+ "positions": {
+  "from": "post",
+  "until": "post"
  }
 }
