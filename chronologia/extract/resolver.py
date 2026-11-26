@@ -3056,7 +3056,7 @@ class Resolver:
         # already running.  Twelve is the midnight that ends the day.
         if ((match.construction == "clock_this_daypart" or today_word)
                 and meridiem.text in self.spec.night_meridiems
-                and (hour == 0 or hour < 6 <= anchor.hour)):
+                and (hour == 0 or hour < 6 and (6 <= anchor.hour or dt < anchor))):
             dt = dt + timedelta(days=1)
         start = AstroDate.from_datetime(dt)
         tz = self._zone_tzinfo(match.slots.get("ZONE"))

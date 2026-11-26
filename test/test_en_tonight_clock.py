@@ -51,6 +51,30 @@ CASES = [
      datetime(2026, 10, 25, 0, 0), ""),
     # a part of the day after the named day
     ("en", "at 7:03 tomorrow evening", TUE, datetime(2017, 6, 28, 19, 3), ""),
+    # no join across a clause break
+    ("en", "at 7 tomorrow. evening is busy", TUE,
+     datetime(2017, 6, 28, 7, 0), "evening is busy"),
+    ("en", "call me at 7 tomorrow, evening is busy", TUE,
+     datetime(2017, 6, 28, 7, 0), "call me evening is busy"),
+    # a part of the day that cannot hold the hour stays in the remainder
+    ("en", "at 2 tomorrow night", TUE, datetime(2017, 6, 28, 2, 0), "night"),
+    ("en", "at 12 tomorrow night", TUE, datetime(2017, 6, 28, 12, 0),
+     "night"),
+    ("en", "at 12 on friday night", TUE, datetime(2017, 6, 30, 12, 0),
+     "night"),
+    ("pt", "às 2 amanhã à noite", TUE, datetime(2017, 6, 28, 2, 0),
+     "à noite"),
+    ("fr", "à 2 heures demain soir", TUE, datetime(2017, 6, 28, 2, 0),
+     "soir"),
+    ("de", "um 9 heute nacht", TUE, datetime(2017, 6, 27, 9, 0), "nacht"),
+    ("de", "um 12 heute nacht", TUE, datetime(2017, 6, 27, 12, 0), "nacht"),
+    ("de", "um 11 morgen nacht", TUE, datetime(2017, 6, 28, 11, 0), "nacht"),
+    ("en", "at 9 tomorrow night", TUE, datetime(2017, 6, 28, 21, 0), ""),
+    # never before the anchor: said at 05:59, the coming night
+    ("en", "at 5 tonight", datetime(2017, 6, 27, 5, 59),
+     datetime(2017, 6, 28, 5, 0), ""),
+    ("en", "at 1 tonight", datetime(2017, 6, 27, 5, 59),
+     datetime(2017, 6, 28, 1, 0), ""),
     # controls that already read right
     ("en", "tonight at 8", TUE, datetime(2017, 6, 27, 20, 0), ""),
     ("en", "at 8 pm", TUE, datetime(2017, 6, 27, 20, 0), ""),
@@ -76,6 +100,7 @@ OPEN = [
     ("it", "stasera 10", datetime(2026, 10, 17, 12, 0),
      datetime(2026, 10, 17, 22, 0), ""),
     ("fy", "om 9 oere moarns", TUE, datetime(2017, 6, 28, 9, 0), ""),
+    ("nl", "vanavond om 12", TUE, datetime(2017, 6, 28, 0, 0), ""),
     ("nl", "om halfacht vanavond", datetime(2026, 10, 17, 12, 0),
      datetime(2026, 10, 17, 19, 30), ""),
 ]
