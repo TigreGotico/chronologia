@@ -23,11 +23,12 @@ classifiers = [
 ]
 # Natural-language date extraction (chronologia.extract / extract_timespan)
 # needs two runtime helpers: numtag reads the spelled numbers of the
-# languages it has a lexicon for, and ovos-spec-tools loads the per-language
+# languages it has a lexicon for and spells the numbers of chronologia.spoken,
+# and ovos-spec-tools loads the per-language
 # .voc vocabulary bundles under chronologia/locale/. The calendrical core
 # (dates, spans, calendars, eras) runs on the standard library alone.
 dependencies = [
-    "numtag>=0.19.21a1",
+    "numtag>=0.38.0a1",
     "ovos-spec-tools>=1.5.0a1",
 ]
 
