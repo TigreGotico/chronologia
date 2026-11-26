@@ -36,14 +36,14 @@ NO_DAY_WORD = [
 ]
 
 
-@pytest.mark.xfail(strict=True, reason=ISSUE)
+@pytest.mark.xfail(raises=AssertionError, strict=True, reason=ISSUE)
 @pytest.mark.parametrize("lang,text,day", DAY_WORD)
 def test_the_event_starts_at_the_day_word(lang, text, day):
     event = extract_event(text, lang, anchor=ANCHOR)
     assert event.span.start.datetime().date() == day
 
 
-@pytest.mark.xfail(strict=True, reason=ISSUE)
+@pytest.mark.xfail(raises=AssertionError, strict=True, reason=ISSUE)
 @pytest.mark.parametrize("lang,text", NO_DAY_WORD)
 def test_a_range_of_lengths_with_no_day_word_has_no_start(lang, text):
     event = extract_event(text, lang, anchor=ANCHOR)

@@ -15,7 +15,7 @@ ISSUE = "https://github.com/TigreGotico/chronologia/issues/995"
 ANCHOR = datetime(2017, 6, 27, 13, 4, tzinfo=ZoneInfo("Europe/Lisbon"))
 
 
-@pytest.mark.xfail(strict=True, reason=ISSUE)
+@pytest.mark.xfail(raises=AssertionError, strict=True, reason=ISSUE)
 @pytest.mark.parametrize("lang", ["da", "sv"])
 def test_jul_is_christmas_from_extract_timespans(lang):
     mentions = extract_timespans("jul", lang, ANCHOR)

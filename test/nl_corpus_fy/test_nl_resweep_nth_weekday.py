@@ -49,7 +49,7 @@ def test_no_fifth_occurrence_in_short_month(text):
 _LIMITATIONS = [
     pytest.param(
         'de lêste freed fan de moanne',
-        marks=pytest.mark.xfail(
+        marks=pytest.mark.xfail(raises=AssertionError,
             reason="'lêste WEEKDAY' is claimed by the weekday_ref order "
                    "(REL_MARKER WEEKDAY -> 'last Friday' relative to anchor, "
                    "2017-06-23) before the scoped_ordinal 'ordlast WEEKDAY of "
@@ -60,7 +60,7 @@ _LIMITATIONS = [
             strict=True)),
     pytest.param(
         'de lêste freed fan april 2022',
-        marks=pytest.mark.xfail(
+        marks=pytest.mark.xfail(raises=AssertionError,
             reason="same weekday_ref-first limitation with an explicit named "
                    "month: 'lêste freed' resolves relative to the anchor "
                    "(2017-06-23) instead of nesting against April 2022, whose "

@@ -15,7 +15,7 @@ from chronologia import extract_timespan
 ISSUE = "https://github.com/TigreGotico/chronologia/issues/1081"
 
 
-@pytest.mark.xfail(strict=True, reason=ISSUE)
+@pytest.mark.xfail(raises=AssertionError, strict=True, reason=ISSUE)
 def test_the_evening_word_after_today_keeps_the_pm_half():
     found = extract_timespan(
         "om 8:00 vandaag 's avonds", "nl", datetime(2017, 6, 27, 5, 0))

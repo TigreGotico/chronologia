@@ -58,34 +58,34 @@ def test_confusable_returns_none(text):
 _LIMITATIONS = [
     pytest.param(
         'abril nombre de niña',
-        marks=pytest.mark.xfail(reason='month homograph used as a person/pet name binds as the month; expected limitation, disambiguation is downstream', strict=True)),
+        marks=pytest.mark.xfail(raises=AssertionError, reason='month homograph used as a person/pet name binds as the month; expected limitation, disambiguation is downstream', strict=True)),
     pytest.param(
         'la primavera de los pueblos',
-        marks=pytest.mark.xfail(reason='season word in figurative use binds as the season; downstream concern', strict=True)),
+        marks=pytest.mark.xfail(raises=AssertionError, reason='season word in figurative use binds as the season; downstream concern', strict=True)),
     pytest.param(
         'el otoño de la vida',
-        marks=pytest.mark.xfail(reason='season word in figurative use binds as the season; downstream concern', strict=True)),
+        marks=pytest.mark.xfail(raises=AssertionError, reason='season word in figurative use binds as the season; downstream concern', strict=True)),
     pytest.param(
         'una década perdida',
-        marks=pytest.mark.xfail(reason='temporal unit in figurative use binds as a date; downstream concern', strict=True)),
+        marks=pytest.mark.xfail(raises=AssertionError, reason='temporal unit in figurative use binds as a date; downstream concern', strict=True)),
     pytest.param(
         'por la mañana temprano',
-        marks=pytest.mark.xfail(reason='morning/tomorrow homograph binds as the next day; expected limitation', strict=True)),
+        marks=pytest.mark.xfail(raises=AssertionError, reason='morning/tomorrow homograph binds as the next day; expected limitation', strict=True)),
     pytest.param(
         'domingo canta ópera',
-        marks=pytest.mark.xfail(reason='weekday homograph binds as the weekday once bare-weekday parsing lands engine-wide; downstream concern', strict=True)),
+        marks=pytest.mark.xfail(raises=AssertionError, reason='weekday homograph binds as the weekday once bare-weekday parsing lands engine-wide; downstream concern', strict=True)),
     pytest.param(
         'el señor domingo llegó',
-        marks=pytest.mark.xfail(reason='weekday homograph binds as the weekday once bare-weekday parsing lands engine-wide; downstream concern', strict=True)),
+        marks=pytest.mark.xfail(raises=AssertionError, reason='weekday homograph binds as the weekday once bare-weekday parsing lands engine-wide; downstream concern', strict=True)),
     pytest.param(
         'martes nombre propio',
-        marks=pytest.mark.xfail(reason='weekday homograph binds as the weekday once bare-weekday parsing lands engine-wide; downstream concern', strict=True)),
+        marks=pytest.mark.xfail(raises=AssertionError, reason='weekday homograph binds as the weekday once bare-weekday parsing lands engine-wide; downstream concern', strict=True)),
     pytest.param(
         'sábado gloria',
-        marks=pytest.mark.xfail(reason='weekday homograph binds as the weekday once bare-weekday parsing lands engine-wide; downstream concern', strict=True)),
+        marks=pytest.mark.xfail(raises=AssertionError, reason='weekday homograph binds as the weekday once bare-weekday parsing lands engine-wide; downstream concern', strict=True)),
     pytest.param(
         'la navidad llegó temprano',
-        marks=pytest.mark.xfail(reason='temporal token inside a fixed idiom binds literally; downstream concern', strict=True)),
+        marks=pytest.mark.xfail(raises=AssertionError, reason='temporal token inside a fixed idiom binds literally; downstream concern', strict=True)),
 ]
 
 
