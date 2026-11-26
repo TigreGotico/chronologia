@@ -4,7 +4,15 @@
     "split_contractions": false,
     "ordinal_dot": false
   },
+  "base_grammar": {
+    "marker_position": "post"
+  },
   "constructions": {
+    "relative_offset": {
+      "orders": [
+        "MARKER NUM of UNIT"
+      ]
+    },
     "calendar_date": {
       "orders": [
         "DAY of MONTH YEAR?",
