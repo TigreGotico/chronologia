@@ -1,4 +1,7 @@
 {
+ "positions": {
+  "from": "post"
+ },
  "tokenizer": {
   "split_contractions": false,
   "ordinal_dot": false,
