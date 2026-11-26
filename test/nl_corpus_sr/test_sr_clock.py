@@ -20,13 +20,13 @@ Sources: Wikipedia "Date and time notation in Serbia"; gospeakserbian;
 Talkpal "Telling Time in Serbian" -- cross-sourced per
 lang-research/sr.md.
 """
-from datetime import timedelta
+from datetime import datetime, timedelta
 
 import pytest
 
 from chronologia.extract.numfold_slavic import sr_lat2cyr
 
-from ._corpus import ANCHOR, ad, nomatch, remainder, start
+from ._corpus import ANCHOR, ad, nomatch, remainder, start, start_end
 from ruling17 import moved
 
 
@@ -162,11 +162,25 @@ def test_a_compound_numeral_is_never_a_clock_time(phrase):
 
 
 @pytest.mark.parametrize("phrase", [
-    "od osam do devet", "osam do devet", "osam do pet", "od dva do pet",
-    "од осам до девет",
+    "osam do devet", "osam do pet",
 ])
 def test_a_direction_word_never_names_the_hour_first(phrase):
     """"do" is both the subtractive direction word and the range terminator,
-    so an hour-first order accepting it reads "from eight to nine" as eight
+    so an hour-first order accepting it reads "eight to nine" as eight
     minutes to nine.  Refusal is the contract."""
     nomatch(phrase)
+
+
+@pytest.mark.parametrize("phrase,first,last", [
+    ("od osam do devet", 8, 9),
+    ("од осам до девет", 8, 9),
+    ("od dva do pet", 2, 5),
+])
+def test_from_hour_to_hour_is_a_range(phrase, first, last):
+    """"od ... do" leads a range of two hours.  Both hours are past at 13:04,
+    so the range is the next morning; a clock end is end-exclusive by one
+    minute."""
+    day = ANCHOR.date() + timedelta(days=1)
+    assert start_end(phrase) == (
+        datetime(day.year, day.month, day.day, first, 0),
+        datetime(day.year, day.month, day.day, last, 1))
