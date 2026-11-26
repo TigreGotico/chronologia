@@ -187,10 +187,12 @@ def test_until_bound_event_starts_on_monday():
     assert event.span.start.datetime() == datetime(2026, 11, 23, 9, 0)
 
 
-@pytest.mark.parametrize("text,control", rows(1320, [
-    ("the 15th of february every year", "every year on the 15th of february"),
+@pytest.mark.parametrize("text,control", [
+    *rows(1320, [
+        ("the 15th of february every year", "every year on the 15th of february"),
+    ]),
     ("every month on the first friday", "the first friday of every month"),
-]))
+])
 def test_date_next_to_a_frequency_word(text, control):
     result = extract_recurrence(text, "en", ANCHOR)
     assert result is not None

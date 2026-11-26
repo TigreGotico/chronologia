@@ -85,7 +85,8 @@ def test_habitual_first_breaks_the_habitual_phrase(lang, text, rrule,
 def test_finders_tuple_is_the_documented_order():
     """The shipped order, spelled out -- a reorder must be a deliberate edit."""
     assert [f.__name__ for f in nseries._FINDERS] == [
-        "_recur_nth_weekday_list", "_recur_nth_weekday", "_recur_holiday",
+        "_recur_nth_weekday_list", "_recur_scoped_ordinal",
+        "_recur_nth_weekday", "_recur_holiday",
         "_recur_jurisdiction_holidays",
         "_recur_date_anchored",
         "_recur_once", "_recur_on_weekdays", "_recur_repeated_numeral",

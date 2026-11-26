@@ -658,6 +658,46 @@ def _is_business_day(day, weekend_start: int,
     return True
 
 
+def scoped_ordinal_n(match: Match) -> Optional[int]:
+    """The signed ordinal of a ``scoped_ordinal`` match (-1 is the last), or
+    ``None`` for an unsupported "<ordinal> to last" idiom."""
+    # ``DORD`` is ``ORD`` restricted to an ordinal that kept its written
+    # dot -- the same number, read from an order that must not accept a
+    # bare count (see the slot's note in ``matcher``).
+    ord_tok = match.slots.get("ORD") or match.slots.get("DORD")
+    ntolast_tok = match.slots.get("NTOLAST")
+    penult_tok = match.slots.get("PENULT")
+    if penult_tok is not None:
+        # "penultimate" -- a fixed synonym for "second-to-last" (-2).
+        n = -2
+    elif ntolast_tok is not None:
+        # an "<ordinal> to last" / "next to last" idiom: ``ORD`` present
+        # means "Nth-to-last" (-N), absent means the "next to last" idiom
+        # (-2).  Bounded at -4 -- "fifth-to-last" and beyond refuse rather
+        # than invent a reading past what the idiom is ever actually used
+        # for.
+        if ord_tok is not None:
+            v = int(ord_tok.value)
+            if not 2 <= v <= 4:
+                return None
+            n = -v
+        else:
+            n = -2
+    else:
+        n = int(ord_tok.value) if ord_tok is not None else -1
+    return None if scoped_ordinal_split(match) else n
+
+
+def scoped_ordinal_split(match: Match) -> bool:
+    """Whether a punctuation mark splits "every month on the 15th, monday":
+    a day of the month, then a weekday of another clause."""
+    every, ord_tok, wd_tok = (match.slots.get(k)
+                              for k in ("EVERY", "ORD", "WEEKDAY"))
+    return (every is not None and ord_tok is not None and wd_tok is not None
+            and every.index < ord_tok.index
+            and wd_tok.char_start - ord_tok.char_end > 1)
+
+
 class Resolver:
     """Configured once from a :class:`LangSpec`."""
 
@@ -2177,30 +2217,10 @@ class Resolver:
 
         ``last`` in place of the ordinal selects the final unit (-1).
         """
-        # ``DORD`` is ``ORD`` restricted to an ordinal that kept its written
-        # dot -- the same number, read from an order that must not accept a
-        # bare count (see the slot's note in ``matcher``).
-        ord_tok = match.slots.get("ORD") or match.slots.get("DORD")
-        ntolast_tok = match.slots.get("NTOLAST")
-        penult_tok = match.slots.get("PENULT")
-        if penult_tok is not None:
-            # "penultimate" -- a fixed synonym for "second-to-last" (-2).
-            n = -2
-        elif ntolast_tok is not None:
-            # an "<ordinal> to last" / "next to last" idiom: ``ORD`` present
-            # means "Nth-to-last" (-N), absent means the "next to last" idiom
-            # (-2).  Bounded at -4 -- "fifth-to-last" and beyond refuse rather
-            # than invent a reading past what the idiom is ever actually used
-            # for.
-            if ord_tok is not None:
-                v = int(ord_tok.value)
-                if not 2 <= v <= 4:
-                    return None
-                n = -v
-            else:
-                n = -2
-        else:
-            n = int(ord_tok.value) if ord_tok is not None else -1
+        n = scoped_ordinal_n(match)
+        if n is None or ("EVERY" in match.slots
+                         and "REL_MARKER" in match.slots):
+            return None
 
         # A scoped-ordinal selection ("the Nth <unit> of ...") names ONE unit
         # and is grammatically SINGULAR in every language, so a PLURAL selected
@@ -2226,7 +2246,8 @@ class Resolver:
         # "in two decades") are unaffected -- they bind through
         # ``relative_offset``'s UNIT slot, not this construction's SCOPE_UNIT.
         scope_tok = match.slots.get("SCOPE_UNIT")
-        if scope_tok is not None and scope_tok.text in self.spec.plural_units:
+        if (scope_tok is not None and scope_tok.text in self.spec.plural_units
+                and "EVERY" not in match.slots):
             return None
 
         if match.slots.get("BDAY") is not None:

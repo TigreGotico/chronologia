@@ -36,6 +36,7 @@ from chronologia.extract.numlayer import NUMTAG_LANGS
 from chronologia.extract.pipeline import fold_tokens, pretokens, require_text
 from chronologia.extract.reading import read
 from chronologia.extract.resolver import _nth_weekday_of_month as _month_weekday
+from chronologia.extract.resolver import scoped_ordinal_n, scoped_ordinal_split
 from chronologia.extract.timespan import (_RANGE_BETWEEN, _RANGE_FROM,
                                           _lone_spoken_hour,
                                           reads_spoken_hours,
@@ -2328,6 +2329,7 @@ class _RecurCtx:
     other: set
     weekday_word: set
     weekday_count_word: set
+    business: set
     articles: set
     of_words: set
     freq: dict
@@ -2432,6 +2434,7 @@ def _recur_ctx(text, lang, anchor):
         other=set(C.get("recur_other", ())),
         weekday_word=set(C.get("weekday", ())),
         weekday_count_word=set(C.get("weekday_count", ())),
+        business=set(C.get("business", ())),
         articles=_article_words(spec),
         of_words=set(C.get("of", ())),
         freq=_freq_map(C),
@@ -2724,24 +2727,17 @@ def _recur_nth_weekday(ctx):
                     month_ordn = -numeric_last_n
                 else:
                     return None, frozenset()
+            if business:
+                continue    # a scoped_ordinal reading (_recur_scoped_ordinal)
             named_month = ctx.months.get(t[r].text)
-            reason = ordinal_cap(month_ordn, "business day" if business else wd,
-                                 named_month, zero=True)
+            reason = ordinal_cap(month_ordn, wd, named_month, zero=True)
             if reason:
                 # the month never holds that many, so the rule would never
                 # occur -- claim the phrase and decline it
                 decline(reason)
                 return _NEVER_OCCURS, frozenset(range(start, r + 1))
-            if t[r].text in ctx.months:
-                if business:
-                    rec = _business_day_of_month(month_ordn, month=ctx.months[t[r].text])
-                else:
-                    rec = _nth_weekday_of_month(month_ordn, wd,
-                                                month=ctx.months[t[r].text])
-                return rec, set(range(start, r + 1))
-            if business:
-                return _business_day_of_month(month_ordn), set(range(start, r + 1))
-            return _nth_weekday_of_month(month_ordn, wd), set(range(start, r + 1))
+            rec = _nth_weekday_of_month(month_ordn, wd, month=named_month)
+            return rec, set(range(start, r + 1))
         if r < n and t[r].text in ctx.units and ctx.units[t[r].text] == "year":
             # "every last monday of the year": the yearly sibling of
             # the "... of [every] month" tail above. Before this branch, "of
@@ -2765,27 +2761,79 @@ def _recur_nth_weekday(ctx):
                 decline(reason)
                 return _NEVER_OCCURS, frozenset(range(start, r + 1))
             if business:
-                return (_business_day_of_year(ordn, year_interval),
+                return (_business_day_of_year(ordn, ctx.spec, year_interval),
                         set(range(start, r + 1)))
             return (_nth_weekday_of_year(ordn, wd, year_interval),
                     set(range(start, r + 1)))
     return None
 
 
-def _business_day_of_month(ordn, month=None):
-    """The ``ordn``-th business day of the month as a ``BYSETPOS`` rule.
+def _workweek(spec):
+    """The locale's business weekdays as a ``BYDAY`` set: the week without
+    its two weekend days."""
+    ws = spec.conventions.weekend_start
+    return tuple((None, k) for k in range(7) if k not in (ws, (ws + 1) % 7))
 
-    The canonical RFC 5545 idiom for "the last (or first) weekday of the
-    month": ``BYDAY=MO,TU,WE,TH,FR`` selects the workweek and ``BYSETPOS``
-    picks the ``ordn``-th of that set within each period ("last weekday" ->
-    ``BYSETPOS=-1``).  With ``month`` given it restricts to a single calendar
-    month (a yearly rule), mirroring :func:`_nth_weekday_of_month`.
+
+def _recur_scoped_ordinal(ctx):
+    """A ``scoped_ordinal`` match read as a rule: "the sixth monday of every
+    month", "the last business day of every month", "der dritte Werktag jedes
+    Monats".
+
+    The rule is the one the timespan reading names in a single month: a
+    weekday ordinal with "every" before the month, or a business-day ordinal
+    of the month or of a named month.  An ordinal the month never holds
+    claims the phrase and declines it.
     """
-    byday = tuple((None, k) for k in range(5))  # MO..FR
-    if month is not None:
-        return _build_every("yearly", bymonth=month, byday=byday,
-                            bysetpos=(ordn,))
-    return _build_every("monthly", byday=byday, bysetpos=(ordn,))
+    t = ctx.tokens
+    if not any(tok.text in ctx.every or tok.text in ctx.business
+               or tok.text in ctx.weekday_word for tok in t):
+        return None
+    engine = _timespan_engine(ctx.lang)
+    for m in engine.matcher.match(t):
+        slots = m.slots
+        if m.construction != "scoped_ordinal" or not (
+                "EVERY" in slots or "BDAY" in slots):
+            continue
+        if "WEEKDAY" not in slots and "BDAY" not in slots:
+            continue
+        scope = slots.get("SCOPE_UNIT")
+        if scope is not None and ctx.units.get(scope.text) != "month":
+            continue
+        start = m.span[0]
+        while start > 0 and (t[start - 1].text in ctx.articles
+                             or t[start - 1].text in ctx.every):
+            start -= 1
+        if start > 0 and (t[start - 1].is_number
+                          or t[start - 1].text in ctx.to_words):
+            continue    # "every 3rd last friday", "third-to-last friday"
+        consumed = set(range(start, m.span[1]))
+        n = scoped_ordinal_n(m)
+        if n is None and scoped_ordinal_split(m):
+            continue
+        ord_tok = slots.get("ORD")
+        if n is None or "REL_MARKER" in slots or "YEAR" in slots or (
+                ord_tok is not None and not ord_tok.ordinal
+                and "BDAY" in slots):
+            # one period ("of next month", "of march 2027") or a count ("5
+            # business days of the month") is no rule
+            return None, consumed
+        month = ctx.months[slots["MONTH"].text] if "MONTH" in slots else None
+        if "BDAY" in slots:
+            unit = "business day"
+        else:
+            unit = ctx.weekdays[slots["WEEKDAY"].text]
+        reason = ordinal_cap(n, unit, month, zero=True)
+        if reason:
+            decline(reason)
+            return _NEVER_OCCURS, consumed
+        if "BDAY" in slots:
+            kw = {"byday": _workweek(ctx.spec), "bysetpos": (n,)}
+            if month is None:
+                return _build_every("monthly", **kw), consumed
+            return _build_every("yearly", bymonth=month, **kw), consumed
+        return _nth_weekday_of_month(n, unit, month=month), consumed
+    return None
 
 
 def _nth_weekday_of_year(ordn, wd, interval=1):
@@ -2805,18 +2853,17 @@ def _nth_weekday_of_year(ordn, wd, interval=1):
     return _build_every("yearly", byday=((ordn, wd),), **kw)
 
 
-def _business_day_of_year(ordn, interval=1):
+def _business_day_of_year(ordn, spec, interval=1):
     """The ``ordn``-th business day of the whole calendar year.
 
-    Sibling of :func:`_business_day_of_month` (``month=None``) but yearly
-    rather than monthly, for "the last weekday of the year" -- the same
+    The yearly sibling of the monthly business-day rule, for "the last weekday of the year" -- the same
     ``BYSETPOS`` idiom, scoped to ``FREQ=YEARLY`` with no ``BYMONTH``.
     ``interval`` folds a leading "every other"/"every Nth" multiplier, same
     as :func:`_nth_weekday_of_year`.
     """
-    byday = tuple((None, k) for k in range(5))  # MO..FR
     kw = {"interval": interval} if interval != 1 else {}
-    return _build_every("yearly", byday=byday, bysetpos=(ordn,), **kw)
+    return _build_every("yearly", byday=_workweek(spec), bysetpos=(ordn,),
+                        **kw)
 
 
 def _fold_group_value(ctx, group):
@@ -4338,7 +4385,8 @@ def _recur_date_anchored(ctx):
 # them: its 5-token from/number/in/number/unit shape never satisfies any of
 # the other finders' frames, so it is placed anywhere ahead of the
 # ``_recur_every``/``_recur_habitual_weekday`` catch-alls.
-_FINDERS = (_recur_nth_weekday_list, _recur_nth_weekday, _recur_holiday,
+_FINDERS = (_recur_nth_weekday_list, _recur_scoped_ordinal,
+            _recur_nth_weekday, _recur_holiday,
             _recur_jurisdiction_holidays,
             _recur_date_anchored,
             _recur_once, _recur_on_weekdays, _recur_repeated_numeral,

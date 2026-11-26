@@ -37,11 +37,9 @@ def test_candidates_raise_mode(text, reason):
 
 
 @pytest.mark.parametrize("lang,text,first,kind", [
-    *rows(1276, [
-        ("en", "tomorrow or every month on the sixth monday", datetime(2026, 11, 23), "named_day"),
-        ("pt", "amanhã ou todos os meses no sexto domingo", datetime(2026, 11, 23), "named_day"),
-        ("de", "am 3. Juni oder der sechste Montag jedes Monats", datetime(2027, 6, 3), "calendar_date"),
-    ]),
+    ("en", "tomorrow or every month on the sixth monday", datetime(2026, 11, 23), "named_day"),
+    ("pt", "amanhã ou todos os meses no sexto domingo", datetime(2026, 11, 23), "named_day"),
+    ("de", "am 3. Juni oder der sechste Montag jedes Monats", datetime(2027, 6, 3), "calendar_date"),
     ("en", "the sixth monday of may, or else on 3 june", datetime(2027, 6, 3), "calendar_date"),
 ])
 def test_candidates_keep_the_valid_date_and_drop_the_refused_weekday(lang, text, first, kind):
@@ -70,30 +68,22 @@ def test_candidates_refused_business_day_has_no_month_fallback():
     assert extract_candidates("the 23rd business day of this month", "en", ANCHOR) == []
 
 
-@pytest.mark.xfail(strict=True, reason=URL + "1288")
 def test_sixth_monday_of_every_month_declines():
     text = "the sixth monday of every month"
     assert extract_timespan(text, "en", ANCHOR) is None
     assert extract_candidates(text, "en", ANCHOR) == []
 
 
-@pytest.mark.xfail(strict=True, reason=URL + "1288")
 def test_sixth_monday_of_every_month_raises():
     with pytest.raises(ImpossibleDateError, match="no 6th Monday"):
         extract_timespan("the sixth monday of every month", "en", ANCHOR, impossible="raise")
 
 
 @pytest.mark.parametrize("text,rule", [
-    pytest.param(
-        "the last business day of every month",
-        "FREQ=MONTHLY;BYDAY=MO,TU,WE,TH,FR;BYSETPOS=-1",
-        marks=xfail(1289),
-    ),
-    pytest.param(
-        "the third business day of every month",
-        "FREQ=MONTHLY;BYDAY=MO,TU,WE,TH,FR;BYSETPOS=3",
-        marks=xfail(1289),
-    ),
+    ("the last business day of every month",
+     "FREQ=MONTHLY;BYDAY=MO,TU,WE,TH,FR;BYSETPOS=-1"),
+    ("the third business day of every month",
+     "FREQ=MONTHLY;BYDAY=MO,TU,WE,TH,FR;BYSETPOS=3"),
 ])
 def test_business_day_of_every_month(text, rule):
     result = extract_recurrence(text, "en", ANCHOR)

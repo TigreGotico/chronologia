@@ -81,15 +81,21 @@ BASE_GRAMMAR: Dict[str, List[str]] = {
         "article? ordlast WEEKDAY of article? month_word? of? MONTH of? article? REL_MARKER year_word",
         "article? ORD WEEKDAY of article? month_word? of? MONTH of? article? year_word REL_MARKER",
         "article? ordlast WEEKDAY of article? month_word? of? MONTH of? article? year_word REL_MARKER",
-        "article? ORD WEEKDAY of REL_MARKER? article? SCOPE_UNIT",
-        "article? ordlast WEEKDAY of REL_MARKER? article? SCOPE_UNIT",
+        "article? ORD WEEKDAY of REL_MARKER? article? EVERY? SCOPE_UNIT",
+        "article? ordlast WEEKDAY of REL_MARKER? article? EVERY? SCOPE_UNIT",
+        # de "der erste Montag jedes Monats": a genitive scope with no "of"
+        "article? ORD WEEKDAY EVERY SCOPE_UNIT",
+        "article? ordlast WEEKDAY EVERY SCOPE_UNIT",
+        # "every month on the first monday", pt "todos os meses no 1.º domingo"
+        "EVERY article? SCOPE_UNIT on? article? ORD WEEKDAY",
+        "EVERY article? SCOPE_UNIT on? article? ordlast WEEKDAY",
         # "the 3rd business day of march", "o 3.º dia útil do mês": the
         # n-th business day of a month, read before "ORD UNIT of MONTH" so
         # the day unit of the class noun is not a bare day ordinal.
         "article? ORD DAYUNIT? BDAY DAYUNIT? of? MONTH of? YEAR?",
         "article? ordlast DAYUNIT? BDAY DAYUNIT? of? MONTH of? YEAR?",
-        "article? ORD DAYUNIT? BDAY DAYUNIT? of? REL_MARKER? article? SCOPE_UNIT",
-        "article? ordlast DAYUNIT? BDAY DAYUNIT? of? REL_MARKER? article? SCOPE_UNIT",
+        "article? ORD DAYUNIT? BDAY DAYUNIT? of? REL_MARKER? article? EVERY? SCOPE_UNIT",
+        "article? ordlast DAYUNIT? BDAY DAYUNIT? of? REL_MARKER? article? EVERY? SCOPE_UNIT",
         "article? ORD UNIT of MONTH of? YEAR?",
         "article? ordlast UNIT of MONTH of? YEAR?",
         "article? ORD UNIT of article? year_word YEAR?",
