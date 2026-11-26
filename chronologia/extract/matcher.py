@@ -495,6 +495,13 @@ def _counted_refused_unit_before(tokens: Tuple[Token, ...], start: int,
             and tokens[k - 1].text in ambiguous)
 
 
+def _named_day_homograph(tokens: Tuple[Token, ...], index: int,
+                         spec: LangSpec) -> bool:
+    """Is the day-part word at ``index`` a named-day word right after "of"?"""
+    return (index > 0 and tokens[index].text in spec.named_days
+            and tokens[index - 1].text in spec.connectors.get("of", ()))
+
+
 def _counted_plural_daypart(tokens: Tuple[Token, ...], index: int,
                             spec: LangSpec) -> bool:
     """Is the plural day-part word at ``index`` counted, not a part of the day?
@@ -1108,6 +1115,14 @@ class ConstructionMatcher:
                             and "REL_MARKER" not in slots
                             and _counted_refused_unit_before(
                                 tokens, start, self.spec)):
+                        continue
+                    # A day-part word that is also a named-day word (es
+                    # "mañana") directly after "of" is the named day: "la fiesta de
+                    # mañana" is tomorrow's party; "de la mañana" keeps the band.
+                    if (name == "daypart_ref" and "DAYPART" in slots
+                            and "REL_MARKER" not in slots
+                            and _named_day_homograph(
+                                tokens, slots["DAYPART"].index, self.spec)):
                         continue
                     if ("DAYPART" in slots and _counted_plural_daypart(
                             tokens, slots["DAYPART"].index, self.spec)):
