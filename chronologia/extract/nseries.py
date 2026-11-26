@@ -2727,15 +2727,16 @@ def _recur_nth_weekday(ctx):
                     month_ordn = -numeric_last_n
                 else:
                     return None, frozenset()
-            if business:
-                continue    # a scoped_ordinal reading (_recur_scoped_ordinal)
             named_month = ctx.months.get(t[r].text)
-            reason = ordinal_cap(month_ordn, wd, named_month, zero=True)
+            reason = ordinal_cap(month_ordn, "business day" if business else wd,
+                                 named_month, zero=True)
             if reason:
                 # the month never holds that many, so the rule would never
                 # occur -- claim the phrase and decline it
                 decline(reason)
                 return _NEVER_OCCURS, frozenset(range(start, r + 1))
+            if business:
+                continue    # a scoped_ordinal reading (_recur_scoped_ordinal)
             rec = _nth_weekday_of_month(month_ordn, wd, month=named_month)
             return rec, set(range(start, r + 1))
         if r < n and t[r].text in ctx.units and ctx.units[t[r].text] == "year":
