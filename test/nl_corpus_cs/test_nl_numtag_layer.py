@@ -29,7 +29,7 @@ def test_ordinal_after_a_locative_preposition_is_no_clock():
     assert parse("ve druhém patře") is None
 
 
-@pytest.mark.xfail(strict=True, reason="https://github.com/TigreGotico/chronologia/issues/1193")
+@pytest.mark.xfail(raises=AssertionError, strict=True, reason="https://github.com/TigreGotico/chronologia/issues/1193")
 def test_known_gap_hour_and_minute_clock():
     assert start("v devět třicet") == ad(datetime(2017, 6, 27, 21, 30))
 
@@ -39,7 +39,7 @@ def test_ordinal_after_about_is_no_clock(text):
     assert parse(text) is None
 
 
-@pytest.mark.xfail(strict=True, reason="https://github.com/TigreGotico/chronologia/issues/1221")
+@pytest.mark.xfail(raises=AssertionError, strict=True, reason="https://github.com/TigreGotico/chronologia/issues/1221")
 @pytest.mark.parametrize("text,expected", [
     ("v půl deváté zavolej mámě", datetime(2017, 6, 27, 20, 30)),
 ])

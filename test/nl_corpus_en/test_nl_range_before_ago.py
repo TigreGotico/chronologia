@@ -13,7 +13,7 @@ from chronologia import extract_timespan
 ISSUE = "https://github.com/TigreGotico/chronologia/issues/1041"
 
 
-@pytest.mark.xfail(strict=True, reason=ISSUE)
+@pytest.mark.xfail(raises=AssertionError, strict=True, reason=ISSUE)
 def test_a_spelled_range_of_days_before_ago_is_a_range():
     found = extract_timespan(
         "from two thousand to three thousand days ago", "en",

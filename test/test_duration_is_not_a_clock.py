@@ -57,7 +57,7 @@ def test_an_offset_still_reads(text, lang):
     assert (got.span.start.hour, got.span.start.minute) == (15, 4)
 
 
-@pytest.mark.xfail(strict=True, reason="https://github.com/TigreGotico/chronologia/issues/1362")
+@pytest.mark.xfail(strict=True, raises=AssertionError, reason="https://github.com/TigreGotico/chronologia/issues/1362")
 @pytest.mark.parametrize("text,remainder", [
     ("for 10h", ""),
     ("for 10 h", ""),
@@ -66,4 +66,5 @@ def test_an_offset_still_reads(text, lang):
 def test_the_hour_symbol_after_for_is_a_length(text, remainder):
     # SI Brochure (BIPM, 9th edition, Table 8): the hour, symbol "h".
     found = extract_duration(text, "en")
+    assert found is not None, f"no reading for {text!r}"
     assert (found.duration.total_seconds(), found.remainder) == (36000, remainder)

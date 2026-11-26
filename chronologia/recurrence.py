@@ -844,17 +844,21 @@ class JurisdictionHolidays:
     from :mod:`chronologia.civil_holidays` per year.  ``categories`` defaults to
     the public holidays; ``jurisdiction`` is an upper-cased ISO-3166-1 (or
     vacanza market) code and ``subdiv`` an optional subdivision (``"PT-LIS"``).
-    It has no RFC 5545 rule, so :meth:`to_string` raises.
+    ``until`` is an optional inclusive bound that :meth:`occurrences` uses when
+    the caller passes none.  It has no RFC 5545 rule, so :meth:`to_string` raises.
     """
 
     jurisdiction: str
     subdiv: Optional[str] = None
     categories: Optional[Tuple[str, ...]] = ("public",)
+    until: Optional[AstroDate] = None
 
     def __post_init__(self) -> None:
         from chronologia.civil_holidays import registry
         code = self.jurisdiction.upper()
         object.__setattr__(self, "jurisdiction", code)
+        if self.until is not None:
+            object.__setattr__(self, "until", _as_astro(self.until))
         # Fail at construction, not at the first occurrences() pull.
         try:
             registry._calendar_for(code)
@@ -873,7 +877,7 @@ class JurisdictionHolidays:
         """
         from chronologia.civil_holidays import registry
         dtstart = _as_astro(dtstart)
-        eff_until = _as_astro(until) if until is not None else None
+        eff_until = _as_astro(until) if until is not None else self.until
         if eff_until is None and count is None:
             raise ValueError(
                 "unbounded jurisdiction holiday recurrence: pass count=... "
@@ -926,7 +930,8 @@ class JurisdictionHolidays:
         return {"type": "JurisdictionHolidays", "jurisdiction": self.jurisdiction,
                 "subdiv": self.subdiv,
                 "categories": (list(self.categories)
-                              if self.categories is not None else None)}
+                              if self.categories is not None else None),
+                **({"until": self.until.isoformat()} if self.until else {})}
 
     @classmethod
     def from_json(cls, data: dict) -> "JurisdictionHolidays":
@@ -935,5 +940,7 @@ class JurisdictionHolidays:
             raise ValueError(
                 f"not a JurisdictionHolidays envelope: {data.get('type')!r}")
         cats = data.get("categories")
+        until = data.get("until")
         return cls(data["jurisdiction"], data.get("subdiv"),
-                   tuple(cats) if cats is not None else None)
+                   tuple(cats) if cats is not None else None,
+                   AstroDate.fromisoformat(until) if until else None)

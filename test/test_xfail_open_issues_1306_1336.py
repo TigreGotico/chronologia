@@ -23,7 +23,7 @@ WEEKDAYS = ((None, 0), (None, 1), (None, 2), (None, 3), (None, 4))  # Monday to 
 
 
 def xfail(issue):
-    return pytest.mark.xfail(strict=True, reason=URL + str(issue))
+    return pytest.mark.xfail(raises=AssertionError, strict=True, reason=URL + str(issue))
 
 
 def rows(issue, entries):
@@ -105,7 +105,7 @@ def test_list_of_two_days_reads_the_first(lang, text):
     assert result.span.start.datetime() == datetime(2027, 5, 14)
 
 
-@pytest.mark.xfail(strict=True, reason=URL + "1311")
+@pytest.mark.xfail(raises=AssertionError, strict=True, reason=URL + "1311")
 def test_list_of_two_days_primero_y_dos():
     result = extract_timespan("el primero y dos de mayo", "es", ANCHOR)
     assert result is not None
@@ -149,7 +149,7 @@ def test_clock_range_in_a_recurrence(lang, text, byhour, byminute):
     assert result.remainder == ""
 
 
-@pytest.mark.xfail(strict=True, reason=URL + "1315")
+@pytest.mark.xfail(raises=AssertionError, strict=True, reason=URL + "1315")
 def test_monday_from_1_to_5_december_never_occurs():
     assert extract_recurrence("every monday from 1 to 5 december", "en", ANCHOR) is None
 
@@ -172,7 +172,7 @@ def test_until_bound_in_a_recurrence(lang, text, byhour, until):
     assert result.remainder == ""
 
 
-@pytest.mark.xfail(strict=True, reason=URL + "1316")
+@pytest.mark.xfail(raises=AssertionError, strict=True, reason=URL + "1316")
 def test_de_until_end_of_june_is_next_june():
     result = extract_recurrence("jeden Montag bis Ende Juni", "de", ANCHOR)
     assert result is not None
@@ -180,7 +180,7 @@ def test_de_until_end_of_june_is_next_june():
     assert (until.year, until.month) == (2027, 6)
 
 
-@pytest.mark.xfail(strict=True, reason=URL + "1316")
+@pytest.mark.xfail(raises=AssertionError, strict=True, reason=URL + "1316")
 def test_until_bound_event_starts_on_monday():
     event = extract_event("every monday at 9 until 5 pm", "en", ANCHOR)
     assert event is not None
@@ -200,7 +200,7 @@ def test_date_next_to_a_frequency_word(text, control):
     assert result.remainder == ""
 
 
-@pytest.mark.xfail(strict=True, reason=URL + "1321")
+@pytest.mark.xfail(raises=AssertionError, strict=True, reason=URL + "1321")
 def test_nl_tot_en_met_is_a_weekday_range():
     long_form = extract_recurrence("elke maandag tot en met vrijdag", "nl", ANCHOR)
     short_form = extract_recurrence("elke maandag t/m vrijdag", "nl", ANCHOR)
@@ -218,7 +218,7 @@ def test_weekday_range_before_a_clock(lang, text):
     assert (result.recurrence.byday, result.recurrence.byhour) == (WEEKDAYS, (9,))
 
 
-@pytest.mark.xfail(strict=True, reason=URL + "1321")
+@pytest.mark.xfail(raises=AssertionError, strict=True, reason=URL + "1321")
 def test_de_month_after_a_clock_range_limits_the_rule():
     result = extract_recurrence("jeden Montag von 9 bis 17 Uhr im Dezember", "de", ANCHOR)
     assert result is not None
@@ -226,7 +226,7 @@ def test_de_month_after_a_clock_range_limits_the_rule():
     assert result.remainder == ""
 
 
-@pytest.mark.xfail(strict=True, reason=URL + "1321")
+@pytest.mark.xfail(raises=AssertionError, strict=True, reason=URL + "1321")
 def test_pt_until_5_dez_is_an_end_date():
     result = extract_recurrence("todas as segundas de 9 até 5 dez", "pt", ANCHOR)
     assert result is not None
@@ -252,7 +252,7 @@ def test_repeat_count_word(lang, text):
     assert result.remainder == ""
 
 
-@pytest.mark.xfail(strict=True, reason=URL + "1322")
+@pytest.mark.xfail(raises=AssertionError, strict=True, reason=URL + "1322")
 def test_de_repeat_count_is_no_minute():
     result = extract_recurrence("jeden Montag um 9 Uhr 10 mal", "de", ANCHOR)
     assert result is not None
@@ -272,7 +272,7 @@ def test_daypart_before_the_clock_in_a_daily_rule(text):
     assert result.remainder == ""
 
 
-@pytest.mark.xfail(strict=True, reason=URL + "1324")
+@pytest.mark.xfail(raises=AssertionError, strict=True, reason=URL + "1324")
 def test_daypart_before_the_clock_event_start():
     event = extract_event("evening at 8 every day", "en", ANCHOR)
     assert event is not None
@@ -334,7 +334,7 @@ def test_impossible_day_read_apart_declines(lang, text):
         extract_timespan(text, lang, ANCHOR, impossible="raise")
 
 
-@pytest.mark.xfail(strict=True, reason=URL + "1328")
+@pytest.mark.xfail(raises=AssertionError, strict=True, reason=URL + "1328")
 def test_impossible_day_in_a_yearly_event_declines():
     assert extract_event("every year in february on the 30th", "en", ANCHOR) is None
 
@@ -383,7 +383,7 @@ def test_es_length_before_manana_is_tomorrow():
     assert event.duration == timedelta(hours=2)
 
 
-@pytest.mark.xfail(strict=True, reason=URL + "1332")
+@pytest.mark.xfail(raises=AssertionError, strict=True, reason=URL + "1332")
 def test_es_length_before_esta_manana_is_this_morning():
     result = extract_timespan("reunión de dos horas esta mañana", "es", ANCHOR)
     assert result is not None

@@ -81,6 +81,16 @@ The Roman calendar anchors rest on a Wikipedia article. That source is weaker th
 3. Are `calendas`, `nonas` and `idus` the forms Spanish historical writing uses, or does it keep the Latin?
 4. Is `día` ever used in a way that would make folding a leading `día` into a date wrong?
 
+## Regional variants
+
+The tag `es-CO` gets the same results as `es`. chronologia implements no regional difference for Colombian Spanish: `es-CO` loads the `es` locale data, the same numtag lexicon and the same scale. `es-CO` uses the Monday week start of `es`; `_REGION_WEEK_START` has no entry for CO.
+
+    >>> from datetime import datetime
+    >>> from chronologia import extract_timespan
+    >>> anchor = datetime(2027, 6, 2, 12, 0)
+    >>> extract_timespan("5 de junio de 2027", "es", anchor)[0] == extract_timespan("5 de junio de 2027", "es-CO", anchor)[0]
+    True
+
 ## Checked examples
 
 Each example below runs as a doctest with a fixed anchor, so the output does not depend on the machine. The first one shows which reader handles the numbers of this locale.
@@ -116,7 +126,6 @@ Each line is an open issue with a strict `xfail` test for this language. The lin
 
 - A part of the day with no day word answers the band that has already passed. Example (reader `extract_timespan`, lang `es`, anchor 2017-06-27 13:04): `necesito que suene una alarma por la mañana` gives 2017-06-27 06:00 to 2017-06-27 12:00 and `necesito que suene una alarma` left over. [#997](https://github.com/TigreGotico/chronologia/issues/997)
 
-- A part of the day in another clause leaves a lone hour as spoken. Example (reader `extract_timespan`, lang `es-ES`, anchor 2026-01-05 06:00): `a las 9, esta noche` gives 2026-01-05 09:00 to 2026-01-05 09:01 and `esta noche` left over. [#1001](https://github.com/TigreGotico/chronologia/issues/1001)
 
 - A part of the day before a clock stays in the remainder. Example (reader `extract_timespan`, lang `es-ES`, anchor 2026-10-17 12:00): `tarde a las 4:30` gives 2026-10-17 16:30 to 2026-10-17 16:31 and `tarde` left over. [#1002](https://github.com/TigreGotico/chronologia/issues/1002)
 

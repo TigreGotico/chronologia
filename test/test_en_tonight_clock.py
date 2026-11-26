@@ -117,7 +117,7 @@ def test_clock_with_tonight(lang, text, anchor, expected, rest):
     assert _read(lang, text, anchor) == (expected, rest)
 
 
-@pytest.mark.xfail(strict=True, reason=ISSUE)
+@pytest.mark.xfail(raises=AssertionError, strict=True, reason=ISSUE)
 @pytest.mark.parametrize("lang,text,anchor,expected,rest", OPEN)
 def test_open_rows(lang, text, anchor, expected, rest):
     assert _read(lang, text, anchor) == (expected, rest)

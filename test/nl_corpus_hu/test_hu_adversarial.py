@@ -11,7 +11,7 @@ from datetime import datetime
 @pytest.mark.parametrize("text", [
     pytest.param(
         "minden reggel almát eszem",
-        marks=pytest.mark.xfail(reason="bare daypart 'reggel' now binds the "
+        marks=pytest.mark.xfail(raises=AssertionError, reason="bare daypart 'reggel' now binds the "
                                 "morning band; the 'minden' recurrence is not "
                                 "modelled, disambiguation is downstream",
                                 strict=True)),

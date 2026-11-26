@@ -81,7 +81,7 @@ def test_thousands_group_is_still_a_number():
     assert parse("1.000") is None
 
 
-@pytest.mark.xfail(reason="a trailing dot makes the run a truncated dotted "
+@pytest.mark.xfail(raises=AssertionError, reason="a trailing dot makes the run a truncated dotted "
                           "date ('15.06.'), which the date rules refuse; the "
                           "sentence-final clock is refused with it",
                    strict=True)

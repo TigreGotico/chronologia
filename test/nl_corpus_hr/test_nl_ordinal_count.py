@@ -15,7 +15,7 @@ def test_weekend_after_next():
     assert s.width == timedelta(days=2)
 
 
-@pytest.mark.xfail(reason="no colloquial 'from now' present-marker in hr; the "
+@pytest.mark.xfail(raises=AssertionError, reason="no colloquial 'from now' present-marker in hr; the "
                           "N-weekday-from-now count does not fire",
                    strict=True)
 def test_weekday_from_now():

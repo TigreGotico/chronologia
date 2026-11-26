@@ -128,7 +128,7 @@ def test_the_at_preposition_is_consumed_by_every_fraction_order(phrase, hour, mi
 
 # -- the additive minute count, attested but unread -------------------------
 
-@pytest.mark.xfail(strict=True, reason=(
+@pytest.mark.xfail(raises=AssertionError, strict=True, reason=(
     "gospeakserbian prints these rows, but the clock slots accept ordinals "
     "and cardinals alike and 'i' also joins compound numerals, so an order "
     "reading HOUR i MINUTE also reads 'dvadeset i pet' (25) and 'osmog i "

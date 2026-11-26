@@ -96,7 +96,7 @@ def test_en_tonight_still_band():
 
 # -- Defect B: sun-event instants (DEFERRED) --------------------------------
 
-@pytest.mark.xfail(reason="B deferred: extraction layer has no location "
+@pytest.mark.xfail(raises=AssertionError, reason="B deferred: extraction layer has no location "
                           "contract; sun_events() needs lat/lon with no "
                           "safe default. See PR.", strict=True)
 def test_en_sunset_today_is_instant():

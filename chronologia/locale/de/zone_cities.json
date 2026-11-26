@@ -1,0 +1,74 @@
+{
+ "source": "City names: CLDR 47 timeZoneNames exemplarCity (via Babel 2.18) for de; a zone with no exemplarCity takes the TR35 fallback, the city part of the IANA zone ID. Pattern: CLDR de regionFormat \"{0} (Ortszeit)\", and \"<city>-Zeit\" / \"<city adjective> Zeit\". City adjectives in -er: Amtliches Regelwerk 2024 § 61 (\"die New Yorker Kunstszene\"; rechtschreibrat_amtliches_regelwerk_2024.pdf) and § 49 E (\"New-Yorker\"); Duden, indeklinables Adjektiv: duden_Londoner_aus_von_London.html, duden_Berliner_Adjektiv.html, duden_Pariser_Adjektiv.html, duden_Moskauer_aus_von_Moskau.html (\"Moskauer Zeit\"), duden_New_Yorker_aus_von_New_York.html, duden_Tokioter_aus_von_Tokio.html (also \"Tokyoter\").",
+ "patterns": [
+  "{city} zeit",
+  "{city} ortszeit"
+ ],
+ "cities": {
+  "Europe/London": [
+   "London",
+   "Londoner"
+  ],
+  "America/New_York": [
+   "New York",
+   "New Yorker",
+   "New-Yorker"
+  ],
+  "America/Los_Angeles": [
+   "Los Angeles"
+  ],
+  "America/Chicago": [
+   "Chicago"
+  ],
+  "America/Toronto": [
+   "Toronto"
+  ],
+  "America/Sao_Paulo": [
+   "São Paulo"
+  ],
+  "America/Mexico_City": [
+   "Mexiko-Stadt"
+  ],
+  "Europe/Paris": [
+   "Paris",
+   "Pariser"
+  ],
+  "Europe/Berlin": [
+   "Berlin",
+   "Berliner"
+  ],
+  "Europe/Madrid": [
+   "Madrid"
+  ],
+  "Europe/Rome": [
+   "Rom"
+  ],
+  "Europe/Lisbon": [
+   "Lissabon"
+  ],
+  "Europe/Moscow": [
+   "Moskau",
+   "Moskauer"
+  ],
+  "Asia/Dubai": [
+   "Dubai"
+  ],
+  "Asia/Shanghai": [
+   "Shanghai"
+  ],
+  "Asia/Hong_Kong": [
+   "Hongkong"
+  ],
+  "Asia/Singapore": [
+   "Singapur"
+  ],
+  "Asia/Tokyo": [
+   "Tokio",
+   "Tokioter",
+   "Tokyoter"
+  ],
+  "Australia/Sydney": [
+   "Sydney"
+  ]
+ }
+}
