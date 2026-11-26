@@ -29,7 +29,7 @@ def test_landmarks(text, h):
     assert start(text).hour == h
 
 
-@pytest.mark.xfail(strict=True, reason="https://github.com/TigreGotico/chronologia/issues/1345")
+@pytest.mark.xfail(raises=AssertionError, strict=True, reason="https://github.com/TigreGotico/chronologia/issues/1345")
 @pytest.mark.parametrize("text,expected", [
     ("ساعت بیست و دو و چهل و پنج دقیقه", datetime(2017, 6, 27, 22, 45)),
     ("ساعت ده و پانزده دقیقه", datetime(2017, 6, 27, 22, 15)),

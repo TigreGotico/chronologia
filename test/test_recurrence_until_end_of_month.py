@@ -13,7 +13,7 @@ from chronologia import extract_recurrence
 ANCHOR = datetime(2026, 11, 22, 9, 0)
 
 
-@pytest.mark.xfail(strict=True, reason="https://github.com/TigreGotico/chronologia/issues/1316")
+@pytest.mark.xfail(raises=AssertionError, strict=True, reason="https://github.com/TigreGotico/chronologia/issues/1316")
 def test_en_until_the_end_of_august_is_next_august():
     result = extract_recurrence("every monday until the end of august", "en", ANCHOR)
     last_monday = datetime(2027, 8, 30)

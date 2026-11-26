@@ -15,7 +15,7 @@ ISSUE = "https://github.com/TigreGotico/chronologia/issues/988"
 ANCHOR = datetime(2017, 6, 27, 13, 4)
 
 
-@pytest.mark.xfail(strict=True, reason=ISSUE)
+@pytest.mark.xfail(raises=AssertionError, strict=True, reason=ISSUE)
 @pytest.mark.parametrize("lang,text,start,remainder", [
     ("ru", "в начале года", datetime(2017, 1, 1), ""),
     ("uk", "на початку року", datetime(2017, 1, 1), ""),
@@ -31,7 +31,7 @@ def test_the_year_noun_and_preposition_are_part_of_the_date(
     assert (found.span.start.datetime(), found.remainder) == (start, remainder)
 
 
-@pytest.mark.xfail(strict=True, reason=ISSUE)
+@pytest.mark.xfail(raises=AssertionError, strict=True, reason=ISSUE)
 def test_ru_na_before_a_spelled_half_hour_is_part_of_the_date():
     found = extract_timespan("заведи будильник на полседьмого", "ru", ANCHOR)
     assert found.remainder == "заведи будильник"

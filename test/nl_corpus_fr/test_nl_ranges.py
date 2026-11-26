@@ -123,7 +123,7 @@ def test_du_au_garbage_never_raises(text):
     parse(text)
 
 
-@pytest.mark.xfail(strict=True, reason="https://github.com/TigreGotico/chronologia/issues/1355")
+@pytest.mark.xfail(raises=AssertionError, strict=True, reason="https://github.com/TigreGotico/chronologia/issues/1355")
 @pytest.mark.parametrize("text,rest", [
     ("xx du 10h au 12h", "xx"),
     ("réunion du 10h au 12h", "réunion"),

@@ -15,7 +15,7 @@ URL = "https://github.com/TigreGotico/chronologia/issues/"
 
 
 def xfail(issue):
-    return pytest.mark.xfail(strict=True, reason=URL + str(issue))
+    return pytest.mark.xfail(raises=AssertionError, strict=True, reason=URL + str(issue))
 
 
 @xfail(1455)

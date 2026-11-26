@@ -17,7 +17,7 @@ ISSUE = "https://github.com/TigreGotico/chronologia/issues/1038"
 ANCHOR = datetime(2017, 6, 27, 13, 4)
 
 
-@pytest.mark.xfail(strict=True, reason=ISSUE)
+@pytest.mark.xfail(raises=AssertionError, strict=True, reason=ISSUE)
 def test_ru_weekday_of_next_week_keeps_nothing_of_the_date_in_the_remainder():
     found = extract_timespan(
         "в понедельник на следующей неделе в 8:15 утра", "ru", ANCHOR)

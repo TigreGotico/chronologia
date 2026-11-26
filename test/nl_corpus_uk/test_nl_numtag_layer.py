@@ -61,7 +61,7 @@ def test_masculine_ordinal_after_o_is_no_clock():
     assert parse("о другому етапі") is None
 
 
-@pytest.mark.xfail(strict=True, reason="https://github.com/TigreGotico/chronologia/issues/1221")
+@pytest.mark.xfail(raises=AssertionError, strict=True, reason="https://github.com/TigreGotico/chronologia/issues/1221")
 @pytest.mark.parametrize("text,expected", [
     ("пів на дев'яту подзвони мамі", datetime(2017, 6, 27, 20, 30)),
 ])

@@ -20,7 +20,7 @@ URL = "https://github.com/TigreGotico/chronologia/issues/"
 
 
 def xfail(issue):
-    return pytest.mark.xfail(strict=True, reason=URL + str(issue))
+    return pytest.mark.xfail(raises=AssertionError, strict=True, reason=URL + str(issue))
 
 
 def rows(issue, entries):
@@ -169,7 +169,7 @@ def test_event_summary_keeps_the_words(lang, text, summary):
     assert event.summary == summary
 
 
-@pytest.mark.xfail(strict=True, reason=URL + "1298")
+@pytest.mark.xfail(raises=AssertionError, strict=True, reason=URL + "1298")
 def test_fr_hours_of_meeting_le_matin_reads_the_morning_band():
     band = extract_timespan("demain matin", "fr", ANCHOR)
     result = extract_timespan("demain deux heures de réunion le matin", "fr", ANCHOR)

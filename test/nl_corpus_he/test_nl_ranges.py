@@ -101,7 +101,7 @@ def test_fused_vav_daypart_range_endpoint(text):
 # still truncates.  Left open deliberately (tracked separately, same
 # limitation as the Arabic sibling fix); pinned here so a future fix flips
 # this from xfail to a real assertion.
-@pytest.mark.xfail(reason="multiword weekday surfaces not covered by the fused-vav guard", strict=True)
+@pytest.mark.xfail(raises=AssertionError, reason="multiword weekday surfaces not covered by the fused-vav guard", strict=True)
 def test_fused_vav_multiword_weekday_not_yet_closed():
     ss, ee = start_end("בין יום שני ויום שלישי")
     assert ss == AstroDate(2017, 7, 3) and ee == AstroDate(2017, 7, 5)

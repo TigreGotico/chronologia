@@ -39,7 +39,7 @@ def test_not_a_quarter(text):
                     and (e.year - s.year) * 12 + (e.month - s.month) == 3)
 
 
-@pytest.mark.xfail(reason="Hebrew spelled ordinals ARE the weekday names "
+@pytest.mark.xfail(raises=AssertionError, reason="Hebrew spelled ordinals ARE the weekday names "
                           "(שלישי third = Tuesday, from יום שלישי); folding them "
                           "to a digit would destroy weekday parsing, so the "
                           "spelled-ordinal quarter cannot fold at token level",

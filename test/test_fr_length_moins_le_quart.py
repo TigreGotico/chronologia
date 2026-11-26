@@ -15,7 +15,7 @@ ISSUE = "https://github.com/TigreGotico/chronologia/issues/1028"
 ANCHOR = datetime(2026, 11, 22, 9, 0)
 
 
-@pytest.mark.xfail(strict=True, reason=ISSUE)
+@pytest.mark.xfail(raises=AssertionError, strict=True, reason=ISSUE)
 def test_event_summary_keeps_no_moins_le_quart():
     event = extract_event(
         "réunion de deux heures moins le quart le matin demain", "fr",
@@ -23,7 +23,7 @@ def test_event_summary_keeps_no_moins_le_quart():
     assert event.summary == "réunion"
 
 
-@pytest.mark.xfail(strict=True, reason=ISSUE)
+@pytest.mark.xfail(raises=AssertionError, strict=True, reason=ISSUE)
 def test_une_heure_moins_le_quart_is_45_minutes():
     found = extract_duration(
         "une heure moins le quart avant minuit", "fr", anchor=ANCHOR)

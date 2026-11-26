@@ -16,7 +16,7 @@ ISSUE = "https://github.com/TigreGotico/chronologia/issues/1072"
 ANCHOR = datetime(2017, 6, 27, 13, 4)
 
 
-@pytest.mark.xfail(strict=True, reason=ISSUE)
+@pytest.mark.xfail(raises=AssertionError, strict=True, reason=ISSUE)
 @pytest.mark.parametrize("lang,text,instant", [
     ("ar", "الساعة السادسة والنصف", datetime(2017, 6, 27, 18, 30)),
     ("ta", "ஒன்பதரை மணி", datetime(2017, 6, 27, 21, 30)),
