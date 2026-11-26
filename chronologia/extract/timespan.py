@@ -2756,8 +2756,8 @@ def extract_timespan(
                                 got.match, _timespan_engine(lang), anchor)
     if res is None:
         if raising():
-            from .nseries import _recur_ctx, _recur_nth_weekday
-            _recur_nth_weekday(_recur_ctx(text, lang, anchor))
+            from .nseries import _recur_ctx, _recur_scoped_ordinal
+            _recur_scoped_ordinal(_recur_ctx(text, lang, anchor))
         return None
     out = DateSpanResult(*res)
     if out.remainder and _is_whole_duration(text, lang):

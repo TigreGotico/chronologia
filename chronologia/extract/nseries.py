@@ -2566,209 +2566,6 @@ def _ntolast_ordn(ctx, t, li):
     return None
 
 
-def _recur_nth_weekday(ctx):
-    """``<ordinal|last> <weekday> of [every] (month|<month name>)``.
-
-    The weekday slot is either a *named* weekday ("the last friday of every
-    month" -> ``BYDAY=-1FR``) or the business-day class noun ("the last weekday
-    of every month" -> the canonical last-business-day idiom
-    ``BYDAY=MO,TU,WE,TH,FR;BYSETPOS=-1``).  The class-noun reading only fires
-    with an explicit ordinal/"last" marker and the ``of [every] month`` tail --
-    the bare "every weekday" (a plain weekly workweek) is left to
-    :func:`_recur_every`.
-    """
-    t = ctx.tokens
-    n = len(t)
-    for w in range(1, n):
-        # a derived plural is licensed only under an "every" determiner, which
-        # must sit in the article run leading into the ordinal.
-        li0 = w - 1
-        start0 = li0
-        while start0 > 0 and (t[start0 - 1].text in ctx.articles
-                              or t[start0 - 1].text in ctx.every):
-            start0 -= 1
-        plural_ok = any(t[k].text in ctx.every for k in range(start0, li0))
-        # the plural class noun after a cardinal is a count ("25 weekdays of
-        # the month"), so like a derived weekday plural it needs "every"
-        business = t[w].text in ctx.weekday_word and (
-            plural_ok or t[w].text not in ctx.weekday_count_word)
-        wd = None if business else _weekday_here(ctx, t[w], plural_ok)
-        if wd is None and not business:
-            continue
-        li = w - 1
-        ordn = None
-        ord_start = li
-        # a leading numeric count directly before a BARE "last" ("every 3rd
-        # last friday of the month"), captured for the MONTH-scope branches
-        # below to reinterpret as ``BYDAY=-N`` (mirroring the "<ordinal>-to-
-        # last" idiom); the YEAR-scope branch ignores this and keeps reading
-        # the same number as an INTERVAL multiplier instead.
-        numeric_last_n = None
-        if t[li].is_number:
-            if t[li].value != int(t[li].value):
-                continue
-            ordn = int(t[li].value)
-        elif (t[li].text in ctx.rel_markers
-              and ctx.rel_markers[t[li].text] == -1):
-            # bare "last" (-1), unless it's really the tail of an
-            # "<ordinal> to last" / "next to last" idiom -- checked first so
-            # that idiom is never mis-read as the bare last-of-month.
-            if li - 1 >= 0 and t[li - 1].text in ctx.to_words:
-                # this token IS shaped like the idiom's tail ("<X> to last");
-                # an out-of-range/unrecognised <X> ("fifth-to-last") must
-                # decline the whole reading rather than silently fall back to
-                # bare "last" and strand the qualifier -- exactly the defect
-                # this idiom support exists to fix.
-                found = _ntolast_ordn(ctx, t, li)
-                if found is None:
-                    # the shape IS the "<X> to last" idiom, just with an
-                    # unsupported/out-of-range <X> ("fifth-to-last") -- CLAIM
-                    # the reading and decline it (a ``None`` rule), exactly
-                    # the convention an impossible ordinal ("every 31st of
-                    # april") already uses, so a weaker catch-all finder never
-                    # gets a chance to re-read "each month" alone and strand
-                    # the whole qualified phrase as remainder behind a bare
-                    # MONTHLY rule.  A bare "last" with no leading "to" is NOT
-                    # this idiom and keeps scanning normally (the ``else``
-                    # branch below, and the plain ``continue`` mismatches
-                    # elsewhere in this loop).
-                    return None, frozenset()
-                ordn, ord_start = found
-            else:
-                # bare "last" -- may still carry a leading numeric count
-                # ("every 3rd last friday of the month"), read below ONLY
-                # for the MONTH-scope tail: the YEAR-scope tail reads that
-                # same leading number as an INTERVAL multiplier instead
-                # ("every 2nd last friday of the year" ->
-                # FREQ=YEARLY;INTERVAL=2;BYDAY=-1FR, ordn staying -1).
-                # ``ord_start``/``ordn`` stay untouched here so year-scope
-                # interval detection (the ``t[start - 1].is_number`` check
-                # below) still sees the number; ``numeric_last_n`` records it
-                # for the month-scope branches to reinterpret.
-                ordn = -1
-                if li - 1 >= 0 and t[li - 1].is_number:
-                    numeric_last_n = int(t[li - 1].value)
-        elif t[li].text in ctx.penult_words:
-            # "penultimate <weekday> of every month" -- a fixed synonym for
-            # "second-to-last" (-2).
-            ordn = -2
-        else:
-            continue
-        r = w + 1
-        if not (r < n and t[r].text in ctx.of_words):
-            continue
-        r += 1
-        while r < n and (t[r].text in ctx.every or t[r].text in ctx.articles
-                         or (t[r].text in ctx.rel_markers
-                             and ctx.rel_markers[t[r].text] == 0)):
-            # zero-offset deixis ("this") reads identically to the bare
-            # article before the unit noun -- "of this year" == "of the
-            # year"; the span path already treats them interchangeably.
-            r += 1
-        start = ord_start
-        while start > 0 and (t[start - 1].text in ctx.articles
-                             or t[start - 1].text in ctx.every):
-            start -= 1
-        # a leading interval prefix ("every other"/"every 2nd") directly
-        # before the walked-back head is captured here so the year-scope
-        # branch below can fold it into the built rule's INTERVAL;
-        # the month-scope and bare-elliptical readings intentionally drop
-        # it (their monthly cadence already matches the base "last <wd>"
-        # reading), so this value is used only by the year branch.
-        year_interval = 1
-        if start > 0 and t[start - 1].text in ctx.other:
-            year_interval = 2
-            start -= 1
-        elif start > 0 and t[start - 1].is_number:
-            year_interval = int(t[start - 1].value)
-            start -= 1
-        if year_interval != 1:
-            while start > 0 and (t[start - 1].text in ctx.articles
-                                 or t[start - 1].text in ctx.every):
-                start -= 1
-        if (r < n and t[r].text in ctx.rel_markers
-                and ctx.rel_markers[t[r].text] != 0
-                and r + 1 < n and t[r + 1].text in ctx.units
-                and ctx.units[t[r + 1].text] in ("year", "month")):
-            # non-zero deixis ("next"/"last") before the year/month noun
-            # bounds the phrase to a single period ("of next year"), not an
-            # unbounded recurrence -- claim the frame and refuse so a weaker
-            # finder never re-reads just the ordinal-weekday head into a
-            # rule at the wrong frequency.
-            return None, frozenset(range(start, r + 2))
-        if (r < n and t[r].text in ctx.rel_markers
-                and ctx.rel_markers[t[r].text] != 0
-                and r + 1 < n and t[r + 1].text in ctx.units
-                and ctx.units[t[r + 1].text] == "week"):
-            # "of next/last week" -- same bounded-single-period shape as the
-            # year/month case above, refused the same way.
-            return None, frozenset(range(start, r + 2))
-        if r < n and t[r].text in ctx.units and ctx.units[t[r].text] == "week":
-            # unlike month/year, "week" has no zero-offset/bare fold at all:
-            # a week has exactly one of any given weekday, so "of the week"/
-            # "of this week" is degenerate rather than a well-formed unbounded
-            # rule -- refuse here too instead of falling through to the
-            # month/year unit branches below (which "week" never matches) and
-            # leaving the phrase to a weaker finder.
-            return None, frozenset(range(start, r + 1))
-        if r < n and (t[r].text in ctx.months
-                      or (t[r].text in ctx.units and ctx.units[t[r].text] == "month")):
-            # month-scope tail: a leading numeric count reinterprets as
-            # ``BYDAY=-N`` here (see ``numeric_last_n`` above) rather than
-            # the bare "last" ellipsis (-1) -- N=2 keeps the ellipsis (it is
-            # indistinguishable from "second/last <weekday>"), N=3..4 count
-            # backward unambiguously, N>=5 refuses (mirrors the "<ordinal>-
-            # to-last" idiom's own -4 cap) rather than falling back silently.
-            month_ordn = ordn
-            if numeric_last_n is not None:
-                if numeric_last_n == 2:
-                    month_ordn = -1
-                elif 3 <= numeric_last_n <= 4:
-                    month_ordn = -numeric_last_n
-                else:
-                    return None, frozenset()
-            named_month = ctx.months.get(t[r].text)
-            reason = ordinal_cap(month_ordn, "business day" if business else wd,
-                                 named_month, zero=True)
-            if reason:
-                # the month never holds that many, so the rule would never
-                # occur -- claim the phrase and decline it
-                decline(reason)
-                return _NEVER_OCCURS, frozenset(range(start, r + 1))
-            if business:
-                continue    # a scoped_ordinal reading (_recur_scoped_ordinal)
-            rec = _nth_weekday_of_month(month_ordn, wd, month=named_month)
-            return rec, set(range(start, r + 1))
-        if r < n and t[r].text in ctx.units and ctx.units[t[r].text] == "year":
-            # "every last monday of the year": the yearly sibling of
-            # the "... of [every] month" tail above. Before this branch, "of
-            # the year" matched neither the ``ctx.months`` check nor the
-            # units-is-"month" one, so the loop's tail check fell through
-            # (``continue`` was never reached either -- there was simply no
-            # matching branch) and this finder returned ``None`` for the
-            # whole phrase; a weaker downstream finder then read only "last
-            # monday" as a bare ``MONTHLY;BYDAY=-1MO`` rule and stranded "of
-            # the year" as unmatched remainder -- silently downgrading a
-            # yearly rule to a monthly one. RFC 5545 gives ``BYDAY`` with a
-            # signed ordinal and no ``BYMONTH`` its own well-defined meaning
-            # under ``FREQ=YEARLY``: the nth (or, negative, last) matching
-            # weekday of the whole year -- exactly the reading "of the year"
-            # asks for, so this resolves rather than refuses.
-            reason = ordinal_cap(ordn, "business day" if business else wd,
-                                 per="year", zero=True)
-            if reason:
-                # the year never holds that many, so the rule would never
-                # occur -- claim the phrase and decline it
-                decline(reason)
-                return _NEVER_OCCURS, frozenset(range(start, r + 1))
-            if business:
-                return (_business_day_of_year(ordn, ctx.spec, year_interval),
-                        set(range(start, r + 1)))
-            return (_nth_weekday_of_year(ordn, wd, year_interval),
-                    set(range(start, r + 1)))
-    return None
-
-
 def _workweek(spec):
     """The locale's business weekdays as a ``BYDAY`` set: the week without
     its two weekend days."""
@@ -2777,64 +2574,215 @@ def _workweek(spec):
 
 
 def _recur_scoped_ordinal(ctx):
-    """A ``scoped_ordinal`` match read as a rule: "the sixth monday of every
-    month", "the last business day of every month", "der dritte Werktag jedes
-    Monats".
+    """A ``scoped_ordinal`` match read as a rule: "the last friday of every
+    month", "the sixth monday of every month", "the last business day of every
+    month", "der dritte Werktag jedes Monats", "every 2nd last friday of the
+    year", "the first and third monday of every month".
 
-    The rule is the one the timespan reading names in a single month: a
-    weekday ordinal with "every" before the month, or a business-day ordinal
-    of the month or of a named month.  An ordinal the month never holds
-    claims the phrase and declines it.
+    The rule is the one the timespan reading names in one period.  A month
+    scope gives ``FREQ=MONTHLY`` (a named month ``FREQ=YEARLY;BYMONTH``), a
+    year scope ``FREQ=YEARLY`` with no ``BYMONTH``.  An "every other"/"every
+    Nth" before the head is the INTERVAL of a year scope.  Before a bare
+    "last" and a month scope, the number counts back: 2 stays the last, 3 and
+    4 give ``BYDAY=-3``/``-4``, 5 and more refuse.  A list of ordinals before
+    the weekday is one ``BYDAY`` list; its scope is optional.
+
+    A scope of one period ("of next month", "of the week") and an ordinal the
+    period never holds claim the phrase and give no rule.
     """
+    hit = _ordinal_list(ctx)
+    if hit is not None:
+        return hit
     t = ctx.tokens
     if not any(tok.text in ctx.every or tok.text in ctx.business
-               or tok.text in ctx.weekday_word for tok in t):
+               or tok.text in ctx.weekday_word
+               or tok.text in ctx.weekdays for tok in t):
         return None
-    engine = _timespan_engine(ctx.lang)
-    for m in engine.matcher.match(t):
+    for m in _timespan_engine(ctx.lang).matcher.match(t):
         slots = m.slots
         if m.construction != "scoped_ordinal" or not (
-                "EVERY" in slots or "BDAY" in slots):
+                "WEEKDAY" in slots or "BDAY" in slots):
             continue
-        if "WEEKDAY" not in slots and "BDAY" not in slots:
-            continue
-        scope = slots.get("SCOPE_UNIT")
-        if scope is not None and ctx.units.get(scope.text) != "month":
-            continue
+        scope_tok = slots.get("SCOPE_UNIT")
+        scope = ctx.units.get(scope_tok.text) if scope_tok is not None else None
         start = m.span[0]
         while start > 0 and (t[start - 1].text in ctx.articles
                              or t[start - 1].text in ctx.every):
             start -= 1
-        if start > 0 and (t[start - 1].is_number
-                          or t[start - 1].text in ctx.to_words):
-            continue    # "every 3rd last friday", "third-to-last friday"
-        consumed = set(range(start, m.span[1]))
-        n = scoped_ordinal_n(m)
-        if n is None and scoped_ordinal_split(m):
-            continue
+        lead = t[start - 1] if start > 0 else None
         ord_tok = slots.get("ORD")
-        if n is None or "REL_MARKER" in slots or "YEAR" in slots or (
-                ord_tok is not None and not ord_tok.ordinal
-                and "BDAY" in slots):
-            # one period ("of next month", "of march 2027") or a count ("5
-            # business days of the month") is no rule
-            return None, consumed
-        month = ctx.months[slots["MONTH"].text] if "MONTH" in slots else None
-        if "BDAY" in slots:
-            unit = "business day"
+        if (("EVERY" in slots or "BDAY" in slots) and scope in (None, "month")
+                and not (lead is not None and (
+                    lead.is_number or lead.text in ctx.to_words))):
+            got = _every_month_rule(ctx, m, set(range(start, m.span[1])))
+            if got is not None:
+                return got
+            continue
+        got = _scoped_rule(ctx, m, scope, start)
+        if got is not None:
+            return got
+    return _token_ordinal(ctx)
+
+
+def _token_ordinal(ctx):
+    """"<n|last> <weekday|class noun> of [the|a|every] (month|<month>|year)"
+    in a shape no ``scoped_ordinal`` order matches: "the 0th monday of the
+    month", "the 25th weekday of a month", fy "de lêste freed fan de moanne".
+    An ordinal the period never holds is declined; a weekday is read as the
+    rule of that scope."""
+    t = ctx.tokens
+    for w in range(1, len(t) - 2):
+        lead = t[w - 1]
+        if lead.is_number and lead.value == int(lead.value):
+            n = int(lead.value)
+        elif ctx.rel_markers.get(lead.text) == -1:
+            n = -1
         else:
-            unit = ctx.weekdays[slots["WEEKDAY"].text]
-        reason = ordinal_cap(n, unit, month, zero=True)
+            continue
+        business = t[w].text in ctx.weekday_word
+        unit = "business day" if business else ctx.weekdays.get(t[w].text)
+        if (unit is None or t[w].text in ctx.weekday_count_word
+                or t[w + 1].text not in ctx.of_words):
+            continue
+        r = w + 2
+        while r < len(t) and (t[r].text in ctx.every or t[r].text in ctx.articles
+                              or ctx.rel_markers.get(t[r].text, 1) == 0):
+            r += 1
+        if r == len(t):
+            continue
+        month = ctx.months.get(t[r].text)
+        scope = ctx.units.get(t[r].text)
+        if month is not None or scope == "month":
+            reason = ordinal_cap(n, unit, month, zero=True)
+        elif scope == "year":
+            reason = ordinal_cap(n, unit, per="year", zero=True)
+        else:
+            continue
+        start = w - 1
+        while start > 0 and (t[start - 1].text in ctx.articles
+                             or t[start - 1].text in ctx.every):
+            start -= 1
         if reason:
             decline(reason)
-            return _NEVER_OCCURS, consumed
-        if "BDAY" in slots:
-            kw = {"byday": _workweek(ctx.spec), "bysetpos": (n,)}
-            if month is None:
-                return _build_every("monthly", **kw), consumed
-            return _build_every("yearly", bymonth=month, **kw), consumed
-        return _nth_weekday_of_month(n, unit, month=month), consumed
+            return _NEVER_OCCURS, frozenset(range(start, r + 1))
+        if business:
+            continue
+        if scope == "year":
+            return _nth_weekday_of_year(n, unit), set(range(start, r + 1))
+        return _nth_weekday_of_month(n, unit, month=month), set(range(start, r + 1))
     return None
+
+
+def _every_month_rule(ctx, m, consumed):
+    """The rule of an n-th weekday or business day of every month or of a
+    named month, or ``None`` when the match names none."""
+    slots = m.slots
+    n = scoped_ordinal_n(m)
+    if n is None and scoped_ordinal_split(m):
+        return None
+    ord_tok = slots.get("ORD")
+    if n is None or "REL_MARKER" in slots or "YEAR" in slots or (
+            ord_tok is not None and not ord_tok.ordinal and "BDAY" in slots):
+        # one period ("of next month", "of march 2027") or a count ("5
+        # business days of the month") is no rule
+        return None, consumed
+    month = ctx.months[slots["MONTH"].text] if "MONTH" in slots else None
+    unit = ("business day" if "BDAY" in slots
+            else ctx.weekdays[slots["WEEKDAY"].text])
+    reason = ordinal_cap(n, unit, month, zero=True)
+    if reason:
+        decline(reason)
+        return _NEVER_OCCURS, consumed
+    if "BDAY" in slots:
+        kw = {"byday": _workweek(ctx.spec), "bysetpos": (n,)}
+        if month is None:
+            return _build_every("monthly", **kw), consumed
+        return _build_every("yearly", bymonth=month, **kw), consumed
+    return _nth_weekday_of_month(n, unit, month=month), consumed
+
+
+def _scoped_rule(ctx, m, scope, start):
+    """The rule of "<ordinal|last> <weekday> of [every] (month|<month>|year)"
+    with "of" after the weekday, or ``None`` when the match names none."""
+    t = ctx.tokens
+    slots = m.slots
+    head = slots.get("WEEKDAY") or slots["BDAY"]
+    business = "BDAY" in slots
+    if business and ("DAYUNIT" in slots or head.text not in ctx.weekday_word
+                     or head.text in ctx.weekday_count_word):
+        return None
+    of = head.index + 1
+    if of >= len(t) or t[of].text not in ctx.of_words:
+        return None
+    month = ctx.months.get(slots["MONTH"].text) if "MONTH" in slots else None
+    if month is None and scope not in ("month", "year", "week"):
+        return None
+    if "NTOLAST" in slots and scoped_ordinal_n(m) is None:
+        return None, frozenset()     # "fifth-to-last": past the idiom's -4
+    n = scoped_ordinal_n(m)
+    if n is None:
+        return None
+    bare_last = not ({"ORD", "NTOLAST", "PENULT"} & slots.keys())
+    if bare_last and ctx.rel_markers.get(t[head.index - 1].text) != -1:
+        return None     # an "ordlast" surface that is no "last" marker
+    if bare_last and head.index >= 2 and t[head.index - 2].text in ctx.to_words:
+        found = _ntolast_ordn(ctx, t, head.index - 1)
+        if found is None:
+            return None, frozenset()
+        n, start = found
+        bare_last = False
+        while start > 0 and (t[start - 1].text in ctx.articles
+                             or t[start - 1].text in ctx.every):
+            start -= 1
+    lead = t[start - 1] if start > 0 else None
+    numeric_last = (int(lead.value) if bare_last and lead is not None
+                    and lead.is_number and lead.index == head.index - 2
+                    else None)
+    interval = 1
+    if lead is not None and lead.text in ctx.other:
+        interval = 2
+        start -= 1
+    elif lead is not None and lead.is_number:
+        interval = int(lead.value)
+        start -= 1
+    if interval != 1:
+        while start > 0 and (t[start - 1].text in ctx.articles
+                             or t[start - 1].text in ctx.every):
+            start -= 1
+    rel = slots.get("REL_MARKER")
+    if month is None:
+        end = slots["SCOPE_UNIT"].index + 1
+        if scope == "week" or (rel is not None and rel.index < end
+                               and ctx.rel_markers[rel.text] != 0):
+            # one period ("of next year") or a week, which holds each weekday
+            # once, is no rule
+            return None, frozenset(range(start, end))
+    else:
+        end = slots["MONTH"].index + 1
+    unit = "business day" if business else ctx.weekdays[head.text]
+    if scope == "year":
+        reason = ordinal_cap(n, unit, per="year", zero=True)
+        if reason:
+            decline(reason)
+            return _NEVER_OCCURS, frozenset(range(start, end))
+        if business:
+            return (_business_day_of_year(n, ctx.spec, interval),
+                    set(range(start, end)))
+        return _nth_weekday_of_year(n, unit, interval), set(range(start, end))
+    if numeric_last is not None:
+        if numeric_last == 2:
+            n = -1
+        elif 3 <= numeric_last <= 4:
+            n = -numeric_last
+        else:
+            return None, frozenset()
+    reason = ordinal_cap(n, unit, month, zero=True)
+    if reason:
+        decline(reason)
+        return _NEVER_OCCURS, frozenset(range(start, end))
+    if business:
+        return None
+    return _nth_weekday_of_month(n, unit, month=month), set(range(start, end))
 
 
 def _nth_weekday_of_year(ordn, wd, interval=1):
@@ -2900,7 +2848,7 @@ def _list_region_stop(ctx, tok):
             or tok.text in ctx.months)
 
 
-def _recur_nth_weekday_list(ctx):
+def _ordinal_list(ctx):
     """``<ord> and <ord> [and <ord>...] <weekday> [of [every] month]``.
 
     A *list* of ordinal weekdays -- "the first and third monday of every month"
@@ -3546,7 +3494,7 @@ def _recur_every(ctx):
             return _build_every("monthly", **kw), set(range(start, end))
         # A derived weekday plural ("tous les lundis", "todas as segundas") is
         # licensed here: this is already the "every"-determiner frame, so the
-        # same positional licence _recur_nth_weekday uses applies, and the guard
+        # same positional licence _weekday_here gives applies, and the guard
         # goes through _weekday_here (which strips the -s) rather than the bare
         # weekday dict -- otherwise the plural is invisible and the phrase
         # silently misreads (French "tous les lundis ..." fell through to a
@@ -4386,8 +4334,7 @@ def _recur_date_anchored(ctx):
 # them: its 5-token from/number/in/number/unit shape never satisfies any of
 # the other finders' frames, so it is placed anywhere ahead of the
 # ``_recur_every``/``_recur_habitual_weekday`` catch-alls.
-_FINDERS = (_recur_nth_weekday_list, _recur_scoped_ordinal,
-            _recur_nth_weekday, _recur_holiday,
+_FINDERS = (_recur_scoped_ordinal, _recur_holiday,
             _recur_jurisdiction_holidays,
             _recur_date_anchored,
             _recur_once, _recur_on_weekdays, _recur_repeated_numeral,
