@@ -3718,6 +3718,36 @@ def _skip_one_idiom_veto(tokens, match, spec) -> bool:
             and marker_names_a_reference(tokens, match.span[1] - 1, spec))
 
 
+def _homograph_veto(tokens, match, spec) -> bool:
+    """True for a match made only of surfaces in ``marker_homograph.voc`` with
+    no time cue beside it.
+
+    Some date words are homographs of a more frequent word: pt "verão" is
+    also "they will see", sv "vår" is also "our".  Alone, such a word takes
+    its frequent sense.  A cue keeps the date sense: a connector right before
+    it (a preposition, a demonstrative, an article), a relative marker right
+    after it ("vara trecută"), or a number on either side.  A cue that the match
+    consumes ("no verão", "verão de 2027") makes a longer match, which this
+    veto leaves alone.  A word that is the whole input keeps the date sense.
+    """
+    words = spec.connectors.get("homograph")
+    if not words:
+        return False
+    b, e = match.span
+    if e - b == len(tokens) or any(t.text not in words for t in tokens[b:e]):
+        return False
+    if b > 0:
+        prev = tokens[b - 1]
+        if prev.is_number or any(prev.text in v for k, v in spec.connectors.items()
+                                 if k != "homograph"):
+            return False
+    if e < len(tokens):
+        nxt = tokens[e]
+        if nxt.is_number or nxt.text in spec.rel_markers:
+            return False
+    return True
+
+
 def _candidate_veto(tokens, match, spec) -> bool:
     """Combined pre-selection veto: readings whose surrounding context makes
     them the WRONG parse ("the new year" is the period not the holiday; a
@@ -3738,6 +3768,7 @@ def _candidate_veto(tokens, match, spec) -> bool:
             or _month_holiday_collision_veto(tokens, match, spec)
             or _relday_daypart_homograph_veto(tokens, match, spec)
             or _participle_season_veto(tokens, match, spec)
+            or _homograph_veto(tokens, match, spec)
             or _num_preamble_named_day_idiom_veto(tokens, match, spec)
             or _subday_named_day_idiom_veto(match, spec)
             or _stranded_year_veto(tokens, match, spec)
