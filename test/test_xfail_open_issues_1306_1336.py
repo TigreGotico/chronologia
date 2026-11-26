@@ -232,7 +232,6 @@ def test_pt_until_5_dez_is_an_end_date():
     assert date_of(result.recurrence.until) == date(2026, 12, 5)
 
 
-@pytest.mark.xfail(strict=True, reason=URL + "1321")
 def test_monday_from_1_to_15_december_first_event():
     event = extract_event("every monday from 1 to 15 december", "en", ANCHOR)
     assert event is not None

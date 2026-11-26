@@ -232,8 +232,6 @@ def test_a_meridiem_hour_keeps_the_alarm_noun_in_the_reading(text, remainder):
     assert extract_timespan(text, "en", ANCHOR).remainder == remainder
 
 
-@pytest.mark.xfail(
-    strict=True, reason="https://github.com/TigreGotico/chronologia/issues/1058")
 def test_alarm_for_seven_tonight_reads_seven_in_the_evening():
     found = extract_timespan("alarm for 7 tonight", "en", ANCHOR)
     assert found.span.start.datetime() == datetime(2026, 11, 17, 19, 0)

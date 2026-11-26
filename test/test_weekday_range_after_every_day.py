@@ -56,13 +56,13 @@ def test_range_outside_the_weekdays_is_declined(text, lang, anchor):
 
 
 @pytest.mark.parametrize("text,lang,until", [
-    ("jeden Tag von Montag bis zum 30. November", "de", "20261130"),
-    ("jeden Tag von heute bis Freitag", "de", "20261127"),
+    ("jeden Tag von Montag bis zum 30. November", "de", "20261201"),
+    ("jeden Tag von heute bis Freitag", "de", "20261128"),
     ("jeden Tag bis Freitag", "de", "20261127"),
     ("elke dag tot vrijdag", "nl", "20261127"),
-    ("elke dag van vandaag tot vrijdag", "nl", "20261127"),
+    ("elke dag van vandaag tot vrijdag", "nl", "20261128"),
     ("elke dag tot en met vrijdag", "nl", "20261127"),
-    ("elke dag van maandag tot en met 30 november", "nl", "20261130"),
+    ("elke dag van maandag tot en met 30 november", "nl", "20261201"),
 ])
 def test_date_range_keeps_its_until(text, lang, until):
     got = extract_recurrence(text, lang, _ANCHORS[0])

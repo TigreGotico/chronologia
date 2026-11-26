@@ -183,5 +183,9 @@ The hours run first to twelfth: "в двенадцатом часу ночи" is
 
 Sources: Ефремова, Современный толковый словарь, s.v. "восьмой", sense III: "Приближающийся к восьми (о единицах исчисления времени)". Ru.wiktionary s.v. "шестой": "шестой час, интервал времени между пятью и шестью часами дня или ночи".
 
+**38. A recurrence that a range bounds runs over the days of the range**. In "every monday from june to august" and de `jeden Montag von Juni bis August`, the rule runs over the same days as the span that `extract_timespan` reads from the range words. The range words are "from june to august", or "from june until august" when the until word stands between the two bounds. `extract_recurrence` sets UNTIL to the end of the right bound, the first instant after August. `extract_event` starts the rule at the later of the anchor and the left bound. Said on 22 November 2026, the first event of "every monday from june to august" falls on Monday 7 June 2027, and UNTIL falls on 1 September 2027 00:00.
+
+A plain until bound has no left bound, so its UNTIL stays at the start of its date: in "every friday until june", UNTIL falls on 1 June. A right bound with a clock (es "desde junio hasta agosto a las 9") also keeps the start of its date and its clock.
+
 ---
 [← EDTF](edtf.md) · [Home](index.md) · [Calendars →](calendars.md)

@@ -270,25 +270,25 @@ def test_bounded_recurrence(text, rrule, remainder):
 # * both endpoints bare weekdays -> BYDAY, inclusive and wrap-around
 #   ("friday to monday" -> FR,SA,SU,MO): the idiomatic reading of a
 #   weekday-bounded recurrence.
-# * anything else -> a date-range bound: the right endpoint sets UNTIL,
-#   grounded exactly the way "until <date>" grounds it above (so "to august"
-#   and "until august" land on the identical UNTIL=20170801T000000) -- the
-#   left/"from" endpoint names no field Recurrence has (no DTSTART), same as
-#   the still-unimplemented "starting <date>" today.
+# * anything else -> a date-range bound: UNTIL is the end of the span that
+#   extract_timespan reads for the clause ("from june to august" ends at
+#   UNTIL=20170901T000000), and extract_event starts the rule at the later
+#   of the anchor and the left bound.  A plain "until august" keeps
+#   UNTIL=20170801T000000.
 _RANGE_BOUND_CASES = [
     ("every day from monday to friday",
      "FREQ=DAILY;BYDAY=MO,TU,WE,TH,FR", ""),
     # wrap-around: friday..monday inclusive is FR,SA,SU,MO, not the empty set.
     ("every day from friday to monday",
      "FREQ=DAILY;BYDAY=FR,SA,SU,MO", ""),
-    ("weekly from june to august", "FREQ=WEEKLY;UNTIL=20170801T000000", ""),
+    ("weekly from june to august", "FREQ=WEEKLY;UNTIL=20170901T000000", ""),
     # COUNT/UNTIL mutual exclusivity (RFC 5545): the trailing "5 times" would
     # add COUNT, but it sits BEFORE the still-unconsumed range clause, so the
     # existing "N times" guard (nothing unread may follow) correctly declines
     # to set COUNT here -- the range then grounds UNTIL and "5 times" is left
     # in the remainder, exactly as "every day 5 times until march" above.
     ("every day 5 times from june to august",
-     "FREQ=DAILY;UNTIL=20170801T000000", "5 times"),
+     "FREQ=DAILY;UNTIL=20170901T000000", "5 times"),
     # R91: a range clause that grounds UNTIL must clear a pre-existing COUNT
     # ATOMICALLY -- Recurrence.__post_init__ validates COUNT/UNTIL mutual
     # exclusivity at construction time, so setting until= first (with count=
@@ -296,9 +296,9 @@ _RANGE_BOUND_CASES = [
     # separate follow-up _replace could clear it.  Both fields must land in
     # the SAME _replace call.  UNTIL wins, COUNT is dropped.
     ("every monday from june to august, 3 times",
-     "FREQ=WEEKLY;UNTIL=20170801T000000;BYDAY=MO", ""),
+     "FREQ=WEEKLY;UNTIL=20170901T000000;BYDAY=MO", ""),
     ("every 2 weeks from june to august, 5 times",
-     "FREQ=WEEKLY;INTERVAL=2;UNTIL=20170801T000000", ""),
+     "FREQ=WEEKLY;INTERVAL=2;UNTIL=20170901T000000", ""),
     # controls: no range clause, COUNT must survive unchanged.
     ("every monday 3 times", "FREQ=WEEKLY;COUNT=3;BYDAY=MO", ""),
 ]
@@ -367,17 +367,17 @@ _UNTIL_FROM_RIGHT_CLAUSE_CASES = [
     # control: no time-of-day clause -- UNTIL already grounded correctly
     # before this fix, must not regress.
     ("every monday from june to august",
-     "FREQ=WEEKLY;UNTIL=20170801T000000;BYDAY=MO", ""),
+     "FREQ=WEEKLY;UNTIL=20170901T000000;BYDAY=MO", ""),
     ("every monday from 9 to 5 from june to august",
-     "FREQ=WEEKLY;UNTIL=20170801T000000;BYDAY=MO;BYHOUR=9",
+     "FREQ=WEEKLY;UNTIL=20170901T000000;BYDAY=MO;BYHOUR=9",
      ""),
     ("every monday from 9am to 5pm from june to august",
-     "FREQ=WEEKLY;UNTIL=20170801T000000;BYDAY=MO;BYHOUR=9",
+     "FREQ=WEEKLY;UNTIL=20170901T000000;BYDAY=MO;BYHOUR=9",
      ""),
     # interval variant: the "every other" INTERVAL=2 reading must survive the
     # same two-clause pairing.
     ("every other monday from 9 to 5 from june to august",
-     "FREQ=WEEKLY;INTERVAL=2;UNTIL=20170801T000000;BYDAY=MO;"
+     "FREQ=WEEKLY;INTERVAL=2;UNTIL=20170901T000000;BYDAY=MO;"
      "BYHOUR=9", ""),
 ]
 
@@ -678,11 +678,11 @@ def test_every_n_unit_with_trailing_placement(text, rrule):
 # never silently dropped, never misread as a bogus UNTIL.
 _MULTI_CLAUSE_CASES = [
     ("every weekday from friday to monday from 9 to 5 from june to august",
-     "FREQ=WEEKLY;UNTIL=20170801T000000;BYDAY=FR,MO;BYHOUR=9", ""),
+     "FREQ=WEEKLY;UNTIL=20170901T000000;BYDAY=FR,MO;BYHOUR=9", ""),
     # date + weekday + clock in a different textual order: date clause is
     # still rightmost, weekday and clock clauses precede it.
     ("every weekday from 9 to 5 from friday to monday from june to august",
-     "FREQ=WEEKLY;UNTIL=20170801T000000;BYDAY=FR,MO;BYHOUR=9", ""),
+     "FREQ=WEEKLY;UNTIL=20170901T000000;BYDAY=FR,MO;BYHOUR=9", ""),
 ]
 
 
@@ -704,7 +704,7 @@ def test_bogus_trailing_range_never_produces_garbage_until():
     assert got is not None, f"{text!r} did not parse as a recurrence"
     rec, remainder = got
     assert rec.until is not None
-    assert rec.until.month == 8 and rec.until.day == 1, (
+    assert rec.until.month == 9 and rec.until.day == 1, (
         f"UNTIL grounded off the wrong clause: {rec.until!r}")
     assert rec.byday == ((None, 0),), f"unexpected BYDAY: {rec.byday!r}"
     assert rec.byhour == (9,), f"unexpected BYHOUR: {rec.byhour!r}"
@@ -757,7 +757,7 @@ def test_single_date_range_still_grounds_until():
     assert got is not None
     rec, remainder = got
     assert rec.until is not None
-    assert rec.until.month == 8 and rec.until.day == 1
+    assert rec.until.month == 9 and rec.until.day == 1
     assert remainder == ""
 
 

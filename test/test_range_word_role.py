@@ -13,7 +13,7 @@ from chronologia import extract_recurrence, extract_timespan
 from chronologia.extract import nseries
 
 ANCHOR = datetime(2026, 11, 22, 9, 0)
-MONDAYS_TO_AUGUST = "FREQ=WEEKLY;UNTIL=20270801T000000;BYDAY=MO"
+MONDAYS_TO_AUGUST = "FREQ=WEEKLY;UNTIL=20270901T000000;BYDAY=MO"
 
 
 def recurrence(lang, text):
@@ -41,35 +41,35 @@ WEEKLY = "FREQ=WEEKLY;UNTIL="
 
 
 @pytest.mark.parametrize("lang, text, rule", [
-    ("ca", "cada dia de dilluns fins al 5 de desembre", DAILY + "20261205T000000"),
-    ("ca", "cada dia de dilluns fins al 24 de desembre", DAILY + "20261224T000000"),
-    ("ca", "cada dia de dilluns fins al 25 de desembre", DAILY + "20261225T000000"),
-    ("ca", "cada dia de dilluns fins al 1 de gener", DAILY + "20270101T000000"),
-    ("ca", "cada dia de dilluns fins a 5 de desembre", DAILY + "20261205T000000"),
-    ("ca", "cada dia de dilluns fins al dia 5 de desembre", DAILY + "20261205T000000"),
-    ("ca", "cada dia de dilluns fins al 5 d'agost", DAILY + "20270805T000000"),
-    ("ca", "cada dia de juny fins al 5 de juny", DAILY + "20270605T000000"),
+    ("ca", "cada dia de dilluns fins al 5 de desembre", DAILY + "20261206T000000"),
+    ("ca", "cada dia de dilluns fins al 24 de desembre", DAILY + "20261225T000000"),
+    ("ca", "cada dia de dilluns fins al 25 de desembre", DAILY + "20261226T000000"),
+    ("ca", "cada dia de dilluns fins al 1 de gener", DAILY + "20270102T000000"),
+    ("ca", "cada dia de dilluns fins a 5 de desembre", DAILY + "20261206T000000"),
+    ("ca", "cada dia de dilluns fins al dia 5 de desembre", DAILY + "20261206T000000"),
+    ("ca", "cada dia de dilluns fins al 5 d'agost", DAILY + "20270806T000000"),
+    ("ca", "cada dia de juny fins al 5 de juny", DAILY + "20270606T000000"),
     ("ca", "cada divendres de 3 de juny fins al 5 de juny",
-     WEEKLY + "20270605T000000;BYDAY=FR"),
-    ("pt", "toda semana de junho até o dia 5 de agosto", WEEKLY + "20270805T000000"),
+     WEEKLY + "20270606T000000;BYDAY=FR"),
+    ("pt", "toda semana de junho até o dia 5 de agosto", WEEKLY + "20270806T000000"),
     ("pt", "toda sexta de junho até o dia 5 de agosto",
-     WEEKLY + "20270805T000000;BYDAY=FR"),
-    ("pt", "todo dia de junho até o dia 5 de agosto", DAILY + "20270805T000000"),
-    ("pt", "todo dia de 3 de junho até dia 5 de junho", DAILY + "20270605T000000"),
-    ("pt", "todo dia de 3 de junho até o dia 15 de junho", DAILY + "20270615T000000"),
-    ("pt", "todo dia do dia 3 de junho até ao dia 5 de junho", DAILY + "20270605T000000"),
-    ("pt", "todo dia de segunda até dia 5 de dezembro", DAILY + "20261205T000000"),
-    ("pt", "todo dia de 3 de junho até 5 de junho", DAILY + "20270605T000000"),
+     WEEKLY + "20270806T000000;BYDAY=FR"),
+    ("pt", "todo dia de junho até o dia 5 de agosto", DAILY + "20270806T000000"),
+    ("pt", "todo dia de 3 de junho até dia 5 de junho", DAILY + "20270606T000000"),
+    ("pt", "todo dia de 3 de junho até o dia 15 de junho", DAILY + "20270616T000000"),
+    ("pt", "todo dia do dia 3 de junho até ao dia 5 de junho", DAILY + "20270606T000000"),
+    ("pt", "todo dia de segunda até dia 5 de dezembro", DAILY + "20261206T000000"),
+    ("pt", "todo dia de 3 de junho até 5 de junho", DAILY + "20270606T000000"),
 ])
-def test_a_date_range_word_grounds_the_date_the_until_bound_reads(lang, text, rule):
+def test_a_date_range_word_ends_the_rule_with_its_right_bound(lang, text, rule):
     got = recurrence(lang, text)
     assert got[0] == rule
     assert got[1] == ""
 
 
 @pytest.mark.parametrize("lang, text, rule", [
-    ("en", "every week from now until june", "FREQ=WEEKLY;UNTIL=20270601T000000"),
-    ("en", "every day from today until friday", "FREQ=DAILY;UNTIL=20261127T000000"),
+    ("en", "every week from now until june", "FREQ=WEEKLY;UNTIL=20270701T000000"),
+    ("en", "every day from today until friday", "FREQ=DAILY;UNTIL=20261128T000000"),
 ])
 def test_a_left_bound_that_the_span_reads_is_consumed(lang, text, rule):
     assert recurrence(lang, text) == (rule, "")
@@ -86,15 +86,18 @@ def test_the_range_word_of_a_weekday_set_is_not_an_until_bound(lang, text, rule)
     assert recurrence(lang, text) == (rule, "")
 
 
+# A rule with days of its own reads two weekdays joined by an until word that
+# is no "to" word as a date range, not as a weekday set: UNTIL is the end of
+# the right weekday.
 @pytest.mark.parametrize("lang, text, rule", [
     ("en", "every friday from monday until friday",
-     "FREQ=WEEKLY;UNTIL=20261127T000000;BYDAY=FR"),
+     "FREQ=WEEKLY;UNTIL=20261128T000000;BYDAY=FR"),
     ("en", "every saturday from friday until sunday",
-     "FREQ=WEEKLY;UNTIL=20261122T000000;BYDAY=SA"),
+     "FREQ=WEEKLY;UNTIL=20261130T000000;BYDAY=SA"),
     ("en", "every weekday from monday until wednesday",
-     "FREQ=WEEKLY;UNTIL=20261125T000000;BYDAY=MO,TU,WE,TH,FR"),
+     "FREQ=WEEKLY;UNTIL=20261126T000000;BYDAY=MO,TU,WE,TH,FR"),
 ])
-def test_a_rule_with_days_keeps_an_until_word_as_its_bound(lang, text, rule):
+def test_a_rule_with_days_reads_two_weekdays_as_a_date_range(lang, text, rule):
     assert recurrence(lang, text) == (rule, "")
 
 
@@ -148,23 +151,23 @@ def test_a_text_without_an_until_word_runs_no_span_reading(monkeypatch):
 
 
 # The range reads a duration after it as part of its right bound, as a plain
-# until bound does, so UNTIL is the start of August and no COUNT is set.
+# until bound does, so UNTIL is the end of August and no COUNT is set.
 @pytest.mark.parametrize("lang, text, rule", [
-    ("en", "every day from june until august for 5 weeks", DAILY + "20270801T000000"),
+    ("en", "every day from june until august for 5 weeks", DAILY + "20270901T000000"),
     ("en", "every monday from june until august for 3 months",
-     WEEKLY + "20270801T000000;BYDAY=MO"),
-    ("en", "every day from 3 june until 5 august for 5 weeks", DAILY + "20270805T000000"),
-    ("pt", "todo dia de junho até agosto por 5 semanas", DAILY + "20270801T000000"),
+     WEEKLY + "20270901T000000;BYDAY=MO"),
+    ("en", "every day from 3 june until 5 august for 5 weeks", DAILY + "20270806T000000"),
+    ("pt", "todo dia de junho até agosto por 5 semanas", DAILY + "20270901T000000"),
     ("pt", "toda segunda de junho até agosto por 5 semanas",
-     WEEKLY + "20270801T000000;BYDAY=MO"),
-    ("es", "cada día de junio hasta agosto durante 5 semanas", DAILY + "20270801T000000"),
-    ("de", "jeden Tag von Juni bis August für 5 Wochen", DAILY + "20270801T000000"),
-    ("fr", "chaque jour de juin jusqu’à août pendant 5 semaines", DAILY + "20270801T000000"),
-    ("nl", "elke dag van juni tot augustus gedurende 5 weken", DAILY + "20270801T000000"),
+     WEEKLY + "20270901T000000;BYDAY=MO"),
+    ("es", "cada día de junio hasta agosto durante 5 semanas", DAILY + "20270901T000000"),
+    ("de", "jeden Tag von Juni bis August für 5 Wochen", DAILY + "20270901T000000"),
+    ("fr", "chaque jour de juin jusqu’à août pendant 5 semaines", DAILY + "20270901T000000"),
+    ("nl", "elke dag van juni tot augustus gedurende 5 weken", DAILY + "20270901T000000"),
     ("nl", "elke maandag van juni tot augustus voor 5 weken",
-     WEEKLY + "20270801T000000;BYDAY=MO"),
-    ("ca", "cada dia de juny fins a agost durant 5 setmanes", DAILY + "20270801T000000"),
-    ("gl", "cada día de xuño ata agosto durante 5 semanas", DAILY + "20270801T000000"),
+     WEEKLY + "20270901T000000;BYDAY=MO"),
+    ("ca", "cada dia de juny fins a agost durant 5 setmanes", DAILY + "20270901T000000"),
+    ("gl", "cada día de xuño ata agosto durante 5 semanas", DAILY + "20270901T000000"),
 ])
 def test_a_duration_after_a_range_sets_no_count(lang, text, rule):
     assert recurrence(lang, text) == (rule, "")
@@ -172,7 +175,7 @@ def test_a_duration_after_a_range_sets_no_count(lang, text, rule):
 
 # UNTIL wins over a duration read before it: RFC 5545 allows one of the two.
 @pytest.mark.parametrize("lang, text, rule", [
-    ("en", "daily for 5 weeks from june until august", DAILY + "20270801T000000"),
+    ("en", "daily for 5 weeks from june until august", DAILY + "20270901T000000"),
     ("en", "every day for 5 weeks until june", DAILY + "20270601T000000"),
 ])
 def test_an_until_bound_wins_over_a_duration_before_it(lang, text, rule):
@@ -238,7 +241,8 @@ def test_an_until_word_after_the_rule_alone_runs_no_span_reading(monkeypatch, te
     assert recurrence("en", text) == (rule, "")
 
 
-# "until august" from 2026-11-22 is 2027-08-01; the clock sets the hour
+# "until august" from 2026-11-22 is 2027-08-01; the clock sets the hour.  A
+# right bound with a clock keeps the value of a plain until bound.
 @pytest.mark.parametrize("lang, text, until", [
     ("es", "cada lunes desde junio hasta agosto a las 9", "2027-08-01T09:00:00"),
     ("es", "todos los lunes de junio hasta agosto a las 9", "2027-08-01T09:00:00"),

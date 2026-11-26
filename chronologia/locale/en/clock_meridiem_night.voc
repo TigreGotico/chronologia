@@ -1,0 +1,4 @@
+# "tonight" is the night band of the anchor day: hours 6..11 read as
+# 18..23, hours 1..5 and 12 fall after the midnight that ends the day
+# (the band split lives in the resolver _clock_hms via night_meridiems).
+tonight

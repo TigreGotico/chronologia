@@ -1304,7 +1304,7 @@ def extract_recurrence(
     ``None``.
     """
     got = _read_recurrence(text, lang, anchor)
-    return None if got is _NEVER_OCCURS else got
+    return None if got in (None, _NEVER_OCCURS) else got[0]
 
 
 #: Returned by :func:`_read_recurrence` for a phrase that names a rule no
@@ -1316,8 +1316,10 @@ _NEVER_OCCURS = object()
 
 @reads_spoken_hours
 def _read_recurrence(text, lang, anchor):
-    """:func:`extract_recurrence`, but a rule that never occurs returns
-    :data:`_NEVER_OCCURS` where the public function returns ``None``."""
+    """``(result, start)`` for :func:`extract_recurrence`, but a rule that
+    never occurs returns :data:`_NEVER_OCCURS` where the public function
+    returns ``None``.  ``start`` is the start of the range clause that bounds
+    the rule ("from june to august"), or ``None``."""
     require_text(text, "extract_recurrence")
     ctx = _recur_ctx(text, lang, anchor)
     tokens = ctx.tokens
@@ -1350,12 +1352,12 @@ def _read_recurrence(text, lang, anchor):
             if rec is None:
                 return None
             rec, consumed = _apply_clock_range(rec, consumed, ctx, lang, anchor)
-            range_words, left = _range_words(rec, consumed, ctx, text, lang,
-                                             anchor)
+            range_words, left, span = _range_words(rec, consumed, ctx, text,
+                                                   lang, anchor)
             rec, consumed = _apply_bounds(rec, consumed, ctx, lang, anchor,
                                           range_words)
-            rec, consumed = _apply_range_bound(rec, consumed, ctx, lang, anchor,
-                                               range_words)
+            rec, consumed, start = _apply_range_bound(rec, consumed, ctx, lang,
+                                                      anchor, range_words)
             if rec is _NEVER_OCCURS:
                 return _NEVER_OCCURS
             # a range bound may CLAIM its clause yet name no valid recurrence
@@ -1367,13 +1369,15 @@ def _read_recurrence(text, lang, anchor):
             if rec is None:
                 return None
             if range_words - consumed:
-                rec, consumed = _apply_range_reading(rec, consumed, ctx, lang,
-                                                     anchor, range_words, left)
+                rec, consumed, read_start = _apply_range_reading(
+                    rec, consumed, ctx, lang, anchor, range_words, left, span)
+                start = start or read_start
             if range_words - consumed:
                 # no date grounds the range: its clauses read as they do
                 # when an until bound fails
-                rec, consumed = _apply_range_bound(rec, consumed, ctx, lang,
-                                                   anchor, frozenset())
+                rec, consumed, bound_start = _apply_range_bound(
+                    rec, consumed, ctx, lang, anchor, frozenset())
+                start = start or bound_start
                 if rec is _NEVER_OCCURS:
                     return _NEVER_OCCURS
                 if rec is None:
@@ -1396,7 +1400,7 @@ def _read_recurrence(text, lang, anchor):
             from chronologia.extract.pipeline import render_remainder
             remainder = render_remainder(text, [t for t in tokens
                                                 if t.index not in consumed])
-            return RecurrenceResult(rec, remainder)
+            return RecurrenceResult(rec, remainder), start
     return None
 
 
@@ -1763,7 +1767,8 @@ def _bound_payload(rec, consumed, tokens, marker, lang, anchor, grounder):
 
 def _range_words(rec, consumed, ctx, text, lang, anchor):
     """The tokens of the unconsumed "until" words that join the two bounds of
-    a range, and the tokens of its left bound with its lead word.
+    a range, the tokens of its left bound with its lead word, and the span
+    reading of the range.
 
     The text is read with the words of the rule blanked out, its clock
     included (:func:`_apply_clock` reads it later).  An until word joins a
@@ -1782,10 +1787,10 @@ def _range_words(rec, consumed, ctx, text, lang, anchor):
     last = max((i for i, _ in runs), default=0)
     # a left bound needs a word of its own before the until word
     if all(k in consumed for k in range(last)):
-        return frozenset(), frozenset()
+        return frozenset(), frozenset(), None
     _, held = _apply_clock(rec, consumed, ctx, lang, anchor)
     if all(k in held for k in range(last)):
-        return frozenset(), frozenset()
+        return frozenset(), frozenset(), None
     rest = list(text)
     for t in tokens:
         if t.index in held:
@@ -1793,7 +1798,7 @@ def _range_words(rec, consumed, ctx, text, lang, anchor):
     rest = "".join(rest)
     got = read(rest, lang, anchor, first=True)
     if not got or got[0].kind != "span" or None in (got[0].left, got[0].right):
-        return frozenset(), frozenset()
+        return frozenset(), frozenset(), None
     span = got[0]
     first = next(t.index for t in tokens if t.char_start >= span.chars[0])
     for lead in _conn_surfaces(ctx.spec, "between", _RANGE_BETWEEN) \
@@ -1805,20 +1810,20 @@ def _range_words(rec, consumed, ctx, text, lang, anchor):
             break
     # "before christmas" names no day a range starts on
     if any(j == first for _, j in _marker_runs(tokens, ctx.before_words, held)):
-        return frozenset(), frozenset()
+        return frozenset(), frozenset(), None
     # the until word joins the range when the words between its bounds are
     # that word, or a "to" word of the locale that starts with it
     lo, hi = span.left.chars[1], span.right.chars[0]
     gap = [t.index for t in tokens if t.index not in held
            and lo <= t.char_start and t.char_end <= hi]
     if not gap or all(i != gap[0] for i, _ in runs):
-        return frozenset(), frozenset()
+        return frozenset(), frozenset(), None
     joints = [[t.text for t in tokens[i:j]] for i, j in runs]
     if ([tokens[k].text for k in gap]
             not in joints + _conn_surfaces(ctx.spec, "to", _RANGE_TO)):
-        return frozenset(), frozenset()
+        return frozenset(), frozenset(), None
     return frozenset(gap), frozenset(
-        k for k in range(first, gap[0]) if k not in held)
+        k for k in range(first, gap[0]) if k not in held), span
 
 
 def _ground_until(rec, text, ctx, lang, anchor):
@@ -2016,10 +2021,11 @@ def _apply_range_bound(rec, consumed, ctx, lang, anchor, range_words):
     """
     from dataclasses import replace as _replace
     if isinstance(rec, (HolidayRecurrence, JurisdictionHolidays)):
-        return rec, consumed
+        return rec, consumed, None
     bounded = rec.until is not None
     if bounded and not range_words - consumed:
-        return rec, consumed
+        return rec, consumed, None
+    start = None
 
     tokens = ctx.tokens
     spec = ctx.spec
@@ -2123,7 +2129,8 @@ def _apply_range_bound(rec, consumed, ctx, lang, anchor, range_words):
                             decline("the range from "
                                     f"{_WEEKDAY_NAMES_FULL[start_wd]} to "
                                     f"{_WEEKDAY_NAMES_FULL[end_wd]} holds no day the rule allows")
-                            return _NEVER_OCCURS, consumed | set(range(i, n))
+                            return (_NEVER_OCCURS, consumed | set(range(i, n)),
+                                    None)
                         rec = _replace(rec, byday=tuple((None, wd) for wd in keep))
                     else:
                         added = tuple((None, wd) for wd in days)
@@ -2150,6 +2157,16 @@ def _apply_range_bound(rec, consumed, ctx, lang, anchor, range_words):
                 got = extract_timespan(right_text, lang, anchor=anchor)
                 if got is None:
                     continue
+                # UNTIL ends with the right bound, at the end of the span
+                # that the whole clause reads; a right bound with a clock
+                # keeps the start of its date
+                clause = None
+                u = got.span.start
+                if not any((u.hour, u.minute, u.second, u.microsecond)):
+                    clause = extract_timespan(
+                        " ".join(t.raw for x, t in enumerate(tokens[i:right_end])
+                                 if (i + x) not in consumed),
+                        lang, anchor=anchor)
 
                 # R98: a SECOND genuine date-range candidate claiming UNTIL
                 # for the same rule ("every day from june to august from
@@ -2163,9 +2180,13 @@ def _apply_range_bound(rec, consumed, ctx, lang, anchor, range_words):
                 # whole extraction (mirrors the empty-intersection decline in
                 # the weekday-range branch above).
                 if rec.until is not None:
-                    return None, consumed | set(range(i, n))
+                    return None, consumed | set(range(i, n)), None
 
-                rec = _replace(rec, until=got[0].start, count=None)
+                if clause is None or clause.remainder:
+                    rec = _replace(rec, until=got.span.start, count=None)
+                else:
+                    rec = _replace(rec, until=clause.span.end, count=None)
+                    start = clause.span.start
                 consumed = consumed | set(range(i, n))
                 claimed = True
                 break
@@ -2173,17 +2194,22 @@ def _apply_range_bound(rec, consumed, ctx, lang, anchor, range_words):
                 break
         if not claimed:
             break
-    return rec, consumed
+    return rec, consumed, start
 
 
-def _apply_range_reading(rec, consumed, ctx, lang, anchor, range_words, left):
+def _apply_range_reading(rec, consumed, ctx, lang, anchor, range_words, left,
+                         span):
     """Ground the range words that no weekday range read as a date range.
-    UNTIL is the date that a plain "until <date>" bound reads from the same
-    words, and the range consumes the tokens ``left`` of its left bound and
-    its lead word ("de", "von", "from")."""
+    The range consumes the tokens ``left`` of its left bound and its lead word
+    ("de", "von", "from").  When the until bound reads the right bound of
+    ``span``, the range reading of the same words, UNTIL is the end of that
+    range and the start of the range is returned with the rule.  A bound
+    that reads more ("hasta agosto a las 9") keeps the value of a plain
+    until bound."""
     if (isinstance(rec, (HolidayRecurrence, JurisdictionHolidays))
             or rec.until is not None):
-        return rec, consumed
+        return rec, consumed, None
+    from dataclasses import replace as _replace
     tokens = ctx.tokens
     ground_until = partial(_ground_until, ctx=ctx, lang=lang, anchor=anchor)
     for marker in _marker_runs(tokens, ctx.until_words, consumed):
@@ -2194,8 +2220,11 @@ def _apply_range_reading(rec, consumed, ctx, lang, anchor, range_words, left):
         if got is None:
             continue
         rec, extra = got
-        return rec, consumed | extra | left
-    return rec, consumed
+        if rec.until != span.right.span.start:
+            return rec, consumed | extra | left, None
+        return (_replace(rec, until=span.span.end), consumed | extra | left,
+                span.span.start)
+    return rec, consumed, None
 
 
 def _apply_year_scope(rec, consumed, ctx, lang, anchor):

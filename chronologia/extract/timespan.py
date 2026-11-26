@@ -47,6 +47,7 @@ from chronologia.extract.pipeline import (consumed_extent, consumed_pieces,
                                           require_text)
 from chronologia.extract.resolver import (DATE_CONSTRUCTIONS, Resolver,
                                               _daypart_band,
+                                              _hour_in_daypart,
                                               compose_date_clock,
                                               compose_date_daypart,
                                               compose_daypart_clock,
@@ -4099,9 +4100,31 @@ def _compose(resolved, engine, tokens, anchor=None, text=None):
     # (a non-empty remainder honestly signals the un-placed time).
     _week = len(eff_dates) == 1 and eff_dates[0][1].week_widened
     glue_consumed = set()
+    # "at 7:03 tomorrow evening": the day part names the half of the day for
+    # the clock across the date between them.  The join holds only when the
+    # shifted hour lies inside the band and is not midnight, which would
+    # belong to the next day ("at 2 tomorrow night", "at 12 tomorrow night").
+    _clock_date_daypart = (
+        len(clocks) == 1 and len(dayparts) == 1 and len(eff_dates) == 1
+        and clocks[0][0].slots.get("MERIDIEM") is None
+        and clocks[0][0].span[1] <= eff_dates[0][0].span[0]
+        and eff_dates[0][0].span[1] <= dayparts[0][0].span[0]
+        and _adjacent(clocks[0][0], eff_dates[0][0])
+        and _adjacent(eff_dates[0][0], dayparts[0][0])
+        and not tokens[eff_dates[0][0].span[0]].break_before
+        and not tokens[dayparts[0][0].span[0]].break_before)
+    if _clock_date_daypart:
+        _name = spec.dayparts[dayparts[0][0].slots["DAYPART"].text]
+        _joined = compose_daypart_clock(clocks[0][1], dayparts[0][1], _name,
+                                        False, False, anchor)
+        _clock_date_daypart = (_joined is not None
+                               and _joined.value.start.hour != 0
+                               and _hour_in_daypart(
+                                   _name, _joined.value.start.hour))
     if (not _week and len(clocks) == 1 and len(dayparts) == 1
-            and dayparts[0][0].span[1] <= clocks[0][0].span[0]
-            and _adjacent(dayparts[0][0], clocks[0][0])):
+            and (_clock_date_daypart
+                 or (dayparts[0][0].span[1] <= clocks[0][0].span[0]
+                     and _adjacent(dayparts[0][0], clocks[0][0])))):
         # A day-part word PRECEDING an explicit clock ("evening at 9") is a
         # meridiem HINT on it, not a competing reading: the two must
         # COMPOSE, with the clock as the pinpoint, rather than one silently
@@ -4150,9 +4173,17 @@ def _compose(resolved, engine, tokens, anchor=None, text=None):
             rep = clk_match
     elif (not _week and len(clocks) == 1 and len(eff_dates) == 1
             and _adjacent(eff_dates[0][0], clocks[0][0])):
-        res = compose_date_clock(eff_dates[0][1], clocks[0][1])
+        clk_match, clk_res = clocks[0]
+        # "at 2 tonight tomorrow": the small hours of the named day's night
+        # fall on the day after it.
+        meridiem = clk_match.slots.get("MERIDIEM")
+        night_after = (meridiem is not None
+                       and meridiem.text in spec.night_meridiems
+                       and meridiem.text in spec.daypart_today_words
+                       and clk_res.value.start.hour < 6)
+        res = compose_date_clock(eff_dates[0][1], clk_res, night_after)
         rep = eff_dates[0][0]
-        glue_consumed = _composition_glue(eff_dates[0][0], clocks[0][0])
+        glue_consumed = _composition_glue(eff_dates[0][0], clk_match)
     elif (not _week and len(dayparts) == 1 and len(eff_dates) == 1
             and not clocks
             and _adjacent(eff_dates[0][0], dayparts[0][0])):
