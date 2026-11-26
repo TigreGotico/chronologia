@@ -2328,6 +2328,9 @@ class Resolver:
                     rel = self.spec.rel_markers[rel_tok.text] if rel_tok else 0
                     year = anchor.year + rel
                     value = _nth_weekday_of_year(year, target, n)
+                    if ("EVERY" in match.slots and value is not None
+                            and value < anchor.date()):
+                        value = _nth_weekday_of_year(year + 1, target, n)
                     cap_year = year if rel_tok else None
                     cap_per = "year"
                 elif scope_tok is None:

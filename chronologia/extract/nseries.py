@@ -2812,13 +2812,16 @@ def _recur_scoped_ordinal(ctx):
         if n is None and scoped_ordinal_split(m):
             continue
         ord_tok = slots.get("ORD")
-        if n is None or "REL_MARKER" in slots or "YEAR" in slots or (
+        if n is None or "REL_MARKER" in slots or (
                 ord_tok is not None and not ord_tok.ordinal
                 and "BDAY" in slots):
             # one period ("of next month", "of march 2027") or a count ("5
             # business days of the month") is no rule
             return None, consumed
         month = ctx.months[slots["MONTH"].text] if "MONTH" in slots else None
+        if "YEAR" in slots:
+            # the year is a scope that _apply_year_scope folds into UNTIL
+            consumed = set(range(start, slots["MONTH"].index + 1))
         if "BDAY" in slots:
             unit = "business day"
         else:

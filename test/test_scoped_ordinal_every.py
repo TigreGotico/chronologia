@@ -100,3 +100,23 @@ def test_sixth_monday_of_every_month_has_no_candidate():
     assert extract_candidates(text, "en", ANCHOR) == []
     with pytest.raises(ImpossibleDateError, match="no 6th Monday"):
         extract_candidates(text, "en", ANCHOR, impossible="raise")
+
+
+@pytest.mark.parametrize("text,n,keep", [
+    ("the second to last weekday of the month", -2, business(SAT_SUN)),
+    ("the penultimate business day of every month", -2, business(SAT_SUN)),
+    ("the second-to-last friday of every month", -2, weekday(4)),
+])
+def test_a_count_from_the_end_keeps_its_rule(text, n, keep):
+    result = extract_recurrence(text, "en", ANCHOR)
+    assert result is not None
+    assert result.remainder == ""
+    assert expand(result.recurrence.to_string()) == gold(n, keep)
+
+
+def test_a_weekday_of_every_year_reads_the_next_one():
+    # 2026-01-19 is past at the anchor; the third Monday of 2027 is Jan 18
+    jan = [date(2027, 1, d) for d in range(1, 32) if date(2027, 1, d).weekday() == MON]
+    result = extract_timespan("the 3rd monday of every year", "en", ANCHOR)
+    assert result.span.start.datetime().date() == jan[2]
+    assert result.remainder == ""
