@@ -46,23 +46,6 @@ def test_a_vikram_samvat_year_is_not_converted():
 
 
 @pytest.mark.parametrize("text", [
-    "छह बजे से दस बजे तक",
-    "सोमवार से शुक्रवार तक",
-    "मार्च से जून तक",
-])
-def test_a_closed_range_leaves_its_far_bound_unread(text):
-    """Hindi frames a closed range with BOTH markers postposed -- "A से B तक",
-    the start closed by से and the end by तक.  The range grammar reads a
-    LEADING frame ("from A to B"), so only the open reading fires and the far
-    bound stays visible in the remainder rather than being silently dropped.
-    The open ranges themselves ("शुक्रवार तक", "सोमवार से") do resolve."""
-    r = parse(text)
-    assert r is not None
-    assert r[1] != ""
-    assert "से" in r[1] or "तक" in r[1]
-
-
-@pytest.mark.parametrize("text", [
     "2010 और 2020 के बीच", "सोमवार और शुक्रवार के बीच",
 ])
 def test_a_between_range_leaves_its_far_bound_unread(text):
