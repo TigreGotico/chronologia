@@ -585,9 +585,15 @@ def _subtractive_clock_complete(text, sub, engine, anchor):
 def _frame_band(text, frame, engine, anchor):
     """The band a slice names when it is a whole daypart reference, else None.
 
+    A slice with a number, a month or a weekday names a date, not a daypart.
+
     "heute Nachmittag", "esta tarde", "this afternoon": the slice resolves in
     full to a span of two hours or more and less than one day.
     """
+    spec = engine.spec
+    if any(t.is_number or t.text in spec.months or t.text in spec.weekdays
+           for t in frame):
+        return None
     got = _range_endpoint(text, frame, engine, anchor)
     if got is None or got[1]:
         return None
@@ -648,7 +654,10 @@ def _extract_daypart_range(text, tokens, engine, anchor, scale_mode):
             inner = tokens[i:lo] if after else tokens[i:]
             got = _extract_plain_range(text, inner, engine, anchor,
                                        scale_mode)
-            if got is None:
+            if got is None or not all(
+                    b is not None
+                    and b.span.end - b.span.start < timedelta(days=1)
+                    for b in got[3:5]):
                 continue
             span = _fit_band(got[0], band)
             if span is None:

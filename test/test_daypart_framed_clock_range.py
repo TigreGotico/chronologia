@@ -12,6 +12,9 @@ from datetime import datetime
 import pytest
 
 from chronologia import extract_timespan
+from chronologia.extract.reading import pretokens
+from chronologia.extract.timespan import (_extract_daypart_range,
+                                          _timespan_engine)
 
 ANCHOR = datetime(2017, 6, 27, 13, 4)
 
@@ -68,3 +71,30 @@ def test_daypart_frames_clock_range_open(lang, text, start, end):
     r = extract_timespan(text, lang, ANCHOR)
     assert r is not None
     assert (r.span.start, r.span.end) == _pm(start, end)
+
+
+def test_full_date_with_clock_is_no_range():
+    r = extract_timespan("nos vemos el 5 de junio de 2027 a las 3 de la "
+                         "tarde", "es", ANCHOR)
+    assert (r.span.start, r.span.end) == (datetime(2027, 6, 5, 15, 0),
+                                          datetime(2027, 6, 5, 15, 1))
+    assert r.remainder == "nos vemos"
+
+
+NOT_FRAMED = [
+    ("es", "el 5 de junio de 2027 a las 3 de la tarde"),
+    ("es", "de lunes a viernes por la tarde"),
+    ("de", "vom 3. Mai bis 5 Uhr nachmittags"),
+    ("en", "from june to 3 this afternoon"),
+    ("es", "del 2 al 5 de mayo por la tarde"),
+]
+
+
+@pytest.mark.parametrize("lang,text", NOT_FRAMED)
+def test_date_bound_or_date_frame_is_no_daypart_range(lang, text):
+    """A bound that is a date, or a frame that holds a date, is no daypart
+    frame of a clock range."""
+    engine = _timespan_engine(lang)
+    tokens = pretokens(text, engine.spec)
+    assert _extract_daypart_range(text, tokens, engine, ANCHOR,
+                                  "short") is None
