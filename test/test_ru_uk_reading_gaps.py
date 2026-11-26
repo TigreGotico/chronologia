@@ -25,8 +25,9 @@ def test_ru_weekday_of_next_week_keeps_nothing_of_the_date_in_the_remainder():
     assert found.remainder == ""
 
 
-@pytest.mark.xfail(strict=True, reason=ISSUE)
+@pytest.mark.xfail(strict=True, raises=AssertionError, reason=ISSUE)
 def test_uk_last_night_is_the_night_band_of_today():
     found = extract_timespan("минулої ночі", "uk", ANCHOR)
+    assert found is not None, "no reading for 'минулої ночі'"
     assert (found.span.start.datetime(), found.span.end.datetime()) == (
         datetime(2017, 6, 27, 0, 0), datetime(2017, 6, 27, 4, 0))
