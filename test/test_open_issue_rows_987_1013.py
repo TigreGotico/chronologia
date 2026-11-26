@@ -51,6 +51,7 @@ FIXED_SPANS = {
     "el darrer dilluns de març",
     "lo zaguer luns de marzo",
     "avísame de luns a venres pola mañá sobre as 7",
+    "at 8 tonight",
 }
 
 
