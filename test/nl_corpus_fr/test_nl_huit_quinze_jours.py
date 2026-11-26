@@ -26,16 +26,22 @@ import pytest
 
 from chronologia import extract_duration, extract_recurrence
 
-from ._corpus import ad, parse
+from ._corpus import ad, nomatch, parse
 
 A = datetime(2026, 11, 26, 10, 0)   # a Thursday
 
 
 @pytest.mark.parametrize("text,start", [
     ("dans huit jours", datetime(2026, 12, 3, 10, 0)),
-    ("dans 8 jours", datetime(2026, 12, 3, 10, 0)),
     ("dans quinze jours", datetime(2026, 12, 10, 10, 0)),
-    ("dans 15 jours", datetime(2026, 12, 10, 10, 0)),
+    # the digits are counted as written: the sense is that of the spoken
+    # numeral, and a written count of days is literal in law (Code de
+    # procédure civile, art. 641-642)
+    ("dans 8 jours", datetime(2026, 12, 4, 10, 0)),
+    ("dans 15 jours", datetime(2026, 12, 11, 10, 0)),
+    # a count beside a larger unit is part of a literal sum
+    ("dans 2 mois et quinze jours", datetime(2027, 2, 10, 10, 0)),
+    ("il y a un an et quinze jours", datetime(2025, 11, 11, 10, 0)),
     ("il y a huit jours", datetime(2026, 11, 19, 10, 0)),
     ("il y a quinze jours", datetime(2026, 11, 12, 10, 0)),
     # other counts are read as written
@@ -62,6 +68,36 @@ def test_ordinal_day_is_not_the_count(text, day):
     assert r[0].start == ad(day)
 
 
+@pytest.mark.parametrize("text", [
+    "dans quinze jours calendaires",
+    "dans quinze jours francs",
+    "dans quinze jours pleins",
+    "dans quinze jours entiers",
+    "dans quinze jours de travail",
+])
+def test_a_counted_kind_of_day_is_literal(text):
+    # "jours francs", "calendaires", "pleins", "entiers", "de travail" count
+    # each day: the count stays fifteen, whatever else reads
+    r = parse(text, A)
+    assert r is None or r[0].start != ad(datetime(2026, 12, 10, 10, 0))
+
+
+def test_a_delai_is_literal():
+    from chronologia import extract_duration
+    got = extract_duration("un délai de quinze jours", "fr", anchor=A)
+    assert got is None or got.duration == timedelta(days=15)
+
+
+def test_dans_huit_jours_with_another_weekday_refuses():
+    # A count of days reaches one day, and a weekday beside it must be that
+    # day's (ruling 19, as "dans 7 jours vendredi" refuses).  Seven days on is
+    # Thursday 3 December, not a Friday, so the phrase names no day.
+    nomatch("dans huit jours vendredi", A)
+    r = parse("dans huit jours jeudi", A)
+    assert r is not None
+    assert r[0].start == ad(datetime(2026, 12, 3))
+
+
 def test_business_days_are_counted_as_written():
     # Fri 27 Nov, Mon 30, Tue 1, Wed 2, Thu 3, Fri 4, Mon 7, Tue 8 Dec
     r = parse("dans 8 jours ouvrés", A)
@@ -84,3 +120,9 @@ def test_tous_les_quinze_jours_is_every_two_weeks():
     got = extract_recurrence("tous les quinze jours", "fr", A)
     assert got is not None
     assert got.recurrence.to_string() == "FREQ=DAILY;INTERVAL=14"
+
+
+def test_tous_les_15_jours_is_counted_as_written():
+    got = extract_recurrence("tous les 15 jours", "fr", A)
+    assert got is not None
+    assert got.recurrence.to_string() == "FREQ=DAILY;INTERVAL=15"

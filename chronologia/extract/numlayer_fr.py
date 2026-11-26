@@ -241,41 +241,69 @@ def fold_fr_hour_length(tokens: Tuple[Token, ...],
     return _inclusive_weeks(tokens, spec)
 
 
-#: "huit jours" and "quinze jours" count the first day and the last, so they
-#: are one week and two weeks: "Huit jours, dans l'usage courant, une semaine
-#: entière en comptant le premier jour et le dernier. J'irai vous voir dans
-#: huit jours" and "Quinze jours, dans l'usage courant, deux semaines
-#: complètes" (Académie française, 9th ed., s.v. "huit" and s.v. "quinze");
-#: "Huit jours. Une semaine." and "Quinze jours. Deux semaines." (TLFi, s.v.
-#: "huit" and s.v. "quinze").  The count -> the days it spans.
-_INCLUSIVE_DAYS = {8: 7, 15: 14}
-
-
 def _inclusive_weeks(tokens: Tuple[Token, ...],
                      spec: LangSpec) -> Tuple[Token, ...]:
-    """Read "huit jours" as seven days and "quinze jours" as fourteen.
+    """Read the spoken "huit jours" as seven days and "quinze jours" as
+    fourteen.
 
-    A count of business days ("8 jours ouvrés") counts as written: the
-    dictionaries give the week sense to the calendar days only."""
-    business = spec.connectors.get("business", frozenset())
+    French counts these days inclusively, the first day and the last:
+    "Huit jours, dans l'usage courant, une semaine entière en comptant le
+    premier jour et le dernier" and "Quinze jours, dans l'usage courant, deux
+    semaines complètes" (Académie française, 9th ed., s.v. "huit" and
+    "quinze").  The numerals and their week counts are the locale's
+    ``week_idiom_<weeks>.voc`` words, seven days a week.
+
+    The sense is that of the spelled numeral in everyday use, so a count in
+    digits ("15 jours") is read as written, and so is a count the law or a
+    qualifier makes literal: "Lorsqu'un délai est exprimé en jours, celui de
+    l'acte [...] qui le fait courir ne compte pas" and "Tout délai expire le
+    dernier jour à vingt-quatre heures" (Code de procédure civile, art. 641
+    and 642).  The words before the count ("délai") and after the day noun
+    ("francs", "ouvrés", "de travail") that keep it literal are in
+    ``marker_day_count_literal_before.voc`` and
+    ``marker_day_count_literal_after.voc``.  A count added to a larger unit
+    ("deux mois et quinze jours") is part of a literal sum and stays too."""
+    if not spec.week_idioms:
+        return tokens
+    conn = spec.connectors
+    before = conn.get("day_count_literal_before", frozenset())
+    after = (conn.get("day_count_literal_after", frozenset())
+             | conn.get("business", frozenset()))
+    of = conn.get("of", frozenset())
+    joiners = conn.get("and", frozenset())
+    repeat = conn.get("week_idiom_in", frozenset())
     out = list(tokens)
+
+    def spoken_weeks(tok):
+        # the number layer keeps the spelled surface on the mention
+        said = (tok.mention.text.lower() if tok.mention is not None else "")
+        if not (tok.is_number and not tok.ordinal and said.isalpha()):
+            return None
+        return spec.week_idioms.get(said)
+
     for i, tok in enumerate(out[:-1]):
+        weeks = spoken_weeks(tok)
         # a cardinal before the plural day noun only: "le quinzième jour de
         # mars" is the fifteenth day
-        if not (tok.is_number and not tok.ordinal
-                and tok.value in _INCLUSIVE_DAYS
-                and float(tok.value).is_integer()
-                and spec.units.get(out[i + 1].text) == "day"
-                and out[i + 1].text in spec.plural_units):
+        if (weeks is None or spec.units.get(out[i + 1].text) != "day"
+                or out[i + 1].text not in spec.plural_units):
             continue
-        if i + 2 < len(out) and out[i + 2].text in business:
+        nxt = [t.text for t in out[i + 2:i + 4]]
+        if nxt and (nxt[0] in after or " ".join(nxt) in after):
             continue
-        days = _INCLUSIVE_DAYS[int(tok.value)]
+        if i >= 1 and (out[i - 1].text in before
+                       or (i >= 2 and out[i - 1].text in of
+                           and out[i - 2].text in before)):
+            continue
+        if (i >= 2 and out[i - 1].text in joiners
+                and spec.units.get(out[i - 2].text) not in (None, "day")):
+            continue
+        days = 7 * weeks
         out[i] = replace(tok, text=str(days), value=type(tok.value)(days))
         # "de quinze en quinze jours" restates the count: both are the week
         # count, or the two would disagree
-        if (i >= 2 and out[i - 1].text == "en" and out[i - 2].is_number
-                and out[i - 2].value == tok.value):
+        if (i >= 2 and out[i - 1].text in repeat
+                and spoken_weeks(out[i - 2]) == weeks):
             out[i - 2] = replace(out[i - 2], text=str(days),
                                  value=type(tok.value)(days))
     return tuple(out)

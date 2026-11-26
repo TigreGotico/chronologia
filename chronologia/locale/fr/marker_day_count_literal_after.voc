@@ -1,0 +1,15 @@
+# Words after "jours" that make a count of days literal, so "quinze jours
+# francs" stays fifteen days rather than the everyday two weeks.
+# "Jour franc. Jour entier, de minuit à minuit" (TLFi s.v. "franc", in law);
+# a délai in days counts each day (Code de procédure civile, art. 641-642);
+# "jours calendaires", "jours pleins", "jours entiers" and "jours de travail"
+# name the kind of day counted, as "jours ouvrés" (marker_business.voc) does.
+francs
+franc
+calendaires
+calendaire
+pleins
+plein
+entiers
+entier
+de travail
