@@ -89,9 +89,7 @@ _LIMITATIONS = [
     pytest.param(
         'το φθινόπωρο της ζωής',
         marks=pytest.mark.xfail(reason='season word in figurative use binds as the season; downstream concern', strict=True)),
-    pytest.param(
-        'τα χριστούγεννα ήρθαν νωρίς',
-        marks=pytest.mark.xfail(reason='temporal token inside a fixed idiom binds literally; downstream concern', strict=True)),
+    'τα χριστούγεννα ήρθαν νωρίς',
 ]
 
 

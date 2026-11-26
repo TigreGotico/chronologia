@@ -90,9 +90,7 @@ _LIMITATIONS = [
     pytest.param(
         'luns pesado',
         marks=pytest.mark.xfail(reason='weekday homograph binds as the weekday once bare-weekday parsing lands engine-wide; downstream concern', strict=True)),
-    pytest.param(
-        'o nadal chegou cedo',
-        marks=pytest.mark.xfail(reason='temporal token inside a fixed idiom binds literally; downstream concern', strict=True)),
+    'o nadal chegou cedo',
 ]
 
 

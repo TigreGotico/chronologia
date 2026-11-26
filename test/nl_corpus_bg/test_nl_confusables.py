@@ -83,9 +83,7 @@ _LIMITATIONS = [
     pytest.param(
         'есента на живота',
         marks=pytest.mark.xfail(reason='season word in figurative use binds as the season; downstream concern', strict=True)),
-    pytest.param(
-        'коледа дойде рано',
-        marks=pytest.mark.xfail(reason='temporal token inside a fixed idiom binds literally; downstream concern', strict=True)),
+    'коледа дойде рано',
 ]
 
 

@@ -85,9 +85,7 @@ _LIMITATIONS = [
     pytest.param(
         'mai ich helfen',
         marks=pytest.mark.xfail(reason='bare month homograph used as a common word binds as the month; homograph disambiguation is a downstream (NLU) concern', strict=True)),
-    pytest.param(
-        'weihnachten kam früh',
-        marks=pytest.mark.xfail(reason='temporal token inside a fixed idiom binds literally; downstream concern', strict=True)),
+    'weihnachten kam früh',
 ]
 
 

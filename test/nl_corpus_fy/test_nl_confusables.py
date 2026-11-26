@@ -79,9 +79,7 @@ _LIMITATIONS = [
     pytest.param(
         'betiid yn de moarn',
         marks=pytest.mark.xfail(reason='morning/tomorrow homograph binds as the next day; expected limitation', strict=True)),
-    pytest.param(
-        'kryst kaam betiid',
-        marks=pytest.mark.xfail(reason='temporal token inside a fixed idiom binds literally; downstream concern', strict=True)),
+    'kryst kaam betiid',
     pytest.param(
         'om de middei hinne',
         marks=pytest.mark.xfail(reason='structurally-safe class unexpectedly binds; recorded as a limitation', strict=True)),
