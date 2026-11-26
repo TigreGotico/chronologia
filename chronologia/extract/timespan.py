@@ -3872,30 +3872,33 @@ def _skip_one_idiom_veto(tokens, match, spec) -> bool:
 
 def _cued_day_veto(tokens, match, spec) -> bool:
     """True for a match that holds a ``named_day_cued_<off>.voc`` surface with
-    no cue after it.
+    no cue word directly beside it.
 
     pl "dzisiejszy", el "σημερινός" and es "hodierno" mean "today's" and,
     more often, "present-day" ("dzisiejsza młodzież").  The day sense needs a
-    cue: a unit word right beside the adjective ("dzisiejszy dzień"), a word that starts with a stem from ``marker_cued_day_cue.voc``
-    ("dzisiejsze spotkanie"), or a number or daypart in the next three words.
+    cue: the next word is a unit, a daypart or a word of
+    ``marker_cued_day_cue.voc`` ("dzisiejszy dzień", "dzisiejsze spotkanie"),
+    or the word before is a word of ``marker_cued_day_cue_before.voc`` or a
+    unit, for a locale that ships that file ("la sesión hodierna").
     """
     words = spec.connectors.get("cued_day")
     if not words:
         return False
+    after = spec.connectors.get("cued_day_cue", frozenset())
+    before = spec.connectors.get("cued_day_cue_before", frozenset())
     b, e = match.span
-    stems = tuple(spec.connectors.get("cued_day_cue", ()))
     for i in range(b, e):
         if tokens[i].text not in words:
             continue
-        after = tokens[i + 1:i + 4]
-        # the noun stands after the adjective, or before it in the Romance
-        # order "la sesión hodierna"
-        beside = after[:1] + tokens[i - 1:i] if i else after[:1]
-        if any(t.text in spec.units or t.text in spec.singular_units
-               or t.text.startswith(stems) for t in beside):
-            continue
-        if any(t.is_number or t.text in spec.dayparts for t in after):
-            continue
+        if i + 1 < len(tokens):
+            nxt = tokens[i + 1].text
+            if (nxt in after or nxt in spec.units or nxt in spec.singular_units
+                    or nxt in spec.dayparts):
+                continue
+        if before and i > 0:
+            prev = tokens[i - 1].text
+            if prev in before or prev in spec.units or prev in spec.singular_units:
+                continue
         return True
     return False
 

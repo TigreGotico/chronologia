@@ -1,15 +1,27 @@
-# Word stems beside a named_day_cued_0.voc adjective that keep its day sense:
-# meeting, session, concert, match, lesson, newspaper, programme, meal, trip,
-# news, rain. A word that starts with a stem is a cue.
-συνάντησ
-συνεδρίασ
-συναυλί
-αγών
-μάθημ
-εφημερίδ
-πρόγραμμ
-γεύμ
-δείπν
-εκδρομ
-ειδήσ
-βροχ
+# Whole words directly after a named_day_cued_0.voc adjective that keep its
+# day sense: meeting, session, concert, match, newspaper, trip, meal, edition.
+συνάντηση
+συνάντησης
+συναντήσεις
+συναντήσεων
+συνεδρίαση
+συνεδρίασης
+συνεδριάσεις
+συναυλία
+συναυλίας
+συναυλίες
+συναυλιών
+αγώνας
+αγώνα
+αγώνες
+αγώνων
+εφημερίδα
+εφημερίδας
+εφημερίδες
+εκδρομή
+εκδρομής
+εκδρομές
+βροχή
+βροχής
+έκδοση
+έκδοσης

@@ -1,16 +1,15 @@
-# Word stems beside a named_day_cued_0.voc adjective that keep its day sense:
-# meeting, session, concert, match, lesson, newspaper, programme, meal, trip,
-# news, rain. A word that starts with a stem is a cue.
-riunion
-session
-sedut
-concert
-partit
-lezion
-giornal
-programm
-pranz
-cen
-gita
-notizi
-pioggi
+# Whole words directly after a named_day_cued_0.voc adjective that keep its
+# day sense: meeting, session, concert, match, newspaper, trip, meal, edition.
+riunione
+riunioni
+seduta
+sedute
+sessione
+sessioni
+udienza
+udienze
+edizione
+edizioni
+giornata
+partita
+concerto

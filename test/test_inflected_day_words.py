@@ -105,7 +105,32 @@ PRESENT_DAY = [
     ("sl", "današnji čas"),
     ("es", "La sociedad hodierna cambia deprisa."),
     ("it", "la società odierna"),
+    ("pl", "dzisiejsza młodzież ma 20 lat"),
+    ("uk", "сьогоднішній світ має 8 мільярдів людей"),
+    ("bg", "днешното общество от 7 милиона"),
+    ("el", "η σημερινή γενιά των 30 ετών"),
+    ("pl", "dzisiejsza gazetka szkolna"),
+    ("pl", "dzisiejszy meczet"),
+    ("pl", "dzisiejsze programowanie"),
+    ("hr", "današnji sateliti"),
+    ("hr", "današnji programeri"),
+    ("bg", "днешните програмисти"),
+    ("sk", "dnešné hodinky"),
+    ("sk", "dnešná doba je rýchla"),
+    ("pl", "w dzisiejszych czasach"),
+    ("hr", "u današnje vrijeme"),
+    ("uk", "сьогоднішні уроки історії"),
+    ("pl", "dzisiejsza młodzież, wiadomo, jest leniwa"),
 ]
+
+
+@pytest.mark.parametrize("lang,text,start", [
+    ("hr", "današnji svijet u 21. stoljeću", datetime(2000, 1, 1)),
+    ("el", "σημερινή κοινωνία το 2026", datetime(2026, 1, 1)),
+])
+def test_a_present_day_adjective_leaves_the_other_date_to_read(lang, text, start):
+    found = extract_timespan(text, lang, PROBE_ANCHOR)
+    assert found.span.start.datetime() == start
 
 
 @pytest.mark.parametrize("lang,text", PRESENT_DAY)
@@ -121,6 +146,11 @@ CUED_TODAY = [
     ("uk", "сьогоднішній день"),
     ("pl", "dzisiejsze spotkanie"),
     ("es", "la sesión hodierna"),
+    ("el", "η σημερινή συνάντηση"),
+    ("uk", "сьогоднішня зустріч"),
+    ("hr", "današnja sjednica"),
+    ("bg", "днешната среща"),
+    ("it", "l'odierna riunione"),
 ]
 
 

@@ -1,17 +1,41 @@
-# Word stems beside a named_day_cued_0.voc adjective that keep its day sense:
-# meeting, session, concert, match, lesson, newspaper, programme, meal, trip,
-# news, rain. A word that starts with a stem is a cue.
-срещ
-заседани
-събрани
+# Whole words directly after a named_day_cued_0.voc adjective that keep its
+# day sense: meeting, session, concert, match, newspaper, trip, meal, edition.
+среща
+срещата
+срещи
+срещите
+заседание
+заседанието
+заседания
+заседанията
+събрание
+събранието
+събрания
+събранията
 концерт
+концерта
+концертът
+концерти
+концертите
 мач
-урок
+мача
+мачът
+мачове
+мачовете
 вестник
-програм
+вестника
+вестникът
+вестници
+вестниците
+разходка
+разходката
+разходки
+екскурзия
+екскурзията
 обяд
+обяда
+обядът
 вечеря
-разходк
-екскурзи
-новини
-дъжд
+вечерята
+издание
+изданието
