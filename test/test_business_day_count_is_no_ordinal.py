@@ -2,7 +2,8 @@
 
 "5 working days of the month" is a length, so the nth-business-day reading and
 its past-the-month refusal do not apply.  The ordinal forms keep both.
-November 2026 has 21 weekdays, so its 5th business day is Friday the 6th.
+The 5th business day of November 2026 (Friday the 6th) is past, so "the month"
+is December 2026: Tuesday the 1st to Monday the 7th.
 """
 from datetime import datetime
 
@@ -60,4 +61,4 @@ def test_a_count_is_no_business_day_in_either_mode(lang, text):
 def test_an_ordinal_is_the_fifth_business_day(lang, text):
     result = span(text, lang, impossible="raise")
     assert (result.span.start.year, result.span.start.month,
-            result.span.start.day) == (2026, 11, 6)
+            result.span.start.day) == (2026, 12, 7)

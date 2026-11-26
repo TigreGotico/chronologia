@@ -83,6 +83,13 @@ BASE_GRAMMAR: Dict[str, List[str]] = {
         "article? ordlast WEEKDAY of article? month_word? of? MONTH of? article? year_word REL_MARKER",
         "article? ORD WEEKDAY of REL_MARKER? article? SCOPE_UNIT",
         "article? ordlast WEEKDAY of REL_MARKER? article? SCOPE_UNIT",
+        # "the 3rd business day of march", "o 3.º dia útil do mês": the
+        # n-th business day of a month, read before "ORD UNIT of MONTH" so
+        # the day unit of the class noun is not a bare day ordinal.
+        "article? ORD DAYUNIT? BDAY DAYUNIT? of? MONTH of? YEAR?",
+        "article? ordlast DAYUNIT? BDAY DAYUNIT? of? MONTH of? YEAR?",
+        "article? ORD DAYUNIT? BDAY DAYUNIT? of? REL_MARKER? article? SCOPE_UNIT",
+        "article? ordlast DAYUNIT? BDAY DAYUNIT? of? REL_MARKER? article? SCOPE_UNIT",
         "article? ORD UNIT of MONTH of? YEAR?",
         "article? ordlast UNIT of MONTH of? YEAR?",
         "article? ORD UNIT of article? year_word YEAR?",

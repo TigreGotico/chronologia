@@ -54,7 +54,7 @@ def _ad(d):
     ("the last working day of this month", date(2017, 6, 30)),   # Fri
     ("the last business day of next month", date(2017, 7, 31)),  # Mon
     ("the third business day of July", date(2017, 7, 5)),        # Wed
-    ("the first working day of the month", date(2017, 6, 1)),    # Thu
+    ("the first working day of the month", date(2017, 7, 3)),    # Jun 1 is past: Mon Jul 3
 ])
 def test_business_day_of_month(text, expected):
     assert start(text) == _ad(expected)
@@ -91,10 +91,10 @@ def test_year_not_stranded(text):
         f"{text!r} stranded a year: {rem(text)!r}"
 
 
-# -- yearless + relative-month stay byte-identical (anchor-relative) --------
+# -- a yearless month rolls forward when its day is past (ruling 39) -------
 
 @pytest.mark.parametrize("text,expected", [
-    ("the third working day of March", date(2017, 3, 3)),        # anchor 2017
+    ("the third working day of March", date(2018, 3, 5)),        # Thu 1, Fri 2, Mon 5
     ("the third business day of July", date(2017, 7, 5)),
     ("the last working day of this month", date(2017, 6, 30)),
     ("the last business day of next month", date(2017, 7, 31)),

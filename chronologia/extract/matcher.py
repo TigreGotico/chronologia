@@ -112,6 +112,10 @@ def _bind(element: SlotElement, token: Token, spec: LangSpec,
         # construction outright, so the matcher picks the (correct) bare
         # ``named_day`` reading instead.
         return spec.units.get(token.text) == "day"
+    if name == "BDAY":
+        # the business-day class noun ("business", "Werktag", "weekday")
+        return (token.text in spec.connectors.get("business", frozenset())
+                or token.text in spec.connectors.get("weekday", frozenset()))
     if name == "USG":
         return token.text in spec.singular_units
     if name in ("MARKER", "DIRECTION_MARKER"):

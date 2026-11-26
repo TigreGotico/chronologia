@@ -4555,6 +4555,7 @@ def _compose_core(tokens, engine, anchor, enable=(), jurisdiction=None,
     a range endpoint follows the range rules instead.
     """
     resolved = []
+    refused = []
     veto = lambda m: _candidate_veto(tokens, m, engine.spec)   # noqa: E731
     for match in engine.matcher.match(tokens, veto):
         # construction-group gate: a construction tagged ``"group": <g>`` in
@@ -4565,7 +4566,11 @@ def _compose_core(tokens, engine, anchor, enable=(), jurisdiction=None,
             match.construction, {}).get("group")
         if group is not None and group not in enable:
             continue
-        res = engine.resolver.resolve(match, anchor, scale_mode)
+        res = engine.resolver.resolve(match, anchor, scale_mode, jurisdiction)
+        if res is None and "BDAY" in match.slots and (
+                "MONTH" in match.slots or engine.spec.units.get(
+                    match.slots["SCOPE_UNIT"].text) == "month"):
+            refused.append(match)
         if res is not None:
             if whole:
                 res = replace(res, value=_since_month(
@@ -4579,7 +4584,7 @@ def _compose_core(tokens, engine, anchor, enable=(), jurisdiction=None,
     resolve_ref = _make_resolve_ref(tokens, engine, anchor, enable,
                                      jurisdiction, text, scale_mode)
     resolved = apply_business_days(tokens, resolved, engine.spec, anchor,
-                                   jurisdiction, resolve_ref)
+                                   jurisdiction, resolve_ref, refused)
     # mixed-grain offset compound ("in 3 months and 2 days"): fold every
     # further "[and|,] NUM UNIT" chunk into the leading relative_offset match
     # BEFORE the anchored-offset pass, so a stranded calendar/fixed tail is
