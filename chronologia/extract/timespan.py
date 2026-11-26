@@ -3976,7 +3976,12 @@ def _compose(resolved, engine, tokens, anchor=None, text=None):
         return None, set(), None
     apposed |= counted
     clocks = [(m, r) for m, r in resolved if m.construction == "clock_time"]
-    composable = _COMPOSABLE_DATES | {"relative_offset"}
+    # an offset is a day only to the clock or daypart that pins it; beside a
+    # weekday or a date it stays a separate reading
+    composable = (_COMPOSABLE_DATES | {"relative_offset"}
+                  if clocks or any(m.construction == "daypart_ref"
+                                   for m, _r in resolved)
+                  else _COMPOSABLE_DATES)
     # "the morning after next" is a band of its day, so a clock beside it may
     # contradict the band and is left unread; "the week before last" is a
     # period, so no clock lands on it
