@@ -497,9 +497,22 @@ def _counted_refused_unit_before(tokens: Tuple[Token, ...], start: int,
 
 def _named_day_homograph(tokens: Tuple[Token, ...], index: int,
                          spec: LangSpec) -> bool:
-    """Is the day-part word at ``index`` a named-day word right after "of"?"""
-    return (index > 0 and tokens[index].text in spec.named_days
-            and tokens[index - 1].text in spec.connectors.get("of", ()))
+    """Is the day-part word at ``index`` a named day that a noun owns?
+
+    True for "<noun> <of_bare> <word>" where the word is also a named-day
+    word: "la fiesta de mañana".  A clock, a day word, a weekday or a
+    day-part before the connector keeps the band ("el lunes de mañana",
+    "mañana de mañana"), as does the sentence start.
+    """
+    if (index < 2 or tokens[index].text not in spec.named_days
+            or tokens[index - 1].text not in spec.connectors.get("of_bare", ())):
+        return False
+    owner = tokens[index - 2]
+    return not (owner.is_number or owner.text in spec.named_days
+                or owner.text in spec.weekdays or owner.text in spec.dayparts
+                or owner.text in spec.clock_landmarks
+                or owner.text in spec.clock_fractions
+                or owner.text in spec.connectors.get("oclock", ()))
 
 
 def _counted_plural_daypart(tokens: Tuple[Token, ...], index: int,
@@ -1117,8 +1130,8 @@ class ConstructionMatcher:
                                 tokens, start, self.spec)):
                         continue
                     # A day-part word that is also a named-day word (es
-                    # "mañana") directly after "of" is the named day: "la fiesta de
-                    # mañana" is tomorrow's party; "de la mañana" keeps the band.
+                    # "mañana") after a noun and a bare "of" is the named day: "la
+                    # fiesta de mañana" is tomorrow's party.
                     if (name == "daypart_ref" and "DAYPART" in slots
                             and "REL_MARKER" not in slots
                             and _named_day_homograph(

@@ -38,3 +38,15 @@ def test_noun_de_manana_is_tomorrow(text):
 ])
 def test_article_or_this_keeps_the_band(text, start, end):
     assert _span(text) == (start, end)
+
+
+@pytest.mark.parametrize("text, lang, start, end", [
+    ("el periódico de mañana", "es", TOMORROW, TOMORROW + timedelta(days=1)),
+    ("a festa de mañá", "gl", TOMORROW, TOMORROW + timedelta(days=1)),
+    ("mañana de mañana", "es", TOMORROW + timedelta(hours=6), TOMORROW + timedelta(hours=12)),
+])
+def test_owner_before_of_decides(text, lang, start, end):
+    s = extract_timespan(text, lang, anchor=ANCHOR).span
+    got = (datetime(s.start.year, s.start.month, s.start.day, s.start.hour, s.start.minute),
+           datetime(s.end.year, s.end.month, s.end.day, s.end.hour, s.end.minute))
+    assert got == (start, end)
