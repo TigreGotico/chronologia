@@ -114,6 +114,7 @@ Three terms recur in every guide. A **span** is a stretch of time with a start a
 | [languages/ms.md](languages/ms.md) | The sources, the weaker evidence and the refusals of the Malay (`ms`) locale. |
 | [languages/mt.md](languages/mt.md) | The sources, the weaker evidence and the refusals of the Maltese (`mt`) locale. |
 | [languages/mwl.md](languages/mwl.md) | The sources, the weaker evidence and the refusals of the Mirandese (`mwl`) locale. |
+| [languages/mwr.md](languages/mwr.md) | The sources, the weaker evidence and the refusals of the Marwari (`mwr`) locale. |
 | [languages/nb.md](languages/nb.md) | The sources, the weaker evidence and the refusals of the Norwegian Bokmål (`nb`) locale. |
 | [languages/nn.md](languages/nn.md) | The sources, the weaker evidence and the refusals of the Norwegian Nynorsk (`nn`) locale. |
 | [languages/oc.md](languages/oc.md) | The sources, the weaker evidence and the refusals of the Occitan (`oc`) locale. |
