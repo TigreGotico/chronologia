@@ -180,6 +180,10 @@ PRECEDENCE: Dict[str, int] = {
     # lacks, so on the longer span they win the same-anchor tie.
     "named_day_span_idiom": 8,
     "named_day_offset_from": 8,
+    # fr "jeudi en huit", "demain en quinze": the same day one or two weeks
+    # on.  Carries the idiom on top of the bare weekday or named day, so it
+    # wins the longer span.
+    "day_week_idiom": 8,
     "sametime_shift": 8,
     # backward relative-day idioms -- "the <X> before last" / "the <X> after
     # next" / "a <weekday> ago" / "<N-unit> ago <weekday>".  Each carries the

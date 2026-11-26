@@ -34,6 +34,10 @@ To read a phrase, call `extract_timespan` with the phrase, the locale code and a
 
 **Relative offsets** run both ways with `dans` and `il y a`. `lang.json` allows the marker before or after the count. An optional article and an optional quantifier can stand in either position. The quantifiers include `quelques` and `plusieurs` for a vague three and `un`/`une` for one.
 
+**The week idiom.** `jeudi en huit` and `demain en quinze` name the same day one or two weeks on. The day named counts as day one, so `en huit` adds seven days and `en quinze` fourteen. TLFi gives "En huit. Le même jour de la semaine suivante" and the Académie française "au huitième jour à partir du jour où l'on parle ou qui sert de référence", both s.v. *huit*, with the same entries s.v. *quinze*. `d'aujourd'hui en huit` is the anchor's day a week on. The day words are `aujourd'hui` and `demain`, the two the Académie lists.
+
+A weekday reads only when it falls on or after the anchor's weekday in the week. Before it, the sources name two different days. Larousse glosses `lundi en huit` as "lundi de la semaine prochaine", while a week counted from the coming Monday lands one week later. `vendredi en huit` said on a Tuesday is the Friday of next week.
+
 **The relative determiners** follow the noun in French. For that reason the locale sets `marker_position: post`, as in `la semaine prochaine` and `lundi dernier`. The locale overrides `rel_period` to accept a leading article, so the definite article on the noun does not block the read.
 
 **The clock** carries `heures` as the hour word, `et` and `moins` as the two directions, `quart` and `demi`/`demie` as the fractions, `du matin` and `du soir` as the meridiem phrases, and `midi` and `minuit` as points. The vocabulary cites the half word to TLFi and Larousse under *moitié*. The same file supplies the period sense ("l'une des deux parties égales"). `la première moitié de 2020` reads as the first half-year.
@@ -65,6 +69,8 @@ The weekday and month names cite Unicode CLDR 47.
 ## What refuses
 
 **The dotted date.** `15.06.2020`, `06.15.2020`, `15.6.2020` and `le 15.06.2020` all return nothing, and none of them yields a bare year either.
+
+**A weekday before the anchor's in the week, with `en huit`.** Said on a Tuesday, `lundi en huit` returns nothing, and so does `lundi en huit à 10h`. A clock beside the idiom has no day to land on.
 
 **A bare duration.** `quinze jours` returns nothing. A quantity without a direction marker is still only a quantity. A fortnight unit does ship, but it needs a marker to become a span.
 
@@ -122,6 +128,13 @@ Each example below runs as a doctest with a fixed anchor, so the output does not
     True
     >>> extract_timespan('quinze jours', "fr", anchor) is None
     True
+    >>> extract_timespan('lundi en huit', "fr", anchor) is None
+    True
+    >>> extract_timespan('lundi en huit à 10h', "fr", anchor) is None
+    True
+    >>> span, rest = extract_timespan('vendredi en huit', "fr", anchor)
+    >>> span.start_datetime.date().isoformat(), rest
+    ('2017-07-07', '')
 
 ## Known limits
 

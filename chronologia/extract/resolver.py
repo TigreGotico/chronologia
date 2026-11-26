@@ -409,6 +409,9 @@ DATE_CONSTRUCTIONS = frozenset({
     # date -- letting the double nest "the day after the day after tomorrow"
     # step one more day past the inner result instead of stranding the outer.
     "named_day_after", "named_day_before",
+    # fr "jeudi en huit" is a whole day too, so "samedi en huit au soir" and
+    # "jeudi en huit à 10h" narrow it like any other date
+    "day_week_idiom",
     "scoped_bc", "scoped_ad", "decade_bc",
     "regnal_date", "roman_date", "era_date",
     "era_bc", "era_ad", "era_bp", "era_auc", "era_buddhist",
@@ -975,6 +978,40 @@ class Resolver:
         qty = self._offset_quantity(match)
         value = self._named_day_base(match, anchor) + timedelta(days=days * qty)
         return Resolution(_day_span(value), self._consumed(match))
+
+    #: the named days a week idiom counts from: "d'aujourd'hui en huit, de
+    #: demain en huit" (Académie française, 9th ed., s.v. "huit").
+    _WEEK_IDIOM_DAYS = frozenset({0, 1})
+
+    def _resolve_day_week_idiom(self, match, anchor):
+        """fr "jeudi en huit", "demain en quinze": the named day, counted as
+        day one, then the same day one or two weeks on (TLFi s.v. "huit":
+        "En huit. Le même jour de la semaine suivante").
+
+        A weekday reads only when it falls on or after the anchor's weekday in
+        the locale's week.  There the coming weekday plus a week is also the
+        weekday of next week (Larousse s.v. "huit": "Lundi, mardi en huit,
+        lundi, mardi de la semaine prochaine").  Before it, the two counts
+        name different days a week apart, so the phrase refuses."""
+        weeks = self.spec.week_idioms.get(match.slots["WEEK_IDIOM"].text)
+        if weeks is None:
+            weeks = self.spec.week_idioms[
+                match.slots["WEEK_IDIOM"].raw.lower()]
+        day_tok = match.slots.get("DAY_WORD")
+        if day_tok is not None:
+            offset = self.spec.named_days[day_tok.text]
+            if offset not in self._WEEK_IDIOM_DAYS:
+                return None
+            base = _midnight(anchor) + timedelta(days=offset)
+        else:
+            target = self.spec.weekdays[match.slots["WEEKDAY"].text]
+            first = _WEEK_START.get(self.conventions.week_start, 0)
+            if (target - first) % 7 < (anchor.weekday() - first) % 7:
+                return None
+            base = _midnight(anchor) + timedelta(
+                days=(target - anchor.weekday()) % 7)
+        return Resolution(_day_span(base + timedelta(weeks=weeks)),
+                          self._consumed(match))
 
     def _resolve_named_day_offset_from(self, match, anchor):
         """"a month from tomorrow", "two months from today", "a week from
@@ -3544,6 +3581,7 @@ class Resolver:
         "weekday_offset": _resolve_weekday_offset,
         "named_day_span_idiom": _resolve_named_day_span_idiom,
         "named_day_offset_from": _resolve_named_day_offset_from,
+        "day_week_idiom": _resolve_day_week_idiom,
         "sametime_shift": _resolve_sametime_shift,
         "holiday_eve": _resolve_holiday_eve,
         "weekday_ref": _resolve_weekday_ref,
