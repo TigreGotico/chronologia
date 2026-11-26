@@ -38,7 +38,7 @@ from typing import Optional
 from chronologia.astrodate import (AstroDate, BASIS_RECONSTRUCTED, DateSpan,
                                    _days_in_month, civil_add)
 from chronologia.extract.impossible import (bad_day, decline, no_such, ordinal,
-                                          ordinal_cap, scope_name)
+                                          ordinal_cap, recorded, scope_name)
 from chronologia.dayparts import daypart_span, lookup as daypart_lookup
 from chronologia.calendars import (CALENDARS, gregorian_to_jdn,
                                         jdn_to_gregorian)
@@ -50,6 +50,7 @@ from chronologia.extract.compiler import UNIMPLEMENTED
 from chronologia.extract.matcher import GYEAR_MAX, GYEAR_MIN
 from chronologia.extract.model import (Conventions, LangSpec, Match,
                                            Resolution)
+from chronologia.extract.pipeline import consumed_extent
 from chronologia.extract.ranges import (_ABSOLUTE, _UNIT_OF_CENTURY,
                                         _UNIT_OF_MILLENNIUM, _UNIT_OF_MONTH,
                                         _UNIT_OF_YEAR,
@@ -661,13 +662,21 @@ class Resolver:
         if handler is None:
             raise NotImplementedError(
                 f"no resolver for construction {match.construction!r}")
+        found = recorded()
+        before = 0 if found is None else len(found)
         try:
             # deep time is the only construction whose reading depends on the
             # dialect short/long scale (the billion-cognate is 10^9 short, 10^12
             # long); every other handler ignores the mode.
             if match.construction == "deep_time":
                 return self._resolve_deep_time(match, anchor, scale_mode)
-            return handler(self, match, anchor)
+            res = handler(self, match, anchor)
+            if res is None and found is not None and len(found) > before:
+                chars = consumed_extent(match.slots.values())
+                for refusal in found[before:]:
+                    if refusal.chars is None:
+                        refusal.chars = chars
+            return res
         except (ValueError, OverflowError, KeyError):
             # "This reading does not resolve to a real date" -- an out-of-range
             # or calendar-invalid value (day 31 of a 30-day month, a year beyond

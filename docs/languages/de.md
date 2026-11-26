@@ -181,8 +181,6 @@ Each line is an open issue with a strict `xfail` test for this language. The lin
 
 **Recurrence**
 
-- A range after a recurring weekday reads its end as an until bound and leaves the start. Example (reader `extract_event`, lang `de`, anchor 2026-11-22 09:00): `jeden Montag von Juni bis August` gives start 2026-11-23 00:00, length none, summary `juni`. [#1291](https://github.com/TigreGotico/chronologia/issues/1291)
-
 - An until bound in a recurrence resolves on the anchor day. [#1316](https://github.com/TigreGotico/chronologia/issues/1316)
 
 - A weekday or clock range in a recurrence loses its end. Example (reader `extract_recurrence`, lang `de`, anchor 2026-11-22 09:00): `jeden Montag bis Freitag 9 Uhr` gives the rule `FREQ=WEEKLY;BYDAY=MO,FR;BYHOUR=9`. [#1321](https://github.com/TigreGotico/chronologia/issues/1321)

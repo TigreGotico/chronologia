@@ -34,7 +34,7 @@ from chronologia.extract.anchored import (apply_anchored_offset,
 from chronologia.extract.business import apply_business_days
 from chronologia.extract.compiler import ConstructionCompiler
 from chronologia.extract.explain import ExplainTrace, explain
-from chronologia.extract.impossible import raising, reports_impossible
+from chronologia.extract.impossible import capture, raising, reports_impossible
 from chronologia.extract.loader import LOCALE_DIR, load_lang_spec
 from chronologia.extract.matcher import (ConstructionMatcher,
                                          alarm_marker_span,
@@ -4727,7 +4727,9 @@ def extract_candidates(
     anchor = anchor or datetime.now()
     if isinstance(anchor, datetime):
         anchor = anchor.replace(tzinfo=None)
-    readings = read(text, lang, anchor, scale=scale)
+    with capture() as found:
+        readings = read(text, lang, anchor, scale=scale)
+    refused = [r.chars for r in found if r.chars is not None]
     engine = _timespan_engine(lang)
     scored = []
     seen = set()
@@ -4746,6 +4748,10 @@ def extract_candidates(
         if key in seen:
             continue
         seen.add(key)
+        # a word spent on a refused date reads nothing else
+        if got.chars is not None and any(lo < got.chars[1] and got.chars[0] < hi
+                                         for lo, hi in refused):
+            continue
         # skip a reading governed by a leading negation/exclusion particle
         # ("not tomorrow"): the excluded reference is not a positive date.  The
         # SAME bounded governing-region logic as the single-winner path, so the

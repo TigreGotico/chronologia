@@ -27,9 +27,8 @@ def rows(issue, entries):
     return [pytest.param(*entry, marks=xfail(issue)) for entry in entries]
 
 
-@pytest.mark.xfail(strict=True, reason=URL + "1276")
 @pytest.mark.parametrize("text,reason", [
-    ("the 25th weekday of the month", "no 25th"),
+    pytest.param("the 25th weekday of the month", "no 25th", marks=xfail(1276)),
     ("the sixth monday of may", "no 6th Monday"),
 ])
 def test_candidates_raise_mode(text, reason):
@@ -37,11 +36,12 @@ def test_candidates_raise_mode(text, reason):
         extract_candidates(text, "en", ANCHOR, impossible="raise")
 
 
-@pytest.mark.xfail(strict=True, reason=URL + "1276")
 @pytest.mark.parametrize("lang,text,first,kind", [
-    ("en", "tomorrow or every month on the sixth monday", datetime(2026, 11, 23), "named_day"),
-    ("pt", "amanhã ou todos os meses no sexto domingo", datetime(2026, 11, 23), "named_day"),
-    ("de", "am 3. Juni oder der sechste Montag jedes Monats", datetime(2027, 6, 3), "calendar_date"),
+    *rows(1276, [
+        ("en", "tomorrow or every month on the sixth monday", datetime(2026, 11, 23), "named_day"),
+        ("pt", "amanhã ou todos os meses no sexto domingo", datetime(2026, 11, 23), "named_day"),
+        ("de", "am 3. Juni oder der sechste Montag jedes Monats", datetime(2027, 6, 3), "calendar_date"),
+    ]),
     ("en", "the sixth monday of may, or else on 3 june", datetime(2027, 6, 3), "calendar_date"),
 ])
 def test_candidates_keep_the_valid_date_and_drop_the_refused_weekday(lang, text, first, kind):
@@ -52,12 +52,12 @@ def test_candidates_keep_the_valid_date_and_drop_the_refused_weekday(lang, text,
     assert "weekday_ref" not in [c.construction for c in found]
 
 
-@pytest.mark.xfail(strict=True, reason=URL + "1276")
 @pytest.mark.parametrize("text", [
     "annually on the 30th of february",
     "the sixth monday of may 2027",
     "the sixth monday of may next year",
-    "the sixth monday of may at 7",
+    # extract_timespan reads the clock "at 7"
+    pytest.param("the sixth monday of may at 7", marks=xfail(1276)),
 ])
 def test_candidates_read_nothing_from_a_refused_date(text):
     # extract_timespan gives None for each; no candidate may read a year, a
@@ -66,7 +66,6 @@ def test_candidates_read_nothing_from_a_refused_date(text):
     assert extract_candidates(text, "en", ANCHOR) == []
 
 
-@pytest.mark.xfail(strict=True, reason=URL + "1276")
 def test_candidates_refused_business_day_has_no_month_fallback():
     assert extract_candidates("the 23rd business day of this month", "en", ANCHOR) == []
 
@@ -116,7 +115,6 @@ def test_twenty_fourth_weekday_of_march_declines():
     assert extract_timespan("the 24th weekday of march", "en", ANCHOR) is None
 
 
-@pytest.mark.xfail(strict=True, reason=URL + "1291")
 @pytest.mark.parametrize("lang, text, first, last_monday", [
     ("de", "jeden Montag von Juni bis August", datetime(2027, 6, 7), datetime(2027, 8, 30)),
     ("en", "every monday from june to august", datetime(2027, 6, 7), datetime(2027, 8, 30)),
