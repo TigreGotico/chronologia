@@ -1564,6 +1564,10 @@ def _compose_range(left_tok, right_tok, endpoint, borrowed, spec,
             lent = replace(merid, index=-1 - len(left_tok),
                            char_start=None, char_end=None)
             left = endpoint(tuple(left_tok) + (lent,))
+            # a reading of the lent word alone, none of the left slice, is
+            # no left endpoint ("supposed to arrive in a day, ... tonight")
+            if left is not None and left[4] is None:
+                left = None
     if left is None or right is None:
         return None
     left_bound = RangeBound(left[0], left[1], left[5])
