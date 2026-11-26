@@ -268,11 +268,15 @@ def extract_event(
 
     recurrence: Optional[RecurrenceLike] = None
     remainder = text
+    rule_start = anchor
     got_rec = _read_recurrence(text, lang, anchor)
     if got_rec is _NEVER_OCCURS:
         return None
     if got_rec is not None:
-        recurrence, remainder = got_rec
+        (recurrence, remainder), start = got_rec
+        # a rule bounded by a range starts at its left bound
+        if start is not None and 1 <= start.year <= 9999:
+            rule_start = max(anchor, start.datetime())
 
     duration: Optional[timedelta] = None
     got_dur = extract_duration(remainder, lang)
@@ -348,7 +352,7 @@ def extract_event(
     # the confidence of the best plausible reading of the span-bearing text.
     conf = 1.0
     if recurrence is not None:
-        base = first_occurrence(recurrence, anchor)
+        base = first_occurrence(recurrence, rule_start)
     else:
         got_span = extract_timespan(remainder, lang, anchor=anchor,
                                     jurisdiction=jurisdiction)
