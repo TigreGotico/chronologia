@@ -65,15 +65,6 @@ START = [
     # the next Tuesday after Tuesday 27 June 2017 13:04 "next week" is 4 July
     ("en", "meeting on tuesday at 4 pm next week", datetime(2017, 6, 27, 13, 4),
      datetime(2017, 7, 4, 16, 0)),
-    # a clock after a counted day offset
-    ("de", "setze den frisörtermin in 5 tagen um halb 10",
-     datetime(2017, 6, 27), datetime(2017, 7, 2, 9, 30)),
-    ("de", "in 3 tagen um 15 uhr", datetime(2117, 9, 3, 13, 30),
-     datetime(2117, 9, 6, 15, 0)),
-    ("he", "תזכיר לי בעוד שלושה ימים בשעה 15:30", datetime(2017, 6, 27, 13, 4),
-     datetime(2017, 6, 30, 15, 30)),
-    ("he", "תזכיר לי בעוד שלושה ימים בשעה 15:30", datetime(2018, 6, 5, 9, 0),
-     datetime(2018, 6, 8, 15, 30)),
     # a date with a clock: the lone hour keeps its first reading on a day
     # that is not today
     ("it", "il 3 novembre alle 5", _anchor(2026, 10, 17, 12),

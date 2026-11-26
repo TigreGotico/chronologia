@@ -107,8 +107,7 @@
     "dmy": false,
     "hemisphere": "north",
     "prefer_future": true,
-    "bare_half_to": false,
-    "offset_clock_composes": true
+    "bare_half_to": false
   },
   "quantifiers": {
     "1": [

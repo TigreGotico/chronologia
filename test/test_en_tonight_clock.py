@@ -80,12 +80,12 @@ CASES = [
     ("en", "at 8 pm", TUE, datetime(2017, 6, 27, 20, 0), ""),
     ("en", "at 8 this evening", TUE, datetime(2017, 6, 27, 20, 0), ""),
     ("es", "a las 12 esta noche", TUE, datetime(2017, 6, 28, 0, 0), ""),
+    ("en", "at 12 tonight in 2 days", FRI_1500,
+     datetime(2026, 10, 26, 0, 0), ""),
 ]
 
 # rows of the issue that still read wrong
 OPEN = [
-    ("en", "at 12 tonight in 2 days", FRI_1500,
-     datetime(2026, 10, 26, 0, 0), ""),
     ("de", "setze den frisörtermin auf halb neun am abend",
      datetime(2017, 6, 27), datetime(2017, 6, 27, 20, 30),
      "setze den frisörtermin auf"),

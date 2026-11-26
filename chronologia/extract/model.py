@@ -313,21 +313,6 @@ class Conventions:
     # Where it is off ("at 9 of every monday meeting"), the "of" belongs to
     # the words before the clock unless the recurrence ends the text.
     clock_of_recurrence: bool = False
-    # A day-or-coarser ``relative_offset`` ("3 days ago", "next month") composes
-    # with an adjacent trailing ``clock_time`` exactly like a ``named_day``
-    # does ("yesterday at 9" -> yesterday 09:00): the clock pins the offset day
-    # to a minute, instead of the offset standing alone with the clock stranded
-    # in the remainder.  Off by default -- most locales leave "3 days ago at
-    # 9am" un-composed (a queued, separate gap) -- set only for languages where
-    # the offset's trailing marker word is ALSO the clock's "at" preposition
-    # (Turkic/Iranian "saat"), so the two constructions read as one phrase
-    # ("3 gün əvvəl saat 9" = "9 o'clock, 3 days ago") rather than two.
-    # Basque sets it because the "-ko" suffix turns the offset into a modifier
-    # of the time noun after it ("duela 3 eguneko gaua" = the night of three
-    # days ago): "-ko atzizkia adizlagunei eransten zaie eta izenlagunak
-    # eratortzen ditu", with "atzo -> atzoko egunkaria" (Trask, "-Ko atzizkia
-    # euskaraz", Euskera XXX, pp. 168-169).
-    offset_clock_composes: bool = False
 
 
 @dataclass(frozen=True)
