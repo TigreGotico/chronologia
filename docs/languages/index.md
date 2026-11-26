@@ -69,7 +69,7 @@ Cells: status, own test rows passed / own test rows.
 | Language | Tag | Data | Numbers | Dates | Clock | Durations | Relative days | Ranges | Recurrence | Holidays | Spoken |
 |:---|:---|:---|:---|:---|:---|:---|:---|:---|:---|:---|:---|
 | [Portuguese (Portugal)](pt.md) | pt-PT | pt | numtag | yes 175/175 | yes 321/321 | yes 18/18 | yes 127/127 | yes 112/112 | yes 139/139 | yes 360/361 | yes 1143/1143 |
-| [Portuguese (Brazil)](pt.md) | pt-BR | pt | numtag (pt-BR lexicon) | yes 175/175 | yes 321/321 | yes 18/18 | yes 127/127 | yes 112/112 | yes 139/139 | yes 360/361 | no |
+| [Portuguese (Brazil)](pt.md) | pt-BR | pt | numtag (pt-BR lexicon) | yes 175/175 | yes 321/321 | yes 18/18 | yes 127/127 | yes 112/112 | yes 139/139 | yes 360/361 | yes 1143/1143 |
 | [Spanish (Colombia)](es.md) | es-CO | es | numtag | yes 63/63 | yes 166/166 | yes 31/31 | yes 102/102 | yes 172/172 | yes 42/42 | yes 621/622 | no |
 | [French (France)](fr.md) | fr-FR | fr | numtag | yes 230/230 | yes 199/199 | yes 19/19 | yes 100/100 | yes 340/343 | yes 39/39 | yes 451/452 | no |
 | [Italian (Italy)](it.md) | it-IT | it | numtag | yes 47/47 | yes 194/194 | yes 8/8 | yes 86/86 | yes 140/140 | yes 18/18 | yes 341/342 | no |
