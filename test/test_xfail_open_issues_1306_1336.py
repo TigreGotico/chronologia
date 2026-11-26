@@ -280,10 +280,19 @@ def test_daypart_before_the_clock_event_start():
 @pytest.mark.parametrize("text,start", rows(1325, [
     ("the 23rd in the evening at 8", datetime(2026, 11, 23, 20, 0)),
     ("the 23rd at 8 in the evening", datetime(2026, 11, 23, 20, 0)),
-    ("in 2 days evening at 8", datetime(2026, 11, 24, 20, 0)),
-    ("in 2 days at 8 in the evening", datetime(2026, 11, 24, 20, 0)),
 ]))
 def test_day_before_a_daypart_and_clock(text, start):
+    result = extract_timespan(text, "en", ANCHOR)
+    assert result is not None
+    assert result.span.start.datetime() == start
+    assert result.remainder == ""
+
+
+@pytest.mark.parametrize("text,start", [
+    ("in 2 days evening at 8", datetime(2026, 11, 24, 20, 0)),
+    ("in 2 days at 8 in the evening", datetime(2026, 11, 24, 20, 0)),
+])
+def test_offset_before_a_daypart_and_clock(text, start):
     result = extract_timespan(text, "en", ANCHOR)
     assert result is not None
     assert result.span.start.datetime() == start

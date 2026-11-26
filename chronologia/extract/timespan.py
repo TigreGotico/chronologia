@@ -3923,9 +3923,8 @@ def _make_resolve_ref(tokens, engine, anchor, enable, jurisdiction, text,
 
 #: sub-day offset units -- a ``relative_offset`` bound to one of these is
 #: already a clock-level point ("2 saat əvvəl" == an hour-wide span, not a
-#: day), so :func:`_compose` never treats it as a composable date even on a
-#: locale that opts into ``offset_clock_composes``; only a day-or-coarser
-#: offset ("3 gün əvvəl") is a whole day a trailing clock can pin a minute on.
+#: day), so :func:`_compose` never treats it as a composable date; only a
+#: day-or-coarser offset ("3 gün əvvəl") is a whole day a trailing clock can pin a minute on.
 _SUBDAY_OFFSET_UNITS = frozenset({"second", "minute", "hour"})
 
 
@@ -3978,9 +3977,12 @@ def _compose(resolved, engine, tokens, anchor=None, text=None):
         return None, set(), None
     apposed |= counted
     clocks = [(m, r) for m, r in resolved if m.construction == "clock_time"]
+    # an offset is a day only to the clock or daypart that pins it; beside a
+    # weekday or a date it stays a separate reading
     composable = (_COMPOSABLE_DATES | {"relative_offset"}
-                 if spec.conventions.offset_clock_composes
-                 else _COMPOSABLE_DATES)
+                  if clocks or any(m.construction == "daypart_ref"
+                                   for m, _r in resolved)
+                  else _COMPOSABLE_DATES)
     # "the morning after next" is a band of its day, so a clock beside it may
     # contradict the band and is left unread; "the week before last" is a
     # period, so no clock lands on it

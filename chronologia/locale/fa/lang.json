@@ -104,8 +104,7 @@
     "weekend_start": 3,
     "dmy": true,
     "hemisphere": null,
-    "prefer_future": true,
-    "offset_clock_composes": true
+    "prefer_future": true
   },
   "lemmas": {
     "دقیقهای": "دقیقه",
