@@ -1490,6 +1490,22 @@ def _labelled_day_keeps_own(sub, donor, donor_read, spec):
     return counts_unit or (donor_read is not None and donor_read[2] == "clock")
 
 
+def _trailing_week_scope(sub, spec):
+    """The words after ``sub``'s last weekday when they name a week ("next
+    week", "da próxima semana"), else an empty tuple."""
+    day = None
+    for i, t in enumerate(sub):
+        if t.text in spec.weekdays or (
+                i and f"{sub[i - 1].text} {t.text}" in spec.weekdays):
+            day = i
+    if day is None:
+        return ()
+    scope = tuple(sub[day + 1:])
+    if any(spec.units.get(t.text) == "week" for t in scope):
+        return scope
+    return ()
+
+
 def _compose_range(left_tok, right_tok, endpoint, borrowed, spec,
                    bare_of=_lone_numeral, monthly=None, previous=None,
                    daily=None, since=False, following=None, holding=None):
@@ -1572,6 +1588,19 @@ def _compose_range(left_tok, right_tok, endpoint, borrowed, spec,
             new_right = borrowed(lent)
             if new_right is not None:
                 right, right_lent = new_right, True
+    # a bare left weekday borrows the week scope that trails the right
+    # weekday, so "from wednesday to thursday next week" reads both days in
+    # next week; a left end with a scope of its own keeps it
+    if left is not None and left[2] == "weekday" and right is not None:
+        scope = _trailing_week_scope(right_tok, spec)
+        if scope and not any(spec.units.get(t.text) == "week"
+                             for t in left_tok):
+            lent = tuple(replace(t, index=-1 - len(left_tok) - n,
+                                 char_start=None, char_end=None)
+                         for n, t in enumerate(scope))
+            scoped = borrowed(tuple(left_tok) + lent)
+            if scoped is not None:
+                left = scoped[:4] + left[4:]
     # a bare left endpoint ("3" in "between 3 and 5 pm") borrows the right
     # endpoint's trailing meridiem so both read on the same clock
     if left is None and right is not None and left_tok:
