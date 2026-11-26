@@ -273,6 +273,10 @@ class Conventions:
     # capital does not distinguish a proper noun.  A fact, not logic -- the
     # matcher reads it, mirroring the es/gl/pt bare-daypart drop for "mañana".
     daypart_proper_noun_guard: bool = False
+    # A bare day part reads only at the start of a sentence or next to a
+    # date or clock word: "রাতে ... আসর বসবে" is tonight, while "বর্ষার ভেজা
+    # সকালে" (on a wet monsoon morning) names no day.
+    bare_daypart_initial: bool = False
     # "since A until B" is a DIRECTIONAL range: "since" past-anchors the start
     # (its most recent past occurrence) while "until" places the end at-or-after
     # that start, so "since monday until friday" reads [last monday, next

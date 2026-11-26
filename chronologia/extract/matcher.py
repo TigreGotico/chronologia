@@ -724,6 +724,20 @@ class ConstructionMatcher:
             for word in connectors.get(key, ())
             if word.endswith("s") and word[:-1] in connectors.get(key, ()))
 
+    def _licenses_daypart(self, tokens, start, end):
+        """Whether a date word before a bare day part, or a number after
+        it, ties the day part to a day."""
+        spec = self.spec
+        prev = tokens[start - 1]
+        if prev.is_number or prev.text in spec.named_days or (
+                prev.text in spec.weekdays or prev.text in spec.rel_markers
+                or prev.text in spec.directions):
+            return True
+        nxt = tokens[end] if end < len(tokens) else None
+        return nxt is not None and (nxt.is_number
+                                    or nxt.text in spec.clock_fractions
+                                    or nxt.text in spec.clock_landmarks)
+
     def _candidates(self, tokens: Tuple[Token, ...]) -> List[MatchCandidate]:
         out: List[MatchCandidate] = []
         for precedence, name, order in self.compiled.table:
@@ -1089,6 +1103,12 @@ class ConstructionMatcher:
                     # (no REL_MARKER licensing it) is guarded; "this Night" is
                     # not.  Gated on the locale convention so noun-capitalising
                     # languages are unaffected.
+                    if (name == "daypart_ref" and list(slots) == ["DAYPART"]
+                            and self.spec.conventions.bare_daypart_initial
+                            and start > 0
+                            and not tokens[start].sentence_break_before
+                            and not self._licenses_daypart(tokens, start, end)):
+                        continue
                     if (name == "daypart_ref" and "DAYPART" in slots
                             and "REL_MARKER" not in slots
                             and self.spec.conventions.daypart_proper_noun_guard

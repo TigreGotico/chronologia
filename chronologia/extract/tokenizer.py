@@ -343,7 +343,8 @@ def _gap_breaks_clause(gap: str) -> bool:
             or ("-" in gap and gap != "-"))
 
 #: punctuation that ends a sentence between two tokens
-_SENTENCE_END = frozenset(".!?;\u2026\u037e\u061f\u06d4\u3002\uff01\uff1f\uff1b")
+#: (U+0964 and U+0965 are the danda and double danda of the Indic scripts)
+_SENTENCE_END = frozenset(".!?;\u2026\u037e\u061f\u06d4\u0964\u0965\u3002\uff01\uff1f\uff1b")
 
 
 class Tokenizer:

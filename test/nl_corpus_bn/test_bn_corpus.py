@@ -100,3 +100,21 @@ def test_morning_today():
 ])
 def test_no_date(text):
     nomatch(text)
+
+
+@pytest.mark.parametrize("text,h", [
+    ("রাতে পাড়ার মাঠে গানের আসর বসবে।", 20),
+    ("সন্ধ্যায় পাড়ার মাঠে নাটক হবে।", 18),
+    ("চলো। সকালে বাজারে যাব।", 6),
+])
+def test_bare_day_part_at_sentence_start_is_today(text, h):
+    assert start(text) == day(0, h)
+
+
+@pytest.mark.parametrize("text", [
+    "বর্ষার ভেজা সকালে অফিসে পৌঁছাতে দেরি হলো।",
+    "কারখানার শ্রমিকদের কাছে কর্মদিবস মানে সন্ধ্যায় বাড়ি ফেরার অপেক্ষা।",
+    "মা দুটো আম এনেছিলেন, যা আমরা দুপুরে ভাগ করে খেলাম।",
+])
+def test_bare_day_part_inside_a_sentence_names_no_day(text):
+    nomatch(text)

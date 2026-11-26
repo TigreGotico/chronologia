@@ -337,6 +337,7 @@ def _conventions(conv: dict) -> Conventions:
             "duration_count_follows_unit", False),
         daypart_proper_noun_guard=conv.get(
             "daypart_proper_noun_guard", False),
+        bare_daypart_initial=conv.get("bare_daypart_initial", False),
         bare_at_markers=frozenset(conv.get("bare_at_markers", ())),
         clock_of_recurrence=conv.get("clock_of_recurrence", False),
         weekend_start=conv.get("weekend_start", 5))

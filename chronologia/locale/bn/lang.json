@@ -42,7 +42,8 @@
   "hemisphere": "north",
   "prefer_future": true,
   "bare_half_past": true,
-  "bare_quarter_past": true
+  "bare_quarter_past": true,
+  "bare_daypart_initial": true
  },
  "quantifiers": {
   "1": [
