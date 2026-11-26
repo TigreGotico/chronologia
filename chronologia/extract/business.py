@@ -53,6 +53,7 @@ from chronologia.civil_holidays import is_civil_holiday
 from chronologia.extract.anchored import _gap_words, _offset_base
 from chronologia.extract.impossible import decline, ordinal, ordinal_cap
 from chronologia.extract.model import LangSpec, Match, Resolution, Token
+from chronologia.extract.pipeline import consumed_extent
 from chronologia.extract.resolver import (DATE_CONSTRUCTIONS, _add_months,
                                               _day_span, _midnight,
                                               _pivot_two_digit_year)
@@ -361,13 +362,15 @@ def apply_business_days(tokens, resolved: List[Pair], spec: LangSpec,
             claimed = set(range(s0, hi)) | scope_ids
             kept = [(m, r) for m, r in resolved
                     if not (set(range(*m.span)) & claimed)]
+            chars = consumed_extent(tokens, claimed)
             if value is None:
-                decline(_out_of_range(count))
+                decline(_out_of_range(count), chars)
                 return kept
             if mode == "nth" and value >= _add_months(first, 1):
                 # the count runs past the month's last business day: no day of
                 # that month is meant, so the phrase is claimed and refused.
-                decline(ordinal_cap(count, "business day", first.month, first.year))
+                decline(ordinal_cap(count, "business day", first.month, first.year),
+                        chars)
                 return kept
             pair = (Match("business_days", (s0, end), {}),
                     Resolution(_day_span(value), tuple(sorted(claimed))))
@@ -397,7 +400,7 @@ def apply_business_days(tokens, resolved: List[Pair], spec: LangSpec,
         kept = [(m, r) for m, r in resolved
                 if not (set(range(*m.span)) & claimed)]
         if value is None:
-            decline(_out_of_range(count))
+            decline(_out_of_range(count), consumed_extent(tokens, claimed))
             return kept
         kept.append((Match("business_days", (start, end), {}),
                      Resolution(_day_span(value), tuple(sorted(claimed)))))
