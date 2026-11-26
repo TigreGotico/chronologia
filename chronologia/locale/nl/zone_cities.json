@@ -1,0 +1,73 @@
+{
+ "source": "City names: CLDR 47 timeZoneNames exemplarCity (via Babel 2.18) for nl; a zone with no exemplarCity takes the TR35 fallback, the city part of the IANA zone ID. Pattern: CLDR nl regionFormat \"tijd in {0}\", and \"<city>-tijd\" / \"<city adjective> tijd\". The adjectives in -se (\"Londense\") are not yet checked against a dictionary.",
+ "patterns": [
+  "{city} tijd",
+  "tijd in {city}"
+ ],
+ "cities": {
+  "Europe/London": [
+   "Londen",
+   "Londense"
+  ],
+  "America/New_York": [
+   "New York",
+   "New Yorkse"
+  ],
+  "America/Los_Angeles": [
+   "Los Angeles"
+  ],
+  "America/Chicago": [
+   "Chicago"
+  ],
+  "America/Toronto": [
+   "Toronto"
+  ],
+  "America/Sao_Paulo": [
+   "São Paulo"
+  ],
+  "America/Mexico_City": [
+   "Mexico-Stad"
+  ],
+  "Europe/Paris": [
+   "Parijs",
+   "Parijse"
+  ],
+  "Europe/Berlin": [
+   "Berlijn",
+   "Berlijnse"
+  ],
+  "Europe/Madrid": [
+   "Madrid"
+  ],
+  "Europe/Rome": [
+   "Rome"
+  ],
+  "Europe/Lisbon": [
+   "Lissabon"
+  ],
+  "Europe/Moscow": [
+   "Moskou",
+   "Moskouse"
+  ],
+  "Asia/Dubai": [
+   "Dubai"
+  ],
+  "Asia/Shanghai": [
+   "Sjanghai"
+  ],
+  "Asia/Hong_Kong": [
+   "Hongkong"
+  ],
+  "Asia/Singapore": [
+   "Singapore"
+  ],
+  "Asia/Tokyo": [
+   "Tokio",
+   "Tokiose"
+  ],
+  "Australia/Sydney": [
+   "Sydney",
+   "Sydneyse"
+  ]
+ }
+}

@@ -1,0 +1,73 @@
+{
+ "source": "City names: CLDR 47 timeZoneNames exemplarCity (via Babel 2.18) for de; a zone with no exemplarCity takes the TR35 fallback, the city part of the IANA zone ID. Pattern: CLDR de regionFormat \"{0} (Ortszeit)\", and \"<city>-Zeit\" / \"<city adjective> Zeit\". The adjectives in -er (\"Londoner\") are not yet checked against a dictionary.",
+ "patterns": [
+  "{city} zeit",
+  "{city} ortszeit"
+ ],
+ "cities": {
+  "Europe/London": [
+   "London",
+   "Londoner"
+  ],
+  "America/New_York": [
+   "New York",
+   "New Yorker"
+  ],
+  "America/Los_Angeles": [
+   "Los Angeles"
+  ],
+  "America/Chicago": [
+   "Chicago"
+  ],
+  "America/Toronto": [
+   "Toronto"
+  ],
+  "America/Sao_Paulo": [
+   "São Paulo"
+  ],
+  "America/Mexico_City": [
+   "Mexiko-Stadt"
+  ],
+  "Europe/Paris": [
+   "Paris",
+   "Pariser"
+  ],
+  "Europe/Berlin": [
+   "Berlin",
+   "Berliner"
+  ],
+  "Europe/Madrid": [
+   "Madrid"
+  ],
+  "Europe/Rome": [
+   "Rom"
+  ],
+  "Europe/Lisbon": [
+   "Lissabon"
+  ],
+  "Europe/Moscow": [
+   "Moskau",
+   "Moskauer"
+  ],
+  "Asia/Dubai": [
+   "Dubai"
+  ],
+  "Asia/Shanghai": [
+   "Shanghai"
+  ],
+  "Asia/Hong_Kong": [
+   "Hongkong"
+  ],
+  "Asia/Singapore": [
+   "Singapur"
+  ],
+  "Asia/Tokyo": [
+   "Tokio",
+   "Tokioter"
+  ],
+  "Australia/Sydney": [
+   "Sydney",
+   "Sydneyer"
+  ]
+ }
+}

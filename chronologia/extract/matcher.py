@@ -263,6 +263,8 @@ def _bind(element: SlotElement, token: Token, spec: LangSpec,
     if name == "DPDEIX":
         return token.text in spec.daypart_deictics
     if name == "ZONE":
+        if token.text in spec.zone_cities:
+            return True
         # the base acronym ("utc"/"gmt") must be a known zone surface; any
         # trailing signed offset ("utc+2") rides on the same token and is
         # parsed at resolve time.
