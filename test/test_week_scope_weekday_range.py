@@ -43,7 +43,7 @@ def test_week_scope_reaches_both_ends(text, lang, first, last, anchor):
 
 
 @pytest.mark.xfail(strict=True, raises=AssertionError,
-                   reason="a leading week scope is left in the remainder (#1442)")
+                   reason="https://github.com/TigreGotico/chronologia/issues/1452")
 def test_leading_week_scope_reaches_both_ends():
     anchor = _ANCHORS[0]
     got = extract_timespan("next week from wednesday to thursday", "en", anchor)
