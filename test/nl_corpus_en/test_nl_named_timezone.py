@@ -7,8 +7,8 @@ is 15:00 tagged UTC-5, NOT converted to 20:00 UTC.
 
 These abbreviations are mapped as **fixed** offsets, a deliberate
 simplification: they are NOT DST-aware IANA zones.  Genuinely ambiguous
-abbreviations (IST, ACST, CST-as-China, ...) and city/region words
-("Eastern time", "New York time") are out of scope and must NOT fabricate an
+abbreviations (IST, ACST, CST-as-China, ...) and region or bare city words
+("Eastern", "Berlin") must NOT fabricate an
 offset -- they stay naive with the word left in the remainder.
 
 Anchor: Tuesday 2017-06-27 13:04 (prefer_future applies to the naive wall time).

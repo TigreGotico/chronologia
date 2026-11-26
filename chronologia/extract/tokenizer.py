@@ -250,7 +250,7 @@ _DOTCLOCK = r"(?<!\d)(?<!\d\.)(?:[01]?\d|2[0-3])\.[0-5]\d(?!\d)(?!\.)"
 _NUM = r"\d+(?:\.\d+)?"
 # a timezone acronym with an optional fixed signed offset kept as ONE token so
 # the sign survives ("utc+2", "gmt-5", bare "utc"); language-neutral, like the
-# ISO / clock literals above.  Named-city zones are deliberately out of scope.
+# ISO / clock literals above.  Named-city zones come from ``zone_cities.json``.
 _ZONE = r"(?:utc|gmt)(?:[+-]\d{1,2}(?::?\d{2})?)?"
 # a bare RFC/ISO signed numeric offset kept as ONE token ("-0500", "+05:30",
 # "-08:00") so the sign survives to resolve time.  The hour is bound 00..14 and
