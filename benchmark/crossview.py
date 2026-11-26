@@ -56,8 +56,6 @@ Key = Tuple[str, str, str, str, str]
 
 # The phrases the four views read differently.
 SEEDS = (
-    ("en", "the sixth monday of every month"),
-    ("en", "the last business day of every month"),
     ("de", "de jeden Montag von Juni bis August"),
 )
 

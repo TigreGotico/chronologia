@@ -116,6 +116,9 @@ def _bind(element: SlotElement, token: Token, spec: LangSpec,
         # the business-day class noun ("business", "Werktag", "weekday")
         return (token.text in spec.connectors.get("business", frozenset())
                 or token.text in spec.connectors.get("weekday", frozenset()))
+    if name == "EVERY":
+        # "of every month": the scope recurs, read as a rule by recurrence
+        return token.text in spec.connectors.get("every", frozenset())
     if name == "USG":
         return token.text in spec.singular_units
     if name in ("MARKER", "DIRECTION_MARKER"):
