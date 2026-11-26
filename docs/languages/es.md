@@ -83,7 +83,7 @@ The Roman calendar anchors rest on a Wikipedia article. That source is weaker th
 
 ## Regional variants
 
-The tag `es-CO` gets the same results as `es`. chronologia implements no regional difference for Colombian Spanish: `es-CO` loads the `es` locale data, the same numtag lexicon and the same first day of the week.
+The tag `es-CO` gets the same results as `es`. chronologia implements no regional difference for Colombian Spanish: `es-CO` loads the `es` locale data, the same numtag lexicon and the same scale. `es-CO` uses the Monday week start of `es`; `_REGION_WEEK_START` has no entry for CO.
 
     >>> from datetime import datetime
     >>> from chronologia import extract_timespan
@@ -126,7 +126,6 @@ Each line is an open issue with a strict `xfail` test for this language. The lin
 
 - A part of the day with no day word answers the band that has already passed. Example (reader `extract_timespan`, lang `es`, anchor 2017-06-27 13:04): `necesito que suene una alarma por la mañana` gives 2017-06-27 06:00 to 2017-06-27 12:00 and `necesito que suene una alarma` left over. [#997](https://github.com/TigreGotico/chronologia/issues/997)
 
-- A part of the day in another clause leaves a lone hour as spoken. Example (reader `extract_timespan`, lang `es-ES`, anchor 2026-01-05 06:00): `a las 9, esta noche` gives 2026-01-05 09:00 to 2026-01-05 09:01 and `esta noche` left over. [#1001](https://github.com/TigreGotico/chronologia/issues/1001)
 
 - A part of the day before a clock stays in the remainder. Example (reader `extract_timespan`, lang `es-ES`, anchor 2026-10-17 12:00): `tarde a las 4:30` gives 2026-10-17 16:30 to 2026-10-17 16:31 and `tarde` left over. [#1002](https://github.com/TigreGotico/chronologia/issues/1002)
 

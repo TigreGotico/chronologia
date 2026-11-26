@@ -175,7 +175,7 @@ def table():
     results = json.load(open(RESULTS, encoding="utf-8"))
     codes = locales()
     head = "| Language | Tag | Data | Numbers | " + " | ".join(c.capitalize() for c in COLUMNS) + " |"
-    lines = [head, "|" + ":---|" * (4 + len(COLUMNS))]
+    lines = ["Cells: status, own test rows passed / own test rows.", "", head, "|" + ":---|" * (4 + len(COLUMNS))]
     for tag, name in LEADERS:
         code = tag.split("-")[0]
         if code in codes:

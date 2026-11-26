@@ -42,17 +42,19 @@ numtag reads the spelled numbers of the locales in `NUMTAG_LANGS` in `chronologi
 
 The script `tools/language_support.py` writes this table. It reads the locale data in `chronologia/locale/<code>/` and the test results in `docs/languages/support.json`. The test `test/test_docs_language_support.py` writes the table again and fails when this page differs.
 
-Each cell gives a status, then the passed test rows and the total test rows for that locale and feature. The status follows this rule:
+Each cell gives a status, then the number of our own test rows that pass and the total of our own test rows, for that locale and feature. These counts come from the regression rows in this repository. They do not measure coverage of the language. A feature can show "yes" with a few rows and still fail most phrases that a speaker uses. For coverage, read the outside date benchmark in [benchmarks.md](../benchmarks.md).
 
-- **yes**: the locale data for the feature exists, and at least one test row passes.
+The status follows this rule:
+
+- **yes**: the locale data for the feature exists, and at least one of our test rows passes. "yes" does not mean that the feature is complete.
 - **partial**: the data exists and no test row passes, or a test row passes and the locale ships no data for the feature.
 - **no**: the data does not exist, and no test row passes.
 
-A test row counts for a feature when its file name in `test/nl_corpus_<code>/` matches the pattern of the feature in `FEATURES` in the script. A strict `xfail` row is a row that does not pass. The Spoken column counts the rows in `test/test_spoken*_<code>.py`. It reads `chronologia.spoken.writes(tag)`, so a tag with no writer is "no".
+A test row counts for a feature when its file name in `test/nl_corpus_<code>/` matches the pattern of the feature in `FEATURES` in the script. A strict `xfail` row and a skipped row count as rows that do not pass. The Spoken column counts the rows in `test/test_spoken*_<code>.py`. It reads `chronologia.spoken.writes(tag)`, so a tag with no writer is "no".
 
 A regional tag reads the data of its base language, named in the Data column. The leader page of each language lists the forms that differ by region. The languages that have a language leader come first, in leader order. The other languages follow by name.
 
-Bengali and Marwari have no locale. `extract_timespan` raises `NotImplementedError` for `bn`, `bn-IN` and `mwr`. Issue [#1484](https://github.com/TigreGotico/chronologia/issues/1484) holds the questions for a native speaker. numtag reads Bengali numbers with its `bn` lexicon. The draft pull request [numtag#384](https://github.com/TigreGotico/numtag/pull/384) adds the Marwari numbers.
+Bengali and Marwari have no locale. `extract_timespan` raises `NotImplementedError` for `bn`, `bn-IN` and `mwr`. Issue [#1484](https://github.com/TigreGotico/chronologia/issues/1484) holds the questions for a native speaker. numtag reads Bengali numbers with its `bn` lexicon. Issue #1484 tracks Marwari.
 
 To measure the test rows again and write the table, run these commands:
 
@@ -62,6 +64,8 @@ python tools/language_support.py write
 ```
 
 <!-- support-table:start -->
+Cells: status, own test rows passed / own test rows.
+
 | Language | Tag | Data | Numbers | Dates | Clock | Durations | Relative days | Ranges | Recurrence | Holidays | Spoken |
 |:---|:---|:---|:---|:---|:---|:---|:---|:---|:---|:---|:---|
 | [Portuguese (Portugal)](pt.md) | pt-PT | pt | numtag | yes 175/175 | yes 321/321 | yes 18/18 | yes 127/127 | yes 112/112 | yes 139/139 | yes 360/361 | yes 1143/1143 |

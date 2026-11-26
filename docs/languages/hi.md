@@ -94,7 +94,7 @@ To read a phrase, call `extract_timespan` with the phrase, the locale code and a
 
 ## Regional variants
 
-The tag `hi-IN` gets the same results as `hi`. chronologia implements no regional difference for Hindi in India: `hi-IN` loads the `hi` locale data, the same number reader (`numfold_indic`) and the same first day of the week.
+The tag `hi-IN` gets the same results as `hi`. chronologia implements no regional difference for Hindi in India: `hi-IN` loads the `hi` locale data, the same number reader (`numfold_indic`) and the same scale. `hi-IN` uses the Monday week start of `hi`; `_REGION_WEEK_START` has no entry for IN.
 
     >>> from datetime import datetime
     >>> from chronologia import extract_timespan

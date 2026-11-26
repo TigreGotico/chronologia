@@ -173,7 +173,6 @@ Each line is an open issue with a strict `xfail` test for this language. The lin
 
 **Dates, ranges and weeks**
 
-- A date built from two parts loses one of them. Example (reader `extract_timespan`, lang `de`, anchor 2117-09-03 13:30): `in 3 tagen um 15 uhr` gives 2117-09-06 13:30 to 2117-09-07 13:30 and `um 15 uhr` left over. [#1034](https://github.com/TigreGotico/chronologia/issues/1034)
 
 - Text that is no date reads as a date, or the wrong reading wins. Example (reader `extract_timespan`, lang `de`, anchor 2017-06-27 00:00): `am 0. januar` gives 2018-01-01 00:00 to 2018-02-01 00:00 and `am 0.` left over. [#1035](https://github.com/TigreGotico/chronologia/issues/1035)
 
