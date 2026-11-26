@@ -143,12 +143,14 @@ def test_daypart_never_raises_on_junk():
 
 # -- honest deferral: dawn / dusk -----------------------------------------
 
-@pytest.mark.xfail(strict=True, reason=(
+@pytest.mark.xfail(strict=True, raises=AssertionError, reason=(
     "dawn/dusk are astronomical solar events, location-dependent: without "
     "coordinates the library cannot place them on a real clock. Deferred rather "
     "than faked with an invented civil-twilight hour. The solar machinery "
     "(chronologia.solar / prayer_times) resolves them once a location is "
     "supplied."))
 def test_dawn_is_a_located_solar_event_not_a_nominal_band():
-    s = extract_timespan("at dawn", "en-us", anchor=ANCHOR).span
+    found = extract_timespan("at dawn", "en-us", anchor=ANCHOR)
+    assert found is not None, "no reading for 'at dawn'"
+    s = found.span
     assert s is not None and s.start.hour < 12

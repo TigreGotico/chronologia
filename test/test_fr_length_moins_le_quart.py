@@ -30,9 +30,10 @@ def test_une_heure_moins_le_quart_is_45_minutes():
     assert found.duration == timedelta(minutes=45)
 
 
-@pytest.mark.xfail(strict=True, reason=ISSUE)
+@pytest.mark.xfail(strict=True, raises=AssertionError, reason=ISSUE)
 def test_une_heure_moins_le_quart_avant_minuit_ends_at_midnight():
     found = extract_timespan(
         "une heure moins le quart avant minuit", "fr", ANCHOR)
+    assert found is not None, "no reading for 'une heure moins le quart avant minuit'"
     assert (found.span.start.datetime(), found.span.end.datetime()) == (
         datetime(2026, 11, 22, 23, 15), datetime(2026, 11, 23, 0, 0))
