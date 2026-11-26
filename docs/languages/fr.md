@@ -74,6 +74,8 @@ The weekday and month names cite Unicode CLDR 47.
 
 **A weekday before the anchor's in the week, with `en huit`.** Said on a Tuesday, `lundi en huit` returns nothing, and so does `lundi en huit à 10h`. A clock beside the idiom has no day to land on.
 
+**A part of the day named by a range of days.** `la nuit de samedi à dimanche`, `la nuit du 28 au 29 novembre` and `le soir du 3 au 5 mai` return nothing. The night from one day into the next is no band of one day: the `nuit` band is the small hours of the day named, and TLFi gives the night as running from dusk to dawn, with a fixed clock band only in law ("de 21 heures à 6 heures"). The evenings of several days are several bands. The words that head such a range are listed in `marker_daypart_across_days.voc`.
+
 **A bare duration.** `quinze jours` returns nothing. A quantity without a direction marker is still only a quantity. A fortnight unit does ship, but it needs a marker to become a span.
 
 ## Open questions for a native speaker
@@ -129,6 +131,12 @@ Each example below runs as a doctest with a fixed anchor, so the output does not
     >>> extract_timespan('le 15.06.2020', "fr", anchor) is None
     True
     >>> extract_timespan('quinze jours', "fr", anchor) is None
+    True
+    >>> extract_timespan('la nuit de samedi à dimanche', "fr", anchor) is None
+    True
+    >>> extract_timespan('la nuit du 28 au 29 novembre', "fr", anchor) is None
+    True
+    >>> extract_timespan('le soir du 3 au 5 mai', "fr", anchor) is None
     True
     >>> extract_timespan('lundi en huit', "fr", anchor) is None
     True

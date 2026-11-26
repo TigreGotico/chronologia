@@ -1,0 +1,15 @@
+# Day-part words that, named by a range of days, give no reading:
+# "la nuit de samedi à dimanche", "le soir du 3 au 5 mai".
+# The night runs from one day into the next: TLFi (CNRTL) s.v. "nuit", II.A:
+# "depuis la disparition de la lumière qui suit le coucher du soleil jusqu'à
+# l'apparition du jour qui précède le lever du soleil", which depends on the
+# place and the season; the only fixed clock band it gives is legal ("DR.
+# Espace de temps qui s'étend de 21 heures à 6 heures"). The locale's "nuit"
+# band is the small hours of one day (Unicode CLDR 47, fr), so it cannot hold
+# that night, and "le soir"/"le matin" of a range of days names several bands.
+nuit
+nuits
+soir
+soirs
+matin
+matins
