@@ -75,6 +75,16 @@ The seasons and the holiday vocabulary carry no recorded source.
 3. Should the uninflected `komend` join `komende` as a "next" determiner? `komend weekend` leaves `komend` unread.
 4. Are `kalenden`, `nonen` and `iden` the forms Dutch historical writing uses?
 
+## Regional variants
+
+The tag `nl-NL` gets the same results as `nl`. chronologia implements no regional difference for Dutch in the Netherlands: `nl-NL` loads the `nl` locale data, the same numtag lexicon and the same first day of the week.
+
+    >>> from datetime import datetime
+    >>> from chronologia import extract_timespan
+    >>> anchor = datetime(2027, 6, 2, 12, 0)
+    >>> extract_timespan("5 juni 2027", "nl", anchor)[0] == extract_timespan("5 juni 2027", "nl-NL", anchor)[0]
+    True
+
 ## Checked examples
 
 Each example below runs as a doctest with a fixed anchor, so the output does not depend on the machine. The first one shows which reader handles the numbers of this locale.

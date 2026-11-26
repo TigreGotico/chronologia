@@ -92,6 +92,16 @@ To read a phrase, call `extract_timespan` with the phrase, the locale code and a
 
 6. Is there a fixed early/mid/late vocabulary for a month that could be attested?
 
+## Regional variants
+
+The tag `hi-IN` gets the same results as `hi`. chronologia implements no regional difference for Hindi in India: `hi-IN` loads the `hi` locale data, the same number reader (`numfold_indic`) and the same first day of the week.
+
+    >>> from datetime import datetime
+    >>> from chronologia import extract_timespan
+    >>> anchor = datetime(2027, 6, 2, 12, 0)
+    >>> extract_timespan("5 जून 2027", "hi", anchor)[0] == extract_timespan("5 जून 2027", "hi-IN", anchor)[0]
+    True
+
 ## Checked examples
 
 Each example below runs as a doctest with a fixed anchor, so the output does not depend on the machine. The first one shows which reader handles the numbers of this locale.

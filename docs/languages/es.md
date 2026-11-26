@@ -81,6 +81,16 @@ The Roman calendar anchors rest on a Wikipedia article. That source is weaker th
 3. Are `calendas`, `nonas` and `idus` the forms Spanish historical writing uses, or does it keep the Latin?
 4. Is `día` ever used in a way that would make folding a leading `día` into a date wrong?
 
+## Regional variants
+
+The tag `es-CO` gets the same results as `es`. chronologia implements no regional difference for Colombian Spanish: `es-CO` loads the `es` locale data, the same numtag lexicon and the same first day of the week.
+
+    >>> from datetime import datetime
+    >>> from chronologia import extract_timespan
+    >>> anchor = datetime(2027, 6, 2, 12, 0)
+    >>> extract_timespan("5 de junio de 2027", "es", anchor)[0] == extract_timespan("5 de junio de 2027", "es-CO", anchor)[0]
+    True
+
 ## Checked examples
 
 Each example below runs as a doctest with a fixed anchor, so the output does not depend on the machine. The first one shows which reader handles the numbers of this locale.

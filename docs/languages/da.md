@@ -92,6 +92,16 @@ The clock words, the range markers, the seasons and the holiday vocabulary recor
 
 1. Is `klokken seks om natten` 06:00 or 18:00 in ordinary use? The band split puts it at 18:00.
 
+## Regional variants
+
+The tag `da-DK` gets the same results as `da`. chronologia implements no regional difference for Danish in Denmark: `da-DK` loads the `da` locale data, the same numtag lexicon and the same first day of the week.
+
+    >>> from datetime import datetime
+    >>> from chronologia import extract_timespan
+    >>> anchor = datetime(2027, 6, 2, 12, 0)
+    >>> extract_timespan("5. juni 2027", "da", anchor)[0] == extract_timespan("5. juni 2027", "da-DK", anchor)[0]
+    True
+
 ## Checked examples
 
 Each example below runs as a doctest with a fixed anchor, so the output does not depend on the machine. The first one shows which reader handles the numbers of this locale.
