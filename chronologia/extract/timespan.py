@@ -853,6 +853,55 @@ def _extract_plain_range(text, tokens, engine, anchor, scale_mode="short"):
         day = bare_day_words(own)
         return got[:4] + (consumed_extent(day), consumed_pieces(day))
 
+    # -- A <from> B <until> (postposed) -------------------------------------
+    # A locale whose "from" word is a postposition (``positions`` "from":
+    # "post") closes a range with the "until" word after the right bound:
+    # Hindi "सोमवार से बुधवार तक".  The left bound runs from the start of the
+    # stream to the "from" word, so a leading word that no endpoint reads
+    # blocks the range.
+    if spec.positions.get("from") == "post":
+        until_surf = _conn_surfaces(spec, "until", ())
+        found = _find_conn(tokens, from_surf)
+        if found is not None and until_surf and found[0] > 0:
+            p, k = found
+            close = _find_conn(tokens[p + k:], until_surf)
+            if close is not None and close[0] > 0:
+                q = p + k + close[0]
+                mk = close[1]
+                left_tok, right_tok = tokens[:p], tokens[p + k:q]
+                suffix = render_remainder(text, list(tokens[q + mk:]))
+                # the pair of markers frames the range as a lead does, so a
+                # spoken cardinal is an hour ("चार बजे से पाँच बजे तक")
+                lclock = _cardinals_folded(left_tok, spec, text)
+                rclock = _cardinals_folded(right_tok, spec, text)
+                got = None
+                # a right clock with no daypart of its own stays in the left
+                # one's daypart: "दोपहर चार बजे से पाँच बजे तक" ends at 17:00
+                lent = [t for t in lclock if t.text in spec.dayparts]
+                if len(lent) == 1 and not any(
+                        t.text in spec.dayparts or t.text in spec.meridiems
+                        for t in rclock):
+                    word = lent[0].text
+                    got = _compose_clock_range(
+                        text, lclock,
+                        (Token(text=word, raw=word, index=-1),) + rclock,
+                        engine, anchor)
+                if got is None:
+                    got = _compose_clock_range(text, lclock, rclock,
+                                               engine, anchor)
+                if got is None:
+                    got = _compose_range(left_tok, right_tok, endpoint,
+                                         borrowed, spec, bare_of, monthly,
+                                         previous, daily,
+                                         following=following,
+                                         holding=holding)
+                if got is not None:
+                    span, rem, ext, left, right = got
+                    rem = (rem + " " + suffix).strip() if suffix else rem
+                    ext = join_extents(ext, consumed_extent(tokens[p:p + k]))
+                    return span, rem, join_extents(
+                        ext, consumed_extent(tokens[q:q + mk])), left, right
+
     # -- from A to B -------------------------------------------------------
     at_from = _lead_at(tokens, from_surf, spec)
     at_between = _lead_at(tokens, between_surf, spec)
@@ -3818,6 +3867,40 @@ def _skip_one_idiom_veto(tokens, match, spec) -> bool:
             and marker_names_a_reference(tokens, match.span[1] - 1, spec))
 
 
+def _homograph_veto(tokens, match, spec) -> bool:
+    """True for a match made only of surfaces in ``marker_homograph.voc`` with
+    no time cue beside it.
+
+    Some date words are homographs of a more frequent word: pt "verão" is
+    also "they will see", sv "vår" is also "our".  Alone, such a word takes
+    its frequent sense.  A cue keeps the date sense: a connector right before
+    it (a preposition, a demonstrative, an article), a relative marker right
+    after it ("vara trecută"), a word from ``marker_homograph_cue.voc`` on
+    either side (Kabyle "deg tafsut", "lḥedd-agi"), a daypart right after it
+    ("lḥedd ṣṣbeḥ"), or a number on either side.  A cue that the match
+    consumes ("no verão", "verão de 2027") makes a longer match, which this
+    veto leaves alone.  A word that is the whole input keeps the date sense.
+    """
+    words = spec.connectors.get("homograph")
+    if not words:
+        return False
+    b, e = match.span
+    if e - b == len(tokens) or any(t.text not in words for t in tokens[b:e]):
+        return False
+    if b > 0:
+        prev = tokens[b - 1]
+        if prev.is_number or any(prev.text in v for k, v in spec.connectors.items()
+                                 if k != "homograph"):
+            return False
+    if e < len(tokens):
+        nxt = tokens[e]
+        if (nxt.is_number or nxt.text in spec.rel_markers
+                or nxt.text in spec.dayparts
+                or nxt.text in spec.connectors.get("homograph_cue", ())):
+            return False
+    return True
+
+
 def _candidate_veto(tokens, match, spec) -> bool:
     """Combined pre-selection veto: readings whose surrounding context makes
     them the WRONG parse ("the new year" is the period not the holiday; a
@@ -3838,6 +3921,7 @@ def _candidate_veto(tokens, match, spec) -> bool:
             or _month_holiday_collision_veto(tokens, match, spec)
             or _relday_daypart_homograph_veto(tokens, match, spec)
             or _participle_season_veto(tokens, match, spec)
+            or _homograph_veto(tokens, match, spec)
             or _num_preamble_named_day_idiom_veto(tokens, match, spec)
             or _subday_named_day_idiom_veto(match, spec)
             or _stranded_year_veto(tokens, match, spec)
@@ -4786,9 +4870,45 @@ def _compose_core(tokens, engine, anchor, enable=(), jurisdiction=None,
     return resolved, (res, set(res.consumed) | label_consumed, rep)
 
 
+def _indefinite_daypart_veto(tokens, consumed, text, spec) -> bool:
+    """True for a season, daypart or clock reading next to an indefinite
+    daypart.
+
+    Hindi "सर्दियों की एक सुबह" and Kabyle "yiwet n tṣebḥit n tegrest" are
+    "one winter morning": the marker makes the morning indefinite, so the
+    phrase names no date.  The test reads the written surface, because the
+    number fold turns the marker into 1.  It looks from three tokens before
+    the consumed tokens to three tokens after them, and lets one word stand
+    between the marker and the daypart ("एक धुंधली सुबह", "yiwet n tṣebḥit").
+    A marker behind an "at" word is a clock hour ("ɣef yiwet n tmeddit").
+    A locale with no ``marker_indef_daypart.voc`` is untouched.
+    """
+    indef = spec.connectors.get("indef_daypart")
+    if not indef or not consumed:
+        return False
+    def part(t):
+        return t.text in spec.dayparts or t.text in spec.meridiems
+    if not any(tokens[i].text in spec.seasons or part(tokens[i])
+               for i in consumed):
+        return False
+    at = spec.connectors.get("at", frozenset())
+    n = len(tokens)
+    for k in range(max(0, min(consumed) - 3), min(n, max(consumed) + 4)):
+        t = tokens[k]
+        if (t.char_start is not None
+                and text[t.char_start:t.char_end].lower() in indef
+                and not (k > 0 and tokens[k - 1].text in at)
+                and any(part(tokens[j]) for j in range(k + 1, min(n, k + 3)))):
+            return True
+    return False
+
+
 def _core_veto(tokens, consumed, rep, engine, anchor, text):
     """Whether the composed winner strands a tail that shows it is the wrong
     reading of an unsupported compound."""
+    if text is not None and _indefinite_daypart_veto(tokens, consumed, text,
+                                                     engine.spec):
+        return True
     # Trailing-scope veto: a bare relative-period reading ("os últimos dias" =
     # "the last days") that strands an unbound "of? <SCOPE_UNIT>" tail ("do ano",
     # "roku") is the unsupported "last <plural-unit> of <period>" compound.  The
