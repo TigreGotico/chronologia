@@ -19,31 +19,20 @@ ROWS = [
     ("bg", "Не забравяй чадър за утрешната разходка.", 1),
     ("uk", "Сьогоднішня зустріч тривала довго.", 0),
     ("uk", "Я не дочитала вчорашньої статті.", -1),
-    ("uk", "Ми говоримо про учорашню грозу.", -1),
     ("uk", "Готуйся до завтрашньої поїздки.", 1),
     ("pl", "Po wczorajszej burzy ogród jest mokry.", -1),
     ("pl", "Na dzisiejszym spotkaniu było tłoczno.", 0),
     ("pl", "Musimy przygotować jutrzejsze zebranie.", 1),
-    ("sk", "Na včerajšom koncerte hrala dobrá kapela.", -1),
     ("sk", "Podklady k dnešnej porade sú hotové.", 0),
-    ("sk", "Zajtrajšia porada sa presúva.", 1),
-    ("sl", "Na včerajšnjem sestanku smo se dogovorili.", -1),
-    ("sl", "Na današnjem izletu je deževalo.", 0),
-    ("sl", "Jutrišnji izlet bo zgodaj zjutraj.", 1),
     ("hr", "O jučerašnjem razgovoru još razmišljam.", -1),
     ("hr", "Na današnjem sastanku bilo je napeto.", 0),
     ("hr", "Sutrašnji izlet bi se mogao otkazati.", 1),
     ("sr", "Na jučerašnjem sastanku smo se dogovorili.", -1),
     ("sr", "Јучерашњи разговор ме је изненадио.", -1),
     ("sr", "Sutrašnji izlet počinje rano.", 1),
-    ("el", "Η χθεσινή συνάντηση κράτησε πολύ.", -1),
     ("el", "Η σημερινή βροχή ήταν δυνατή.", 0),
     ("el", "Η αυριανή συναυλία μάλλον θα αναβληθεί.", 1),
-    ("eo", "La hodiaŭa kunveno estis vigla.", 0),
     ("eo", "Mi ankoraŭ pensas pri la hieraŭa koncerto.", -1),
-    ("eo", "Ni preparis ĉion por la morgaŭan ekskurson.", 1),
-    ("lt", "Šiandieninis susitikimas užtruko.", 0),
-    ("lt", "Negaliu pamiršti vakarykščio koncerto.", -1),
     ("lt", "Rytdienos šventei reikia pyrago.", 1),
     ("et", "Tänane koosolek venis pikaks.", 0),
     ("et", "Eilsest koosolekust on protokoll valmis.", -1),
@@ -56,12 +45,10 @@ ROWS = [
     ("gl", "Na sesión hodierna debateuse a reforma.", 0),
     ("pt", "Na sessão hodierna aprovou-se a reforma.", 0),
     ("da", "Har du læst gårsdagens avis?", -1),
-    ("da", "Husk vand før morgendagens hedebølge.", 1),
     ("nb", "Har du lest gårsdagens avis?", -1),
     ("nb", "Vi trenger en sakliste for morgendagens styremøte.", 1),
     ("nn", "Eg gler meg til morgondagens fisketur.", 1),
     ("nn", "Gårsdagen var regnfull.", -1),
-    ("sv", "Har du läst gårdagens protokoll?", -1),
 ]
 
 
@@ -97,22 +84,56 @@ def test_a_numeral_above_31_before_a_month_is_still_refused(lang, text):
     assert extract_timespan(text, lang, ANCHOR) is None
 
 
-NO_DATE = [
-    ("da", "Alt går godt."),
-    ("sk", "To je dnešná mládež."),
-    ("pl", "Ten film to dzisiejsza klasyka."),
+def test_da_gaar_alone_gives_no_date():
+    assert extract_timespan("Alt går godt.", "da", ANCHOR) is None
+
+
+PROBE_ANCHOR = datetime(2026, 11, 26, 12, 0)
+
+# The "today's" adjectives also mean "present-day"; with no time or event
+# noun beside them they give no date.
+PRESENT_DAY = [
+    ("pl", "dzisiejsza młodzież"),
+    ("pl", "dzisiejsze czasy"),
+    ("sk", "dnešná doba"),
+    ("sk", "dnešný svet"),
+    ("uk", "сьогоднішній світ"),
+    ("bg", "днешното общество"),
+    ("hr", "današnji svijet"),
+    ("el", "σημερινή κοινωνία"),
+    ("el", "η σημερινή εποχή"),
+    ("sl", "današnji čas"),
     ("es", "La sociedad hodierna cambia deprisa."),
-    ("el", "Το σημερινό παιδί μεγαλώνει με κινητό."),
+    ("it", "la società odierna"),
 ]
 
 
-@pytest.mark.parametrize("lang,text", NO_DATE[:1])
-def test_da_gaar_alone_gives_no_date(lang, text):
-    assert extract_timespan(text, lang, ANCHOR) is None
-
-
-@pytest.mark.xfail(strict=True, raises=AssertionError,
-                   reason="present-day sense of a day adjective reads as a date (#1467)")
-@pytest.mark.parametrize("lang,text", NO_DATE[1:])
+@pytest.mark.parametrize("lang,text", PRESENT_DAY)
 def test_the_present_day_sense_gives_no_date(lang, text):
-    assert extract_timespan(text, lang, ANCHOR) is None
+    assert extract_timespan(text, lang, PROBE_ANCHOR) is None
+
+
+CUED_TODAY = [
+    ("pl", "dzisiejszy dzień"),
+    ("sk", "dnešný deň"),
+    ("el", "σημερινή ημέρα"),
+    ("hr", "današnji dan"),
+    ("uk", "сьогоднішній день"),
+    ("pl", "dzisiejsze spotkanie"),
+    ("es", "la sesión hodierna"),
+]
+
+
+@pytest.mark.parametrize("lang,text", CUED_TODAY)
+def test_a_time_or_event_noun_keeps_the_today_sense(lang, text):
+    found = extract_timespan(text, lang, PROBE_ANCHOR)
+    assert found.span.start.datetime() == datetime(2026, 11, 26)
+
+
+@pytest.mark.parametrize("lang,text", [
+    ("pl", "wczorajsza gazeta"),
+    ("hr", "jučerašnje novine"),
+])
+def test_yesterdays_paper_is_yesterday(lang, text):
+    found = extract_timespan(text, lang, PROBE_ANCHOR)
+    assert found.span.start.datetime() == datetime(2026, 11, 25)

@@ -3870,6 +3870,36 @@ def _skip_one_idiom_veto(tokens, match, spec) -> bool:
             and marker_names_a_reference(tokens, match.span[1] - 1, spec))
 
 
+def _cued_day_veto(tokens, match, spec) -> bool:
+    """True for a match that holds a ``named_day_cued_<off>.voc`` surface with
+    no cue after it.
+
+    pl "dzisiejszy", el "σημερινός" and es "hodierno" mean "today's" and,
+    more often, "present-day" ("dzisiejsza młodzież").  The day sense needs a
+    cue: a unit word right beside the adjective ("dzisiejszy dzień"), a word that starts with a stem from ``marker_cued_day_cue.voc``
+    ("dzisiejsze spotkanie"), or a number or daypart in the next three words.
+    """
+    words = spec.connectors.get("cued_day")
+    if not words:
+        return False
+    b, e = match.span
+    stems = tuple(spec.connectors.get("cued_day_cue", ()))
+    for i in range(b, e):
+        if tokens[i].text not in words:
+            continue
+        after = tokens[i + 1:i + 4]
+        # the noun stands after the adjective, or before it in the Romance
+        # order "la sesión hodierna"
+        beside = after[:1] + tokens[i - 1:i] if i else after[:1]
+        if any(t.text in spec.units or t.text in spec.singular_units
+               or t.text.startswith(stems) for t in beside):
+            continue
+        if any(t.is_number or t.text in spec.dayparts for t in after):
+            continue
+        return True
+    return False
+
+
 def _candidate_veto(tokens, match, spec) -> bool:
     """Combined pre-selection veto: readings whose surrounding context makes
     them the WRONG parse ("the new year" is the period not the holiday; a
@@ -3890,6 +3920,7 @@ def _candidate_veto(tokens, match, spec) -> bool:
             or _month_holiday_collision_veto(tokens, match, spec)
             or _relday_daypart_homograph_veto(tokens, match, spec)
             or _participle_season_veto(tokens, match, spec)
+            or _cued_day_veto(tokens, match, spec)
             or _num_preamble_named_day_idiom_veto(tokens, match, spec)
             or _subday_named_day_idiom_veto(match, spec)
             or _stranded_year_veto(tokens, match, spec)

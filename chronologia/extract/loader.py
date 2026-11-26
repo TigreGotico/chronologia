@@ -239,7 +239,16 @@ def _add_cycle(tables: dict, lang: str, base: str, surfaces: List[str]) -> None:
         dict.fromkeys(surfaces, int(num)))
 
 
+def _add_cued_day(tables: dict, lang: str, base: str, surfaces: List[str]) -> None:
+    # A day adjective whose frequent sense is "present-day": a named day that
+    # reads only with a cue beside it (see timespan._cued_day_veto).
+    tables["named_days"].update(dict.fromkeys(surfaces, int(base[len("named_day_cued_"):])))
+    cued = tables["connectors"].get("cued_day", frozenset())
+    tables["connectors"]["cued_day"] = cued | frozenset(surfaces)
+
+
 _SPECIAL = (
+    ("named_day_cued_", _add_cued_day),
     ("month_", _add_month),
     ("weekday_", _add_weekday),
     ("regnal_", _add_regnal),
