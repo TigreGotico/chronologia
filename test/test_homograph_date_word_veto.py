@@ -91,3 +91,15 @@ def test_ro_season_subject_before_copula():
     found = extract_timespan("vara e caldă", "ro", ANCHOR)
     assert found is not None
     assert found.span.start.datetime() == datetime(2026, 6, 1)
+
+
+@pytest.mark.xfail(raises=AssertionError, strict=True,
+                   reason="ro 'înainte' far from a date binds as an UNTIL bound "
+                          "and takes the clock time of the recurrence")
+def test_ro_weekly_clock_keeps_its_hour():
+    from chronologia import extract_recurrence
+    text = ("Piața se deschide în fiecare sâmbătă la ora zece dimineața, iar "
+            "oamenii vin cu mult înainte ca să prindă cele mai bune obiecte.")
+    rec = extract_recurrence(text, "ro", ANCHOR).recurrence
+    assert rec.until is None
+    assert rec.byhour == (10,)
