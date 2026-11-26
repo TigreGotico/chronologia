@@ -1,0 +1,7 @@
+# Unicode CLDR 47, common/main/bn.xml, dayPeriods format abbreviated and wide (the -বেলায় forms).
+# The locative -এ / -য় / -তে by H.-R. Thompson, Bengali (LOALL 18, John Benjamins 2012), §4 ("sokale", "sondhyay").
+# বিকেল and রাত are left out: no Bengali-script source has them yet.
+সন্ধ্যা
+সন্ধ্যায়
+সন্ধ্যাবেলা
+সন্ধ্যাবেলায়

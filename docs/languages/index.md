@@ -50,6 +50,7 @@ numtag reads the spelled numbers of the 40 locales in `NUMTAG_LANGS` in `chronol
 | [Azerbaijani](az.md) | az | numtag |
 | [Basque](eu.md) | eu | numtag |
 | [Belarusian](be.md) | be | numfold_be |
+| [Bengali](bn.md) | bn | numtag |
 | [Bulgarian](bg.md) | bg | numtag |
 | [Catalan](ca.md) | ca | numtag |
 | [Croatian](hr.md) | hr | numtag |

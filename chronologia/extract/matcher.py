@@ -758,6 +758,18 @@ class ConstructionMatcher:
                             in self.spec.connectors.get(
                                 "this_not_weekday", frozenset())):
                         continue
+                    # A word one or two before a day part that leaves its day
+                    # unknown gives no reading: an indefinite numeral
+                    # ("শীতের এক কুয়াশাভরা সকালে", "one foggy winter morning")
+                    # or a day word with two directions (Bengali কাল).  The
+                    # list is a locale fact (``marker_daypart_refused.voc``).
+                    if (name == "daypart_ref" and any(
+                            (tokens[k].mention.text if tokens[k].mention
+                             else tokens[k].raw).lower()
+                            in self.spec.connectors.get(
+                                "daypart_refused", frozenset())
+                            for k in range(max(0, start - 2), start))):
+                        continue
                     # A marker contracted with its preposition ("deste",
                     # "desta") always comes before its noun, so a match never
                     # ends on it: "a semana deste natal" is the week of
