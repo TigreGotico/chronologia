@@ -16,8 +16,10 @@ from __future__ import annotations
 
 import functools
 import inspect
+from contextlib import contextmanager
 from contextvars import ContextVar
-from typing import List, Optional
+from dataclasses import dataclass
+from typing import Iterator, List, Optional, Tuple
 
 from chronologia.astrodate import (_MONTH_NAMES_FULL, _WEEKDAY_NAMES_FULL,
                                    _days_in_month)
@@ -41,10 +43,19 @@ class ImpossibleDateError(ValueError):
         self.reason = reason
 
 
-_refusals: ContextVar[Optional[List[str]]] = ContextVar("refusals", default=None)
+@dataclass
+class Refusal:
+    """Why a reader refused a reading, and the text offsets of the words it
+    spent on the refused date (``None`` when the reader does not know them)."""
+    reason: str
+    chars: Optional[Tuple[int, int]] = None
 
 
-def decline(reason: Optional[str]) -> None:
+_refusals: ContextVar[Optional[List[Refusal]]] = ContextVar("refusals", default=None)
+
+
+def decline(reason: Optional[str],
+            chars: Optional[Tuple[int, int]] = None) -> None:
     """Record ``reason`` for the running ``"raise"`` call, if any.
 
     A refusal that has no calendar cause passes ``None`` and is not recorded.
@@ -53,12 +64,34 @@ def decline(reason: Optional[str]) -> None:
     """
     found = _refusals.get()
     if reason is not None and found is not None:
-        found.append(reason)
+        found.append(Refusal(reason, chars))
+
+
+def recorded() -> Optional[List[Refusal]]:
+    """The refusals of the running call, or ``None`` when none are recorded."""
+    return _refusals.get()
 
 
 def raising() -> bool:
     """Whether a ``"raise"`` call is running, so a refusal is being recorded."""
     return _refusals.get() is not None
+
+
+@contextmanager
+def capture() -> Iterator[List[Refusal]]:
+    """Record the refusals of the block, also outside a ``"raise"`` call.
+
+    Inside a ``"raise"`` call the block records into that call's list."""
+    found = _refusals.get()
+    if found is not None:
+        yield found
+        return
+    found = []
+    token = _refusals.set(found)
+    try:
+        yield found
+    finally:
+        _refusals.reset(token)
 
 
 def ordinal(n: int) -> str:
@@ -151,7 +184,7 @@ def reports_impossible(extract):
                 f"got {impossible!r}")
         if impossible == "none" or _refusals.get() is not None:
             return extract(*args, **kwargs)
-        found: List[str] = []
+        found: List[Refusal] = []
         token = _refusals.set(found)
         try:
             result = extract(*args, **kwargs)
@@ -166,7 +199,7 @@ def reports_impossible(extract):
             given = signature.bind(*args, **kwargs)
             given.apply_defaults()
             raise ImpossibleDateError(given.arguments["text"],
-                                      given.arguments["lang"], found[0])
+                                      given.arguments["lang"], found[0].reason)
         return result
 
     wrapper.__signature__ = signature.replace(parameters=[
