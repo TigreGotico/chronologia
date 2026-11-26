@@ -3981,19 +3981,25 @@ def _compose(resolved, engine, tokens, anchor=None, text=None):
         return None, set(), None
     apposed |= counted
     clocks = [(m, r) for m, r in resolved if m.construction == "clock_time"]
-    # an offset is a day only to the clock or daypart that pins it; beside a
-    # weekday or a date it stays a separate reading
-    composable = (_COMPOSABLE_DATES | {"relative_offset"}
-                  if clocks or any(m.construction == "daypart_ref"
-                                   for m, _r in resolved)
-                  else _COMPOSABLE_DATES)
+    # an offset is a day only to a clock or daypart in its own sentence;
+    # beside a weekday or a date it stays a separate reading
+    pins = [m for m, _r in resolved
+            if m.construction in ("clock_time", "daypart_ref")]
+
+    def _same_sentence(a, b):
+        (lo, hi) = sorted((a.span, b.span))
+        return not any(tokens[i].sentence_break_before
+                       for i in range(lo[1], hi[0] + 1))
+
     # "the morning after next" is a band of its day, so a clock beside it may
     # contradict the band and is left unread; "the week before last" is a
     # period, so no clock lands on it
     dates = [(m, r) for m, r in resolved
-             if m.construction in composable
+             if (m.construction in _COMPOSABLE_DATES
+                 or m.construction == "relative_offset")
              and (m.construction != "relative_offset"
-                  or _offset_is_day_or_coarser(m, spec))
+                  or (_offset_is_day_or_coarser(m, spec)
+                      and any(_same_sentence(m, p) for p in pins)))
              and not (m.construction in ("after_next", "before_last")
                       and ("DAYPART" in m.slots
                            or (m.slots.get("UNIT") is not None
