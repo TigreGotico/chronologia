@@ -979,10 +979,6 @@ class Resolver:
         value = self._named_day_base(match, anchor) + timedelta(days=days * qty)
         return Resolution(_day_span(value), self._consumed(match))
 
-    #: the named days a week idiom counts from: "d'aujourd'hui en huit, de
-    #: demain en huit" (Académie française, 9th ed., s.v. "huit").
-    _WEEK_IDIOM_DAYS = frozenset({0, 1})
-
     def _resolve_day_week_idiom(self, match, anchor):
         """fr "jeudi en huit", "demain en quinze": the named day, counted as
         day one, then the same day one or two weeks on (TLFi s.v. "huit":
@@ -999,10 +995,13 @@ class Resolver:
                 match.slots["WEEK_IDIOM"].raw.lower()]
         day_tok = match.slots.get("DAY_WORD")
         if day_tok is not None:
-            offset = self.spec.named_days[day_tok.text]
-            if offset not in self._WEEK_IDIOM_DAYS:
+            # only the day words the locale lists for the idiom
+            # (``marker_week_idiom_day.voc``: fr "aujourd'hui", "demain")
+            if day_tok.text not in self.spec.connectors.get(
+                    "week_idiom_day", frozenset()):
                 return None
-            base = _midnight(anchor) + timedelta(days=offset)
+            base = _midnight(anchor) + timedelta(
+                days=self.spec.named_days[day_tok.text])
         else:
             target = self.spec.weekdays[match.slots["WEEKDAY"].text]
             first = _WEEK_START.get(self.conventions.week_start, 0)

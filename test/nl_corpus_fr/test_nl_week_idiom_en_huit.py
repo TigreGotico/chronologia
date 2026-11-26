@@ -96,3 +96,50 @@ def test_en_huit_heures_is_not_the_idiom():
     # "en huit heures" counts hours: the week idiom does not fire
     r = parse("jeudi en huit heures", THU)
     assert r is None or r[0].start != ad(datetime(2026, 12, 3))
+
+
+@pytest.mark.parametrize("text", [
+    # a relative word between the day and the idiom: no reading, never today
+    "jeudi prochain en huit",
+    "jeudi dernier en huit",
+    "lundi prochain en huit",
+    "le lundi suivant en huit",
+    # two idioms joined: one day each, no single span
+    "vendredi en huit ou en quinze",
+    # a word after "en huit" that may be the noun it counts ("en huit
+    # manches", eight rounds): the phrase refuses
+    "le match de jeudi en huit manches",
+])
+def test_idiom_refuses_what_it_cannot_read(text):
+    nomatch(text, THU)
+
+
+def test_jusqu_a_the_idiom_ends_after_that_day():
+    # as "jusqu'à vendredi" ends at the end of that Friday
+    r = parse("jusqu'à jeudi en huit", THU)
+    assert r is not None
+    assert (r[0].start, r[0].end) == (ad(THU), ad(datetime(2026, 12, 4)))
+    assert r.remainder == ""
+
+
+def test_a_preposition_after_the_idiom_keeps_it():
+    r = parse("jeudi en huit chez Paul", THU)
+    assert r is not None
+    assert r[0].start == ad(datetime(2026, 12, 3))
+    assert r.remainder == "chez Paul"
+
+
+@pytest.mark.parametrize("text,day", [
+    ("depuis vendredi en huit", datetime(2026, 12, 4)),
+    ("depuis samedi en quinze", datetime(2026, 12, 12)),
+    ("depuis jeudi en quinze", datetime(2026, 12, 10)),
+])
+def test_depuis_never_opens_on_the_idiom(text, day):
+    # The idiom names a day after the anchor, so no "since" span opens on it
+    # (on dev "depuis vendredi en huit" ran from Friday 20 November to the
+    # anchor).  As "depuis demain" reads, the day stands and "depuis" is left
+    # over.
+    r = parse(text, THU)
+    assert r is not None
+    assert (r[0].start, r[0].end) == (ad(day), ad(day + timedelta(days=1)))
+    assert r.remainder == "depuis"

@@ -33,6 +33,12 @@ THU = datetime(2026, 11, 26, 10, 0)   # a Thursday
     "dans la nuit du 28 au 29",
     "la nuit d'hier à aujourd'hui",
     "le soir du 3 au 5 mai",
+    "la soirée du 3 au 5 mai",
+    "la matinée du 3 au 5 mai",
+    "l'après-midi du lundi au vendredi",
+    "les après-midis du 3 au 5 mai",
+    "la nuitée du 28 au 29 novembre",
+    "le soir du lundi au vendredi",
 ])
 def test_daypart_over_a_range_of_days_refuses(text):
     nomatch(text, THU)
@@ -53,3 +59,36 @@ def test_one_day_or_no_daypart_still_reads(text, start, end):
     assert r is not None
     assert (r[0].start, r[0].end) == (ad(start), ad(end))
     assert r.remainder == ""
+
+
+@pytest.mark.parametrize("text", [
+    # a number after "à" with a weekday before it is a clock: 21:00 on
+    # Saturday 28 November, as "le soir" fixes the half of the day
+    "le soir de samedi à 9",
+    "le soir de samedi à neuf",
+])
+def test_a_clock_after_a_to_word_is_not_a_range_of_days(text):
+    r = parse(text, THU)
+    assert r is not None
+    assert r[0].start == ad(datetime(2026, 11, 28, 21, 0))
+
+
+def test_an_address_after_au_is_not_a_range_of_days():
+    r = parse("le soir de samedi au 12 rue Victor Hugo", THU)
+    assert r is not None
+    assert (r[0].start, r[0].end) == (ad(datetime(2026, 11, 28, 18, 0)),
+                                      ad(datetime(2026, 11, 29, 0, 0)))
+
+
+def test_event_keeps_the_clock():
+    from chronologia import extract_event
+    got = extract_event("réunion le soir de samedi à 9", "fr", THU)
+    assert got is not None
+    assert got.span.start == ad(datetime(2026, 11, 28, 21, 0))
+
+
+def test_every_view_refuses_the_range_of_evenings():
+    from chronologia import extract_candidates, extract_event
+    assert extract_candidates("le soir du lundi au vendredi", "fr", THU) == []
+    assert extract_event("réunion le soir du lundi au vendredi", "fr",
+                         THU) is None
