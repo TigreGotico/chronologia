@@ -63,6 +63,10 @@
  "guards": {
   "bare_year_min_digits": 4
  },
+ "positions": {
+  "from": "post",
+  "until": "post"
+ },
  "hook": "chronologia.extract.numfold_indic:fold_hi",
  "base_grammar": {
   "marker_position": "post",
@@ -71,6 +75,9 @@
     "REL_MARKER WEEKDAY on",
     "WEEKDAY REL_MARKER on",
     "WEEKDAYFULL on"
+   ],
+   "weekday_of_week": [
+    "REL_MARKER UNIT of WEEKDAYFULL on?"
    ],
    "daypart_ref": [
     "REL_MARKER DAYPART on",
