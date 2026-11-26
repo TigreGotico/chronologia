@@ -40,6 +40,11 @@ MIDNIGHT = ANCHOR.replace(hour=0, minute=0)
     ("१५:३०", ANCHOR.replace(hour=15, minute=30)),
     ("4:30 सांम", ANCHOR.replace(hour=16, minute=30)),
     ("9:15 सबेरे", datetime(2017, 6, 28, 9, 15)),
+    ("4 बज्या", ANCHOR.replace(hour=16, minute=0)),
+    ("४ वज्या", ANCHOR.replace(hour=16, minute=0)),
+    ("आज 9 बज्या", ANCHOR.replace(hour=21, minute=0)),
+    ("9 बज्या सांम", ANCHOR.replace(hour=21, minute=0)),
+    ("8 बज्या सबेरे", datetime(2017, 6, 28, 8, 0)),
 ])
 def test_reads(text, gold):
     assert start(text) == gold
@@ -61,12 +66,13 @@ def test_refuses(text):
 @pytest.mark.parametrize("text, gold", [
     ("तीन दिनां में", ANCHOR + timedelta(days=3)),
     ("दो दिन पछै", ANCHOR + timedelta(days=2)),
+    ("च्यार बज्या", ANCHOR.replace(hour=16, minute=0)),
 ])
 def test_spelled_offset_waits_on_numtag(text, gold):
     assert start(text) == gold
 
 
 @pytest.mark.xfail(strict=True, raises=AssertionError,
-                   reason="no source in the library attests the clock word बजे")
+                   reason="बजे waits on the native answer, #1484 Q6")
 def test_digit_hour_with_baje_waits_on_a_source():
     assert start("4 बजे") == ANCHOR.replace(hour=16, minute=0)

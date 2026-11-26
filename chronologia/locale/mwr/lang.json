@@ -19,7 +19,8 @@
   },
   "clock_time": {
    "orders": [
-    "CLOCK MERIDIEM?"
+    "CLOCK MERIDIEM?",
+    "HOUR at MERIDIEM?"
    ],
    "prefer_future": true
   },

@@ -30,13 +30,13 @@ Marwari sources are few. The locale ships only the surfaces that a source attest
 
 **Relative offsets** postpose their marker: `3 दिनां में`, `2 दिन पछै`. में is in Bahal 1964 ("थोडा दिनां में", in a few days). पछै is in Narottamdas §270 and in the Shekhawati specimen of Grierson 1908, LSI vol. IX part 2.
 
-**The clock** reads digit times only, with the CLDR `raj` meridiem names सबेरे and सांम.
+**The clock** reads digit times, with the CLDR `raj` meridiem names सबेरे and सांम, and a digit hour before बज्या: `4 बज्या`. बज्या is in Lalas, *Rājasthānī Sabad Kos*, book p. 3737, which prints it as वज्या; both spellings are read.
 
 ## What refuses
 
 `काल` and `परसूं` are refused: each names a day in either direction (issue #1484), and only the verb shows which.
 
-Spelled numbers are not read until the numtag Marwari lexicon ships. No source in the library attests the clock word बजे, so a time such as 4 बजे returns no reading. The weekday names are left out: the bench sentences put unsourced words such as पछलै and आगलै before them, and a bare weekday then reads the wrong week.
+Spelled numbers are not read until the numtag Marwari lexicon ships. The clock words बजे and बज्यां wait on a native answer, so a time such as 4 बजे returns no reading. The weekday names are left out: the bench sentences put unsourced words such as पछलै and आगलै before them, and a bare weekday then reads the wrong week.
 
 ## Open questions for a native speaker
 
