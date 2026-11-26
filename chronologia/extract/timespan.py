@@ -4012,19 +4012,25 @@ def _compose(resolved, engine, tokens, anchor=None, text=None):
         return None, set(), None
     apposed |= counted
     clocks = [(m, r) for m, r in resolved if m.construction == "clock_time"]
-    # an offset is a day only to the clock or daypart that pins it; beside a
-    # weekday or a date it stays a separate reading
-    composable = (_COMPOSABLE_DATES | {"relative_offset"}
-                  if clocks or any(m.construction == "daypart_ref"
-                                   for m, _r in resolved)
-                  else _COMPOSABLE_DATES)
+    # an offset is a day only to a clock or daypart in its own sentence;
+    # beside a weekday or a date it stays a separate reading
+    pins = [m for m, _r in resolved
+            if m.construction in ("clock_time", "daypart_ref")]
+
+    def _same_sentence(a, b):
+        (lo, hi) = sorted((a.span, b.span))
+        return not any(tokens[i].sentence_break_before
+                       for i in range(lo[1], hi[0] + 1))
+
     # "the morning after next" is a band of its day, so a clock beside it may
     # contradict the band and is left unread; "the week before last" is a
     # period, so no clock lands on it
     dates = [(m, r) for m, r in resolved
-             if m.construction in composable
+             if (m.construction in _COMPOSABLE_DATES
+                 or m.construction == "relative_offset")
              and (m.construction != "relative_offset"
-                  or _offset_is_day_or_coarser(m, spec))
+                  or (_offset_is_day_or_coarser(m, spec)
+                      and any(_same_sentence(m, p) for p in pins)))
              and not (m.construction in ("after_next", "before_last")
                       and ("DAYPART" in m.slots
                            or (m.slots.get("UNIT") is not None
@@ -4592,6 +4598,7 @@ def _compose_core(tokens, engine, anchor, enable=(), jurisdiction=None,
     a range endpoint follows the range rules instead.
     """
     resolved = []
+    refused = []
     veto = lambda m: _candidate_veto(tokens, m, engine.spec)   # noqa: E731
     for match in engine.matcher.match(tokens, veto):
         # construction-group gate: a construction tagged ``"group": <g>`` in
@@ -4602,7 +4609,11 @@ def _compose_core(tokens, engine, anchor, enable=(), jurisdiction=None,
             match.construction, {}).get("group")
         if group is not None and group not in enable:
             continue
-        res = engine.resolver.resolve(match, anchor, scale_mode)
+        res = engine.resolver.resolve(match, anchor, scale_mode, jurisdiction)
+        if res is None and "BDAY" in match.slots and (
+                "MONTH" in match.slots or engine.spec.units.get(
+                    match.slots["SCOPE_UNIT"].text) == "month"):
+            refused.append(match)
         if res is not None:
             if whole:
                 res = replace(res, value=_since_month(
@@ -4616,7 +4627,7 @@ def _compose_core(tokens, engine, anchor, enable=(), jurisdiction=None,
     resolve_ref = _make_resolve_ref(tokens, engine, anchor, enable,
                                      jurisdiction, text, scale_mode)
     resolved = apply_business_days(tokens, resolved, engine.spec, anchor,
-                                   jurisdiction, resolve_ref)
+                                   jurisdiction, resolve_ref, refused)
     # mixed-grain offset compound ("in 3 months and 2 days"): fold every
     # further "[and|,] NUM UNIT" chunk into the leading relative_offset match
     # BEFORE the anchored-offset pass, so a stranded calendar/fixed tail is

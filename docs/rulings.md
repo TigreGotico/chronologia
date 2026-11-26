@@ -187,5 +187,9 @@ Sources: Ефремова, Современный толковый словар�
 
 A plain until bound has no left bound, so its UNTIL stays at the start of its date: in "every friday until june", UNTIL falls on 1 June. A right bound with a clock (es "desde junio hasta agosto a las 9") also keeps the start of its date and its clock.
 
+**39. A business-day ordinal of a month names the next such day**. "the 3rd business day of march", "the third weekday of the month" and pt "o 3.º dia útil do mês" are the n-th business day of that month. A business day is a day outside the locale's weekend (`weekend_start` and the day after it). With a jurisdiction, a public holiday of that jurisdiction is not a business day. "weekday" as a class noun is a business day.
+
+A named month with no year, and "the month" with no marker, name the next month whose n-th business day is not before the anchor. This is the roll of the weekday ordinal ("the first tuesday of the month"). Said on 22 November 2026, "the third business day of the month" is 3 December 2026, and "the 3rd business day of march" is 3 March 2027. A year or a marker fixes the month: "of next month", "of march 2027". When that month has no n-th business day, no date is read.
+
 ---
 [← EDTF](edtf.md) · [Home](index.md) · [Calendars →](calendars.md)

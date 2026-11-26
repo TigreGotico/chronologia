@@ -28,7 +28,7 @@ def rows(issue, entries):
 
 
 @pytest.mark.parametrize("text,reason", [
-    pytest.param("the 25th weekday of the month", "no 25th", marks=xfail(1276)),
+    ("the 25th weekday of the month", "no 25th"),
     ("the sixth monday of may", "no 6th Monday"),
 ])
 def test_candidates_raise_mode(text, reason):
@@ -102,7 +102,6 @@ def test_business_day_of_every_month(text, rule):
     assert result.remainder == ""
 
 
-@pytest.mark.xfail(strict=True, reason=URL + "1290")
 def test_third_weekday_of_march():
     result = extract_timespan("the 3rd weekday of march", "en", ANCHOR)
     assert result is not None
@@ -110,7 +109,6 @@ def test_third_weekday_of_march():
     assert result.span.end.datetime() == datetime(2027, 3, 4)
 
 
-@pytest.mark.xfail(strict=True, reason=URL + "1290")
 def test_twenty_fourth_weekday_of_march_declines():
     assert extract_timespan("the 24th weekday of march", "en", ANCHOR) is None
 

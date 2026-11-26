@@ -145,7 +145,8 @@ def read(text: str, lang: str, anchor: datetime,
     def resolve(match):
         res = chosen.get(id(match))
         if res is None:
-            res = engine.resolver.resolve(match, anchor, scale_mode)
+            res = engine.resolver.resolve(match, anchor, scale_mode,
+                                           jurisdiction)
         if res is None:
             return None
         return _lone_spoken_hour(res, match, anchor, spec, tokens, matches,

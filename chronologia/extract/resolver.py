@@ -39,6 +39,7 @@ from chronologia.astrodate import (AstroDate, BASIS_RECONSTRUCTED, DateSpan,
                                    _days_in_month, civil_add)
 from chronologia.extract.impossible import (bad_day, decline, no_such, ordinal,
                                           ordinal_cap, recorded, scope_name)
+from chronologia.civil_holidays import is_civil_holiday
 from chronologia.dayparts import daypart_span, lookup as daypart_lookup
 from chronologia.calendars import (CALENDARS, gregorian_to_jdn,
                                         jdn_to_gregorian)
@@ -644,6 +645,19 @@ def _gregorian_month_span(year: int, month: int) -> DateSpan:
     return DateSpan(start, AstroDate(nyear, nmonth, 1))
 
 
+def _is_business_day(day, weekend_start: int,
+                     jurisdiction: Optional[str]) -> bool:
+    """True when ``day`` is neither a weekend day nor (with a jurisdiction) a
+    public holiday of that jurisdiction."""
+    wd = day.weekday()
+    if wd == weekend_start or wd == (weekend_start + 1) % 7:
+        return False
+    if jurisdiction and is_civil_holiday(day, jurisdiction,
+                                         categories=("public",)):
+        return False
+    return True
+
+
 class Resolver:
     """Configured once from a :class:`LangSpec`."""
 
@@ -652,7 +666,8 @@ class Resolver:
         self.conventions: Conventions = spec.conventions
 
     def resolve(self, match: Match, anchor: datetime,
-                scale_mode: str = "short") -> Optional[Resolution]:
+                scale_mode: str = "short",
+                jurisdiction: Optional[str] = None) -> Optional[Resolution]:
         if match.construction in UNIMPLEMENTED:
             raise NotImplementedError(
                 f"construction {match.construction!r} is declared but not "
@@ -670,7 +685,10 @@ class Resolver:
             # long); every other handler ignores the mode.
             if match.construction == "deep_time":
                 return self._resolve_deep_time(match, anchor, scale_mode)
-            res = handler(self, match, anchor)
+            if match.construction == "scoped_ordinal":
+                res = self._resolve_scoped_ordinal(match, anchor, jurisdiction)
+            else:
+                res = handler(self, match, anchor)
             if res is None and found is not None and len(found) > before:
                 chars = consumed_extent(match.slots.values())
                 for refusal in found[before:]:
@@ -2088,7 +2106,58 @@ class Resolver:
     def _scope_kind(self, tok):
         return self.spec.scope_units.get(tok.text) or self.spec.units[tok.text]
 
-    def _resolve_scoped_ordinal(self, match, anchor):
+    def _scoped_business_day(self, match, anchor, n, jurisdiction):
+        """The ``n``-th business day of a month ("the 3rd working day of
+        march", "the last business day of next month").
+
+        A month with no year and no marker, and a bare "the month", name the
+        next such month whose ``n``-th business day is not before the anchor.
+        """
+        ord_tok = match.slots.get("ORD")
+        if ord_tok is not None and not ord_tok.ordinal:
+            return None     # "5 business days of the month" counts days
+        weekend_start = self.conventions.weekend_start
+
+        def nth(year, month):
+            days = [date(year, month, d)
+                    for d in range(1, calendar.monthrange(year, month)[1] + 1)
+                    if _is_business_day(date(year, month, d), weekend_start,
+                                        jurisdiction)]
+            return days[n - 1 if n > 0 else n] if abs(n) <= len(days) else None
+
+        month_tok = match.slots.get("MONTH")
+        year_tok = match.slots.get("YEAR")
+        rel_tok = match.slots.get("REL_MARKER")
+        rel = self.spec.rel_markers[rel_tok.text] if rel_tok else 0
+        if month_tok is not None:
+            month = self.spec.months[month_tok.text]
+            fixed = year_tok is not None or rel_tok is not None
+            year = (_pivot_two_digit_year(year_tok, anchor.year) if year_tok
+                    else anchor.year + rel)
+            months = [(year + k, month) for k in range(1 if fixed else 28)]
+        elif self.spec.units.get(match.slots["SCOPE_UNIT"].text) == "month":
+            month = None
+            fixed = rel_tok is not None
+            base = _add_months(_midnight(anchor).replace(day=1), rel)
+            months = [(m.year, m.month) for m in
+                      (_add_months(base, k) for k in range(1 if fixed else 24))]
+        else:
+            return None
+        if not fixed:
+            reason = ordinal_cap(n, "business day", month, zero=True)
+            if reason:
+                return decline(reason)
+        for year, mon in months:
+            value = nth(year, mon)
+            if value is not None and (fixed or value >= anchor.date()):
+                start = AstroDate.from_date(value)
+                return Resolution(DateSpan(start, start + timedelta(days=1)),
+                                  self._consumed(match))
+        year, mon = months[0]
+        return decline(ordinal_cap(n, "business day", mon,
+                                   year if fixed else None))
+
+    def _resolve_scoped_ordinal(self, match, anchor, jurisdiction=None):
         """"Nth UNIT of SCOPE" nesting, absolute periods, last-ordinal (-1).
 
         Ports :func:`scoped_scan.extract_scoped_date` into the engine: the
@@ -2159,6 +2228,9 @@ class Resolver:
         scope_tok = match.slots.get("SCOPE_UNIT")
         if scope_tok is not None and scope_tok.text in self.spec.plural_units:
             return None
+
+        if match.slots.get("BDAY") is not None:
+            return self._scoped_business_day(match, anchor, n, jurisdiction)
 
         wd_tok = match.slots.get("WEEKDAY")
         if wd_tok is not None:                      # nth weekday of a month
