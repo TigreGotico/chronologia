@@ -806,7 +806,13 @@ def _extract_range(text, tokens, engine, anchor, scale_mode="short"):
             # roll a bogus ~20h day-crossing span (9->21:00, then 5pm rolled to
             # tomorrow).  A bare "9 to 5" with no meridiem stays the subtractive
             # clock ("nine minutes to five"), untouched.
-            if led or _trailing_meridiem(right_tok, spec) is not None \
+            # Under a lead a spoken cardinal is an hour too ("from two to
+            # six"); unled, "ten to eight pm" stays the subtractive clock.
+            if led:
+                got = _compose_clock_range(
+                    text, _cardinals_folded(left_tok, spec, text),
+                    _cardinals_folded(right_tok, spec, text), engine, anchor)
+            elif _trailing_meridiem(right_tok, spec) is not None \
                     or _trailing_meridiem(left_tok, spec) is not None:
                 got = _compose_clock_range(text, left_tok, right_tok,
                                            engine, anchor)
@@ -1247,6 +1253,16 @@ def _rebase(span, day):
     return DateSpan(start, start + (span.end - span.start))
 
 
+def _cardinals_folded(sub, spec, text):
+    """``sub`` folded, so a spoken cardinal ("two", "zwei") is a number token.
+
+    The range slices come from the pre-fold stream.  A slice whose fold makes
+    an ordinal ("fifth") stays as it is: an ordinal is no hour.
+    """
+    folded = fold_tokens(tuple(sub), spec, text)
+    return tuple(sub) if any(t.ordinal for t in folded) else folded
+
+
 def _compose_clock_range(text, left_tok, right_tok, engine, anchor):
     """A clock range one of whose endpoints writes its hour bare, or ``None``.
 
@@ -1286,7 +1302,7 @@ def _compose_clock_range(text, left_tok, right_tok, engine, anchor):
     if _bare_hour_pos(left_tok, spec) is None \
             and _bare_hour_pos(right_tok, spec) is None:
         return None
-    borrow = _trailing_meridiem(right_tok, spec)
+    borrow = _borrowable_meridiem(right_tok, spec)
     lefts = _clock_candidates(text, left_tok, engine, anchor,
                               borrow.text if borrow is not None else None)
     rights = _clock_candidates(text, right_tok, engine, anchor)
@@ -2559,6 +2575,21 @@ def _bare_weekday_endpoint(sub, engine, anchor, backward=False):
     start = AstroDate.from_datetime(day)
     return (DateSpan(start, start + timedelta(days=1)), "",
             consumed_extent(sub), consumed_pieces(sub))
+
+
+def _borrowable_meridiem(sub, spec):
+    """The meridiem a bare left endpoint borrows from the right slice.
+
+    The one ending the slice, else the one ending its first clause: in
+    "six this afternoon, so plan ..." the clause after the comma is not part
+    of the endpoint.
+    """
+    merid = _trailing_meridiem(sub, spec)
+    if merid is None:
+        cut = next((i for i, t in enumerate(sub) if i and t.break_before), None)
+        if cut is not None:
+            merid = _trailing_meridiem(sub[:cut], spec)
+    return merid
 
 
 def _trailing_meridiem(sub, spec):
