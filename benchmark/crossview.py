@@ -59,7 +59,6 @@ SEEDS = (
     ("en", "the sixth monday of every month"),
     ("en", "the last business day of every month"),
     ("de", "de jeden Montag von Juni bis August"),
-    ("en", "the 3rd weekday of march"),
 )
 
 # from, until, between, to, and, every, month pair, weekday pair
