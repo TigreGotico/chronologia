@@ -232,9 +232,50 @@ def fold_fr_hour_length(tokens: Tuple[Token, ...],
     soustraction" (TLFi, s.v. "moins", II.A), and "moins le quart est plus
     fréq. que moins un quart" (TLFi, s.v. "quart", B.1.a).
     """
-    return _governed_hour_length(
+    tokens = _governed_hour_length(
         tokens, spec, governors=frozenset({"dans", "ilya"}),
         fractions={"demie": 30, "demi": 30, "quart": 15},
         minus=frozenset({"moins"}),
         minus_articles=frozenset({"le", "la", "un"}),
         second_symbols=frozenset({"s", "sec"}))
+    return _inclusive_weeks(tokens, spec)
+
+
+#: "huit jours" and "quinze jours" count the first day and the last, so they
+#: are one week and two weeks: "Huit jours, dans l'usage courant, une semaine
+#: entière en comptant le premier jour et le dernier. J'irai vous voir dans
+#: huit jours" and "Quinze jours, dans l'usage courant, deux semaines
+#: complètes" (Académie française, 9th ed., s.v. "huit" and s.v. "quinze");
+#: "Huit jours. Une semaine." and "Quinze jours. Deux semaines." (TLFi, s.v.
+#: "huit" and s.v. "quinze").  The count -> the days it spans.
+_INCLUSIVE_DAYS = {8: 7, 15: 14}
+
+
+def _inclusive_weeks(tokens: Tuple[Token, ...],
+                     spec: LangSpec) -> Tuple[Token, ...]:
+    """Read "huit jours" as seven days and "quinze jours" as fourteen.
+
+    A count of business days ("8 jours ouvrés") counts as written: the
+    dictionaries give the week sense to the calendar days only."""
+    business = spec.connectors.get("business", frozenset())
+    out = list(tokens)
+    for i, tok in enumerate(out[:-1]):
+        # a cardinal before the plural day noun only: "le quinzième jour de
+        # mars" is the fifteenth day
+        if not (tok.is_number and not tok.ordinal
+                and tok.value in _INCLUSIVE_DAYS
+                and float(tok.value).is_integer()
+                and spec.units.get(out[i + 1].text) == "day"
+                and out[i + 1].text in spec.plural_units):
+            continue
+        if i + 2 < len(out) and out[i + 2].text in business:
+            continue
+        days = _INCLUSIVE_DAYS[int(tok.value)]
+        out[i] = replace(tok, text=str(days), value=type(tok.value)(days))
+        # "de quinze en quinze jours" restates the count: both are the week
+        # count, or the two would disagree
+        if (i >= 2 and out[i - 1].text == "en" and out[i - 2].is_number
+                and out[i - 2].value == tok.value):
+            out[i - 2] = replace(out[i - 2], text=str(days),
+                                 value=type(tok.value)(days))
+    return tuple(out)
