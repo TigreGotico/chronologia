@@ -125,6 +125,11 @@ def _bind(element: SlotElement, token: Token, spec: LangSpec,
         return token.text in spec.directions
     if name == "DAY_WORD":
         return token.text in spec.named_days
+    if name == "WEEK_IDIOM":
+        # the numeral of "jeudi en huit": the fold turns "huit" into "8", so
+        # the spelled surface is matched on the raw word too
+        return (token.text in spec.week_idioms
+                or (token.raw or "").lower() in spec.week_idioms)
     if name == "REL_MARKER":
         return token.text in spec.rel_markers
     if name == "WEEKEND":
@@ -516,6 +521,21 @@ def _counted_plural_daypart(tokens: Tuple[Token, ...], index: int,
                            spec) > 0
 
 
+def _week_idiom_at(tokens: Tuple[Token, ...], i: int, spec: LangSpec) -> bool:
+    """Whether a week idiom ("en huit", "en quinze") opens at ``i``: its
+    preposition, then its numeral, with no unit word after it ("en huit
+    heures" counts hours)."""
+    if i + 1 >= len(tokens) or not spec.week_idioms:
+        return False
+    if tokens[i].text not in spec.connectors.get("week_idiom_in", frozenset()):
+        return False
+    num = tokens[i + 1]
+    if not (num.text in spec.week_idioms
+            or (num.raw or "").lower() in spec.week_idioms):
+        return False
+    return i + 2 >= len(tokens) or tokens[i + 2].text not in spec.units
+
+
 def _connector_span(name: str, tokens: Tuple[Token, ...], ti: int,
                     spec: LangSpec) -> int:
     """Longest run of tokens from ``ti`` matching a connector surface.
@@ -733,6 +753,24 @@ class ConstructionMatcher:
                     continue
                 end, slots = best
                 if end > start:
+                    # "jeudi en huit heures" counts eight hours: the week
+                    # idiom never stands before a unit word.
+                    if (name == "day_week_idiom" and end < len(tokens)
+                            and tokens[end].text in self.spec.units):
+                        continue
+                    # In "lundi en huit" and "samedi en huit au soir" the
+                    # numeral belongs to the week idiom: neither the bare day
+                    # nor a clock on "huit" is a reading of its own.  Where
+                    # the idiom itself refuses, the phrase refuses.
+                    if (name in ("weekday_ref", "named_day")
+                            and _week_idiom_at(tokens, end, self.spec)):
+                        continue
+                    if (name == "clock_time" and start >= 2
+                            and _week_idiom_at(tokens, start - 1, self.spec)
+                            and (tokens[start - 2].text in self.spec.weekdays
+                                 or tokens[start - 2].text
+                                 in self.spec.named_days)):
+                        continue
                     # A weekday whose genitive surface is ALSO the
                     # dictionary-default genitive of a "week" word ("prošle
                     # nedelje" -- dictionaries give "last week" as the primary

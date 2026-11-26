@@ -4788,6 +4788,12 @@ def _compose_core(tokens, engine, anchor, enable=(), jurisdiction=None,
         if group is not None and group not in enable:
             continue
         res = engine.resolver.resolve(match, anchor, scale_mode, jurisdiction)
+        # fr "lundi en huit" said on a Thursday names a day the dictionaries
+        # disagree on; a clock or day part beside it ("lundi en huit à 10h")
+        # has no day to land on, so the whole utterance refuses rather than
+        # timing the anchor's day.
+        if res is None and match.construction == "day_week_idiom":
+            return [], None
         if res is None and "BDAY" in match.slots and (
                 "MONTH" in match.slots or engine.spec.units.get(
                     match.slots["SCOPE_UNIT"].text) == "month"):
