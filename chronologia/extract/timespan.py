@@ -753,6 +753,55 @@ def _extract_range(text, tokens, engine, anchor, scale_mode="short"):
         day = bare_day_words(own)
         return got[:4] + (consumed_extent(day), consumed_pieces(day))
 
+    # -- A <from> B <until> (postposed) -------------------------------------
+    # A locale whose "from" word is a postposition (``positions`` "from":
+    # "post") closes a range with the "until" word after the right bound:
+    # Hindi "सोमवार से बुधवार तक".  The left bound runs from the start of the
+    # stream to the "from" word, so a leading word that no endpoint reads
+    # blocks the range.
+    if spec.positions.get("from") == "post":
+        until_surf = _conn_surfaces(spec, "until", ())
+        found = _find_conn(tokens, from_surf)
+        if found is not None and until_surf and found[0] > 0:
+            p, k = found
+            close = _find_conn(tokens[p + k:], until_surf)
+            if close is not None and close[0] > 0:
+                q = p + k + close[0]
+                mk = close[1]
+                left_tok, right_tok = tokens[:p], tokens[p + k:q]
+                suffix = render_remainder(text, list(tokens[q + mk:]))
+                # the pair of markers frames the range as a lead does, so a
+                # spoken cardinal is an hour ("चार बजे से पाँच बजे तक")
+                lclock = _cardinals_folded(left_tok, spec, text)
+                rclock = _cardinals_folded(right_tok, spec, text)
+                got = None
+                # a right clock with no daypart of its own stays in the left
+                # one's daypart: "दोपहर चार बजे से पाँच बजे तक" ends at 17:00
+                lent = [t for t in lclock if t.text in spec.dayparts]
+                if len(lent) == 1 and not any(
+                        t.text in spec.dayparts or t.text in spec.meridiems
+                        for t in rclock):
+                    word = lent[0].text
+                    got = _compose_clock_range(
+                        text, lclock,
+                        (Token(text=word, raw=word, index=-1),) + rclock,
+                        engine, anchor)
+                if got is None:
+                    got = _compose_clock_range(text, lclock, rclock,
+                                               engine, anchor)
+                if got is None:
+                    got = _compose_range(left_tok, right_tok, endpoint,
+                                         borrowed, spec, bare_of, monthly,
+                                         previous, daily,
+                                         following=following,
+                                         holding=holding)
+                if got is not None:
+                    span, rem, ext, left, right = got
+                    rem = (rem + " " + suffix).strip() if suffix else rem
+                    ext = join_extents(ext, consumed_extent(tokens[p:p + k]))
+                    return span, rem, join_extents(
+                        ext, consumed_extent(tokens[q:q + mk])), left, right
+
     # -- from A to B -------------------------------------------------------
     at_from = _lead_at(tokens, from_surf, spec)
     at_between = _lead_at(tokens, between_surf, spec)
@@ -4686,9 +4735,39 @@ def _compose_core(tokens, engine, anchor, enable=(), jurisdiction=None,
     return resolved, (res, set(res.consumed) | label_consumed, rep)
 
 
+def _indefinite_daypart_veto(tokens, consumed, text, spec) -> bool:
+    """True for a season or daypart reading next to an indefinite daypart.
+
+    Hindi "सर्दियों की एक सुबह" is "one winter morning": एक makes the
+    morning indefinite, so the phrase names no date.  The test reads the
+    written surface, because the number fold turns एक into 1.  It looks at
+    the consumed tokens and the three tokens after them, and lets one
+    adjective stand between the marker and the daypart ("एक धुंधली सुबह").
+    A locale with no ``marker_indef_daypart.voc`` is untouched.
+    """
+    indef = spec.connectors.get("indef_daypart")
+    if not indef or not consumed:
+        return False
+    if not any(tokens[i].text in spec.seasons or tokens[i].text in spec.dayparts
+               for i in consumed):
+        return False
+    n = len(tokens)
+    for k in range(min(consumed), min(n, max(consumed) + 4)):
+        t = tokens[k]
+        if (t.char_start is not None
+                and text[t.char_start:t.char_end] in indef
+                and any(tokens[j].text in spec.dayparts
+                        for j in range(k + 1, min(n, k + 3)))):
+            return True
+    return False
+
+
 def _core_veto(tokens, consumed, rep, engine, anchor, text):
     """Whether the composed winner strands a tail that shows it is the wrong
     reading of an unsupported compound."""
+    if text is not None and _indefinite_daypart_veto(tokens, consumed, text,
+                                                     engine.spec):
+        return True
     # Trailing-scope veto: a bare relative-period reading ("os últimos dias" =
     # "the last days") that strands an unbound "of? <SCOPE_UNIT>" tail ("do ano",
     # "roku") is the unsupported "last <plural-unit> of <period>" compound.  The
