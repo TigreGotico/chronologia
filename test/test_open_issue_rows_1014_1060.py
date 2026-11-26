@@ -54,6 +54,8 @@ FIXED_SPANS = {
     "väck mig i morgon bitti",
     "vilka larm har jag till i morgon",
     "duas horas e três quartos",
+    "léeme las alarmas de mañana",
+    "amósame as alarmas de mañá",
 }
 FIXED_LENGTHS = {
     "sæt en timer",
