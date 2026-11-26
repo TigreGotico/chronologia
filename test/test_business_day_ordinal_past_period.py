@@ -17,21 +17,23 @@ ANCHOR = datetime(2026, 11, 22, 9, 0)
 #:              {month number: month name}, the scope of the anchor's month)
 SURFACES = {
     "en": ("the {n}{en} business day of {scope}",
-           {2: "february", 10: "october", 11: "november", 12: "december"}, "the month"),
+           {2: "february 2026", 10: "october 2026", 11: "november 2026",
+            12: "december 2026"}, "this month"),
     "de": ("der {n}. Werktag {scope}",
-           {2: "im Februar", 10: "im Oktober", 11: "im November", 12: "im Dezember"},
-           "des Monats"),
+           {2: "im Februar 2026", 10: "im Oktober 2026", 11: "im November 2026",
+            12: "im Dezember 2026"}, "dieses Monats"),
     "nl": ("de {n}e werkdag van {scope}",
-           {2: "februari", 10: "oktober", 11: "november", 12: "december"}, "de maand"),
+           {2: "februari 2026", 10: "oktober 2026", 11: "november 2026",
+            12: "december 2026"}, "deze maand"),
     "pt": ("o {n}.º dia útil {scope}",
-           {2: "de fevereiro", 10: "de outubro", 11: "de novembro", 12: "de dezembro"},
-           "do mês"),
+           {2: "de fevereiro de 2026", 10: "de outubro de 2026",
+            11: "de novembro de 2026", 12: "de dezembro de 2026"}, "deste mês"),
     "es": ("el {n}.º día hábil {scope}",
-           {2: "de febrero", 10: "de octubre", 11: "de noviembre", 12: "de diciembre"},
-           "del mes"),
+           {2: "de febrero de 2026", 10: "de octubre de 2026",
+            11: "de noviembre de 2026", 12: "de diciembre de 2026"}, "de este mes"),
     "fr": ("le {n}e jour ouvrable {scope}",
-           {2: "de février", 10: "d'octobre", 11: "de novembre", 12: "de décembre"},
-           "du mois"),
+           {2: "de février 2026", 10: "d'octobre 2026", 11: "de novembre 2026",
+            12: "de décembre 2026"}, "de ce mois"),
 }
 
 
@@ -86,13 +88,14 @@ def test_raise_mode_names_the_period(lang, text, last):
 
 def test_raise_reason_is_exact():
     with pytest.raises(ImpossibleDateError) as caught:
-        extract_timespan("the 23rd business day of the month", "en", ANCHOR,
+        extract_timespan("the 23rd business day of this month", "en", ANCHOR,
                          impossible="raise")
     assert caught.value.reason == "November 2026 has no 23rd business day"
     with pytest.raises(ImpossibleDateError) as caught:
         extract_timespan("the 24th business day of may", "en", ANCHOR,
                          impossible="raise")
-    assert caught.value.reason == "May 2026 has no 24th business day"
+    # no May holds 24 business days, so no year is named
+    assert caught.value.reason == "May has no 24th business day"
 
 
 def test_next_month_counts_its_own_weekdays():

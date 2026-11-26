@@ -49,29 +49,15 @@ from __future__ import annotations
 from datetime import datetime, timedelta
 from typing import List, Optional, Set, Tuple
 
-from chronologia.civil_holidays import is_civil_holiday
 from chronologia.extract.anchored import _gap_words, _offset_base
-from chronologia.extract.impossible import decline, ordinal, ordinal_cap
+from chronologia.extract.impossible import decline, ordinal
 from chronologia.extract.model import LangSpec, Match, Resolution, Token
 from chronologia.extract.pipeline import consumed_extent
 from chronologia.extract.resolver import (DATE_CONSTRUCTIONS, _add_months,
-                                              _day_span, _midnight,
-                                              _pivot_two_digit_year)
+                                              _day_span, _is_business_day,
+                                              _midnight)
 
 Pair = Tuple[Match, Resolution]
-
-
-def _is_business_day(day: datetime, weekend_start: int,
-                     jurisdiction: Optional[str]) -> bool:
-    """True when ``day`` is neither a weekend day nor (with a jurisdiction) a
-    public holiday of that jurisdiction."""
-    wd = day.weekday()
-    if wd == weekend_start or wd == (weekend_start + 1) % 7:
-        return False
-    if jurisdiction and is_civil_holiday(day, jurisdiction,
-                                         categories=("public",)):
-        return False
-    return True
 
 
 def _nth_business_day(base: datetime, n: int, sign: int, weekend_start: int,
@@ -108,71 +94,6 @@ def _out_of_range(n: int) -> str:
 
 def _is_day_unit(tok: Token, spec: LangSpec) -> bool:
     return spec.units.get(tok.text) == "day"
-
-
-def _is_year_token(tok: Token) -> bool:
-    """True when ``tok`` reads as a written year, mirroring the ``YEAR`` slot
-    matcher: a bare number too big to be a day/count (>=32), written with >=4
-    digits, or a two-digit run carrying the apostrophe cue ("'19")."""
-    if not tok.is_number:
-        return False
-    raw = tok.raw.rstrip(".")
-    return ((tok.value or 0) >= 32 or len(raw) >= 4
-            or (tok.apostrophe and len(raw.lstrip("'")) == 2))
-
-
-def _trailing_year(tokens, p: int, spec: LangSpec, scan_gap, anchor: datetime
-                   ) -> Optional[Tuple[int, int]]:
-    """An explicit year sitting just past a named month ("of March 2019", "de
-    marzo de 2019"), modulo an article/of gap.  Returns ``(year, end_index)``
-    with ``end_index`` one past the year token; otherwise ``None``."""
-    k = p
-    while k < len(tokens) and tokens[k].text in scan_gap:
-        k += 1
-    if k < len(tokens) and _is_year_token(tokens[k]):
-        return _pivot_two_digit_year(tokens[k], anchor.year), k + 1
-    return None
-
-
-def _month_scope(tokens, hi: int, spec: LangSpec, gap, anchor: datetime
-                 ) -> Optional[Tuple[datetime, int, Set[int]]]:
-    """A trailing "of <month>" scope on a business-day count.
-
-    "the first business day of next month" / "the third working day of July"
-    scopes the count to a calendar month rather than the anchor.  The month is
-    either **named** ("of July", anchor year -- or an explicit trailing year,
-    "of March 2019") or **relative** ("of this|next|last month", "of the
-    month").  Returns ``(first, end_index, consumed_ids)`` where ``first`` is
-    midnight of that month's first day (so the caller derives the nth or last
-    business day inside it); otherwise ``None``.
-    """
-    scan_gap = gap | frozenset(spec.connectors.get("of", ()))
-    k = hi
-    while k < len(tokens) and tokens[k].text in scan_gap:
-        k += 1
-    # named month: "of July", optionally with an explicit year "of March 2019"
-    if k < len(tokens) and tokens[k].text in spec.months:
-        month = spec.months[tokens[k].text]
-        year = anchor.year
-        end = k + 1
-        yr = _trailing_year(tokens, k + 1, spec, scan_gap, anchor)
-        if yr is not None:
-            year, end = yr
-        return datetime(year, month, 1), end, set(range(hi, end))
-    # relative month: "of (this|next|last) month" / "of the month"
-    month_words = spec.connectors.get("month_word", frozenset())
-    if not month_words:
-        return None
-    rel = 0
-    if k < len(tokens) and tokens[k].text in spec.rel_markers:
-        rel = spec.rel_markers[tokens[k].text]
-        k += 1
-    while k < len(tokens) and tokens[k].text in scan_gap:
-        k += 1
-    if k >= len(tokens) or tokens[k].text not in month_words:
-        return None
-    first = _add_months(datetime(anchor.year, anchor.month, 1), rel)
-    return first, k + 1, set(range(hi, k + 1))
 
 
 def _dom_ref(tokens, p: int, spec: LangSpec, anchor: datetime
@@ -290,12 +211,14 @@ def _date_ref(tokens, hi: int, resolved: List[Pair], spec: LangSpec,
 def apply_business_days(tokens, resolved: List[Pair], spec: LangSpec,
                         anchor: datetime,
                         jurisdiction: Optional[str],
-                        resolve_ref=None) -> List[Pair]:
+                        resolve_ref=None, refused=()) -> List[Pair]:
     """Rewrite a "in N business days" / "the next working day" / "N working
     days after <date>" phrase into its day-wide business-day span.
 
     A business phrase claims its tokens and drops any weaker match overlapping
-    them, exactly as the other anchor-relative passes do.
+    them, exactly as the other anchor-relative passes do.  The n-th business
+    day of a month is a ``scoped_ordinal`` reading: this pass leaves the words
+    of such a match, resolved or ``refused``, to it.
     """
     surfaces = spec.connectors.get("business")
     if not surfaces:
@@ -303,8 +226,6 @@ def apply_business_days(tokens, resolved: List[Pair], spec: LangSpec,
     gap = _gap_words(spec) | frozenset(spec.connectors.get("article", ())) \
         | frozenset(spec.connectors.get("in", ()))
     nextw = frozenset(s for s, v in spec.rel_markers.items() if v > 0)
-    lastw = frozenset(s for s, v in spec.rel_markers.items() if v < 0)
-    artwords = frozenset(spec.connectors.get("article", ()))
     weekend_start = spec.conventions.weekend_start
     n = len(tokens)
     for i, t in enumerate(tokens):
@@ -324,13 +245,15 @@ def apply_business_days(tokens, resolved: List[Pair], spec: LangSpec,
             j -= 1
         if j >= 0 and tokens[j].is_number and tokens[j].value \
                 and tokens[j].value >= 1:
-            count, start, mode = int(tokens[j].value), j, "nth"
+            count, start = int(tokens[j].value), j
         elif j >= 0 and tokens[j].text in nextw:
-            count, start, mode = 1, j, "nth"
-        elif j >= 0 and tokens[j].text in lastw:
-            # "the last business day" -- only meaningful scoped to a month.
-            count, start, mode = 1, j, "last"
+            count, start = 1, j
         else:
+            continue
+        # an n-th business day of a month is a scoped_ordinal reading; this
+        # pass leaves its words to it, also when it was refused
+        if any(m.construction == "scoped_ordinal" and m.span[0] <= i < m.span[1]
+               for m in [*refused, *(m for m, _ in resolved)]):
             continue
         # swallow a leading "in" marker ("in 5 business days") into the claim so
         # it does not strand in the remainder -- the clock ("... at 3pm") that
@@ -338,48 +261,6 @@ def apply_business_days(tokens, resolved: List[Pair], spec: LangSpec,
         inwords = frozenset(spec.connectors.get("in", ()))
         while start - 1 >= 0 and tokens[start - 1].text in inwords:
             start -= 1
-        scope = _month_scope(tokens, hi, spec, gap, anchor)
-        if scope is not None:
-            if mode == "nth" and tokens[j].is_number \
-                    and not tokens[j].ordinal:
-                # "5 business days of the month" counts days; only an ordinal
-                # ("the 5th business day of the month") names one.
-                continue
-            first, end, scope_ids = scope
-            if mode == "last":
-                # last business day of the month == first business day strictly
-                # before the first of the *next* month.
-                value = _nth_business_day(_add_months(first, 1), 1, -1,
-                                          weekend_start, jurisdiction)
-            else:
-                value = _nth_business_day(first - timedelta(days=1), count, 1,
-                                          weekend_start, jurisdiction)
-            # a scoped phrase reads as one unit -- swallow its leading article
-            # ("the last working day of ...") so the remainder is clean.
-            s0 = start
-            while s0 - 1 >= 0 and tokens[s0 - 1].text in artwords:
-                s0 -= 1
-            claimed = set(range(s0, hi)) | scope_ids
-            kept = [(m, r) for m, r in resolved
-                    if not (set(range(*m.span)) & claimed)]
-            chars = consumed_extent(tokens, claimed)
-            if value is None:
-                decline(_out_of_range(count), chars)
-                return kept
-            if mode == "nth" and value >= _add_months(first, 1):
-                # the count runs past the month's last business day: no day of
-                # that month is meant, so the phrase is claimed and refused.
-                decline(ordinal_cap(count, "business day", first.month, first.year),
-                        chars)
-                return kept
-            pair = (Match("business_days", (s0, end), {}),
-                    Resolution(_day_span(value), tuple(sorted(claimed))))
-            kept.append(pair)
-            return kept
-        if mode == "last":
-            # "the last business day" with no month scope is not a count we can
-            # resolve -- leave it for weaker passes rather than guessing.
-            continue
         ref = _date_ref(tokens, hi, resolved, spec, gap, anchor, resolve_ref)
         if ref is not None:
             base, sign, end, claimed = ref

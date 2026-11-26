@@ -2,8 +2,8 @@
 extract_timespan.
 
 "do 25.º dia útil de junho a 30 de fevereiro" names two impossible dates.
-Both functions read the range first, and its left end fails first: June 2026
-has 22 weekdays (30 days from Monday 1 June), so it has no 25th business day.
+Both functions read the range first, and its left end fails first: no June
+has more than 22 weekdays, so no June has a 25th business day.
 Anchor 2026-03-15, so the June is the next one.
 """
 import calendar
@@ -15,7 +15,7 @@ from chronologia import extract_candidates, extract_timespan
 from chronologia.extract.impossible import ImpossibleDateError
 
 ANCHOR = datetime(2026, 3, 15, 9, 0)
-REASON = "June 2026 has no 25th business day"
+REASON = "June has no 25th business day"
 
 
 def test_june_2026_has_22_weekdays():

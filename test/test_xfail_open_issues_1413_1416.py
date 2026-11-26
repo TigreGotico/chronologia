@@ -22,7 +22,6 @@ def start(text):
     return extract_timespan(text, "en", ANCHOR).span.start.datetime()
 
 
-@xfail(1413)
 @pytest.mark.parametrize("text,day", [
     ("the last business day of december 9999", datetime(9999, 12, 31)),
     ("the first business day of january 0001", datetime(1, 1, 1)),
