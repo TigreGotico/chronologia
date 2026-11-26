@@ -23,7 +23,6 @@ def test_jul_is_christmas_from_extract_timespans(lang):
         datetime(2017, 12, 25)]
 
 
-@pytest.mark.xfail(strict=True, reason=ISSUE)
 def test_one_in_the_afternoon_starts_at_13_00_in_extract_timespan():
     found = extract_timespan(
         "how is the weather supposed to look this Friday at one in the "
