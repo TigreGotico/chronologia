@@ -12,7 +12,7 @@ from datetime import date, datetime
 import pytest
 from dateutil.rrule import rrulestr
 
-from chronologia import (ImpossibleDateError, extract_candidates,
+from chronologia import (ImpossibleDateError, extract_candidates, extract_event,
                          extract_recurrence, extract_timespan)
 
 ANCHOR = datetime(2026, 11, 22, 9, 0)
@@ -120,3 +120,12 @@ def test_a_weekday_of_every_year_reads_the_next_one():
     result = extract_timespan("the 3rd monday of every year", "en", ANCHOR)
     assert result.span.start.datetime().date() == jan[2]
     assert result.remainder == ""
+
+
+@pytest.mark.parametrize("text", [
+    "the last working day of June 2018",
+    "the 3rd weekday of march 2027",
+])
+def test_a_business_day_of_a_month_and_year_is_one_date(text):
+    assert extract_recurrence(text, "en", ANCHOR) is None
+    assert extract_event(text, "en", ANCHOR).recurrence is None
