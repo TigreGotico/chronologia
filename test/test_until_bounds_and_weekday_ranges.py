@@ -1,10 +1,11 @@
 """An "until" bound keeps its value and a weekday range keeps its weekday set.
 
-Expected values are the readings of the current tree, each checked by hand
-against the anchor 2026-11-22 (a Sunday): "until december" is 2026-12-01,
-"until june" 2027-06-01, "until 2030" 2030-01-01, "until friday" 2026-11-27,
-"5 de agosto" 2027-08-05 and "until before christmas" 2026-12-25.  Rows marked
-xfail pin the value an open issue asks for.
+Expected values are checked by hand against the anchor 2026-11-22 (a
+Sunday).  A plain until bound ends at the start of its date: "until december"
+is 2026-12-01, "until june" 2027-06-01, "until friday" 2026-11-27 and "until
+before christmas" 2026-12-25.  A range ends at the end of its right bound:
+"from 2027 until 2030" ends 2031-01-01, "de 3 de junho até 5 de agosto"
+2027-08-06 and "from june until august" 2027-09-01.
 """
 from datetime import datetime
 
@@ -13,12 +14,10 @@ import pytest
 from chronologia import extract_recurrence
 
 ANCHOR = datetime(2026, 11, 22, 9, 0)
-ISSUE_1291 = pytest.mark.xfail(
-    strict=True, reason="https://github.com/TigreGotico/chronologia/issues/1291")
 
 WEEKDAYS = "FREQ=DAILY;BYDAY=MO,TU,WE,TH,FR"
 DECEMBER = "FREQ=DAILY;UNTIL=20261201T000000"
-YEAR_PAIR = "FREQ=WEEKLY;UNTIL=20300101T000000;BYDAY=MO"
+YEAR_PAIR = "FREQ=WEEKLY;UNTIL=20310101T000000;BYDAY=MO"
 
 
 def read(lang, text):
@@ -47,9 +46,9 @@ def read(lang, text):
     ("gl", "cada luns de 2027 ata 2030", YEAR_PAIR, ""),
     # a date range with an inner "de"
     ("pt", "todas as segundas de 3 de junho até 5 de agosto",
-     "FREQ=WEEKLY;UNTIL=20270805T000000;BYDAY=MO", ""),
+     "FREQ=WEEKLY;UNTIL=20270806T000000;BYDAY=MO", ""),
     ("es", "cada lunes del 3 de junio hasta el 5 de agosto",
-     "FREQ=WEEKLY;UNTIL=20270805T000000;BYDAY=MO", ""),
+     "FREQ=WEEKLY;UNTIL=20270806T000000;BYDAY=MO", ""),
     # an until word before a holiday, and a plain until bound
     ("en", "every day from monday until before christmas",
      "FREQ=DAILY;UNTIL=20261225T000000", "from monday"),
@@ -93,9 +92,7 @@ def test_an_until_word_between_two_weekdays_gives_a_weekday_set():
 
 
 # A weekday rule from one month until another consumes both bounds, and its
-# UNTIL ends with August, as extract_timespan reads "from june to august".  The
-# tree stops UNTIL at 1 August.
-@ISSUE_1291
+# UNTIL ends with August, as extract_timespan reads "from june to august".
 @pytest.mark.parametrize("lang, text", [
     ("de", "jeden Montag von Juni bis August"),
     ("en", "every monday from june until august"),

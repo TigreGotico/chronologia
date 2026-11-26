@@ -151,8 +151,8 @@ def test_from_june_to_august_pinned_as_on_dev():
 
 
 def test_extract_recurrence_every_monday_from_june_to_august_unchanged():
-    """Control: the recurrence "from X to Y" machinery (nseries.py) is
-    UNCHANGED -- weekly Monday recurrence bounded by an August 1st UNTIL."""
+    """A weekly Monday rule from June to August ends with August: UNTIL is
+    1 September, the end of the span "from june to august"."""
     r = extract_recurrence("every monday from june to august", "en", A)
     assert r is not None
     assert r.remainder == ""
@@ -160,7 +160,7 @@ def test_extract_recurrence_every_monday_from_june_to_august_unchanged():
     assert rec.freq == "WEEKLY"
     assert rec.byday == ((None, 0),)
     u = rec.until
-    assert (u.year, u.month, u.day) == (2026, 8, 1)
+    assert (u.year, u.month, u.day) == (2026, 9, 1)
 
 
 # ---------------------------------------------------------------------------

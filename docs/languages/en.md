@@ -203,8 +203,6 @@ Each line is an open issue with a strict `xfail` test for this language. The lin
 
 - The sixth weekday of every month reads as the next such weekday. [#1288](https://github.com/TigreGotico/chronologia/issues/1288)
 
-- A range after a recurring weekday reads its end as an until bound and leaves the start. Example (reader `extract_event`, lang `en`, anchor 2026-11-22 09:00): `every monday from june to august` gives start 2026-11-23 00:00, length none, no summary. [#1291](https://github.com/TigreGotico/chronologia/issues/1291)
-
 - A clock range in a recurrence reads the end hour or a wrong minute. Example (reader `extract_recurrence`, lang `en`, anchor 2026-11-22 09:00): `every monday 9 to 5` gives the rule `FREQ=WEEKLY;BYDAY=MO;BYHOUR=4;BYMINUTE=51`. [#1315](https://github.com/TigreGotico/chronologia/issues/1315)
 
 - An until bound in a recurrence resolves on the anchor day. Example (reader `extract_recurrence`, lang `en`, anchor 2026-11-22 09:00): `every monday at 9 until 5` gives the rule `FREQ=WEEKLY;UNTIL=20261122T090000;BYDAY=MO` and `5` left over. [#1316](https://github.com/TigreGotico/chronologia/issues/1316)

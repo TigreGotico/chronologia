@@ -47,7 +47,7 @@ def test_end_date_after_a_start_clock_stays_an_until_bound(lang, text):
 ])
 def test_date_range_after_a_weekday_is_not_a_clock(lang, text):
     rule = extract_recurrence(text, lang, _A).recurrence.to_string()
-    assert "UNTIL=20261205T000000" in rule
+    assert "UNTIL=20261206T000000" in rule
     assert "BYHOUR" not in rule
 
 

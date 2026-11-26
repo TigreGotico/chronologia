@@ -116,7 +116,6 @@ def test_twenty_fourth_weekday_of_march_declines():
     assert extract_timespan("the 24th weekday of march", "en", ANCHOR) is None
 
 
-@pytest.mark.xfail(strict=True, reason=URL + "1291")
 @pytest.mark.parametrize("lang, text, first, last_monday", [
     ("de", "jeden Montag von Juni bis August", datetime(2027, 6, 7), datetime(2027, 8, 30)),
     ("en", "every monday from june to august", datetime(2027, 6, 7), datetime(2027, 8, 30)),
