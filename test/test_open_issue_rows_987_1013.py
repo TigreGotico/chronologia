@@ -52,6 +52,7 @@ FIXED_SPANS = {
     "lo zaguer luns de marzo",
     "avísame de luns a venres pola mañá sobre as 7",
     "at 8 tonight",
+    "remind me to call the bank tomorrow morning",
 }
 
 
