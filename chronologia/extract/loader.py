@@ -339,8 +339,7 @@ def _conventions(conv: dict) -> Conventions:
             "daypart_proper_noun_guard", False),
         bare_at_markers=frozenset(conv.get("bare_at_markers", ())),
         clock_of_recurrence=conv.get("clock_of_recurrence", False),
-        weekend_start=conv.get("weekend_start", 5),
-        offset_clock_composes=conv.get("offset_clock_composes", False))
+        weekend_start=conv.get("weekend_start", 5))
 
 
 def _tokenizer_modes(tok: dict) -> TokenizerModes:
