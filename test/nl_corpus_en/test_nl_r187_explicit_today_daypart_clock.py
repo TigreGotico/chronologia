@@ -57,8 +57,12 @@ def test_pm_explicit_today_daypart_stays_on_anchor_day(daypart, h):
     r = _p(text)
     assert r is not None, f"{text!r} did not parse"
     s = r.span.start
-    assert (s.year, s.month, s.day) == (2026, 8, TODAY), text
-    assert s.hour == _pm(h), text
+    if (daypart, h) == ("tonight", 12):
+        # the midnight that ends the day (chronologia issue 1002)
+        assert (s.year, s.month, s.day, s.hour) == (2026, 8, TODAY + 1, 0)
+    else:
+        assert (s.year, s.month, s.day) == (2026, 8, TODAY), text
+        assert s.hour == _pm(h), text
     assert r.remainder == "", text
 
 

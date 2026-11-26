@@ -428,7 +428,8 @@ DATE_CONSTRUCTIONS = frozenset({
     "year_ref"})
 
 
-def compose_date_clock(date_res: Resolution, clock_res: Resolution) -> Resolution:
+def compose_date_clock(date_res: Resolution, clock_res: Resolution,
+                       next_day: bool = False) -> Resolution:
     """Intersect a date span with a clock span: the clock time (minute-wide,
     or an hour wide for an ordinal hour) placed on the day the date
     construction selected.
@@ -437,8 +438,11 @@ def compose_date_clock(date_res: Resolution, clock_res: Resolution) -> Resolutio
     that day's midnight); the clock span's ``start`` supplies the
     time-of-day.  The result is the clock's minute-wide span on that day --
     "june 5 at half past ten" -> ``[2027-06-05 10:30, ...10:31)``.
+    ``next_day`` places the clock on the day after the date.
     """
     d = date_res.value.start
+    if next_day:
+        d = civil_add(d, days=1)
     c = clock_res.value.start
     start = AstroDate(d.year, d.month, d.day,
                       c.hour, c.minute, c.second, c.microsecond,
@@ -579,10 +583,15 @@ def compose_daypart_clock(clock_res: Resolution, daypart_res: Resolution,
         # bare 1..12 hour, no meridiem of its own: let the day-part supply
         # the AM/PM side.
         new_hour = (hour % 12) + 12 if is_pm_daypart and hour != 12 else hour
+        # a night band never holds noon: "tonight at 12" is midnight
+        if hour == 12 and _hour_in_daypart(name, 0):
+            new_hour = 0
     new_start = c.replace(hour=new_hour)
     if force_today:
         d = daypart_res.value.start
         new_start = new_start.replace(year=d.year, month=d.month, day=d.day)
+        if new_hour == 0 and _hour_in_daypart(name, 0):
+            new_start = new_start + timedelta(days=1)
     elif (anchor is not None
           and new_start.date() == anchor.date() + timedelta(days=1)):
         today = new_start.replace(year=anchor.year, month=anchor.month,
@@ -3042,11 +3051,12 @@ class Resolver:
                       and meridiem.text in self.spec.daypart_today_words)
         if prefer_future and dt < anchor and not today_word:
             dt = dt + timedelta(days=1)
-        # "a las 2 esta noche" said by day: tonight's small hours fall on the
-        # next calendar day.  Said at 01:00, the night is already running.
-        if (match.construction == "clock_this_daypart"
+        # "a las 2 esta noche" or "at 2 tonight" said by day: tonight's small
+        # hours fall on the next calendar day.  Said at 01:00, the night is
+        # already running.  Twelve is the midnight that ends the day.
+        if ((match.construction == "clock_this_daypart" or today_word)
                 and meridiem.text in self.spec.night_meridiems
-                and hour < 6 <= anchor.hour):
+                and (hour == 0 or hour < 6 <= anchor.hour)):
             dt = dt + timedelta(days=1)
         start = AstroDate.from_datetime(dt)
         tz = self._zone_tzinfo(match.slots.get("ZONE"))
