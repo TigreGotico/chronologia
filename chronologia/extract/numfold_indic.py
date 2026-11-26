@@ -371,3 +371,4 @@ def _compose(*passes: Callable) -> Callable:
 
 
 fold_hi = _compose(_devanagari_digits, _ordinal_rewrite, _cardinal_rewrite)
+fold_mwr = _devanagari_digits

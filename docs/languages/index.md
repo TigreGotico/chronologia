@@ -8,7 +8,7 @@ verify: .venv/bin/python -c 'exec("import re,glob,os,json\nfrom chronologia.extr
 see: docs/index.md, docs/extraction.md
 -->
 
-This page lists the 61 locales, one page for each, and says which number reader serves each locale. Open the page for your language to see where its words come from, what it refuses and what a native speaker could still settle.
+This page lists the 62 locales, one page for each, and says which number reader serves each locale. Open the page for your language to see where its words come from, what it refuses and what a native speaker could still settle.
 
 chronologia never guesses a linguistic surface. A construction ships in a locale only where an attested source supports it. Where the sources conflict, or nothing attests the phrase, the locale ships nothing and the phrase returns nothing. That rule makes a wrong answer rare. It also explains why an ordinary phrase in your language can come back empty.
 
@@ -36,7 +36,7 @@ A source named on these pages was consulted directly. Author and year appear whe
 
 ## How numbers are read
 
-numtag reads the spelled numbers of the 40 locales in `NUMTAG_LANGS` in `chronologia/extract/numlayer.py`. chronologia keeps no number words for them. The other 21 locales read numbers with their own `numfold_*` module in `chronologia/extract/`. The table names the reader of each locale.
+numtag reads the spelled numbers of the 40 locales in `NUMTAG_LANGS` in `chronologia/extract/numlayer.py`. chronologia keeps no number words for them. The other 22 locales read numbers with their own `numfold_*` module in `chronologia/extract/`. The table names the reader of each locale.
 
 ## Pages
 
@@ -82,6 +82,7 @@ numtag reads the spelled numbers of the 40 locales in `NUMTAG_LANGS` in `chronol
 | [Malay](ms.md) | ms | numtag |
 | [Maltese](mt.md) | mt | numfold_maltese |
 | [Mirandese](mwl.md) | mwl | numtag |
+| [Marwari](mwr.md) | mwr | numfold_indic |
 | [Norwegian Bokmål](nb.md) | nb | numtag |
 | [Norwegian Nynorsk](nn.md) | nn | numtag |
 | [Occitan](oc.md) | oc | numtag |
