@@ -51,7 +51,7 @@ ROWS = [
     ('fr', 'ce soir, à 8 heures', datetime(2026, 11, 22, 20, 0)),
     ('fr', "l'après-midi, à 3 heures", datetime(2026, 11, 23, 15, 0)),
     ('it', 'di sera, alle 8', datetime(2026, 11, 23, 20, 0)),
-    ('it', 'stasera, alle 8', datetime(2026, 11, 23, 8, 0)),
+    ('it', 'stasera, alle 8', datetime(2026, 11, 22, 20, 0)),
     ('it', 'pomeriggio, alle 3', datetime(2026, 11, 23, 15, 0)),
     ('ca', 'a la tarda, a les 5', datetime(2026, 11, 23, 17, 0)),
     ('ca', 'aquest vespre, a les 8', datetime(2026, 11, 22, 20, 0)),
