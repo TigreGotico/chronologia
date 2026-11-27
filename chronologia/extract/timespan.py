@@ -4027,7 +4027,8 @@ def _bare_holiday_modifier_veto(tokens, match, spec) -> bool:
         if (len(tokens) <= _HOLIDAY_QUERY_TOKENS
                 and (i < 0 or tokens[i].text not in of)):
             return False
-    elif tokens[end].text in cues or tokens[end].text in spec.dayparts:
+    elif (tokens[end].text in cues or tokens[end].text in spec.dayparts
+          or tokens[end].text in spec.connectors.get("holiday_postcue", ())):
         return False
     # a range or recurrence endpoint is a slice whose connector ("from",
     # "antes") stands before it, outside the slice
