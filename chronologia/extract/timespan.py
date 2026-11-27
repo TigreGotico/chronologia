@@ -4010,6 +4010,8 @@ def _holiday_weekday_question(tokens, match, spec) -> bool:
     stays a noun modifier.
     """
     start, end = match.span
+    if _has_weekday_question_phrase(tokens, start, end, spec):
+        return True
     for k in range(end, len(tokens)):
         if k > end and tokens[k].break_before:
             return False
@@ -4024,6 +4026,24 @@ def _holiday_weekday_question(tokens, match, spec) -> bool:
                     in spec.connectors.get("article", frozenset()))
                 or prev.text in spec.connectors.get("indef", frozenset())
                 or (prev.is_number and prev.value == 1))
+    return False
+
+
+def _has_weekday_question_phrase(tokens, start, end, spec) -> bool:
+    """Whether a phrase that asks for a weekday ("what day of the week",
+    "چه روزی از هفته") stands in the clause of the holiday name at
+    tokens[start:end]."""
+    texts = [t.text for t in tokens]
+    for phrase in spec.connectors.get("weekday_question", ()):
+        words = phrase.split()
+        n = len(words)
+        for i in range(len(texts) - n + 1):
+            if texts[i:i + n] != words:
+                continue
+            lo, hi = (i + n, start) if i < start else (end, i)
+            if not any(tokens[k].break_before for k in range(lo + 1, hi + 1)
+                       if k < len(tokens)):
+                return True
     return False
 
 

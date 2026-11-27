@@ -1,0 +1,6 @@
+# Phrases that ask for the weekday of a date ("سال نو چه روزی از هفته میفته").
+# Source: ovos-skill-date-time test/unittests/test_weekday_for_date.py, OTHER_DAY_QUESTIONS;
+# https://en.wiktionary.org/wiki/هفته#Persian (week), https://en.wiktionary.org/wiki/چه#Persian (what).
+چه روزی از هفته
+چه روز هفته
+چند شنبه

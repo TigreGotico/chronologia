@@ -35,6 +35,16 @@ ROWS = [
     ("pt-PT", "o Dia de Ano Novo vai calhar a uma quinta-feira",
      date(2027, 1, 1)),
     ("gl", "o Día da Nai cae en xoves?", first_sunday_of_may(2027)),
+    ("fa", "سال نو چه روزی از هفته میفته", date(2027, 3, 21)),
+    ("en", "what day of the week is christmas", date(2026, 12, 25)),
+    ("en", "christmas falls on which day of the week", date(2026, 12, 25)),
+    ("es", "qué día de la semana cae navidad", date(2026, 12, 25)),
+    ("es", "navidad cae en qué día de la semana", date(2026, 12, 25)),
+    ("pt", "em que dia da semana cai o natal", date(2026, 12, 25)),
+    ("pt", "o natal cai em que dia da semana", date(2026, 12, 25)),
+    ("it", "che giorno della settimana è natale", date(2026, 12, 25)),
+    ("de", "auf welchen Wochentag fällt Weihnachten", date(2026, 12, 25)),
+    ("fr", "quel jour de la semaine tombe noël", date(2026, 12, 25)),
 ]
 
 
@@ -43,6 +53,12 @@ def test_holiday_in_a_weekday_question_is_a_date(lang, text, expected):
     result = extract_timespan(text, lang=lang, anchor=ANCHOR)
     assert result.span.start.datetime() == datetime.combine(
         expected, datetime.min.time())
+
+
+def test_holiday_modifier_before_a_weekday_keeps_its_date():
+    result = extract_timespan("christmas party on friday", lang="en",
+                              anchor=ANCHOR)
+    assert result.span.start.datetime() == datetime(2026, 12, 25)
 
 
 @pytest.mark.parametrize("text", ["christmas tree", "Christmas songs",

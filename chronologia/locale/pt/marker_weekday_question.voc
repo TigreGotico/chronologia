@@ -1,0 +1,4 @@
+# Phrases that ask for the weekday of a date ("em que dia da semana cai o natal").
+# Source: ovos-skill-date-time test/unittests/test_weekday_for_date.py ("em que dia da semana estamos",
+# "que dia da semana é hoje por favor"); https://en.wiktionary.org/wiki/dia_da_semana
+dia da semana
