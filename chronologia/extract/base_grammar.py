@@ -599,9 +599,16 @@ MARKER_POSTFIX_ORDERS: Dict[str, List[str]] = {
         "during? MONTH REL_MARKER",
         "during? DAY? MONTH of? article? year_word REL_MARKER",
     ],
-    # a lone marker after the month of a part ("fin janvier dernier",
-    # "finales de enero pasado") reads as it does after the month alone.
-    # These follow ``calendar_date``'s knob (see ``_POSTFIX_KNOB``).
+}
+
+# ---------------------------------------------------------------------------
+# A lone marker after the month of a part of a month ("fin janvier dernier",
+# "finales de enero pasado", "le premier lundi de mars dernier", "el último
+# día de enero pasado") reads as it does after the month alone, so these
+# orders follow ``calendar_date``'s ``marker_position`` knob: a locale that
+# reads "janvier dernier" reads its parts the same way (ruling 1).
+# ---------------------------------------------------------------------------
+MONTH_PART_POSTFIX_ORDERS: Dict[str, List[str]] = {
     "month_fuzzy": [
         "article? PART of? MONTH REL_MARKER",
     ],
@@ -617,14 +624,13 @@ MARKER_POSTFIX_ORDERS: Dict[str, List[str]] = {
         "article? ORD WEEKEND of MONTH REL_MARKER",
         "article? ordlast WEEKEND of MONTH REL_MARKER",
     ],
+    "scoped_ordinal": [
+        "article? ORD WEEKDAY of MONTH REL_MARKER",
+        "article? ordlast WEEKDAY of MONTH REL_MARKER",
+        "article? ORD UNIT of MONTH REL_MARKER",
+        "article? ordlast UNIT of MONTH REL_MARKER",
+    ],
 }
-
-#: A construction whose postfix orders follow another construction's
-#: ``marker_position``: a part of a month takes its lone trailing marker where
-#: the month alone takes one ("janvier dernier").
-_POSTFIX_KNOB = {"month_fuzzy": "calendar_date", "half_period": "calendar_date",
-                 "quarter_of_month": "calendar_date",
-                 "weekend_of_month": "calendar_date"}
 
 # ---------------------------------------------------------------------------
 # Knob-generated orders for the YEAR-first season surface, keyed BY
@@ -759,8 +765,10 @@ def merge_orders(cfg: Mapping,
         # ``weekday_ref``; ``both`` names that symmetry explicitly while
         # ``post`` reads as the locale's dominant idiom.  The distinction is
         # reserved for any future construction whose base is itself postposed.
-        if _marker_pos(_POSTFIX_KNOB.get(name, name)) in ("post", "both"):
+        if _marker_pos(name) in ("post", "both"):
             contrib += MARKER_POSTFIX_ORDERS.get(name, [])
+        if _marker_pos("calendar_date") in ("post", "both"):
+            contrib += MONTH_PART_POSTFIX_ORDERS.get(name, [])
         # ``season_year_order`` gates the YEAR-first season surface, exactly as
         # ``marker_position`` gates the postposed marker.  ``season_first``
         # (default): base season-first orders only.  ``year_first`` / ``both``:

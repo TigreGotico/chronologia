@@ -2036,18 +2036,29 @@ class Resolver:
     def _part_year(self, year, bare, month, anchor, end_of):
         """The year of a part of a month with no year or marker of its own.
 
-        Ruling C reads the part as a span: a part that holds the anchor or is
-        still ahead is this year's, and a part of the anchor's own month that
-        has ended is next year's ("early november" said on 26 November 2026
-        is early November 2027, "late november" is this one).  In any other
-        month the part keeps the month's year (:meth:`_month_year`).
-        ``end_of(year)`` is the end of the part in that year as a naive
-        datetime, or ``None`` when that year has no such part."""
-        if not bare or month != anchor.month or not self._rolls():
+        Ruling C reads the part as a span: it is the first one whose end is
+        after the anchor.  A part that holds the anchor or is still ahead is
+        this year's, and a part that has ended is next year's: "early
+        november" said on 26 November 2026 is early November 2027, and "late
+        november" is this one.  A part that runs past the end of its month
+        holds the anchor there too: "the last weekend of october" said on
+        1 November 2026 is the weekend of 31 October 2026.  ``year`` is the
+        month's own year (:meth:`_month_year`); the year before it and the
+        year after it are the only other candidates.  ``end_of(year)`` is the
+        end of the part in that year as a naive datetime, or ``None`` when that
+        year has no such part; a year from the month's own on that lacks the
+        part is kept, and the reading then names no day."""
+        if not bare or not self._rolls():
             return year
-        end = end_of(year)
-        if end is not None and end <= anchor.replace(tzinfo=None):
-            return year + 1
+        now = anchor.replace(tzinfo=None)
+        for y in (year - 1, year, year + 1):
+            end = end_of(y)
+            if end is None:
+                if y >= year:
+                    return y
+                continue
+            if end > now:
+                return y
         return year
 
     def _resolve_month_fuzzy(self, match, anchor):
@@ -2545,6 +2556,7 @@ class Resolver:
             # A year-less "Nth day of <month>" names the date its digit form
             # names: the next such day, as ``calendar_date`` reads "15 march".
             if (unit_kind == "day" and year_tok is None and 1 <= n <= 31
+                    and "REL_MARKER" not in match.slots
                     and self.spec.construction_flags.get(
                         "calendar_date", {}).get("prefer_future", False)):
                 nxt = _next_day_month(month, n, anchor)

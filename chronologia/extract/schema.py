@@ -45,6 +45,7 @@ from typing import Dict, FrozenSet, List, Tuple
 
 from chronologia.extract.base_grammar import (BASE_GRAMMAR,
                                               MARKER_POSTFIX_ORDERS,
+                                              MONTH_PART_POSTFIX_ORDERS,
                                               SEASON_YEAR_FIRST_ORDERS)
 from chronologia.extract.compiler import PRECEDENCE, UNIMPLEMENTED
 from chronologia.extract.numlayer import NUMBER_FOLD_KEYS, NUMBER_FOLD_ROWS
@@ -153,7 +154,8 @@ _NON_VOC_SLOTS: FrozenSet[str] = frozenset({"HOLIDAY"})
 #: order; any other optional connector without vocabulary is a typo.
 _SHARED_CONNECTORS: FrozenSet[str] = frozenset(
     tok.rstrip("?")
-    for orders in (BASE_GRAMMAR, MARKER_POSTFIX_ORDERS, SEASON_YEAR_FIRST_ORDERS)
+    for orders in (BASE_GRAMMAR, MARKER_POSTFIX_ORDERS,
+                   MONTH_PART_POSTFIX_ORDERS, SEASON_YEAR_FIRST_ORDERS)
     for raws in orders.values() for raw in raws for tok in raw.split()
     if not tok.rstrip("?").isupper())
 

@@ -766,9 +766,46 @@ class ConstructionMatcher:
             for word in connectors.get(key, ())
             if word.endswith("s") and word[:-1] in connectors.get(key, ()))
 
+        # what each order needs somewhere in the utterance before a walk can
+        # bind it: its required literal connectors and a required month
+        self._needs = [self._order_needs(order)
+                       for _p, _n, order in compiled.table]
+
+    def _order_needs(self, order):
+        """``(connector heads, needs month)`` for one order.
+
+        Each required (not optional) literal connector gives the set of
+        surfaces it can start with, as :func:`_connector_span` compares them:
+        a whole surface, or the first word of a multiword one.  A walk of the
+        order can only succeed when, for each, some token's text (or the first
+        word of a token glued from several words) is in that set; and when the
+        order requires a ``MONTH``, when some token is a month."""
+        heads = []
+        needs_month = False
+        for el in order.elements:
+            if el.optional:
+                continue
+            if el.is_slot:
+                needs_month = needs_month or el.name == "MONTH"
+                continue
+            surfaces = self.spec.connectors.get(el.name)
+            if not surfaces:
+                continue
+            targets, _ = _connector_targets(surfaces)
+            heads.append(targets | {t.split(" ", 1)[0] for t in targets})
+        return tuple(heads), needs_month
+
     def _candidates(self, tokens: Tuple[Token, ...]) -> List[MatchCandidate]:
         out: List[MatchCandidate] = []
-        for precedence, name, order in self.compiled.table:
+        texts = {t.text for t in tokens} | {t.text.split(" ", 1)[0]
+                                            for t in tokens}
+        has_month = any(t.text in self.spec.months for t in tokens)
+        for (precedence, name, order), (heads, needs_month) in zip(
+                self.compiled.table, self._needs):
+            # an order whose required words are absent cannot match anywhere
+            if (needs_month and not has_month) or any(
+                    texts.isdisjoint(h) for h in heads):
+                continue
             for start in range(len(tokens)):
                 best = _walk(order.elements, tokens, 0, start, self.spec, {})
                 if best is None:

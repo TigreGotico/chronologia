@@ -447,3 +447,145 @@ def test_a_range_from_a_last_day_that_holds_the_anchor(lang, text):
 ])
 def test_other_anchors(anchor, lang, text, gold):
     assert _span(text, lang, anchor) == gold
+
+
+# -- a lone marker after the month of a weekday, week or day of a month ------
+
+# Said on 26 November 2026, "mars dernier" is March 2026 and "janvier
+# dernier" January 2026; "novembre dernier" is November 2025, the latest
+# November that has ended.  1 March 2026 is a Sunday, so its first Monday is
+# the 2nd; 1 January 2026 is a Thursday, so its first week starts on Monday
+# the 5th; 1 November 2025 is a Saturday, so its first Monday is the 3rd.
+@pytest.mark.parametrize("lang,text,gold", [
+    ("fr", "le premier lundi de mars dernier",
+     (datetime(2026, 3, 2), datetime(2026, 3, 3))),
+    ("fr", "le dernier jour de janvier dernier",
+     (datetime(2026, 1, 31), datetime(2026, 2, 1))),
+    ("fr", "la première semaine de janvier dernier",
+     (datetime(2026, 1, 5), datetime(2026, 1, 12))),
+    ("fr", "le premier lundi de novembre dernier",
+     (datetime(2025, 11, 3), datetime(2025, 11, 4))),
+    ("fr", "le premier jour de mars dernier",
+     (datetime(2026, 3, 1), datetime(2026, 3, 2))),
+    ("es", "el último día de enero pasado",
+     (datetime(2026, 1, 31), datetime(2026, 2, 1))),
+    ("es", "la primera semana de enero pasado",
+     (datetime(2026, 1, 5), datetime(2026, 1, 12))),
+    ("pt", "o último dia de janeiro passado",
+     (datetime(2026, 1, 31), datetime(2026, 2, 1))),
+    ("it", "il primo lunedì di marzo scorso",
+     (datetime(2026, 3, 2), datetime(2026, 3, 3))),
+])
+def test_a_lone_marker_names_the_year_of_a_day_or_week(lang, text, gold):
+    assert _span(text, lang) == gold
+
+
+# -- a part that holds the anchor across the end of its month ----------------
+
+# Said on Sunday 1 November 2026 at noon.  The Saturdays of October 2026 are
+# the 3rd, 10th, 17th, 24th and 31st, so its last weekend runs from Saturday
+# 31 October to Monday 2 November 00:00 and holds the anchor.  1 October 2026
+# is a Thursday, so the weeks of October start on the 5th, 12th, 19th and
+# 26th, and the last week (26 October to 2 November) holds the anchor too.
+# Said on 2 January 2027: 1 December 2026 is a Tuesday, the weeks of
+# December start on the 7th, 14th, 21st and 28th, and the last one (28
+# December 2026 to 4 January 2027) holds the anchor.
+N1 = datetime(2026, 11, 1, 12, 0)
+
+
+@pytest.mark.parametrize("anchor,lang,text,gold", [
+    (N1, "en", "the last weekend of october",
+     (datetime(2026, 10, 31), datetime(2026, 11, 2))),
+    (N1, "fr", "le dernier week-end d'octobre",
+     (datetime(2026, 10, 31), datetime(2026, 11, 2))),
+    (N1, "en", "the last week of october",
+     (datetime(2026, 10, 26), datetime(2026, 11, 2))),
+    (datetime(2027, 1, 2, 10, 0), "en", "the last week of december",
+     (datetime(2026, 12, 28), datetime(2027, 1, 4))),
+])
+def test_a_part_that_holds_the_anchor_past_its_month_is_this_one(
+        anchor, lang, text, gold):
+    assert _span(text, lang, anchor) == gold
+
+
+def test_until_a_weekend_that_holds_the_anchor():
+    r = extract_timespan("until the last weekend of october", "en", N1)
+    assert r is not None
+    assert r.span.end_datetime == datetime(2026, 11, 2)
+
+
+# -- a marker that does not agree with the month names no year ---------------
+
+# Months are masculine in fr, es and pt, so the feminine "dernière",
+# "pasada", "passada" qualify the word after them ("pasada la fecha límite":
+# past the deadline), not the month.  Said on 15 January 2027, late January
+# 2027 is ahead.
+@pytest.mark.parametrize("lang,text,rest", [
+    ("es", "a finales de enero pasada la fecha límite",
+     "pasada la fecha límite"),
+    ("pt", "no fim de janeiro passada a data", "passada a data"),
+    ("fr", "fin janvier dernière je pense", "dernière je pense"),
+])
+def test_a_feminine_marker_names_no_year(lang, text, rest):
+    r = extract_timespan(text, lang, J15)
+    assert r is not None
+    assert (r.span.start_datetime, r.span.end_datetime) == LATE_JAN_2027
+    assert r.remainder == rest
+
+
+# -- "since" searches back from the anchor, within the year before -----------
+
+# May 2026's Fridays are the 1st, 8th, 15th, 22nd and 29th.  May 2026 and
+# May 2025 have four weeks that start on a Monday (4 May 2026, 5 May 2025),
+# so neither has a fifth week.  The fifth Monday of November 2026 (the 30th)
+# is ahead of the anchor and November 2025 has four Mondays, so there is no
+# fifth Monday of November in the anchor's year or the year before.
+@pytest.mark.parametrize("lang,text", [
+    ("en", "since the fifth friday of may"),
+    ("fr", "depuis le cinquième vendredi de mai"),
+])
+def test_since_reads_back_a_part_the_next_year_lacks(lang, text):
+    assert _span(text, lang) == (datetime(2026, 5, 29), A)
+
+
+@pytest.mark.parametrize("text", [
+    "since the fifth week of may",
+    "since the fifth monday of november",
+])
+def test_since_a_part_with_no_recent_occurrence_names_nothing(text):
+    # "since" forms no span; as with "since tomorrow", the words after it may
+    # still read alone, with "since" left over
+    r = extract_timespan(text, "en", A)
+    assert r is None or "since" in r.remainder
+
+
+# -- "since <weekday> <date>": the weekday checked, within eleven years -------
+
+# A day of a month other than 29 February falls on each weekday within
+# eleven years.  3 March was a Friday in 2017, a Thursday in 2016, a Tuesday
+# in 2015 and a Monday in 2014.  29 February fell on a Tuesday in 2028, a
+# Thursday in 2024, a Saturday in 2020 and a Monday in 2016, twelve years
+# before 2028.
+@pytest.mark.parametrize("anchor,text,start", [
+    (datetime(2017, 6, 27, 13, 4), "since monday 3 march",
+     datetime(2014, 3, 3)),
+    (A, "since monday 3 march at 10am", datetime(2025, 3, 3, 10, 0)),
+    (datetime(2028, 3, 5, 10, 0), "since tuesday 29 february",
+     datetime(2028, 2, 29)),
+])
+def test_since_a_weekday_and_date_within_eleven_years(anchor, text, start):
+    r = extract_timespan(text, "en", anchor)
+    assert r is not None and r.remainder == ""
+    assert r.span.start_datetime == start
+    assert r.span.end_datetime == anchor
+
+
+def test_since_a_weekday_and_leap_day_too_far_back_names_nothing():
+    r = extract_timespan("since monday 29 february", "en",
+                         datetime(2028, 3, 5, 10, 0))
+    assert r is None or "since" in r.remainder
+
+
+def test_since_a_leap_day():
+    # 29 February 2024 is the latest 29 February before 26 November 2026
+    assert _span("since 29 february", "en") == (datetime(2024, 2, 29), A)

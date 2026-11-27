@@ -2282,6 +2282,12 @@ def _since_start(ep, sub, engine, anchor, now, text):
     wk = _bare_weekday_endpoint(sub, engine, anchor, backward=True)
     if wk is not None:
         return wk[0].start, wk[1], wk[2], wk[3]
+    search = _yearly_search(text, sub, engine, ep)
+    if search is not None:
+        years, accept = search
+        found = _search_back(text, sub, engine, anchor, now, years, accept)
+        return (None if found is None
+                else (found[0].start, found[1], found[2], found[3]))
     if ep is None:
         return None
     start = ep[0].start
@@ -2335,31 +2341,80 @@ def _since_start(ep, sub, engine, anchor, now, text):
         if pulled is None:
             break
         start = pulled
-    weekday = _said_weekday(sub, spec, ep[0])
-    if weekday is not None:
-        # "since monday 3 march": a weekday said beside a day of a named month
-        # names a 3 March that is a Monday, the latest one at or before now.
-        # A day of a month comes back to its weekday within 28 years in the
-        # Gregorian calendar (29 February within 28 leap years at most), and a
-        # date that never falls on it names no day.
-        for _ in range(40):
-            if start is None or start.weekday() == weekday:
-                break
-            start = _minus_one_year(start)
-        if start is None or start.weekday() != weekday:
-            return None
     return start, ep[1], ep[2], ep[3]
 
 
-def _said_weekday(sub, spec, span):
-    """The weekday (Monday 0) said beside a day of a named month in an
-    endpoint one day wide ("monday 3 march"), or ``None``."""
-    if span.end - span.start != timedelta(days=1):
-        return None
+#: How far back "since" looks for a part of a named month: the anchor's year
+#: and the year before (ruling 1).
+_SINCE_PART_YEARS = 1
+#: How far back "since" looks for a day of a month said with its weekday
+#: ("since monday 3 march").  A day other than 29 February falls on each
+#: weekday within 11 years in the Gregorian calendar (ruling 1).
+_SINCE_WEEKDAY_YEARS = 11
+#: 29 February comes round within 8 years (1896 to 1904 at most).
+_SINCE_LEAP_DAY_YEARS = 8
+
+
+def _yearly_search(text, sub, engine, ep):
+    """``(years, accept)`` for a "since" endpoint that is read back by year,
+    or ``None`` for one the other rules read.
+
+    A part of a named month ("since the fifth friday of may", "since early
+    october") is the latest one at or before now in the anchor's year or the
+    year before.  A day of a month said with a weekday ("since monday 3
+    march", "since tuesday 29 february") is the latest such day on that
+    weekday within eleven years.  29 February alone is the latest one within
+    eight years.  ``accept(start)`` keeps a reading."""
+    spec = engine.spec
     if not any(t.text in spec.months for t in sub):
         return None
     days = {spec.weekdays[t.text] for t in sub if t.text in spec.weekdays}
-    return days.pop() if len(days) == 1 else None
+    if _month_part_endpoint(text, sub, engine):
+        return _SINCE_PART_YEARS, lambda start: True
+    if ep is None or ep[0].end - ep[0].start > timedelta(days=1):
+        return None
+    if len(days) == 1:
+        weekday = days.pop()
+        return (_SINCE_WEEKDAY_YEARS,
+                lambda start: start.weekday() == weekday)
+    if (ep[0].start.month, ep[0].start.day) == (2, 29):
+        return _SINCE_LEAP_DAY_YEARS, lambda start: True
+    return None
+
+
+def _month_part_endpoint(text, sub, engine):
+    """Whether ``sub`` reads as a part of a named month with no year or
+    marker of its own (ruling 1)."""
+    spec = engine.spec
+    folded = fold_tokens(tuple(sub), spec, text)
+    veto = lambda m: _candidate_veto(folded, m, spec)   # noqa: E731
+    return any(m.construction in _MONTH_PART_CONSTRUCTIONS
+               and "MONTH" in m.slots
+               and not {"YEAR", "GYEAR", "REL_MARKER", "ERA"} & set(m.slots)
+               for m in engine.matcher.match(folded, veto))
+
+
+def _search_back(text, sub, engine, anchor, now, years, accept):
+    """The latest reading at or before ``now`` of a yearly endpoint, from the
+    readings made on 1 January of each year from the next one back to
+    ``years`` before ``now``'s year, or ``None``.  A reading on 1 January may
+    be a span that holds that day (the last week of December)."""
+    best = None
+    floor = now.year - years
+    for year in range(now.year + 1, floor - 1, -1):
+        if not MINYEAR <= year <= MAXYEAR:
+            continue
+        at = anchor.replace(year=year, month=1, day=1, hour=0, minute=0,
+                            second=0, microsecond=0)
+        got = _resolve_endpoint(text, sub, engine, at)
+        if got is None:
+            continue
+        start = got[0].start
+        when = _in_zone_of(now, start)
+        if (start <= when and start.year >= floor and accept(start)
+                and (best is None or start > best[0].start)):
+            best = got
+    return best
 
 
 #: The constructions that read a bare month as its next occurrence.
@@ -2557,6 +2612,17 @@ def _extract_open_range(text, tokens, engine, anchor, scale_mode="short"):
         return (_resolve_endpoint(text, sub, engine, anchor, scale_mode=scale_mode)
                 or _bare_weekday_endpoint(sub, engine, anchor))
 
+    def since_endpoint(sub):
+        # a part of a named month the next year lacks ("since the fifth
+        # friday of may" said after May) reads nothing forward: "since" then
+        # reads it back from the anchor (:func:`_yearly_search`)
+        ep = endpoint(sub)
+        if ep is None:
+            search = _yearly_search(text, sub, engine, None)
+            if search is not None:
+                ep = _search_back(text, sub, engine, anchor, now, *search)
+        return ep
+
     def until_span(ep, sub):
         if ep is None:
             return None
@@ -2591,7 +2657,7 @@ def _extract_open_range(text, tokens, engine, anchor, scale_mode="short"):
                 in spec.connectors.get("until_amount", ())):
             # "hasta cuántos grados": the limit is an amount, not a time
             return None
-        ep = endpoint(tokens[k:])
+        ep = (since_endpoint if build is since_span else endpoint)(tokens[k:])
         return marked(build(ep, tokens[k:]), tokens[:k]) \
             if ep is not None else None
 
@@ -2603,7 +2669,8 @@ def _extract_open_range(text, tokens, engine, anchor, scale_mode="short"):
         for words in surf:
             m = len(words)
             if m and m < n and [t.text for t in tokens[n - m:]] == words:
-                ep = endpoint(tokens[:n - m])
+                ep = (since_endpoint if build is since_span
+                      else endpoint)(tokens[:n - m])
                 got = marked(build(ep, tokens[:n - m]), tokens[n - m:]) \
                     if ep is not None else None
                 if got is not None:
@@ -2633,7 +2700,8 @@ def _extract_open_range(text, tokens, engine, anchor, scale_mode="short"):
                     char_end=(last.char_end - len(a)
                               if last.char_end is not None else None))
                 sub_a = tuple(tokens[:-1]) + (stripped,)
-                ep = endpoint(sub_a)
+                ep = (since_endpoint if build is since_span
+                      else endpoint)(sub_a)
                 got = marked(build(ep, sub_a), (last,)) \
                     if ep is not None else None
                 if got is not None:
@@ -4895,6 +4963,12 @@ def _part_marker_veto(tokens, match, spec) -> bool:
         return True
     if rel_tok.index != month_tok.index + 1 or match.span[1] != rel_tok.index + 1:
         return False                                # a year phrase
+    # a lone marker agrees with the month, a masculine noun in the Romance
+    # locales: "dernière" in "fin janvier dernière je pense" or "pasada" in
+    # "enero pasada la fecha" qualifies the next word (marker_month_marker.voc)
+    agree = spec.connectors.get("month_marker")
+    if agree and rel_tok.text not in agree:
+        return True
     nxt = match.span[1]
     if nxt >= len(tokens) or tokens[nxt].break_before:
         return False
