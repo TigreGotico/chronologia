@@ -5,6 +5,10 @@ on:
     branches: [dev, master]
   workflow_dispatch:
 
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
 jobs:
   build:
     uses: OpenVoiceOS/gh-automations/.github/workflows/build-tests.yml@dev
