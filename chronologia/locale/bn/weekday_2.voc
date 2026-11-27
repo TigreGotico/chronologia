@@ -1,0 +1,9 @@
+# Unicode CLDR 47, common/main/bn.xml, gregorian wide day name.  The locative -এ and the
+# genitive -এর are the noun endings in H.-R. Thompson, Bengali (LOALL 18, John Benjamins 2012), §4
+# ("sokale", "robibarer age"); CLDR itself writes "বুধবারে" in its
+# future pattern and "রবিবারের সন্ধ্যায়" in its genitive minimal pair.
+# The CLDR abbreviations (সোম, মঙ্গল, বুধ, শনি, রবি ...) are left out:
+# each is also a common noun (মঙ্গল "welfare", রবি "sun").
+বুধবার
+বুধবারে
+বুধবারের

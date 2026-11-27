@@ -83,15 +83,12 @@ def test_explicit_year(text, ymd):
     assert start(text) == AstroDate(*ymd)
 
 
-# -- confusable that DOES bind (documented): "easter egg hunt ideas" ------
-# The bare holiday word is present, so the reference binds easter and the rest
-# is remainder.  This is the documented behaviour, not a bug.
+# -- confusable: "easter egg hunt ideas" ---------------------------------
+# The holiday word modifies a noun and no time cue stands next to it, so it
+# names no date.
 
-def test_confusable_still_binds_easter():
-    r = parse("easter egg hunt ideas")
-    assert r is not None
-    assert r[0].start == AstroDate(2018, 4, 1)
-    assert "egg" in r[1]
+def test_confusable_modifier_does_not_bind_easter():
+    assert parse("easter egg hunt ideas") is None
 
 
 # -- negatives: no holiday word -> nothing to bind ------------------------
@@ -106,10 +103,8 @@ def test_no_holiday_no_match(text):
 
 
 # -- homograph adversarial: a person/place named like a holiday ------------
-# "Easter" is also a given name/surname; with no calendar cue the engine still
-# binds the holiday.  Policy: homograph disambiguation is out of scope -> xfail.
+# "Easter" is also a given name; with no time cue next to it, it names no date.
 
-@pytest.mark.xfail(raises=AssertionError, reason="holiday/person homograph disambiguation out of scope", strict=True)
 def test_person_homograph_should_not_bind():
     nomatch("i met a woman named easter")
 

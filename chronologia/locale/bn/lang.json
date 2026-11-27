@@ -1,0 +1,156 @@
+{
+ "tokenizer": {
+  "split_contractions": false,
+  "ordinal_dot": false,
+  "decimal_comma": false
+ },
+ "constructions": {
+  "relative_offset": {
+   "orders": [
+    "NUM UNIT MARKER",
+    "today from NUM UNIT MARKER"
+   ]
+  },
+  "calendar_date": {
+   "orders": [
+    "DAY tarikh? MONTH YEAR?",
+    "MONTH DAY? YEAR?"
+   ],
+   "prefer_future": true
+  },
+  "clock_time": {
+   "orders": [
+    "CLOCK",
+    "FRACTION HOUR at",
+    "FRACTION HOUR clf strikes?",
+    "HOUR at",
+    "HOUR clf strikes",
+    "LANDMARK at",
+    "LANDMARK clf strikes?"
+   ],
+   "prefer_future": true
+  },
+  "year_ref": {
+   "orders": [
+    "GYEAR"
+   ]
+  }
+ },
+ "conventions": {
+  "week_start": "monday",
+  "dmy": true,
+  "hemisphere": "north",
+  "prefer_future": true,
+  "bare_half_past": true,
+  "bare_quarter_past": true,
+  "bare_daypart_initial": true
+ },
+ "quantifiers": {
+  "1": [
+   "এক"
+  ]
+ },
+ "guards": {
+  "bare_year_min_digits": 4
+ },
+ "number_fold": {
+  "compounds": [
+   {
+    "heads": {
+     "এক": "এক",
+     "দু": "দু",
+     "দুই": "দুই",
+     "তিন": "তিন",
+     "চার": "চার",
+     "পাঁচ": "পাঁচ",
+     "ছ": "ছ",
+     "ছয়": "ছয়",
+     "সাত": "সাত",
+     "আট": "আট",
+     "ন": "ন",
+     "নয়": "নয়",
+     "দশ": "দশ",
+     "এগারো": "এগারো",
+     "বারো": "বারো"
+    },
+    "tails": [
+     "টা",
+     "টায়",
+     "টার",
+     "টো",
+     "টোয়",
+     "টে",
+     "টেয়"
+    ],
+    "source": "Cardinals 1-12 and the combining stems দু, ছ, ন: Wiktionary, Appendix:Bengali numerals, oldid=95460450 (দুবার, ছবার, নবার). The hour classifier -টা and its forms: H.-R. Thompson, Bengali (2012), 'ta is added to numbers for time references. tinta baje three oclock', 'duto two, tinte three, carte four', 'aj sokale noytay'."
+   },
+   {
+    "heads": {
+     "এক": "এক"
+    },
+    "tails": [
+     "দিন"
+    ],
+    "source": "একদিন 'one day': Wiktionary, Appendix:Bengali numerals writes এক-compounds as one word (একবার, একগুণ)."
+   },
+   {
+    "heads": {
+     "আড়াই": "আড়াই",
+     "দেড়": "দেড়"
+    },
+    "tails": [
+     "টা",
+     "টায়",
+     "টার",
+     "টো",
+     "টোয়",
+     "টে",
+     "টেয়"
+    ],
+    "source": "H.-R. Thompson, Bengali (LOALL 18, John Benjamins 2012), Appendix II: 'one and a half der', 'two and a half arai'; the hour classifier as above."
+   }
+  ],
+  "word_numbers": [
+   {
+    "words": {
+     "এক": 1,
+     "দু": 2,
+     "দুই": 2,
+     "তিন": 3,
+     "চার": 4,
+     "পাঁচ": 5,
+     "ছ": 6,
+     "ছয়": 6,
+     "সাত": 7,
+     "আট": 8,
+     "ন": 9,
+     "নয়": 9,
+     "দশ": 10,
+     "এগারো": 11,
+     "বারো": 12
+    },
+    "ordinal": false,
+    "source": "Cardinals 1-12 and the combining stems দু, ছ, ন: Wiktionary, Appendix:Bengali numerals, oldid=95460450 (দুবার, ছবার, নবার). The hour classifier -টা and its forms: H.-R. Thompson, Bengali (2012), 'ta is added to numbers for time references. tinta baje three oclock', 'duto two, tinte three, carte four', 'aj sokale noytay'."
+   },
+   {
+    "words": {
+     "পয়লা": 1,
+     "দোসরা": 2,
+     "তেসরা": 3,
+     "পাঁচই": 5,
+     "বিশে": 20,
+     "একুশে": 21
+    },
+    "ordinal": true,
+    "source": "Day-of-month words: Samsad Bengali-English Dictionary (DSAL): পয়লা p. 614, দোসরা p. 522, তেসরা p. 469, পাঁচই p. 632, বিশে p. 772, একুশে p. 183, each '(of the days of a month)'."
+   }
+  ]
+ },
+ "base_grammar": {
+  "marker_position": "post"
+ },
+ "positions": {
+  "from": "post",
+  "until": "post"
+ }
+}

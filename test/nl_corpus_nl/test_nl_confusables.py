@@ -78,9 +78,7 @@ _LIMITATIONS = [
     pytest.param(
         'morgen komt hij',
         marks=pytest.mark.xfail(raises=AssertionError, reason='morning/tomorrow homograph binds as the next day; expected limitation', strict=True)),
-    pytest.param(
-        'kerst kwam vroeg',
-        marks=pytest.mark.xfail(raises=AssertionError, reason='temporal token inside a fixed idiom binds literally; downstream concern', strict=True)),
+    'kerst kwam vroeg',
 ]
 
 

@@ -85,9 +85,7 @@ _LIMITATIONS = [
     pytest.param(
         'dissabte de glòria',
         marks=pytest.mark.xfail(raises=AssertionError, reason='weekday homograph binds as the weekday once bare-weekday parsing lands engine-wide; downstream concern', strict=True)),
-    pytest.param(
-        'el nadal va arribar aviat',
-        marks=pytest.mark.xfail(raises=AssertionError, reason='temporal token inside a fixed idiom binds literally; downstream concern', strict=True)),
+    'el nadal va arribar aviat',
 ]
 
 

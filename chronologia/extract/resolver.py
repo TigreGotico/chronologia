@@ -3043,6 +3043,27 @@ class Resolver:
 
     # -- holiday_ref -------------------------------------------------------
 
+    def _known_holiday(self, match):
+        from chronologia.civil_holidays import (JURISDICTION_KNOWN_BY_KEY_LANG,
+                                                 WELL_KNOWN_BY_KEY)
+        key = self.spec.holidays.get(match.slots["HOLIDAY"].text)
+        wk = WELL_KNOWN_BY_KEY.get(key) if key is not None else None
+        if wk is None and key is not None:
+            # Second tier: the rule is chosen by the locale's jurisdiction
+            # default (mother's/father's day differ by country).
+            wk = JURISDICTION_KNOWN_BY_KEY_LANG.get((key, self.spec.lang))
+        return wk
+
+    def holiday_in_year(self, match, year, consumed):
+        """The ``holiday_ref`` match's occurrence in ``year`` ("this year at
+        christmas"), or None."""
+        wk = self._known_holiday(match)
+        got = wk.span_for(year) if wk is not None else None
+        if got is None:
+            return None
+        span = got[0]
+        return Resolution(DateSpan(span.start, span.end), tuple(consumed))
+
     def _resolve_holiday_ref(self, match, anchor):
         """"christmas" / "when is easter" / "next christmas" / "last easter" /
         "natal 2020" -> the holiday's own :class:`DateSpan`.
@@ -3064,14 +3085,7 @@ class Resolver:
         The result carries the holiday's own span shape (whole-day, or half-day
         where the rule is a half-day).
         """
-        from chronologia.civil_holidays import (JURISDICTION_KNOWN_BY_KEY_LANG,
-                                                 WELL_KNOWN_BY_KEY)
-        key = self.spec.holidays.get(match.slots["HOLIDAY"].text)
-        wk = WELL_KNOWN_BY_KEY.get(key) if key is not None else None
-        if wk is None and key is not None:
-            # Second tier: the rule is chosen by the locale's jurisdiction
-            # default (mother's/father's day differ by country).
-            wk = JURISDICTION_KNOWN_BY_KEY_LANG.get((key, self.spec.lang))
+        wk = self._known_holiday(match)
         if wk is None:
             return None
         year_tok = match.slots.get("YEAR")

@@ -118,4 +118,4 @@ Each example below runs as a doctest with a fixed anchor, so the output does not
     True
 
 ---
-[← Basque](eu.md) · [Home](../index.md) · [Bulgarian →](bg.md)
+[← Basque](eu.md) · [Home](../index.md) · [Bengali →](bn.md)

@@ -56,7 +56,7 @@ The Ready column and the `ready` key of each locale in `support.json` compare ch
 
 A regional tag reads the data of its base language, named in the Data column. The leader page of each language lists the forms that differ by region. The languages that have a language leader come first, in leader order. The other languages follow by name.
 
-Bengali and Marwari have no locale. `extract_timespan` raises `NotImplementedError` for `bn`, `bn-IN` and `mwr`. Issue [#1484](https://github.com/TigreGotico/chronologia/issues/1484) holds the questions for a native speaker. numtag reads Bengali numbers with its `bn` lexicon. Issue #1484 tracks Marwari.
+Marwari has no locale. `extract_timespan` raises `NotImplementedError` for `mwr`. Issue [#1484](https://github.com/TigreGotico/chronologia/issues/1484) holds the questions for a native speaker of Bengali and Marwari.
 
 To measure the test rows again and write the table, run these commands:
 
@@ -80,7 +80,7 @@ Cells: status, own test rows passed / own test rows.
 | [Danish (Denmark)](da.md) | da-DK | da | numtag | yes 33/33 | yes 116/116 | yes 16/16 | yes 30/30 | yes 345/345 | yes 19/19 | yes 391/391 | no | no |
 | [Kabyle](kab.md) | kab | kab | numtag | yes 98/98 | yes 85/85 | yes 13/13 | yes 27/27 | yes 6/6 | yes 8/8 | yes 7/7 | no | no |
 | [Hindi (India)](hi.md) | hi-IN | hi | numfold_indic | yes 52/52 | yes 47/47 | partial 0/0 | yes 71/71 | yes 20/20 | yes 27/27 | no 0/0 | no | no |
-| Bengali (India) | bn-IN | none | not supported, see [#1484](https://github.com/TigreGotico/chronologia/issues/1484) | no | no | no | no | no | no | no | no | no |
+| [Bengali (India)](bn.md) | bn-IN | bn | numtag | partial 0/0 | partial 0/0 | partial 0/0 | yes 6/10 | partial 0/0 | partial 0/0 | no 0/0 | no | not measured |
 | Marwari | mwr | none | not supported, see [#1484](https://github.com/TigreGotico/chronologia/issues/1484) | no | no | no | no | no | no | no | no | no |
 | [Albanian](sq.md) | sq | sq | numfold_albanian | partial 0/0 | yes 37/37 | partial 0/0 | yes 66/66 | partial 0/0 | partial 0/0 | no 0/0 | no | no |
 | [Arabic](ar.md) | ar | ar | numtag | yes 850/850 | yes 100/100 | yes 25/25 | yes 61/61 | yes 1158/1159 | yes 21/21 | yes 20/20 | no | no |

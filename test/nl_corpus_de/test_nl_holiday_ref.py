@@ -60,9 +60,8 @@ def test_explicit_year(text, ymd):
     assert start(text) == AstroDate(*ymd)
 
 
-def test_confusable_still_binds_easter():
-    r = parse("frohe ostern euch allen")
-    assert r is not None and r[0].start == AstroDate(2018, 4, 1)
+def test_confusable_modifier_does_not_bind_easter():
+    nomatch("frohe ostern euch allen")
 
 
 @pytest.mark.parametrize("text", [
