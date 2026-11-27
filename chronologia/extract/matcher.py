@@ -585,9 +585,13 @@ def week_idiom_state(tokens: Tuple[Token, ...], i: int,
     for k in range(i + 2, len(tokens) - 2):
         if tokens[k].sentence_break_before:
             break
+        # "et en quinze minutes" counts minutes: a numeral before a unit word
+        # is no second idiom
         if (tokens[k].text in joins and tokens[k + 1].text in ins
                 and (week_idiom_weeks(tokens[k + 2], spec) is not None
-                     or _digit_week_numeral(tokens[k + 2], spec))):
+                     or _digit_week_numeral(tokens[k + 2], spec))
+                and not (k + 3 < len(tokens)
+                         and tokens[k + 3].text in spec.units)):
             return "open"
     return "ok"
 

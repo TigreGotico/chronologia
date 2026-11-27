@@ -170,3 +170,11 @@ def test_coordinated_idioms_after_a_comma_refuse():
 def test_candidates_drop_the_clock_of_a_refused_idiom():
     from chronologia import extract_candidates
     assert extract_candidates("lundi en huit à 10h", "fr", THU) == []
+
+
+def test_a_unit_after_a_joined_numeral_is_no_second_idiom():
+    # "et en quinze minutes" counts minutes: Friday 4 December at 10:00 stands
+    r = parse("vendredi en huit à 10h et en quinze minutes", THU)
+    assert r is not None
+    assert (r[0].start, r[0].end) == (ad(datetime(2026, 12, 4, 10, 0)),
+                                      ad(datetime(2026, 12, 4, 10, 1)))
