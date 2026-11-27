@@ -45,7 +45,6 @@ def test_en_fall_before_friday_night_leaves_friday_night_the_date():
     assert found.span.start.datetime().date() == datetime(2017, 6, 30).date()
 
 
-@pytest.mark.xfail(raises=AssertionError, strict=True, reason=ISSUE)
 def test_da_her_til_morgen_is_this_morning():
     found = extract_timespan(
         "Hvad tid gryr dagen her til morgen i dag?", "da", ANCHOR)

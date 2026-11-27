@@ -50,20 +50,31 @@ def _rules_for(language: str) -> Optional[dict]:
         return json.load(fh)
 
 
+@lru_cache(maxsize=None)
+def _tag_rules(language: str, key: str) -> Optional[dict]:
+    """The language rules with the regional block of the key over them."""
+    rules = _rules_for(language)
+    if rules is None or key not in rules["tags"]:
+        return None
+    return {**rules, **rules.get("regions", {}).get(key, {})}
+
+
 def _rules(tag: str, form: str) -> tuple:
     """The writer data and the base tag that numtag reads."""
     language, region = _base_tag(tag)
-    rules = _rules_for(language)
     key = language if region is None else f"{language}-{region}"
-    if rules is None or key not in rules["tags"]:
+    rules = _tag_rules(language, key)
+    if rules is None:
         raise UnsupportedForm(tag, form, "this language")
     return rules, key
 
 
 def writes(tag: str) -> bool:
-    """True when chronologia has a date and time writer for the tag."""
+    """True when chronologia has a date, a time and a year writer for the tag."""
     try:
-        _rules(tag, "date")
+        spoken_date(tag, day=1, month=1, year=2000)
+        spoken_time(tag, 13, 30)
+        spoken_year(tag, 2000)
     except UnsupportedForm:
         return False
     return True
@@ -159,14 +170,16 @@ def _phrase(hour: int, minute: int, period: bool, tag: str,
     if minute in phrase["before_minutes"]:
         minute -= 60
         spoken_hour = (hour + 1) % 24
+    fractions = phrase["fractions"]
     if spoken_hour == 0:
         speak = rules["midnight"]
     elif spoken_hour == 12:
         speak = rules["noon"]
+        fractions = {**fractions, **phrase.get("noon_fractions", {})}
     else:
         speak = _number(spoken_hour % 12, tag, rules["hour_gender"])
-    if str(minute) in phrase["fractions"]:
-        speak += " " + phrase["fractions"][str(minute)]
+    if str(minute) in fractions:
+        speak += " " + fractions[str(minute)]
     elif minute > 0:
         speak += f" {rules['and']} " + _number(minute, tag,
                                                rules["count_gender"])
@@ -174,6 +187,9 @@ def _phrase(hour: int, minute: int, period: bool, tag: str,
         speak += f" {phrase['before']} " + _number(-minute, tag,
                                                    rules["count_gender"])
     if minute == 0 and not period:
+        if "on_the_hour" not in phrase:
+            raise UnsupportedForm(tag, "time", "the whole hour in the phrase"
+                                  " style without a day period")
         speak += " " + phrase["on_the_hour"]
     if period and spoken_hour not in (0, 12):
         speak += " " + _day_period(hour, rules)
