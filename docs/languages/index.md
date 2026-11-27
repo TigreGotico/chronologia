@@ -52,6 +52,8 @@ The status follows this rule:
 
 A test row counts for a feature when its file name in `test/nl_corpus_<code>/` matches the pattern of the feature in `FEATURES` in the script. A strict `xfail` row and a skipped row count as rows that do not pass. The Spoken column counts the rows in `test/test_spoken*_<code>.py`. It reads `chronologia.spoken.writes(tag)`, so a tag with no writer is "no".
 
+The Ready column and the `ready` key of each locale in `support.json` compare chronologia with ovos-date-parser 0.29 on the outside date benchmark. A tag is ready only when chronologia is correct at least as often as ovos-date-parser on every bench class for that tag. One lower class makes the tag "no", also when the total rate of chronologia is higher. A tag with no bench rows shows "not measured". The flag comes from `docs/benchmarks/odp_vs_chronologia.json`, and [benchmarks.md](../benchmarks.md#against-ovos-date-parser) gives the numbers. A consumer can use the flag to select chronologia in place of ovos-date-parser for a tag.
+
 A regional tag reads the data of its base language, named in the Data column. The leader page of each language lists the forms that differ by region. The languages that have a language leader come first, in leader order. The other languages follow by name.
 
 Bengali and Marwari have no locale. `extract_timespan` raises `NotImplementedError` for `bn`, `bn-IN` and `mwr`. Issue [#1484](https://github.com/TigreGotico/chronologia/issues/1484) holds the questions for a native speaker. numtag reads Bengali numbers with its `bn` lexicon. Issue #1484 tracks Marwari.
@@ -66,72 +68,72 @@ python tools/language_support.py write
 <!-- support-table:start -->
 Cells: status, own test rows passed / own test rows.
 
-| Language | Tag | Data | Numbers | Dates | Clock | Durations | Relative days | Ranges | Recurrence | Holidays | Spoken |
-|:---|:---|:---|:---|:---|:---|:---|:---|:---|:---|:---|:---|
-| [Portuguese (Portugal)](pt.md) | pt-PT | pt | numtag | yes 175/175 | yes 321/321 | yes 18/18 | yes 127/127 | yes 112/112 | yes 139/139 | yes 360/361 | yes 1143/1143 |
-| [Portuguese (Brazil)](pt.md) | pt-BR | pt | numtag (pt-BR lexicon) | yes 175/175 | yes 321/321 | yes 18/18 | yes 127/127 | yes 112/112 | yes 139/139 | yes 360/361 | yes 1143/1143 |
-| [Spanish (Colombia)](es.md) | es-CO | es | numtag | yes 63/63 | yes 166/166 | yes 31/31 | yes 102/102 | yes 172/172 | yes 42/42 | yes 621/622 | no |
-| [French (France)](fr.md) | fr-FR | fr | numtag | yes 230/230 | yes 199/199 | yes 19/19 | yes 100/100 | yes 340/343 | yes 39/39 | yes 451/452 | no |
-| [Italian (Italy)](it.md) | it-IT | it | numtag | yes 47/47 | yes 194/194 | yes 8/8 | yes 86/86 | yes 140/140 | yes 18/18 | yes 341/342 | no |
-| [German (Germany)](de.md) | de-DE | de | numtag | yes 69/69 | yes 102/102 | yes 28/28 | yes 44/44 | yes 413/413 | yes 40/40 | yes 768/769 | no |
-| [Dutch (Netherlands)](nl.md) | nl-NL | nl | numtag | yes 659/659 | yes 156/156 | yes 19/19 | yes 31/31 | yes 313/313 | yes 11/11 | yes 696/696 | no |
-| [Danish (Denmark)](da.md) | da-DK | da | numtag | yes 33/33 | yes 116/116 | yes 16/16 | yes 30/30 | yes 345/345 | yes 19/19 | yes 391/391 | no |
-| [Kabyle](kab.md) | kab | kab | numtag | yes 98/98 | yes 85/85 | yes 13/13 | yes 27/27 | yes 6/6 | yes 8/8 | yes 7/7 | no |
-| [Hindi (India)](hi.md) | hi-IN | hi | numfold_indic | yes 52/52 | yes 47/47 | partial 0/0 | yes 71/71 | yes 20/20 | yes 27/27 | no 0/0 | no |
-| Bengali (India) | bn-IN | none | not supported, see [#1484](https://github.com/TigreGotico/chronologia/issues/1484) | no | no | no | no | no | no | no | no |
-| Marwari | mwr | none | not supported, see [#1484](https://github.com/TigreGotico/chronologia/issues/1484) | no | no | no | no | no | no | no | no |
-| [Albanian](sq.md) | sq | sq | numfold_albanian | partial 0/0 | yes 37/37 | partial 0/0 | yes 66/66 | partial 0/0 | partial 0/0 | no 0/0 | no |
-| [Arabic](ar.md) | ar | ar | numtag | yes 850/850 | yes 100/100 | yes 25/25 | yes 61/61 | yes 1158/1159 | yes 21/21 | yes 20/20 | no |
-| [Aragonese](an.md) | an | an | numtag | yes 38/38 | yes 42/42 | yes 14/14 | yes 26/26 | yes 10/10 | yes 19/19 | no 0/0 | no |
-| [Armenian](hy.md) | hy | hy | numfold_armenian | yes 35/35 | yes 26/26 | partial 0/0 | partial 0/0 | partial 0/0 | partial 0/0 | no 0/0 | no |
-| [Asturian](ast.md) | ast | ast | numtag | yes 278/278 | yes 58/58 | yes 14/14 | yes 61/61 | yes 104/104 | yes 20/20 | no 0/0 | no |
-| [Azerbaijani](az.md) | az | az | numtag | yes 414/414 | yes 147/147 | yes 13/13 | yes 34/34 | yes 150/150 | yes 10/10 | yes 67/67 | no |
-| [Basque](eu.md) | eu | eu | numtag | yes 643/643 | yes 29/29 | yes 16/16 | yes 129/129 | yes 4/4 | yes 6/6 | yes 33/33 | no |
-| [Belarusian](be.md) | be | be | numfold_be | yes 113/113 | yes 104/104 | partial 0/0 | yes 80/80 | partial 0/0 | partial 0/0 | no 0/0 | no |
-| [Bulgarian](bg.md) | bg | bg | numtag | yes 170/170 | yes 20/20 | yes 13/13 | yes 46/46 | yes 238/238 | yes 19/19 | yes 168/168 | no |
-| [Catalan](ca.md) | ca | ca | numtag | yes 2727/2728 | yes 178/178 | yes 14/14 | yes 96/96 | yes 370/370 | yes 20/20 | yes 226/239 | no |
-| [Croatian](hr.md) | hr | hr | numtag | yes 70/70 | yes 34/34 | yes 16/16 | yes 41/41 | yes 328/328 | yes 19/19 | yes 282/282 | no |
-| [Czech](cs.md) | cs | cs | numtag | yes 61/61 | yes 73/73 | yes 13/13 | yes 76/76 | yes 191/191 | yes 20/20 | yes 329/329 | no |
-| [English](en.md) | en | en | numtag | yes 393/393 | yes 300/300 | yes 92/92 | yes 164/164 | yes 722/727 | yes 242/242 | yes 1081/1082 | no |
-| [Esperanto](eo.md) | eo | eo | numfold_esperanto | yes 23/23 | yes 32/32 | partial 0/0 | partial 0/0 | no 0/0 | yes 25/25 | no 0/0 | no |
-| [Estonian](et.md) | et | et | numtag | yes 547/547 | yes 41/41 | yes 13/13 | yes 64/64 | yes 4/4 | yes 19/19 | yes 34/34 | no |
-| [Filipino](fil.md) | fil | fil | numfold_filipino | yes 60/60 | yes 71/71 | partial 0/0 | yes 54/54 | partial 0/0 | partial 0/0 | no 0/0 | no |
-| [Finnish](fi.md) | fi | fi | numtag | yes 471/471 | yes 95/96 | yes 13/13 | yes 29/29 | yes 16/16 | yes 10/10 | yes 188/188 | no |
-| [Galician](gl.md) | gl | gl | numtag | yes 1328/1328 | yes 118/118 | yes 14/14 | yes 95/95 | yes 144/144 | yes 20/20 | yes 225/226 | no |
-| [Georgian](ka.md) | ka | ka | numfold_georgian | yes 42/42 | yes 38/38 | partial 0/0 | yes 42/42 | no 0/0 | no 0/0 | no 0/0 | no |
-| [Greek](el.md) | el | el | numtag | yes 578/578 | yes 223/223 | yes 16/16 | yes 54/54 | yes 103/103 | yes 21/21 | yes 193/193 | no |
-| [Hausa](ha.md) | ha | ha | numfold_chadic | yes 64/64 | yes 35/35 | yes 2/2 | yes 44/44 | yes 17/17 | partial 0/0 | no 0/0 | no |
-| [Hebrew](he.md) | he | he | numtag | yes 327/327 | yes 45/45 | yes 19/19 | yes 92/92 | yes 81/82 | yes 49/49 | yes 16/16 | no |
-| [Hungarian](hu.md) | hu | hu | numtag | yes 568/568 | yes 57/57 | yes 15/15 | yes 34/34 | yes 18/18 | yes 10/10 | yes 326/326 | no |
-| [Icelandic](is.md) | is | is | numfold_icelandic | yes 42/42 | yes 50/50 | partial 0/0 | yes 66/66 | no 0/0 | no 0/0 | no 0/0 | no |
-| [Indonesian](id.md) | id | id | numtag | yes 769/769 | yes 40/40 | yes 18/18 | yes 33/33 | yes 213/213 | yes 38/38 | yes 106/106 | no |
-| [Irish](ga.md) | ga | ga | numfold_irish | yes 60/60 | yes 70/70 | partial 0/0 | yes 74/74 | yes 2/2 | partial 0/0 | no 0/0 | no |
-| [Korean](ko.md) | ko | ko | numfold_korean | yes 34/34 | yes 42/42 | yes 11/11 | yes 38/38 | no 0/0 | no 0/0 | no 0/0 | no |
-| [Latvian](lv.md) | lv | lv | numfold_latvian | yes 57/57 | yes 37/37 | partial 0/0 | yes 56/56 | partial 0/0 | partial 0/0 | no 0/0 | no |
-| [Lithuanian](lt.md) | lt | lt | numfold_baltic | yes 34/34 | yes 28/28 | partial 0/0 | yes 68/68 | yes 23/23 | partial 0/0 | no 0/0 | no |
-| [Macedonian](mk.md) | mk | mk | numfold_macedonian | yes 59/59 | yes 64/64 | partial 0/0 | yes 55/55 | partial 0/0 | partial 0/0 | no 0/0 | no |
-| [Malay](ms.md) | ms | ms | numtag | yes 38/38 | yes 36/36 | yes 14/14 | yes 29/29 | yes 15/15 | yes 36/36 | yes 22/22 | no |
-| [Maltese](mt.md) | mt | mt | numfold_maltese | yes 34/34 | yes 33/33 | partial 0/0 | partial 0/0 | partial 0/0 | partial 0/0 | no 0/0 | no |
-| [Mirandese](mwl.md) | mwl | mwl | numtag | yes 43/43 | yes 18/18 | yes 14/14 | yes 18/18 | yes 19/19 | yes 19/19 | no 0/0 | no |
-| [Norwegian Bokmål](nb.md) | nb | nb | numtag | yes 311/311 | yes 55/55 | yes 13/13 | yes 30/30 | yes 269/269 | yes 19/19 | yes 441/441 | no |
-| [Norwegian Nynorsk](nn.md) | nn | nn | numtag | yes 770/770 | yes 53/53 | yes 13/13 | yes 27/27 | yes 29/29 | yes 19/19 | yes 71/71 | no |
-| [Occitan](oc.md) | oc | oc | numtag | yes 29/29 | yes 67/67 | yes 14/14 | yes 54/54 | yes 16/16 | yes 20/20 | no 0/0 | no |
-| [Persian](fa.md) | fa | fa | numtag | yes 30/30 | yes 54/57 | yes 13/13 | yes 59/59 | yes 147/147 | yes 18/18 | yes 25/25 | no |
-| [Polish](pl.md) | pl | pl | numtag | yes 50/50 | yes 20/20 | yes 18/18 | yes 53/53 | yes 319/319 | yes 20/20 | yes 261/261 | no |
-| [Romanian](ro.md) | ro | ro | numtag | yes 19/19 | yes 45/45 | yes 14/14 | yes 85/85 | yes 332/332 | yes 19/19 | yes 306/306 | no |
-| [Russian](ru.md) | ru | ru | numtag | yes 122/122 | yes 94/94 | yes 20/20 | yes 72/72 | yes 695/695 | yes 19/19 | yes 219/219 | no |
-| [Serbian](sr.md) | sr | sr | numfold_slavic | yes 42/42 | yes 42/48 | partial 0/0 | partial 0/0 | partial 0/0 | partial 0/0 | no 0/0 | no |
-| [Slovak](sk.md) | sk | sk | numtag | yes 37/37 | yes 59/59 | yes 13/13 | yes 55/55 | yes 144/144 | yes 19/19 | yes 256/256 | no |
-| [Slovenian](sl.md) | sl | sl | numtag | yes 69/69 | yes 25/25 | yes 13/13 | yes 42/42 | yes 295/295 | yes 19/19 | yes 256/256 | no |
-| [Swahili](sw.md) | sw | sw | numfold_bantu | yes 41/41 | yes 81/81 | yes 34/34 | yes 50/50 | partial 0/0 | partial 0/0 | no 0/0 | no |
-| [Swedish](sv.md) | sv | sv | numtag | yes 275/275 | yes 64/64 | yes 13/13 | yes 27/27 | yes 811/811 | yes 19/19 | yes 410/410 | no |
-| [Tamil](ta.md) | ta | ta | numfold_dravidian | yes 28/28 | yes 21/21 | partial 0/0 | yes 53/53 | no 0/0 | partial 0/0 | no 0/0 | no |
-| [Thai](th.md) | th | th | numfold_thai | yes 30/30 | yes 33/33 | partial 0/0 | yes 63/63 | partial 0/0 | partial 0/0 | no 0/0 | no |
-| [Turkish](tr.md) | tr | tr | numtag | yes 1293/1293 | yes 278/278 | yes 13/13 | yes 36/36 | yes 135/135 | yes 19/19 | yes 201/201 | no |
-| [Ukrainian](uk.md) | uk | uk | numtag | yes 1294/1294 | yes 91/91 | yes 13/13 | yes 46/46 | yes 199/199 | yes 19/19 | yes 244/244 | no |
-| [Vietnamese](vi.md) | vi | vi | numfold_vietnamese | yes 54/54 | yes 46/46 | partial 0/0 | yes 51/51 | no 0/0 | no 0/0 | no 0/0 | no |
-| [Welsh](cy.md) | cy | cy | numfold_welsh | yes 45/45 | yes 59/59 | partial 0/0 | yes 73/73 | no 0/0 | yes 30/30 | no 0/0 | no |
-| [West Frisian](fy.md) | fy | fy | numtag | yes 29/29 | yes 54/54 | yes 13/13 | yes 27/27 | yes 29/29 | yes 18/18 | yes 17/17 | no |
+| Language | Tag | Data | Numbers | Dates | Clock | Durations | Relative days | Ranges | Recurrence | Holidays | Spoken | Ready |
+|:---|:---|:---|:---|:---|:---|:---|:---|:---|:---|:---|:---|:---|
+| [Portuguese (Portugal)](pt.md) | pt-PT | pt | numtag | yes 175/175 | yes 321/321 | yes 18/18 | yes 127/127 | yes 112/112 | yes 139/139 | yes 360/361 | yes 1143/1143 | no |
+| [Portuguese (Brazil)](pt.md) | pt-BR | pt | numtag (pt-BR lexicon) | yes 175/175 | yes 321/321 | yes 18/18 | yes 127/127 | yes 112/112 | yes 139/139 | yes 360/361 | yes 1143/1143 | no |
+| [Spanish (Colombia)](es.md) | es-CO | es | numtag | yes 63/63 | yes 166/166 | yes 31/31 | yes 102/102 | yes 172/172 | yes 42/42 | yes 621/622 | no | not measured |
+| [French (France)](fr.md) | fr-FR | fr | numtag | yes 230/230 | yes 199/199 | yes 19/19 | yes 100/100 | yes 340/343 | yes 39/39 | yes 451/452 | no | no |
+| [Italian (Italy)](it.md) | it-IT | it | numtag | yes 47/47 | yes 194/194 | yes 8/8 | yes 86/86 | yes 140/140 | yes 18/18 | yes 341/342 | no | no |
+| [German (Germany)](de.md) | de-DE | de | numtag | yes 69/69 | yes 102/102 | yes 28/28 | yes 44/44 | yes 413/413 | yes 40/40 | yes 768/769 | no | no |
+| [Dutch (Netherlands)](nl.md) | nl-NL | nl | numtag | yes 659/659 | yes 156/156 | yes 19/19 | yes 31/31 | yes 313/313 | yes 11/11 | yes 696/696 | no | no |
+| [Danish (Denmark)](da.md) | da-DK | da | numtag | yes 33/33 | yes 116/116 | yes 16/16 | yes 30/30 | yes 345/345 | yes 19/19 | yes 391/391 | no | no |
+| [Kabyle](kab.md) | kab | kab | numtag | yes 98/98 | yes 85/85 | yes 13/13 | yes 27/27 | yes 6/6 | yes 8/8 | yes 7/7 | no | no |
+| [Hindi (India)](hi.md) | hi-IN | hi | numfold_indic | yes 52/52 | yes 47/47 | partial 0/0 | yes 71/71 | yes 20/20 | yes 27/27 | no 0/0 | no | no |
+| Bengali (India) | bn-IN | none | not supported, see [#1484](https://github.com/TigreGotico/chronologia/issues/1484) | no | no | no | no | no | no | no | no | no |
+| Marwari | mwr | none | not supported, see [#1484](https://github.com/TigreGotico/chronologia/issues/1484) | no | no | no | no | no | no | no | no | no |
+| [Albanian](sq.md) | sq | sq | numfold_albanian | partial 0/0 | yes 37/37 | partial 0/0 | yes 66/66 | partial 0/0 | partial 0/0 | no 0/0 | no | no |
+| [Arabic](ar.md) | ar | ar | numtag | yes 850/850 | yes 100/100 | yes 25/25 | yes 61/61 | yes 1158/1159 | yes 21/21 | yes 20/20 | no | no |
+| [Aragonese](an.md) | an | an | numtag | yes 38/38 | yes 42/42 | yes 14/14 | yes 26/26 | yes 10/10 | yes 19/19 | no 0/0 | no | no |
+| [Armenian](hy.md) | hy | hy | numfold_armenian | yes 35/35 | yes 26/26 | partial 0/0 | partial 0/0 | partial 0/0 | partial 0/0 | no 0/0 | no | not measured |
+| [Asturian](ast.md) | ast | ast | numtag | yes 278/278 | yes 58/58 | yes 14/14 | yes 61/61 | yes 104/104 | yes 20/20 | no 0/0 | no | no |
+| [Azerbaijani](az.md) | az | az | numtag | yes 414/414 | yes 147/147 | yes 13/13 | yes 34/34 | yes 150/150 | yes 10/10 | yes 67/67 | no | no |
+| [Basque](eu.md) | eu | eu | numtag | yes 643/643 | yes 29/29 | yes 16/16 | yes 129/129 | yes 4/4 | yes 6/6 | yes 33/33 | no | no |
+| [Belarusian](be.md) | be | be | numfold_be | yes 113/113 | yes 104/104 | partial 0/0 | yes 80/80 | partial 0/0 | partial 0/0 | no 0/0 | no | not measured |
+| [Bulgarian](bg.md) | bg | bg | numtag | yes 170/170 | yes 20/20 | yes 13/13 | yes 46/46 | yes 238/238 | yes 19/19 | yes 168/168 | no | no |
+| [Catalan](ca.md) | ca | ca | numtag | yes 2727/2728 | yes 178/178 | yes 14/14 | yes 96/96 | yes 370/370 | yes 20/20 | yes 226/239 | no | no |
+| [Croatian](hr.md) | hr | hr | numtag | yes 70/70 | yes 34/34 | yes 16/16 | yes 41/41 | yes 328/328 | yes 19/19 | yes 282/282 | no | no |
+| [Czech](cs.md) | cs | cs | numtag | yes 61/61 | yes 73/73 | yes 13/13 | yes 76/76 | yes 191/191 | yes 20/20 | yes 329/329 | no | no |
+| [English](en.md) | en | en | numtag | yes 393/393 | yes 300/300 | yes 92/92 | yes 164/164 | yes 722/727 | yes 242/242 | yes 1081/1082 | no | no |
+| [Esperanto](eo.md) | eo | eo | numfold_esperanto | yes 23/23 | yes 32/32 | partial 0/0 | partial 0/0 | no 0/0 | yes 25/25 | no 0/0 | no | no |
+| [Estonian](et.md) | et | et | numtag | yes 547/547 | yes 41/41 | yes 13/13 | yes 64/64 | yes 4/4 | yes 19/19 | yes 34/34 | no | no |
+| [Filipino](fil.md) | fil | fil | numfold_filipino | yes 60/60 | yes 71/71 | partial 0/0 | yes 54/54 | partial 0/0 | partial 0/0 | no 0/0 | no | not measured |
+| [Finnish](fi.md) | fi | fi | numtag | yes 471/471 | yes 95/96 | yes 13/13 | yes 29/29 | yes 16/16 | yes 10/10 | yes 188/188 | no | no |
+| [Galician](gl.md) | gl | gl | numtag | yes 1328/1328 | yes 118/118 | yes 14/14 | yes 95/95 | yes 144/144 | yes 20/20 | yes 225/226 | no | no |
+| [Georgian](ka.md) | ka | ka | numfold_georgian | yes 42/42 | yes 38/38 | partial 0/0 | yes 42/42 | no 0/0 | no 0/0 | no 0/0 | no | not measured |
+| [Greek](el.md) | el | el | numtag | yes 578/578 | yes 223/223 | yes 16/16 | yes 54/54 | yes 103/103 | yes 21/21 | yes 193/193 | no | no |
+| [Hausa](ha.md) | ha | ha | numfold_chadic | yes 64/64 | yes 35/35 | yes 2/2 | yes 44/44 | yes 17/17 | partial 0/0 | no 0/0 | no | not measured |
+| [Hebrew](he.md) | he | he | numtag | yes 327/327 | yes 45/45 | yes 19/19 | yes 92/92 | yes 81/82 | yes 49/49 | yes 16/16 | no | no |
+| [Hungarian](hu.md) | hu | hu | numtag | yes 568/568 | yes 57/57 | yes 15/15 | yes 34/34 | yes 18/18 | yes 10/10 | yes 326/326 | no | no |
+| [Icelandic](is.md) | is | is | numfold_icelandic | yes 42/42 | yes 50/50 | partial 0/0 | yes 66/66 | no 0/0 | no 0/0 | no 0/0 | no | not measured |
+| [Indonesian](id.md) | id | id | numtag | yes 769/769 | yes 40/40 | yes 18/18 | yes 33/33 | yes 213/213 | yes 38/38 | yes 106/106 | no | no |
+| [Irish](ga.md) | ga | ga | numfold_irish | yes 60/60 | yes 70/70 | partial 0/0 | yes 74/74 | yes 2/2 | partial 0/0 | no 0/0 | no | not measured |
+| [Korean](ko.md) | ko | ko | numfold_korean | yes 34/34 | yes 42/42 | yes 11/11 | yes 38/38 | no 0/0 | no 0/0 | no 0/0 | no | not measured |
+| [Latvian](lv.md) | lv | lv | numfold_latvian | yes 57/57 | yes 37/37 | partial 0/0 | yes 56/56 | partial 0/0 | partial 0/0 | no 0/0 | no | not measured |
+| [Lithuanian](lt.md) | lt | lt | numfold_baltic | yes 34/34 | yes 28/28 | partial 0/0 | yes 68/68 | yes 23/23 | partial 0/0 | no 0/0 | no | no |
+| [Macedonian](mk.md) | mk | mk | numfold_macedonian | yes 59/59 | yes 64/64 | partial 0/0 | yes 55/55 | partial 0/0 | partial 0/0 | no 0/0 | no | not measured |
+| [Malay](ms.md) | ms | ms | numtag | yes 38/38 | yes 36/36 | yes 14/14 | yes 29/29 | yes 15/15 | yes 36/36 | yes 22/22 | no | no |
+| [Maltese](mt.md) | mt | mt | numfold_maltese | yes 34/34 | yes 33/33 | partial 0/0 | partial 0/0 | partial 0/0 | partial 0/0 | no 0/0 | no | no |
+| [Mirandese](mwl.md) | mwl | mwl | numtag | yes 43/43 | yes 18/18 | yes 14/14 | yes 18/18 | yes 19/19 | yes 19/19 | no 0/0 | no | no |
+| [Norwegian Bokmål](nb.md) | nb | nb | numtag | yes 311/311 | yes 55/55 | yes 13/13 | yes 30/30 | yes 269/269 | yes 19/19 | yes 441/441 | no | no |
+| [Norwegian Nynorsk](nn.md) | nn | nn | numtag | yes 770/770 | yes 53/53 | yes 13/13 | yes 27/27 | yes 29/29 | yes 19/19 | yes 71/71 | no | no |
+| [Occitan](oc.md) | oc | oc | numtag | yes 29/29 | yes 67/67 | yes 14/14 | yes 54/54 | yes 16/16 | yes 20/20 | no 0/0 | no | no |
+| [Persian](fa.md) | fa | fa | numtag | yes 30/30 | yes 54/57 | yes 13/13 | yes 59/59 | yes 147/147 | yes 18/18 | yes 25/25 | no | no |
+| [Polish](pl.md) | pl | pl | numtag | yes 50/50 | yes 20/20 | yes 18/18 | yes 53/53 | yes 319/319 | yes 20/20 | yes 261/261 | no | no |
+| [Romanian](ro.md) | ro | ro | numtag | yes 19/19 | yes 45/45 | yes 14/14 | yes 85/85 | yes 332/332 | yes 19/19 | yes 306/306 | no | no |
+| [Russian](ru.md) | ru | ru | numtag | yes 122/122 | yes 94/94 | yes 20/20 | yes 72/72 | yes 695/695 | yes 19/19 | yes 219/219 | no | yes |
+| [Serbian](sr.md) | sr | sr | numfold_slavic | yes 42/42 | yes 42/48 | partial 0/0 | partial 0/0 | partial 0/0 | partial 0/0 | no 0/0 | no | no |
+| [Slovak](sk.md) | sk | sk | numtag | yes 37/37 | yes 59/59 | yes 13/13 | yes 55/55 | yes 144/144 | yes 19/19 | yes 256/256 | no | no |
+| [Slovenian](sl.md) | sl | sl | numtag | yes 69/69 | yes 25/25 | yes 13/13 | yes 42/42 | yes 295/295 | yes 19/19 | yes 256/256 | no | no |
+| [Swahili](sw.md) | sw | sw | numfold_bantu | yes 41/41 | yes 81/81 | yes 34/34 | yes 50/50 | partial 0/0 | partial 0/0 | no 0/0 | no | not measured |
+| [Swedish](sv.md) | sv | sv | numtag | yes 275/275 | yes 64/64 | yes 13/13 | yes 27/27 | yes 811/811 | yes 19/19 | yes 410/410 | no | no |
+| [Tamil](ta.md) | ta | ta | numfold_dravidian | yes 28/28 | yes 21/21 | partial 0/0 | yes 53/53 | no 0/0 | partial 0/0 | no 0/0 | no | not measured |
+| [Thai](th.md) | th | th | numfold_thai | yes 30/30 | yes 33/33 | partial 0/0 | yes 63/63 | partial 0/0 | partial 0/0 | no 0/0 | no | not measured |
+| [Turkish](tr.md) | tr | tr | numtag | yes 1293/1293 | yes 278/278 | yes 13/13 | yes 36/36 | yes 135/135 | yes 19/19 | yes 201/201 | no | no |
+| [Ukrainian](uk.md) | uk | uk | numtag | yes 1294/1294 | yes 91/91 | yes 13/13 | yes 46/46 | yes 199/199 | yes 19/19 | yes 244/244 | no | no |
+| [Vietnamese](vi.md) | vi | vi | numfold_vietnamese | yes 54/54 | yes 46/46 | partial 0/0 | yes 51/51 | no 0/0 | no 0/0 | no 0/0 | no | not measured |
+| [Welsh](cy.md) | cy | cy | numfold_welsh | yes 45/45 | yes 59/59 | partial 0/0 | yes 73/73 | no 0/0 | yes 30/30 | no 0/0 | no | not measured |
+| [West Frisian](fy.md) | fy | fy | numtag | yes 29/29 | yes 54/54 | yes 13/13 | yes 27/27 | yes 29/29 | yes 18/18 | yes 17/17 | no | no |
 <!-- support-table:end -->
 
 ---

@@ -502,6 +502,36 @@ def _counted_refused_unit_before(tokens: Tuple[Token, ...], start: int,
             and tokens[k - 1].text in ambiguous)
 
 
+def _named_day_homograph(tokens: Tuple[Token, ...], index: int,
+                         spec: LangSpec) -> bool:
+    """Is the day-part word at ``index`` a named day that a noun owns?
+
+    True for "<article> <noun> <of_bare> <word>" where the word is also a
+    named-day word, "la fiesta de mañana" (tomorrow's party), and for a
+    bare owner that opens the text, "reunión de mañana", unless that owner
+    is a degree word ("muy").  Otherwise the word keeps the band: es "de
+    mañana" after a verb, after "muy" or at the start is the adverb
+    (Diccionario Vox, «mañana» sense 5: "de mañana loc. adv. Al amanecer,
+    en las primeras horas del día"; sense 7: "muy de mañana loc. adv. Muy
+    temprano, de madrugada").  A clock, day, weekday or day-part owner also
+    keeps the band ("el lunes de mañana").
+    """
+    if (index < 2 or tokens[index].text not in spec.named_days
+            or tokens[index - 1].text not in spec.connectors.get("of_bare", ())):
+        return False
+    owner = tokens[index - 2]
+    if index == 2:
+        if owner.text in spec.connectors.get("degree", ()):
+            return False
+    elif tokens[index - 3].text not in spec.connectors.get("article", ()):
+        return False
+    return not (owner.is_number or owner.text in spec.named_days
+                or owner.text in spec.weekdays or owner.text in spec.dayparts
+                or owner.text in spec.clock_landmarks
+                or owner.text in spec.clock_fractions
+                or owner.text in spec.connectors.get("oclock", ()))
+
+
 def _counted_plural_daypart(tokens: Tuple[Token, ...], index: int,
                             spec: LangSpec) -> bool:
     """Is the plural day-part word at ``index`` counted, not a part of the day?
@@ -1187,6 +1217,13 @@ class ConstructionMatcher:
                             and "REL_MARKER" not in slots
                             and _counted_refused_unit_before(
                                 tokens, start, self.spec)):
+                        continue
+                    # A day-part word that is also a named-day word (es
+                    # "mañana") after "<article> <noun> de" is the named day.
+                    if (name == "daypart_ref" and "DAYPART" in slots
+                            and "REL_MARKER" not in slots
+                            and _named_day_homograph(
+                                tokens, slots["DAYPART"].index, self.spec)):
                         continue
                     if ("DAYPART" in slots and _counted_plural_daypart(
                             tokens, slots["DAYPART"].index, self.spec)):
