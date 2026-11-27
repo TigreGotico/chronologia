@@ -2,7 +2,7 @@
 
 <!-- agent-hint
 covers: how the differential benchmark against dateparser and dateutil and the cross-view harness run and what their numbers mean
-source: benchmark/run.py, benchmark/adapter.py, benchmark/crossview.py, benchmark/SCOREBOARD.md
+source: tools/plot_benchmarks.py, docs/benchmarks/odp_vs_chronologia.json, benchmark/run.py, benchmark/adapter.py, benchmark/crossview.py, benchmark/SCOREBOARD.md
 generated: no
 verify: for f in $(grep '^python benchmark/run.py' docs/benchmarks.md | grep -o -- '--[a-z-]*' | sort -u); do .venv/bin/python benchmark/run.py --help | grep -q -- "$f" || exit 1; done && .venv/bin/python -m benchmark.crossview --help | grep -q disagree && for f in $(sed -n '/^## Comparing two trees/,/^## Caveats/p' docs/benchmarks.md | grep -o -- '--[a-z-]*' | sort -u); do (.venv/bin/python -m benchmark.crossview run --help; .venv/bin/python -m benchmark.crossview diff --help; .venv/bin/python -m benchmark.crossview disagree --help) | grep -q -- "$f" || exit 1; done && .venv/bin/python -c 'exec("import os,re\nt=open(\"docs/benchmarks.md\").read()\nfor q in set(re.findall(r\"\\x60((?:benchmark|test|examples)/[^\\x60<>*:]+)\\x60\",t)): assert os.path.exists(q.rstrip(\"/\")),q\nassert os.path.exists(\"benchmark/SCOREBOARD.md\")\n")'
 see: docs/extraction.md, docs/transparency.md
@@ -10,7 +10,7 @@ see: docs/extraction.md, docs/transparency.md
 
 This page is for anyone who has never touched this benchmark before. It explains, in plain language: what gets measured, why, how to run it yourself, and what the numbers do *not* tell you.
 
-## What "the benchmark" even is
+## What the benchmark measures
 
 chronologia is one of several Python libraries that turn a sentence like `"in three weeks"` or `"le 5 juin 2027"` into a computer-usable date. Two well-known alternatives are:
 
@@ -57,6 +57,43 @@ python benchmark/run.py --sample 50 --seed 0
 ```
 
 `benchmark/SCOREBOARD.md` is a dated snapshot of one full run. Its header gives the date of that run. No test or CI step checks its numbers, so they can differ from the current code. This page quotes no number from it. To get current numbers, run the first command above.
+
+## Against ovos-date-parser
+
+This comparison scores chronologia and ovos-date-parser 0.29 on the same outside date benchmark. The benchmark rows come from the bench classes in `tools/bench/data/date_*.jsonl` of the agent workspace, not from the corpora of this repository. A row is correct only when the reader gives the gold value. The `source` key of the result file names the chronologia commit and the benchmark version that the numbers come from.
+
+`tools/plot_benchmarks.py` makes the figure, the table and `benchmarks/odp_vs_chronologia.json`. Its input is the summary TSV `knowledge/wiki/audits/chronologia/vs-odp029/table.tsv` in the agent workspace. That file scores chronologia at commit d202532a. To make the files again, run this command from the root of this repository:
+
+```bash
+python tools/plot_benchmarks.py ~/AgentWorkspaces/knowledge/wiki/audits/chronologia/vs-odp029/table.tsv
+```
+
+The Bench rows column names the rows that measure each leader tag. A bench locale with no region tag has rows in the general language, with no regional variety. The Locale data column names the folder in `chronologia/locale/` that reads the rows. The es rows have no region tag, so they do not measure es-CO.
+
+<!-- odp-table:start -->
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="img/odp_vs_chronologia-dark.svg">
+  <img alt="Strict correct rate per leader locale: chronologia is higher than ovos-date-parser 0.29 in 10 of 10 measured bench locales; largest gap nl-NL · nl 0.86 against 0.35, smallest gap fr-FR · fr 0.84 against 0.73." src="img/odp_vs_chronologia.svg">
+</picture>
+
+| Leader tag | Bench rows | Locale data | Rows | chronologia | ovos-date-parser 0.29 | Ready |
+|:---|:---|:---|---:|---:|---:|:---|
+| pt-PT | pt-PT | pt | 1488 | 0.784 | 0.413 | no |
+| pt-BR | pt-BR | pt | 1506 | 0.786 | 0.424 | no |
+| es-CO | none | es | 0 | not measured | not measured | not measured |
+|  | es (rows with no region tag) | es | 1506 | 0.803 | 0.468 | no |
+| fr-FR | fr (rows with no region tag) | fr | 1496 | 0.840 | 0.729 | no |
+| it-IT | it (rows with no region tag) | it | 1498 | 0.754 | 0.407 | no |
+| de-DE | de (rows with no region tag) | de | 1492 | 0.792 | 0.532 | no |
+| nl-NL | nl (rows with no region tag) | nl | 1441 | 0.860 | 0.348 | no |
+| da-DK | da (rows with no region tag) | da | 1491 | 0.669 | 0.463 | no |
+| kab | kab | kab | 1328 | 0.503 | 0.312 | no |
+| hi-IN | hi (rows with no region tag) | hi | 1429 | 0.638 | 0.287 | no |
+| bn-IN | none | none | 0 | not measured | not measured | not measured |
+| mwr | none | none | 0 | not measured | not measured | not measured |
+<!-- odp-table:end -->
+
+A higher total rate does not make a locale ready. The ready flag needs a rate at least as high on every bench class. [languages/index.md](languages/index.md#support-table) explains the flag. es-CO, bn-IN and mwr have no bench rows.
 
 ## Comparing two trees
 
