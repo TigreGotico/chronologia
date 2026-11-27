@@ -37,7 +37,8 @@ def test_written_together_day_deictic_still_binds(text, off):
     _whole_day(text, off)
 
 
-def test_bare_morgen_is_still_tomorrow():
-    """Morgen carries no morning band in Danish; bare, it is the day word."""
+def test_bare_morgen_is_not_tomorrow():
+    """Bare "morgen" is the noun "morning" (en.wiktionary "morgen")."""
     s = span("morgen")
-    assert (s.start, s.end) == (AstroDate(2017, 6, 28), AstroDate(2017, 6, 29))
+    assert (s.start, s.end) == (AstroDate(2017, 6, 27, 5, 0),
+                                AstroDate(2017, 6, 27, 10, 0))
