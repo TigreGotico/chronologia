@@ -32,6 +32,10 @@ def _day(d):
     ("Ad teffeɣ tmacint sya tlata n dqayeq.", relativedelta(minutes=3)),
     # 11663983 "deg sin n wussan" (in two days)
     ("Ad d-nuɣal deg sin n wussan.", relativedelta(days=2)),
+    # The same "deg <n> n wussan" frame with ukkuẓ (four), which numtag reads
+    # since 0.46.0a2 from its kab lexicon (Tatoeba 11394104, 8272109).
+    # Formerly a strict xfail in test_nl_unsourced_xfail.py (#1485).
+    ("Ad d-yuɣal deg ukkuẓ n wussan.", relativedelta(days=4)),
 ])
 def test_future_offset(text, delta):
     exp = A + delta

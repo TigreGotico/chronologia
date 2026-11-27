@@ -20,6 +20,11 @@ _CASES = [
     ('rrbeɛ ssaɛa', timedelta(minutes=15)),
     ('2 ass 4 ssaɛa', timedelta(days=2, hours=4)),
     ('1 ssaɛa 30 tesdidin', timedelta(hours=1, minutes=30)),
+    # Spelled teens, read through numtag since 0.46.0a2 (numtag#404): "mraw d
+    # yiwen" is 10 + 1 and "mraw d sin" is 10 + 2 in numtag's kab lexicon
+    # (mraw, yiwen and sin each carry a source there). Formerly #1210.
+    ('mraw d yiwen n tesdidin', timedelta(minutes=11)),
+    ('mraw d sin n tesdidin', timedelta(minutes=12)),
 ]
 
 

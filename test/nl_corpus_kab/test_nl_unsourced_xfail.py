@@ -24,7 +24,6 @@ def _day(text):
 @pytest.mark.parametrize("text,day", [
     ("Ad d-yas seld yiwen wass.", (2017, 6, 28)),      # in one day
     ("Ad d-yas deffir yiwen wass.", (2017, 6, 28)),    # in one day
-    ("Ad d-yuɣal deg ukkuẓ n wussan.", (2017, 7, 1)),  # in four days
     ("Ass n lḥed yezrin.", (2017, 6, 25)),             # last Sunday
     ("Larbeɛ yezrin.", (2017, 6, 21)),                 # last Wednesday
 ])

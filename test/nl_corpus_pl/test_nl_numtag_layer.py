@@ -27,7 +27,7 @@ def test_numbers_read_through_numtag(text, expected):
 
 
 # numtag reads no number in the ordinal 90, so the year reads 1900.
-@pytest.mark.xfail(raises=AssertionError, strict=True, reason="https://github.com/TigreGotico/numtag/issues/162")
+# numtag reads the ordinal 90 since 0.46.0a2 (numtag#162 closed by numtag#404).
 def test_known_numtag_gap():
     assert start("rok tysiąc dziewięćset dziewięćdziesiąty pierwszy") == ad(
         datetime(1991, 1, 1))
@@ -86,7 +86,7 @@ def test_ordinal_before_a_noun_is_no_clock():
     assert parse("na drugim piętrze") is None
 
 
-@pytest.mark.xfail(raises=AssertionError, strict=True, reason="https://github.com/TigreGotico/chronologia/issues/1195")
+# Reads since numtag 0.46.0a2 (formerly chronologia#1195).
 def test_known_gap_spelled_year_of_the_1950s():
     assert start("w roku tysiąc dziewięćset pięćdziesiątym szóstym") == ad(
         datetime(1956, 1, 1))
