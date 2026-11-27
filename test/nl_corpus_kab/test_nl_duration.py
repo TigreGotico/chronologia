@@ -20,6 +20,9 @@ _CASES = [
     ('rrbeɛ ssaɛa', timedelta(minutes=15)),
     ('2 ass 4 ssaɛa', timedelta(days=2, hours=4)),
     ('1 ssaɛa 30 tesdidin', timedelta(hours=1, minutes=30)),
+    # Tatoeba 12709086 "mraw d yiwen n yiɣunab" (eleven), 13311699 "mraw d sin n dderya" (twelve).
+    ('mraw d yiwen n tesdidin', timedelta(minutes=11)),
+    ('mraw d sin n tesdidin', timedelta(minutes=12)),
 ]
 
 
