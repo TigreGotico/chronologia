@@ -380,6 +380,10 @@ def _duration_core(text: str, engine, anchor: Optional[datetime] = None,
         return any(start < count_at and unit_at < end
                    for start, end in clock_spans)
 
+    # each length read in the loop below, as (unit, count, start, end), so a
+    # range of two lengths can keep only its upper bound
+    parts = []
+
     def _add(kind, count):
         nonlocal total, months
         if kind in calendar_months:
@@ -583,6 +587,7 @@ def _duration_core(text: str, engine, anchor: Optional[datetime] = None,
                 definite_reads.append((unit, count, range(i, end)))
             else:
                 _add(unit, count)
+                parts.append((unit, count, i, end))
                 found = True
                 consumed.update(range(i, end))
             i = end
@@ -603,6 +608,27 @@ def _duration_core(text: str, engine, anchor: Optional[datetime] = None,
         if (k not in consumed and tokens[k].text in and_words
                 and k - 1 in consumed and k + 1 in consumed):
             consumed.add(k)
+    # A range whose two ends each carry a unit ("8 days to 15 days", "huit
+    # jours à quinze jours") is read as its upper bound too, as "3 to 5 days"
+    # is below: the two lengths are not added.  The ends must be both fixed or
+    # both calendar lengths, joined by one range-``to`` word and nothing else.
+    to_words = {words[0] for words in _conn_surfaces(spec, "to", _RANGE_TO)
+                if len(words) == 1}
+    for (u1, c1, s1, e1), (u2, c2, s2, e2) in zip(parts, parts[1:]):
+        # the word may also open the second length, read as its article
+        # (pt "de 6 horas a 8 horas")
+        joined = (s2 == e1 + 1 or s2 == e1 and e2 - s2 > 2) \
+            and tokens[e1].text in to_words
+        if not (joined and (u1 in calendar_months) == (u2 in calendar_months)):
+            continue
+        if u1 in calendar_months:
+            low = (u1, c1) if (c1 * calendar_months[u1]
+                               <= c2 * calendar_months[u2]) else (u2, c2)
+        else:
+            low = (u1, c1) if (c1 * _DUR_UNIT_SECONDS[u1]
+                               <= c2 * _DUR_UNIT_SECONDS[u2]) else (u2, c2)
+        _add(low[0], -low[1])
+        consumed.add(e1)
     # A duration RANGE ("3 to 5 days", "2-4 hours") is read as its UPPER bound
     # -- the widest length the phrase can mean -- since the public return type
     # is a single ``timedelta``, not an interval.  The lower bound plus its
