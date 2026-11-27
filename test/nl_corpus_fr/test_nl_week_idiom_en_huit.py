@@ -164,6 +164,14 @@ def test_a_digit_numeral_before_a_unit_counts_like_the_spelled_one(text):
     assert (e.hour, e.minute) == (8, 1) and (e.year, e.month, e.day) == (s.year, s.month, s.day)
 
 
+def test_the_digit_and_spelled_unit_readings_name_the_same_thursday():
+    # on top of the hand-derived checks above, the two spellings of the count
+    # must not land on different Thursdays
+    digit, spelled = parse("jeudi en 8 heures", THU), parse("jeudi en huit heures", THU)
+    assert digit is not None and spelled is not None
+    assert (digit.span.start, digit.span.end) == (spelled.span.start, spelled.span.end)
+
+
 @pytest.mark.parametrize("text", [
     "jeudi. En huit manches, Alice gagne.",
     "Jeudi. En huit, nous partons",
