@@ -4892,28 +4892,34 @@ def _compose_core(tokens, engine, anchor, enable=(), jurisdiction=None,
 
 
 def _indefinite_daypart_veto(tokens, consumed, text, spec) -> bool:
-    """True for a season or daypart reading next to an indefinite daypart.
+    """True for a season, daypart or clock reading next to an indefinite
+    daypart.
 
-    Hindi "सर्दियों की एक सुबह" is "one winter morning": एक makes the
-    morning indefinite, so the phrase names no date.  The test reads the
-    written surface, because the number fold turns एक into 1.  It looks at
-    the consumed tokens and the three tokens after them, and lets one
-    adjective stand between the marker and the daypart ("एक धुंधली सुबह").
+    Hindi "सर्दियों की एक सुबह" and Kabyle "yiwet n tṣebḥit n tegrest" are
+    "one winter morning": the marker makes the morning indefinite, so the
+    phrase names no date.  The test reads the written surface, because the
+    number fold turns the marker into 1.  It looks from three tokens before
+    the consumed tokens to three tokens after them, and lets one word stand
+    between the marker and the daypart ("एक धुंधली सुबह", "yiwet n tṣebḥit").
+    A marker behind an "at" word is a clock hour ("ɣef yiwet n tmeddit").
     A locale with no ``marker_indef_daypart.voc`` is untouched.
     """
     indef = spec.connectors.get("indef_daypart")
     if not indef or not consumed:
         return False
-    if not any(tokens[i].text in spec.seasons or tokens[i].text in spec.dayparts
+    def part(t):
+        return t.text in spec.dayparts or t.text in spec.meridiems
+    if not any(tokens[i].text in spec.seasons or part(tokens[i])
                for i in consumed):
         return False
+    at = spec.connectors.get("at", frozenset())
     n = len(tokens)
-    for k in range(min(consumed), min(n, max(consumed) + 4)):
+    for k in range(max(0, min(consumed) - 3), min(n, max(consumed) + 4)):
         t = tokens[k]
         if (t.char_start is not None
-                and text[t.char_start:t.char_end] in indef
-                and any(tokens[j].text in spec.dayparts
-                        for j in range(k + 1, min(n, k + 3)))):
+                and text[t.char_start:t.char_end].lower() in indef
+                and not (k > 0 and tokens[k - 1].text in at)
+                and any(part(tokens[j]) for j in range(k + 1, min(n, k + 3)))):
             return True
     return False
 

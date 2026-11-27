@@ -1,0 +1,31 @@
+# Kabyle date words that are also frequent ordinary words.  Alone, with no
+# time cue beside them, they take the ordinary sense.
+#
+# tafsut "spring" is also a girl's given name.  Tatoeba kab 8420141:
+# "Sɛant yessetma-tsent tiyaḍ d takniwin Tafsut d Tilelli"; 8420836:
+# "06/01/2017 lulent-d Tafsut d Tilelli."  Season sense, 7154718: "Tafsut
+# tattawi-d ciṭṭ n leḥmu mi tεedda tegrest qessiḥen."
+tafsut
+# lḥedd "Sunday" is also "limit".  Tatoeba kab 7209735: "Taẓuri imir tella
+# tewweḍ lḥedd-is."; 7151638: "... i εewwleɣ ad geɣ lḥedd i weεraq ...".
+# "ass n lḥedd" and "lḥedd-agi" keep the date sense through the cue before or
+# after the word.
+lḥedd
+# azal "daytime, noon" is also "value, worth".  Tatoeba kab 2791855:
+# "Tamrint-a ɣur-s azal meqqren."; 2294744: "Ɣur-i azal n yedrimen swayes
+# ara t-id-aɣeɣ."  Daytime sense, 7013385: "Ass n lḥedd ɣef ttnac n uzal".
+azal
+# The CLDR month abbreviations (month_*.voc) are short and read as a month only
+# next to a cue: "20 Tub 2023".
+yen
+fur
+meɣ
+yeb
+may
+yun
+yul
+ɣuc
+cte
+tub
+nun
+duǧ

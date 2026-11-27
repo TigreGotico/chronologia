@@ -1,1 +1,5 @@
 wambeṛ
+# CLDR kab.xml @fdc73fdd, gregorian months, format abbreviated: "Nun"
+nun
+# CLDR kab.xml @fdc73fdd, gregorian months, format wide: "Nunembeṛ"
+nunembeṛ

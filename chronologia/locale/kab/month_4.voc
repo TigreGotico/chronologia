@@ -2,3 +2,5 @@
 # cldr-dates-full/main/kab/ca-gregorian.json): months.format.wide,
 # months.stand-alone.wide.
 yebrir
+# CLDR kab.xml @fdc73fdd, gregorian months, format abbreviated: "Yeb"
+yeb
