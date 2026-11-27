@@ -384,6 +384,13 @@ _LANGUAGES: List[DayPart] = [
     _p("afternoon", (12, 0), (16, 0), "hi", _cldr("hi")),
     _p("evening", (16, 0), (20, 0), "hi", _cldr("hi")),
     _p("night", (20, 0), (4, 0), "hi", _cldr("hi")),
+    # bn: six CLDR periods; বিকাল (afternoon2) keeps its own name "late".
+    _p("dawn", (4, 0), (6, 0), "bn", _cldr("bn")),
+    _p("morning", (6, 0), (12, 0), "bn", _cldr("bn")),
+    _p("afternoon", (12, 0), (16, 0), "bn", _cldr("bn")),
+    _p("late", (16, 0), (18, 0), "bn", _cldr("bn")),
+    _p("evening", (18, 0), (20, 0), "bn", _cldr("bn")),
+    _p("night", (20, 0), (4, 0), "bn", _cldr("bn")),
     # is: same shape as lt -- the evening runs to midnight and the night is
     # the small hours -- and CLDR lists the two locales under the same rules.
     _p("morning", (6, 0), (12, 0), "is", _cldr("is")),

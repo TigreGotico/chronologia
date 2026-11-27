@@ -103,8 +103,19 @@ START = [
 ]
 
 
-@pytest.mark.xfail(raises=AssertionError, strict=True, reason=ISSUE)
-@pytest.mark.parametrize("lang,text,anchor,expected", START)
+FIXED = {
+    "buy christmas presents at 5pm", "play christmas music at 9pm",
+    "christmas island at 9am", "play christmas music on friday",
+    "play christmas music on friday at 9am",
+    "remind me on friday at 9am about christmas",
+    "remind me at 9am on friday about christmas",
+}
+
+
+@pytest.mark.parametrize("lang,text,anchor,expected", [
+    row if row[1] in FIXED else pytest.param(
+        *row, marks=pytest.mark.xfail(raises=AssertionError, strict=True, reason=ISSUE))
+    for row in START])
 def test_the_date_comes_from_the_words_that_name_one(
         lang, text, anchor, expected):
     start = extract_timespan(text, lang, anchor).span.start.datetime()

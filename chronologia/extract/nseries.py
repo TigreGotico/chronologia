@@ -125,7 +125,7 @@ def extract_duration(
     The calendar units (month, year, decade) have no fixed length, so they
     are counted on the calendar from ``anchor``: "3 months" from 31 January
     is the time to 30 April.  A ``date`` anchor is its midnight.  With no
-    anchor a calendar unit has no length, and a text naming one returns
+    anchor a calendar unit has no length, and a text that counts one returns
     ``None``.  The months are added first and a day the new month lacks is
     pinned to its last day, then the fixed-width units are added (W3C XML
     Schema 1.1 Part 2, E.3.3 "Adding durations to dateTimes": "The ·months·
@@ -180,7 +180,7 @@ def _duration_core(text: str, engine, anchor: Optional[datetime] = None,
     cached engine object is reused, and no lang-string plumbing has to be
     threaded through the single-span resolver just for this.
 
-    With no ``anchor`` a calendar unit has no length, and a text naming one
+    With no ``anchor`` a calendar unit has no length, and a text counting one
     returns ``None``.  With ``calendar_needs_marker`` the text must name a
     calendar unit right after a duration marker ("for 3 months"), or the
     result is ``None``.
@@ -275,6 +275,11 @@ def _duration_core(text: str, engine, anchor: Optional[datetime] = None,
         return None, k
 
     calendar_months = _DUR_CALENDAR_MONTHS if anchor is not None else {}
+    # "l'ora", "the hour": a definite article counts one only when the text
+    # names no other length ("dura dodici giorni ... non vedo l'ora").
+    definite = articles - indef - {
+        s for s, v in spec.quantifiers.items() if v == 1.0}
+    definite_reads = []
     total = 0.0
     months = 0.0
     found = False
@@ -572,13 +577,21 @@ def _duration_core(text: str, engine, anchor: Optional[datetime] = None,
                     count_tok.index, j):
                 i += 1
                 continue
-            _add(unit, count)
-            found = True
-            consumed.update(range(i, end))
+            if article_one in definite:
+                definite_reads.append((unit, count, range(i, end)))
+            else:
+                _add(unit, count)
+                found = True
+                consumed.update(range(i, end))
             i = end
             continue
         i += 1
 
+    if not found:
+        for unit, count, span in definite_reads:
+            _add(unit, count)
+            found = True
+            consumed.update(span)
     if not found:
         return None
     # A connective "and" bridging two consumed components ("two hours *and*
@@ -638,12 +651,18 @@ def _duration_core(text: str, engine, anchor: Optional[datetime] = None,
     # answer, not a partial one.  Any unconsumed calendar-unit surface means
     # the phrase named a length this function cannot express in whole; honour
     # the "3 months" convention across the whole compound and refuse.
+    # A unit after a count or an article ("3 days into the month") blocks
+    # the reading; "dieses Jahr" / "este ano" beside "acht Tage" does not.
+    count_words = articles | fracs.keys() | {
+        s for s, v in spec.quantifiers.items() if v == 1.0}
     for tok in tokens:
         if tok.index in consumed:
             continue
         kind = spec.units.get(tok.text)
         if kind is not None and kind not in _DUR_UNIT_SECONDS:
-            return None
+            prev = tokens[tok.index - 1] if tok.index else None
+            if prev is None or prev.is_number or prev.text in count_words:
+                return None
     from chronologia.extract.pipeline import render_remainder
     remainder = render_remainder(text, [t for t in tokens
                                         if t.index not in consumed])

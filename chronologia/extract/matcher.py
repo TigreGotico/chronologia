@@ -500,6 +500,36 @@ def _counted_refused_unit_before(tokens: Tuple[Token, ...], start: int,
             and tokens[k - 1].text in ambiguous)
 
 
+def _named_day_homograph(tokens: Tuple[Token, ...], index: int,
+                         spec: LangSpec) -> bool:
+    """Is the day-part word at ``index`` a named day that a noun owns?
+
+    True for "<article> <noun> <of_bare> <word>" where the word is also a
+    named-day word, "la fiesta de mañana" (tomorrow's party), and for a
+    bare owner that opens the text, "reunión de mañana", unless that owner
+    is a degree word ("muy").  Otherwise the word keeps the band: es "de
+    mañana" after a verb, after "muy" or at the start is the adverb
+    (Diccionario Vox, «mañana» sense 5: "de mañana loc. adv. Al amanecer,
+    en las primeras horas del día"; sense 7: "muy de mañana loc. adv. Muy
+    temprano, de madrugada").  A clock, day, weekday or day-part owner also
+    keeps the band ("el lunes de mañana").
+    """
+    if (index < 2 or tokens[index].text not in spec.named_days
+            or tokens[index - 1].text not in spec.connectors.get("of_bare", ())):
+        return False
+    owner = tokens[index - 2]
+    if index == 2:
+        if owner.text in spec.connectors.get("degree", ()):
+            return False
+    elif tokens[index - 3].text not in spec.connectors.get("article", ()):
+        return False
+    return not (owner.is_number or owner.text in spec.named_days
+                or owner.text in spec.weekdays or owner.text in spec.dayparts
+                or owner.text in spec.clock_landmarks
+                or owner.text in spec.clock_fractions
+                or owner.text in spec.connectors.get("oclock", ()))
+
+
 def _counted_plural_daypart(tokens: Tuple[Token, ...], index: int,
                             spec: LangSpec) -> bool:
     """Is the plural day-part word at ``index`` counted, not a part of the day?
@@ -804,6 +834,20 @@ class ConstructionMatcher:
             for word in connectors.get(key, ())
             if word.endswith("s") and word[:-1] in connectors.get(key, ()))
 
+    def _licenses_daypart(self, tokens, start, end):
+        """Whether a date word before a bare day part, or a number after
+        it, ties the day part to a day."""
+        spec = self.spec
+        prev = tokens[start - 1]
+        if prev.is_number or prev.text in spec.named_days or (
+                prev.text in spec.weekdays or prev.text in spec.rel_markers
+                or prev.text in spec.directions):
+            return True
+        nxt = tokens[end] if end < len(tokens) else None
+        return nxt is not None and (nxt.is_number
+                                    or nxt.text in spec.clock_fractions
+                                    or nxt.text in spec.clock_landmarks)
+
     def _candidates(self, tokens: Tuple[Token, ...]) -> List[MatchCandidate]:
         out: List[MatchCandidate] = []
         for precedence, name, order in self.compiled.table:
@@ -854,6 +898,18 @@ class ConstructionMatcher:
                             and slots["REL_MARKER"].text
                             in self.spec.connectors.get(
                                 "this_not_weekday", frozenset())):
+                        continue
+                    # A word one or two before a day part that leaves its day
+                    # unknown gives no reading: an indefinite numeral
+                    # ("শীতের এক কুয়াশাভরা সকালে", "one foggy winter morning")
+                    # or a day word with two directions (Bengali কাল).  The
+                    # list is a locale fact (``marker_daypart_refused.voc``).
+                    if (name == "daypart_ref" and any(
+                            (tokens[k].mention.text if tokens[k].mention
+                             else tokens[k].raw).lower()
+                            in self.spec.connectors.get(
+                                "daypart_refused", frozenset())
+                            for k in range(max(0, start - 2), start))):
                         continue
                     # A weekday joined to a market noun by a link word
                     # ("ssuq l letnayen", the Monday market) names the market,
@@ -1192,6 +1248,12 @@ class ConstructionMatcher:
                     # (no REL_MARKER licensing it) is guarded; "this Night" is
                     # not.  Gated on the locale convention so noun-capitalising
                     # languages are unaffected.
+                    if (name == "daypart_ref" and list(slots) == ["DAYPART"]
+                            and self.spec.conventions.bare_daypart_initial
+                            and start > 0
+                            and not tokens[start].sentence_break_before
+                            and not self._licenses_daypart(tokens, start, end)):
+                        continue
                     if (name == "daypart_ref" and "DAYPART" in slots
                             and "REL_MARKER" not in slots
                             and self.spec.conventions.daypart_proper_noun_guard
@@ -1225,6 +1287,13 @@ class ConstructionMatcher:
                             and "REL_MARKER" not in slots
                             and _counted_refused_unit_before(
                                 tokens, start, self.spec)):
+                        continue
+                    # A day-part word that is also a named-day word (es
+                    # "mañana") after "<article> <noun> de" is the named day.
+                    if (name == "daypart_ref" and "DAYPART" in slots
+                            and "REL_MARKER" not in slots
+                            and _named_day_homograph(
+                                tokens, slots["DAYPART"].index, self.spec)):
                         continue
                     if ("DAYPART" in slots and _counted_plural_daypart(
                             tokens, slots["DAYPART"].index, self.spec)):

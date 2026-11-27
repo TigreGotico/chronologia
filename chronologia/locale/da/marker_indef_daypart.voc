@@ -1,0 +1,7 @@
+# en ("a", "one", common gender) as the indefinite marker before a
+# daypart: "en kold morgen i februar" ("one cold February morning") names
+# no date.  en.wiktionary "en", Danish, Article: "a, an".  Every daypart
+# noun is common gender (da.wiktionary "morgen": {{da-noun|en|morgen|...}}),
+# so the neuter "et" is left out: it is also the clock hour one ("halv et
+# om eftermiddagen" is 12:30).
+en

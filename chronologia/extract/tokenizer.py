@@ -78,6 +78,11 @@ _UNICODE_TABLE = str.maketrans(_UNICODE_FOLD)
 # class and dropped from the matching key, as the ZWNJ is, so either
 # spelling matches and the offsets still index the original text.
 _INTRAWORD_ZW = dict.fromkeys((0x200C, 0x200D, *range(0x064B, 0x0653), 0x0670))
+# Bengali ড়, ঢ়, য় have a one-codepoint form (U+09DC, U+09DD, U+09DF) and a
+# base-plus-nukta form; NFC gives the second, and the Samsad dictionary and
+# many keyboards give the first.  The matching key takes the NFC form.
+_INTRAWORD_ZW.update({0x09DC: "\u09a1\u09bc", 0x09DD: "\u09a2\u09bc",
+                      0x09DF: "\u09af\u09bc"})
 # the º / ª ordinal indicators (Spanish/Portuguese/Italian "1º de abril" = the
 # 1st) glued to a digit, with the optional RAE dot ("1.º"): read as the day
 # number by dropping the indicator.  Only after a digit, so a bare "Nº" or a
@@ -338,7 +343,8 @@ def _gap_breaks_clause(gap: str) -> bool:
             or ("-" in gap and gap != "-"))
 
 #: punctuation that ends a sentence between two tokens
-_SENTENCE_END = frozenset(".!?;\u2026\u037e\u061f\u06d4\u3002\uff01\uff1f\uff1b")
+#: (U+0964 and U+0965 are the danda and double danda of the Indic scripts)
+_SENTENCE_END = frozenset(".!?;\u2026\u037e\u061f\u06d4\u0964\u0965\u3002\uff01\uff1f\uff1b")
 
 
 class Tokenizer:
@@ -393,9 +399,16 @@ class Tokenizer:
         # The Tamil digits U+0BE6-0BEF and the day/month/year/rupee signs
         # U+0BF3-0BFA are excluded: the numeric rule below already reads the
         # digits, and a currency or bookkeeping symbol is not a letter.
+        # Bengali writes its syllables the same way -- সোমবার is স + ◌ো + ম + ব
+        # + ◌া + র.  Ranges are the Bengali block's mark subranges (Unicode
+        # 16.0 chart U+0980): U+0981-0983 candrabindu/anusvara/visarga, U+09BC
+        # nukta, U+09BE-09CD the vowel signs and the virama, U+09D7 the au
+        # length mark, U+09E2-09E3 the vocalic-l signs.  The Bengali digits
+        # U+09E6-09EF are excluded: the numeric rule below reads them.
         letter = (r"(?:[^\W\d]|[ऀ-ःऺ-ॏ॑-ॗॢॣ]"
                   r"|[\u0e31\u0e34-\u0e3a\u0e47-\u0e4e]"
                   r"|[\u0b82\u0bbe-\u0bcd\u0bd7]"
+                  r"|[\u0981-\u0983\u09bc\u09be-\u09c4\u09c7\u09c8\u09cb-\u09cd\u09d7\u09e2\u09e3]"
                   r"|[\u064b-\u0652\u0670])")
         zwj = r"(?:[‌‍׳״]" + letter + r"+)*"
         # a geresh can also be the mark on its OWN, trailing the letters

@@ -79,9 +79,7 @@ _LIMITATIONS = [
     pytest.param(
         'окружающая среда',
         marks=pytest.mark.xfail(raises=AssertionError, reason='weekday homograph binds as the weekday once bare-weekday parsing lands engine-wide; downstream concern', strict=True)),
-    pytest.param(
-        'рождество пришло рано',
-        marks=pytest.mark.xfail(raises=AssertionError, reason='temporal token inside a fixed idiom binds literally; downstream concern', strict=True)),
+    'рождество пришло рано',
 ]
 
 

@@ -13,6 +13,12 @@
 #   own official native name, and folds them through the same normaliser the
 #   matcher uses. Surfaces carry their real orthography (accents included), and
 #   colloquial/short forms (xmas, Weihnachten) live here.
+#   Inflected Easter Sunday forms follow the declension tables of the
+#   Wiktionary entries nedeľa (sk), neděle (cs, "v neděli" = on Sunday),
+#   igande (eu, inessive igandean, genitive igandearen), noč (sl); the
+#   Sunday words are Wiktionary Minggu (id), Ahad (ms, "hari Ahad"), and
+#   velikonoční (cs) is the relational adjective "Easter".  "consoada" (pt)
+#   is Wiktionary consoada: the meal of Christmas Eve, so it names that day.
 # columns: key | lang | surface ;; surface ;; ...
 #
 # ===== English =====
@@ -56,7 +62,7 @@ whit_monday     | pt | segunda-feira de pentecostes
 corpus_christi  | pt | corpo de deus ;; corpus christi
 assumption      | pt | assunção ;; assunção de nossa senhora
 all_saints      | pt | dia de todos os santos ;; todos os santos
-christmas_eve   | pt | véspera de natal ;; noite de natal
+christmas_eve   | pt | véspera de natal ;; noite de natal ;; consoada
 christmas       | pt | natal ;; dia de natal
 boxing_day      | pt | dia de santo estêvão
 #
@@ -799,7 +805,7 @@ valentines             | el | αγίου βαλεντίνου ;; ημέρα τω
 new_year        | id | tahun baru
 palm_sunday     | id | minggu palma
 good_friday     | id | jumat agung
-easter          | id | paskah
+easter          | id | paskah ;; minggu paskah
 christmas       | id | natal ;; hari natal
 labour_day      | id | hari buruh
 indonesia_independence_day | id | hari kemerdekaan
@@ -818,7 +824,7 @@ valentines      | id | hari valentine
 new_year        | ms | tahun baru
 palm_sunday     | ms | ahad palma
 good_friday     | ms | jumaat agung
-easter          | ms | paskah
+easter          | ms | paskah ;; ahad paskah
 christmas       | ms | krismas ;; hari krismas
 eid_al_fitr     | ms | hari raya aidilfitri ;; aidilfitri ;; hari raya puasa
 eid_al_adha     | ms | hari raya aidiladha ;; aidiladha ;; hari raya haji
@@ -836,7 +842,7 @@ new_year        | eu | urte berri ;; urteberri
 epiphany        | eu | erregen eguna ;; errege eguna
 palm_sunday     | eu | erramu igandea
 good_friday     | eu | ostiral santua
-easter          | eu | pazkoa ;; pazko igandea
+easter          | eu | pazkoa ;; pazko igandea ;; pazko igandean ;; pazko igandearen
 easter_monday   | eu | pazko astelehena
 ascension       | eu | igokundea
 assumption      | eu | andre maria ;; abuztuaren hamabosta
@@ -888,7 +894,7 @@ new_year           | cs | nový rok
 christmas          | cs | vánoce ;; boží hod vánoční
 christmas_eve      | cs | štědrý den ;; štědrý večer
 epiphany           | cs | tři králové
-easter             | cs | velikonoce ;; velikonoční neděle
+easter             | cs | velikonoce ;; velikonoční neděle ;; velikonoční neděli
 palm_sunday     | cs | květná neděle
 good_friday        | cs | velký pátek
 easter_monday      | cs | velikonoční pondělí
@@ -958,7 +964,7 @@ new_year           | sk | nový rok
 christmas          | sk | vianoce
 christmas_eve      | sk | štedrý deň ;; štedrý večer
 epiphany           | sk | traja králi ;; zjavenie pána
-easter             | sk | veľká noc ;; veľkonočná nedeľa
+easter             | sk | veľká noc ;; veľkonočná nedeľa ;; veľkonočnú nedeľu ;; veľkonočnej nedeli ;; veľkonočnou nedeľou
 palm_sunday     | sk | kvetná nedeľa
 good_friday        | sk | veľký piatok
 easter_monday      | sk | veľkonočný pondelok
@@ -973,7 +979,7 @@ new_year           | sl | novo leto ;; novega leta
 christmas          | sl | božič ;; božiča
 christmas_eve      | sl | sveti večer ;; badnjak
 epiphany           | sl | sveti trije kralji
-easter             | sl | velika noč ;; velikonočna nedelja ;; velike noči
+easter             | sl | velika noč ;; velikonočna nedelja ;; velike noči ;; velikonočno nedeljo ;; veliko noč ;; veliki noči ;; veliko nočjo
 palm_sunday     | sl | cvetna nedelja
 good_friday        | sl | veliki petek
 easter_monday      | sl | velikonočni ponedeljek
@@ -1151,3 +1157,12 @@ assumption               | ro | adormirea maicii domnului ;; sfânta maria mare
 romania_childrens_day    | ro | ziua copilului ;; ziua internațională a copilului
 romania_national_day     | ro | ziua națională ;; ziua națională a româniei ;; ziua marii uniri
 romania_union_day        | ro | unirea principatelor ;; ziua unirii principatelor române ;; mica unire
+#
+# --- Hindi ---
+# source: native answer, chronologia#1484 (comment 7209012484). क्रिसमस ईव and
+# न्यू ईयर ईव are the spoken forms; the written पूर्व संध्या forms are not
+# used in speech, so they are not listed.
+new_year                 | hi | नया साल ;; नए साल
+new_year_eve             | hi | न्यू ईयर ईव
+christmas_eve            | hi | क्रिसमस ईव
+christmas                | hi | क्रिसमस ;; क्रिसमस के दिन

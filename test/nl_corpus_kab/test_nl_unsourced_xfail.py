@@ -24,7 +24,6 @@ def _day(text):
 @pytest.mark.parametrize("text,day", [
     ("Ad d-yas seld yiwen wass.", (2017, 6, 28)),      # in one day
     ("Ad d-yas deffir yiwen wass.", (2017, 6, 28)),    # in one day
-    ("Ad d-yuɣal deg ukkuẓ n wussan.", (2017, 7, 1)),  # in four days
     ("Ass n lḥed yezrin.", (2017, 6, 25)),             # last Sunday
     ("Larbeɛ yezrin.", (2017, 6, 21)),                 # last Wednesday
 ])
@@ -36,3 +35,9 @@ def test_unsourced_day(text, day):
 def test_alamma_d_range_end():
     r = extract_timespan("seg letnayen alamma d lexmis", LANG, ANCHOR)
     assert r is not None and (r.span.end.month, r.span.end.day) == (7, 7)
+
+
+# "ukkuẓ" is the annexed form of "kuẓ" (four): Tatoeba sentence 11394104
+# "Sin ternuḍ sin, ɣur-k ukkuẓ." (two and two make four).
+def test_in_four_days_annexed_kuz():
+    assert _day("Ad d-yuɣal deg ukkuẓ n wussan.") == (2017, 7, 1)

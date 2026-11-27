@@ -7,9 +7,12 @@
   "Zero hours take the plural in Portugal: Dicio, 'Zero grau ou zero graus', 'Em Portugal, o zero é encarado como plural: ... zero horas'.",
   "Day periods: Unicode CLDR 49 supplemental dayPeriods.xml, rules for pt: night1 00:00-06:00, morning1 06:00-12:00, afternoon1 12:00-19:00, evening1 19:00-24:00, midnight 00:00, noon 12:00; pt.xml format names 'da madrugada', 'da manhã', 'da tarde', 'da noite', 'meia-noite', 'meio-dia'.",
   "Minutes before the hour: Ciberdúvidas answer 38623, 'são três menos um quarto'; Priberam 'quarto' sense 3. Ciberdúvidas 38623 also gives 'um quarto' for 15 minutes. The half hour 'e meia' follows ovos-date-parser nice_time_pt, which quotes no source for it.",
-  "These quotes are the ones in ovos-date-parser ovos_date_parser/dates_pt.py; this file gives the same readings."
+  "These quotes are the ones in ovos-date-parser ovos_date_parser/dates_pt.py; this file gives the same readings.",
+  "pt-BR: the rules above for day 1, months, weekdays, cardinal hours and years hold for Brazil too: Cunha & Cintra, Nova Gramática do Português Contemporâneo, 7.ª ed. (Lexikon, 2017), p. 388, 'Nas referências aos dias do mês, usam-se os CARDINAIS, salvo na designação do primeiro dia, em que é de regra o ORDINAL. Também na indicação dos anos e das horas empregam-se os CARDINAIS'. Number words such as 'dezesseis' come from numtag for pt-BR; p. 386, 'Em Portugal empregam-se normalmente dezasseis, dezassete e dezanove, variantes desusadas no Brasil'.",
+  "pt-BR zero takes the singular, 'zero hora': FLiP Dúvidas Linguísticas DID 1881, 'No Brasil, tal uso é mais raro, sendo geralmente considerado agramatical e preterido em favor do singular (ex.: zero grau, zero ponto, à zero hora, etc.)'.",
+  "pt-BR half hour: Cunha & Cintra 2017, p. 385, 'Meio concorda em gênero com o designativo da quantidade de que é fração', which gives 'e meia' after an hour, and 'No Brasil, em lugar de meio-dia e meia (hora), diz-se normalmente meio-dia e meio'. The pt-BR phrase style has no source for the quarter hours, the minutes before the hour or 'em ponto', so these readings are not in the pt-BR block."
  ],
- "tags": ["pt", "pt-PT"],
+ "tags": ["pt", "pt-PT", "pt-BR"],
  "months": ["janeiro", "fevereiro", "março", "abril", "maio", "junho", "julho", "agosto", "setembro", "outubro", "novembro", "dezembro"],
  "weekdays": ["segunda-feira", "terça-feira", "quarta-feira", "quinta-feira", "sexta-feira", "sábado", "domingo"],
  "day_ordinal": [1],
@@ -32,5 +35,16 @@
   "before_minutes": [35, 40, 45, 50, 55],
   "fractions": {"15": "e um quarto", "30": "e meia", "-15": "menos um quarto"},
   "on_the_hour": "em ponto"
+ },
+ "regions": {
+  "pt-BR": {
+   "zero_is_plural": false,
+   "phrase": {
+    "before": "menos",
+    "before_minutes": [],
+    "fractions": {"30": "e meia"},
+    "noon_fractions": {"30": "e meio"}
+   }
+  }
  }
 }

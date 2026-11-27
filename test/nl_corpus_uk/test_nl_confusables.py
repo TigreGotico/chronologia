@@ -83,9 +83,7 @@ _LIMITATIONS = [
     pytest.param(
         'листопад золотий',
         marks=pytest.mark.xfail(raises=AssertionError, reason='bare month homograph used as a common word binds as the month; homograph disambiguation is a downstream (NLU) concern', strict=True)),
-    pytest.param(
-        'різдво прийшло рано',
-        marks=pytest.mark.xfail(raises=AssertionError, reason='temporal token inside a fixed idiom binds literally; downstream concern', strict=True)),
+    'різдво прийшло рано',
 ]
 
 
