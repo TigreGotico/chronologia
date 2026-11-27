@@ -1,4 +1,6 @@
-# A number from one to ten takes the annexed noun with no "n": "deg ṛebɛa wussan".
+# A numeral can take the annexed noun with no "n": "deg ṛebɛa wussan".
+# Dallet states it for ṛebɛa (p. 703); the other numerals from one to ten follow the same order
+# by analogy, and they need a native answer. ṛebɛin (40) puts "n" before its noun (same page).
 # Dallet 1982, Dictionnaire kabyle-français, p. 703 (dallet_1982_kf_p702-703_larebea_mercredi.png):
 # "ṛebɛa / ṛewɛa ; ar. S'il est suivi d'un nom, celui-ci est à l'ann. ‖ Quatre." "ṛebɛa warrac, quatre garçons."
 # lang.json has the order "MARKER NUM UNIT" for this construction.
