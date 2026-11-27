@@ -38,6 +38,8 @@ THU = datetime(2026, 11, 26, 10, 0)   # a Thursday
     "l'après-midi du lundi au vendredi",
     "les après-midis du 3 au 5 mai",
     "la nuitée du 28 au 29 novembre",
+    "la nuit de samedi prochain à dimanche",    # a relative word after the day
+    "le soir du 28 novembre au 30",             # "au 30" is a day, the month lent
     "le soir du lundi au vendredi",
 ])
 def test_daypart_over_a_range_of_days_refuses(text):
