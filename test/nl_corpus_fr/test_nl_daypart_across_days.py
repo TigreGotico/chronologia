@@ -92,3 +92,53 @@ def test_every_view_refuses_the_range_of_evenings():
     assert extract_candidates("le soir du lundi au vendredi", "fr", THU) == []
     assert extract_event("réunion le soir du lundi au vendredi", "fr",
                          THU) is None
+
+
+def test_a_dated_evening_keeps_its_clock():
+    # "à 9" after a whole date is a clock: 21:00 on 28 November 2026, a
+    # minute wide
+    r = parse("le soir du 28 novembre à 9", THU)
+    assert r is not None
+    assert (r[0].start, r[0].end) == (ad(datetime(2026, 11, 28, 21, 0)),
+                                      ad(datetime(2026, 11, 28, 21, 1)))
+    assert r.remainder == ""
+
+
+def test_a_month_after_a_comma_still_refuses():
+    # With "décembre" in the next clause the text names two months, and
+    # without this refusal the reader answers this evening (26 November,
+    # 18:00) with "du 28 novembre à 9" left over: a wrong span.  No span is
+    # the better answer.
+    nomatch("le soir du 28 novembre à 9, décembre sera bientôt là", THU)
+
+
+def test_no_range_of_days_across_a_sentence_break():
+    # "le soir" is this evening, 26 November from 18:00 to midnight; the next
+    # sentence is not a range it governs
+    r = parse("le soir. De samedi à dimanche", THU)
+    assert r is not None
+    assert (r[0].start, r[0].end) == (ad(datetime(2026, 11, 26, 18, 0)),
+                                      ad(datetime(2026, 11, 27, 0, 0)))
+    assert r.remainder == "De samedi à dimanche"
+
+
+def test_the_refusal_does_not_reach_across_a_comma():
+    from chronologia.extract.pipeline import pretokens
+    from chronologia.extract.reading import _daypart_across_days
+    from chronologia.extract.timespan import _timespan_engine
+    spec = _timespan_engine("fr").spec
+    text = "le soir de samedi, la réunion est reportée à lundi"
+    assert not _daypart_across_days(pretokens(text, spec), spec)
+    assert _daypart_across_days(
+        pretokens("le soir de samedi à lundi", spec), spec)
+
+
+@pytest.mark.xfail(strict=True, reason=(
+    "two weekdays in the text: the day part does not compose with the "
+    "first one and reads this evening, as on dev"))
+def test_evening_of_saturday_before_a_comma():
+    # the evening of Saturday 28 November, from 18:00 to midnight
+    r = parse("le soir de samedi, la réunion est reportée à lundi", THU)
+    assert r is not None
+    assert (r[0].start, r[0].end) == (ad(datetime(2026, 11, 28, 18, 0)),
+                                      ad(datetime(2026, 11, 29, 0, 0)))

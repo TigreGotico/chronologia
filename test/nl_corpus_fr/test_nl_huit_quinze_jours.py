@@ -69,17 +69,23 @@ def test_ordinal_day_is_not_the_count(text, day):
 
 
 @pytest.mark.parametrize("text", [
-    "dans quinze jours calendaires",
     "dans quinze jours francs",
+    # "jours calendaires" are days of the civil calendar, each counted
+    # (Larousse s.v. "calendaire": "Qui concerne le calendrier civil")
+    "dans quinze jours calendaires",
+    "dans quinze jours calendaire",
+    # "jours de travail" are working days (Larousse s.v. "ouvrable": "Jour
+    # ouvrable, jour consacré normalement au travail")
+    "dans quinze jours de travail",
     "dans quinze jours pleins",
     "dans quinze jours entiers",
-    "dans quinze jours de travail",
+    "dans quinze jours complets",
 ])
 def test_a_counted_kind_of_day_is_literal(text):
-    # "jours francs", "calendaires", "pleins", "entiers", "de travail" count
-    # each day: the count stays fifteen, whatever else reads
+    # "jours francs" count whole days (Larousse s.v. "franc", 8, with the
+    # synonyms "complet", "entier", "plein"): the count stays fifteen
     r = parse(text, A)
-    assert r is None or r[0].start != ad(datetime(2026, 12, 10, 10, 0))
+    assert r is None or r[0].start == ad(datetime(2026, 12, 11, 10, 0))
 
 
 def test_a_delai_is_literal():
@@ -96,6 +102,21 @@ def test_dans_huit_jours_with_another_weekday_refuses():
     r = parse("dans huit jours jeudi", A)
     assert r is not None
     assert r[0].start == ad(datetime(2026, 12, 3))
+
+
+@pytest.mark.parametrize("text,day", [
+    # fifteen working days from Thursday 26 November: Fri 27, Mon 30, Tue 1,
+    # Wed 2, Thu 3, Fri 4, Mon 7, Tue 8, Wed 9, Thu 10, Fri 11, Mon 14,
+    # Tue 15, Wed 16, Thu 17 December
+    ("dans quinze jours ouvrés", datetime(2026, 12, 17)),
+    ("dans quinze jours ouvrables", datetime(2026, 12, 17)),
+    # eight working days: Tue 8 December
+    ("dans huit jours ouvrés", datetime(2026, 12, 8)),
+])
+def test_spelled_business_days_are_counted_as_written(text, day):
+    r = parse(text, A)
+    assert r is not None
+    assert r[0].start == ad(day)
 
 
 def test_business_days_are_counted_as_written():
@@ -126,3 +147,25 @@ def test_tous_les_15_jours_is_counted_as_written():
     got = extract_recurrence("tous les 15 jours", "fr", A)
     assert got is not None
     assert got.recurrence.to_string() == "FREQ=DAILY;INTERVAL=15"
+
+
+def test_a_delai_range_is_literal_at_both_ends():
+    got = extract_duration("un délai de huit à quinze jours", "fr", anchor=A)
+    assert got is None or got.duration == timedelta(days=15)
+
+
+def test_a_range_that_repeats_the_day_noun_is_literal_at_both_ends():
+    # "huit jours" and "quinze jours" share the range's context: they read as
+    # the written counts, as the digits do
+    spelled = extract_duration("un délai de huit jours à quinze jours", "fr", anchor=A)
+    digits = extract_duration("un délai de 8 jours à 15 jours", "fr", anchor=A)
+    assert spelled is not None and digits is not None
+    assert spelled.duration == digits.duration
+
+
+def test_a_sum_without_et_is_literal():
+    # 26 November + 2 months = 26 January 2027, + 15 days = 10 February 2027,
+    # which is 76 days after the anchor
+    got = extract_duration("2 mois quinze jours", "fr", anchor=A)
+    assert got is not None
+    assert got.duration == timedelta(days=76)

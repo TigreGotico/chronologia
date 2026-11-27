@@ -34,7 +34,7 @@ To read a phrase, call `extract_timespan` with the phrase, the locale code and a
 
 **Relative offsets** run both ways with `dans` and `il y a`. `lang.json` allows the marker before or after the count. An optional article and an optional quantifier can stand in either position. The quantifiers include `quelques` and `plusieurs` for a vague three and `un`/`une` for one.
 
-**Eight and fifteen days.** Said or spelled, `dans huit jours` is seven days after the anchor and `dans quinze jours` fourteen, because French counts these days inclusively in everyday use ([ruling 18a](../rulings.md)). The Académie française gives "Huit jours, dans l'usage courant, une semaine entière en comptant le premier jour et le dernier" s.v. *huit*, and "Quinze jours, dans l'usage courant, deux semaines complètes" s.v. *quinze*. Lengths and recurrences read the same: `tous les quinze jours` repeats every fourteen days. A count in digits is literal, as the Code de procédure civile counts a délai (articles 641 and 642): `dans 15 jours` is fifteen days. So is a count after `délai`, a count before a word for the kind of day (`francs`, `calendaires`, `pleins`, `entiers`, `ouvrés`, `de travail`), and a count added to a larger unit (`dans deux mois et quinze jours`).
+**Eight and fifteen days.** Spelled out, `dans huit jours` is seven days after the anchor and `dans quinze jours` fourteen, because French counts these days inclusively in everyday use ([ruling 18a](../rulings.md)). The Académie française gives "Huit jours, dans l'usage courant, une semaine entière en comptant le premier jour et le dernier" s.v. *huit*, and "Quinze jours, dans l'usage courant, deux semaines complètes" s.v. *quinze*. Lengths and recurrences read the same: `tous les quinze jours` repeats every fourteen days. A count in digits is literal, as the Code de procédure civile counts a délai (articles 641 and 642): `dans 15 jours` is fifteen days. So is a count after `délai`, a count before a word for the kind of day (`francs`, `pleins`, `entiers`, `complets`, `calendaires`, `ouvrés`, `de travail`), and a count added to a larger unit (`dans deux mois et quinze jours`, `deux mois quinze jours`).
 
 **The week idiom.** `jeudi en huit` and `demain en quinze` name the same day one or two weeks on. The day named counts as day one, so `en huit` adds seven days and `en quinze` fourteen. TLFi gives "En huit. Le même jour de la semaine suivante" and the Académie française "au huitième jour à partir du jour où l'on parle ou qui sert de référence", both s.v. *huit*, with the same entries s.v. *quinze*. `d'aujourd'hui en huit` is the anchor's day a week on. The day words are `aujourd'hui` and `demain`, the two the Académie lists.
 
@@ -76,7 +76,7 @@ The weekday and month names cite Unicode CLDR 47.
 
 **A weekday before the anchor's in the week, with `en huit`.** Said on a Tuesday, `lundi en huit` returns nothing, and so does `lundi en huit à 10h`. A clock beside the idiom has no day to land on.
 
-**The week idiom it cannot read whole.** `jeudi prochain en huit` and `le lundi suivant en huit` return nothing, as does `vendredi en huit ou en quinze`, which names two days. A word after the numeral that may be the noun it counts makes the phrase refuse: `le match de jeudi en huit manches` returns nothing. Prepositions, articles, day parts and clocks after the idiom keep it (`marker_week_idiom_follow.voc`). `depuis vendredi en huit` opens no span from the past: the idiom names a day after the anchor, so it reads that day and leaves `depuis` over, as `depuis demain` does.
+**The week idiom it cannot read whole.** `jeudi prochain en huit` and `le lundi suivant en huit` return nothing, as do `vendredi en huit ou en quinze` and `vendredi en huit, ou en quinze`, which name two days. The idiom is written with the spelled numeral: `jeudi en 8` returns nothing, and so does an idiom across a sentence break. A word after the numeral that may be the noun it counts makes the phrase refuse: `le match de jeudi en huit manches` returns nothing. Prepositions, articles, day parts and clocks after the idiom keep it (`marker_week_idiom_follow.voc`). `depuis vendredi en huit` opens no span from the past: the idiom names a day after the anchor, so it reads that day and leaves `depuis` over, as `depuis demain` does.
 
 **A part of the day named by a range of days.** `la nuit de samedi à dimanche`, `la nuit du 28 au 29 novembre` and `le soir du 3 au 5 mai` return nothing, and so do `la soirée`, `la matinée` and `l'après-midi` of a range of days. The night from one day into the next is no band of one day: the `nuit` band is the small hours of the day named, and TLFi gives the night as running from dusk to dawn, with a fixed clock band only in law ("de 21 heures à 6 heures"). The evenings of several days are several bands. The words that head such a range are listed in `marker_daypart_across_days.voc`. A number after `à` beside a weekday is a clock, not a day: `le soir de samedi à 9` reads Saturday at nine in the evening.
 
@@ -151,6 +151,10 @@ Each example below runs as a doctest with a fixed anchor, so the output does not
     >>> extract_timespan('le lundi suivant en huit', "fr", anchor) is None
     True
     >>> extract_timespan('vendredi en huit ou en quinze', "fr", anchor) is None
+    True
+    >>> extract_timespan('vendredi en huit, ou en quinze', "fr", anchor) is None
+    True
+    >>> extract_timespan('jeudi en 8', "fr", anchor) is None
     True
     >>> extract_timespan('le match de jeudi en huit manches', "fr", anchor) is None
     True

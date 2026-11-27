@@ -54,7 +54,6 @@ def _day(text, anchor):
     ("vendredi en huit", THU, datetime(2026, 12, 4)),
     ("samedi en huit", THU, datetime(2026, 12, 5)),
     ("dimanche en huit", THU, datetime(2026, 12, 6)),
-    ("jeudi en 8", THU, datetime(2026, 12, 3)),
     ("jeudi en quinze", THU, datetime(2026, 12, 10)),
     ("dimanche en quinze", THU, datetime(2026, 12, 13)),
     ("aujourd'hui en huit", THU, datetime(2026, 12, 3)),
@@ -143,3 +142,55 @@ def test_depuis_never_opens_on_the_idiom(text, day):
     assert r is not None
     assert (r[0].start, r[0].end) == (ad(day), ad(day + timedelta(days=1)))
     assert r.remainder == "depuis"
+
+
+def test_digit_numeral_is_no_idiom_and_refuses():
+    # The dictionaries give the locution with the spelled numeral only; "en 8"
+    # after a day is unattested, and reading the bare day would be wrong.
+    nomatch("jeudi en 8", THU)
+    nomatch("jeudi en 15", THU)
+
+
+def test_a_digit_numeral_before_a_unit_counts_like_the_spelled_one():
+    # "en 8 heures" counts hours, as "en huit heures" does
+    assert parse("jeudi en 8 heures", THU) == parse("jeudi en huit heures", THU)
+
+
+@pytest.mark.parametrize("text", [
+    "jeudi. En huit manches, Alice gagne.",
+    "Jeudi. En huit, nous partons",
+])
+def test_no_idiom_across_a_sentence_break(text):
+    # "jeudi" said on Thursday is today (ruling 6); the next sentence is not
+    # part of it
+    r = parse(text, THU)
+    assert r is not None
+    assert r[0].start == ad(datetime(2026, 11, 26))
+
+
+def test_coordinated_idioms_after_a_comma_refuse():
+    nomatch("vendredi en huit, ou en quinze", THU)
+
+
+def test_candidates_drop_the_clock_of_a_refused_idiom():
+    from chronologia import extract_candidates
+    assert extract_candidates("lundi en huit à 10h", "fr", THU) == []
+
+
+def test_a_unit_after_a_joined_numeral_is_no_second_idiom():
+    # "et en quinze minutes" counts minutes: Friday 4 December at 10:00 stands
+    r = parse("vendredi en huit à 10h et en quinze minutes", THU)
+    assert r is not None
+    assert (r[0].start, r[0].end) == (ad(datetime(2026, 12, 4, 10, 0)),
+                                      ad(datetime(2026, 12, 4, 10, 1)))
+
+
+@pytest.mark.parametrize("text", [
+    "lundi en huit entre 10h et 11h",
+    "lundi en huit de 10h à 11h",
+])
+def test_a_clock_range_after_a_refused_idiom_refuses(text):
+    # the idiom names no day, so the clock range does not time the anchor's day
+    from chronologia import extract_candidates
+    nomatch(text, THU)
+    assert extract_candidates(text, "fr", THU) == []

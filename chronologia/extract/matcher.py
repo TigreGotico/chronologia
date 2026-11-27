@@ -126,10 +126,8 @@ def _bind(element: SlotElement, token: Token, spec: LangSpec,
     if name == "DAY_WORD":
         return token.text in spec.named_days
     if name == "WEEK_IDIOM":
-        # the numeral of "jeudi en huit": the fold turns "huit" into "8", so
-        # the spelled surface is matched on the raw word too
-        return (token.text in spec.week_idioms
-                or (token.raw or "").lower() in spec.week_idioms)
+        # the spelled numeral of "jeudi en huit"
+        return week_idiom_weeks(token, spec) is not None
     if name == "REL_MARKER":
         return token.text in spec.rel_markers
     if name == "WEEKEND":
@@ -551,24 +549,47 @@ def _counted_plural_daypart(tokens: Tuple[Token, ...], index: int,
                            spec) > 0
 
 
+def week_idiom_weeks(token: Token, spec: LangSpec) -> Optional[int]:
+    """The weeks a spelled week-idiom numeral adds ("huit" -> 1), or ``None``.
+
+    The number fold writes "huit" as "8", so the spoken surface is read from
+    the number mention.  Digits are no idiom: the locution is attested with
+    the spelled numeral only."""
+    said = (token.mention.text if token.mention is not None
+            else token.text).lower()
+    return spec.week_idioms.get(said) if said.isalpha() else None
+
+
+def _digit_week_numeral(token: Token, spec: LangSpec) -> bool:
+    """A digit count that spells an idiom numeral ("8" for "huit"): the
+    numerals count the day named as day one, so they are 7 x weeks + 1."""
+    return (token.is_number and token.mention is None
+            and token.value is not None and float(token.value).is_integer()
+            and int(token.value) in {7 * w + 1
+                                     for w in spec.week_idioms.values()})
+
+
 def week_idiom_state(tokens: Tuple[Token, ...], i: int,
                      spec: LangSpec) -> Optional[str]:
     """What the week idiom ("jeudi en huit") that may open at ``i`` is.
 
     ``None`` when no idiom opens there: no preposition and numeral of the
-    idiom, or no weekday or day word before them (one relative word may stand
-    between, as in "jeudi prochain en huit").  ``"unit"`` when a unit word
-    follows ("en huit heures" counts hours).  ``"ok"`` when the idiom ends the
-    utterance or a word the locale lists in ``marker_week_idiom_follow.voc``,
-    a day part, a meridiem or a clock follows.  ``"open"`` otherwise: the next
-    word may be the noun the numeral counts ("en huit manches")."""
+    idiom, no weekday or day word before them (one relative word may stand
+    between, as in "jeudi prochain en huit"), or a break inside that run.
+    ``"unit"`` when a unit word follows ("en huit heures" counts hours).
+    ``"ok"`` when the idiom ends the utterance or a break, a word the locale
+    lists in ``marker_week_idiom_follow.voc``, a day part, a meridiem or a
+    clock follows.  ``"open"`` otherwise: the next word may be the noun the
+    numeral counts ("en huit manches"), another idiom is joined to it
+    ("vendredi en huit, ou en quinze"), or the numeral is in digits ("jeudi
+    en 8"), which no source attests."""
     if not spec.week_idioms or i < 1 or i + 1 >= len(tokens):
         return None
     if tokens[i].text not in spec.connectors.get("week_idiom_in", frozenset()):
         return None
     num = tokens[i + 1]
-    if not (num.text in spec.week_idioms
-            or (num.raw or "").lower() in spec.week_idioms):
+    digit = _digit_week_numeral(num, spec)
+    if week_idiom_weeks(num, spec) is None and not digit:
         return None
     j = i - 1
     if j >= 1 and tokens[j].text in spec.rel_markers:
@@ -576,16 +597,33 @@ def week_idiom_state(tokens: Tuple[Token, ...], i: int,
     if not (tokens[j].text in spec.weekdays
             or tokens[j].text in spec.named_days):
         return None
+    if any(t.break_before for t in tokens[j + 1:i + 2]):
+        return None
+    if i + 2 < len(tokens) and tokens[i + 2].text in spec.units:
+        return "unit"
+    if digit:
+        return "open"
     if i + 2 >= len(tokens):
         return "ok"
     nxt = tokens[i + 2]
-    if nxt.text in spec.units:
-        return "unit"
-    if (nxt.break_before or ":" in nxt.text
-            or nxt.text in spec.connectors.get("week_idiom_follow", frozenset())
+    if not (nxt.break_before or ":" in nxt.text
+            or nxt.text in spec.week_idiom_follow
             or nxt.text in spec.dayparts or nxt.text in spec.meridiems):
-        return "ok"
-    return "open"
+        return "open"
+    joins = spec.week_idiom_join
+    ins = spec.connectors.get("week_idiom_in", frozenset())
+    for k in range(i + 2, len(tokens) - 2):
+        if tokens[k].sentence_break_before:
+            break
+        # "et en quinze minutes" counts minutes: a numeral before a unit word
+        # is no second idiom
+        if (tokens[k].text in joins and tokens[k + 1].text in ins
+                and (week_idiom_weeks(tokens[k + 2], spec) is not None
+                     or _digit_week_numeral(tokens[k + 2], spec))
+                and not (k + 3 < len(tokens)
+                         and tokens[k + 3].text in spec.units)):
+            return "open"
+    return "ok"
 
 
 def _connector_span(name: str, tokens: Tuple[Token, ...], ti: int,

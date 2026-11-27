@@ -2,15 +2,25 @@
 # francs" stays fifteen days rather than the everyday two weeks.
 # "Jour franc. Jour complet de vingt quatre heures comptées de zéro heure à
 # zéro heure" (TLFi s.v. "franc", sense 2 "Qui est complet, entier");
-# a délai in days counts each day (Code de procédure civile, art. 641-642);
-# "jours calendaires", "jours pleins", "jours entiers" and "jours de travail"
-# name the kind of day counted, as "jours ouvrés" (marker_business.voc) does.
+# Larousse s.v. "franc", adjectif, 8: "Se dit d'un délai où on ne compte ni le
+# jour de départ ni celui du terme : Passer dix jours francs à l'étranger.
+# Synonymes : complet - entier - plein". So "francs", and "complets",
+# "entiers", "pleins" after both sources' senses.
+# "Jours calendaires" are days of the civil calendar, each counted: Larousse
+# s.v. "calendaire", adjectif: "Qui concerne le calendrier civil (du 1er
+# janvier au 31 décembre) : Année calendaire."
+# A délai in days counts each day (Code de procédure civile, art. 641-642).
+# "Jours ouvrés" and "ouvrables" are in marker_business.voc. "Jours de
+# travail" are working days, counted as written: Larousse s.v. "ouvrable",
+# "Jour ouvrable, jour consacré normalement au travail".
 francs
 franc
-calendaires
-calendaire
-pleins
-plein
+complets
+complet
 entiers
 entier
+pleins
+plein
+calendaires
+calendaire
 de travail
