@@ -5,10 +5,13 @@
 # Larousse s.v. "franc", adjectif, 8: "Se dit d'un délai où on ne compte ni le
 # jour de départ ni celui du terme : Passer dix jours francs à l'étranger.
 # Synonymes : complet - entier - plein". So "francs", and "complets",
-# "entiers", "pleins" after both sources' senses. A délai in days counts each
-# day (Code de procédure civile, art. 641-642). "Jours ouvrés" and
-# "ouvrables" are in marker_business.voc. No source was found for
-# "calendaires" or "de travail", so they are not listed.
+# "entiers", "pleins" after both sources' senses.
+# "Jours calendaires" are days of the civil calendar, each counted: Larousse
+# s.v. "calendaire", adjectif: "Qui concerne le calendrier civil (du 1er
+# janvier au 31 décembre) : Année calendaire."
+# A délai in days counts each day (Code de procédure civile, art. 641-642).
+# "Jours ouvrés" and "ouvrables" are in marker_business.voc. No source was
+# found for "de travail", so it is not listed.
 francs
 franc
 complets
@@ -17,3 +20,5 @@ entiers
 entier
 pleins
 plein
+calendaires
+calendaire

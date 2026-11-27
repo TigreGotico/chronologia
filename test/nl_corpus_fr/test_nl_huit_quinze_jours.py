@@ -70,6 +70,10 @@ def test_ordinal_day_is_not_the_count(text, day):
 
 @pytest.mark.parametrize("text", [
     "dans quinze jours francs",
+    # "jours calendaires" are days of the civil calendar, each counted
+    # (Larousse s.v. "calendaire": "Qui concerne le calendrier civil")
+    "dans quinze jours calendaires",
+    "dans quinze jours calendaire",
     "dans quinze jours pleins",
     "dans quinze jours entiers",
     "dans quinze jours complets",
@@ -95,6 +99,21 @@ def test_dans_huit_jours_with_another_weekday_refuses():
     r = parse("dans huit jours jeudi", A)
     assert r is not None
     assert r[0].start == ad(datetime(2026, 12, 3))
+
+
+@pytest.mark.parametrize("text,day", [
+    # fifteen working days from Thursday 26 November: Fri 27, Mon 30, Tue 1,
+    # Wed 2, Thu 3, Fri 4, Mon 7, Tue 8, Wed 9, Thu 10, Fri 11, Mon 14,
+    # Tue 15, Wed 16, Thu 17 December
+    ("dans quinze jours ouvrés", datetime(2026, 12, 17)),
+    ("dans quinze jours ouvrables", datetime(2026, 12, 17)),
+    # eight working days: Tue 8 December
+    ("dans huit jours ouvrés", datetime(2026, 12, 8)),
+])
+def test_spelled_business_days_are_counted_as_written(text, day):
+    r = parse(text, A)
+    assert r is not None
+    assert r[0].start == ad(day)
 
 
 def test_business_days_are_counted_as_written():
