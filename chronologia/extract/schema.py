@@ -113,6 +113,7 @@ SLOT_VOCAB_ATTR: Dict[str, str] = {
     "MARKER": "directions",
     "DIRECTION_MARKER": "directions",
     "DAY_WORD": "named_days",
+    "WEEK_IDIOM": "week_idioms",
     "REL_MARKER": "rel_markers",
     "WEEKEND": "weekend_words",
     "WEEKDAY": "weekdays",

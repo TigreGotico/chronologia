@@ -2,3 +2,11 @@
 # Boundaries fall back to chronologia's default night convention.
 iḍ
 iḍ-a
+# Dallet, Dictionnaire kabyle-français (SELAF 1982) p. 170: "iḍ (yi),
+# pl. uḍan / aḍan (wa) / iḍan (yi), Nuit".  Dallet marks iḍan "peu employé",
+# and iḍan is also the plural of "dog", so it is not listed.
+uḍan
+aḍan
+# Dallet, Dictionnaire français-kabyle (SELAF 1985) p. 168: "Nuit : iḍ Ḍ 170.
+# llil L 442".
+llil

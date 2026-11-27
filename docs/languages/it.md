@@ -67,6 +67,16 @@ The weekday and month names cite Unicode CLDR 47.
 3. Should the French Republican months carry their Italian forms rather than the ASCII French ones?
 4. Are `calende`, `none` and `idi` the forms Italian historical writing uses? The Latin forms ship alongside them, so a text that keeps the Latin also reads.
 
+## Regional variants
+
+The tag `it-IT` gets the same results as `it`. chronologia implements no regional difference for Italian in Italy: `it-IT` loads the `it` locale data, the same numtag lexicon and the same first day of the week.
+
+    >>> from datetime import datetime
+    >>> from chronologia import extract_timespan
+    >>> anchor = datetime(2027, 6, 2, 12, 0)
+    >>> extract_timespan("5 giugno 2027", "it", anchor)[0] == extract_timespan("5 giugno 2027", "it-IT", anchor)[0]
+    True
+
 ## Checked examples
 
 Each example below runs as a doctest with a fixed anchor, so the output does not depend on the machine. The first one shows which reader handles the numbers of this locale.

@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 """Shared helpers for the kab natural-language corpus.
 
-The contract: extract_timespan(text, 'kab', anchor). Anchor is a Tuesday (2017-06-27 13:04). Kabyle vocabulary comes from the cited legacy tables; the language has no citable directional offset markers, so relative_offset is deliberately omitted and the corpus is calendar-, named-day- and clock-centred. Spelled numbers read through numtag.
+The contract: extract_timespan(text, 'kab', anchor). Anchor is a Tuesday (2017-06-27 13:04). Kabyle vocabulary comes from the cited tables; the future offset markers "deg" and "sya" rest on Tatoeba sentences cited in marker_future.voc. Spelled numbers read through numtag.
 """
 from datetime import datetime, timedelta  # noqa: F401
 
