@@ -10,7 +10,8 @@
   "constructions": {
     "relative_offset": {
       "orders": [
-        "MARKER NUM of UNIT"
+        "MARKER NUM of UNIT",
+        "MARKER NUM UNIT"
       ]
     },
     "calendar_date": {

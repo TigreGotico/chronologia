@@ -1099,6 +1099,20 @@ class ConstructionMatcher:
                                      in self.spec.connectors.get(
                                          "weather_noun", frozenset())))):
                         continue
+                    # A numeral that is also the indefinite article, with
+                    # the bare unit and a genitive after it, is "one day of
+                    # winter", not "in one day" (``marker_indef_one.voc``).
+                    if (name == "relative_offset" and "NUM" in slots
+                            and tokens[slots["NUM"].index].mention
+                            and tokens[slots["NUM"].index].mention.text.lower()
+                            in self.spec.connectors.get(
+                                "indef_one", frozenset())
+                            and "UNIT" in slots
+                            and slots["UNIT"].index == slots["NUM"].index + 1
+                            and end < len(tokens)
+                            and tokens[end].text
+                            in self.spec.connectors.get("of", frozenset())):
+                        continue
                     # A direction word after the unit counts only if it can
                     # follow its count: "dois anos atrás" does, while "em"
                     # is a preposition and "dois anos em maio" is not "in

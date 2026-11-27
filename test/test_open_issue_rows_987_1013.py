@@ -54,6 +54,7 @@ FIXED_SPANS = {
     "at 8 tonight",
     "remind me to call the bank tomorrow morning",
     "deg snat n dduṛt",
+    "deg 3 wussan",
     "tafsut i d-iteddun",
 }
 
