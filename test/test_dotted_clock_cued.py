@@ -16,7 +16,7 @@ H830 = datetime(2026, 9, 25, 20, 30)
 H815 = datetime(2026, 9, 25, 20, 15)
 
 
-@pytest.mark.xfail(strict=True, reason=ISSUE)
+@pytest.mark.xfail(strict=True, raises=AssertionError, reason=ISSUE)
 @pytest.mark.parametrize("lang,text,instant", [
     ("es", "a las 8.30", H830),
     ("es", "a las 8.15", H815),
@@ -32,4 +32,5 @@ H815 = datetime(2026, 9, 25, 20, 15)
 ])
 def test_a_dotted_clock_beside_its_clock_word(lang, text, instant):
     found = extract_timespan(text, lang, ANCHOR)
+    assert found is not None, f"no reading for {text!r}"
     assert found.span.start.datetime() == instant

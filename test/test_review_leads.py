@@ -9,7 +9,7 @@ ANCHOR = datetime(2017, 6, 27, 13, 4)
 
 
 def xfail(issue):
-    return pytest.mark.xfail(strict=True, reason=f"#{issue}")
+    return pytest.mark.xfail(raises=AssertionError, strict=True, reason=f"#{issue}")
 
 
 FR = xfail("1379")

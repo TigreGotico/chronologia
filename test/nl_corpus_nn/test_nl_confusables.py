@@ -67,19 +67,19 @@ _RESOLVED = [
 _LIMITATIONS = [
     pytest.param(
         'juni som namn',
-        marks=pytest.mark.xfail(reason='month homograph used as a person/pet name binds as the month; expected limitation, disambiguation is downstream', strict=True)),
+        marks=pytest.mark.xfail(raises=AssertionError, reason='month homograph used as a person/pet name binds as the month; expected limitation, disambiguation is downstream', strict=True)),
     pytest.param(
         'august som namn',
-        marks=pytest.mark.xfail(reason='month homograph used as a person/pet name binds as the month; expected limitation, disambiguation is downstream', strict=True)),
+        marks=pytest.mark.xfail(raises=AssertionError, reason='month homograph used as a person/pet name binds as the month; expected limitation, disambiguation is downstream', strict=True)),
     pytest.param(
         'folkas vår',
-        marks=pytest.mark.xfail(reason='season word in figurative use binds as the season; downstream concern', strict=True)),
+        marks=pytest.mark.xfail(raises=AssertionError, reason='season word in figurative use binds as the season; downstream concern', strict=True)),
     pytest.param(
         'livets haust',
-        marks=pytest.mark.xfail(reason='season word in figurative use binds as the season; downstream concern', strict=True)),
+        marks=pytest.mark.xfail(raises=AssertionError, reason='season word in figurative use binds as the season; downstream concern', strict=True)),
     pytest.param(
         'reise til mars',
-        marks=pytest.mark.xfail(reason='month homograph used as a person/pet name binds as the month; expected limitation, disambiguation is downstream', strict=True)),
+        marks=pytest.mark.xfail(raises=AssertionError, reason='month homograph used as a person/pet name binds as the month; expected limitation, disambiguation is downstream', strict=True)),
 ]
 
 

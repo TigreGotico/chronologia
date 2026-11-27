@@ -150,7 +150,7 @@ def test_bronze_age(text, key):
     assert s == p.start and e == p.end
 
 
-@pytest.mark.xfail(reason="no citable single-span 'stone age'/'middle ages' "
+@pytest.mark.xfail(raises=AssertionError, reason="no citable single-span 'stone age'/'middle ages' "
                           "in chronologia PERIODS (neolithic != stone age; "
                           "medieval span needs a sourced entry) -- would "
                           "require inventing a boundary", strict=True)

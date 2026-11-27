@@ -61,28 +61,28 @@ _RESOLVED = [
 _LIMITATIONS = [
     pytest.param(
         'abril nome de menina',
-        marks=pytest.mark.xfail(reason='month homograph used as a person/pet name binds as the month; expected limitation, disambiguation is downstream', strict=True)),
+        marks=pytest.mark.xfail(raises=AssertionError, reason='month homograph used as a person/pet name binds as the month; expected limitation, disambiguation is downstream', strict=True)),
     pytest.param(
         'primavera dos povos',
-        marks=pytest.mark.xfail(reason='season word in figurative use binds as the season; downstream concern', strict=True)),
+        marks=pytest.mark.xfail(raises=AssertionError, reason='season word in figurative use binds as the season; downstream concern', strict=True)),
     pytest.param(
         'caiu no outono da vida',
-        marks=pytest.mark.xfail(reason='season word in figurative use binds as the season; downstream concern', strict=True)),
+        marks=pytest.mark.xfail(raises=AssertionError, reason='season word in figurative use binds as the season; downstream concern', strict=True)),
     pytest.param(
         'uma década perdida',
-        marks=pytest.mark.xfail(reason='temporal unit in figurative use binds as a date; downstream concern', strict=True)),
+        marks=pytest.mark.xfail(raises=AssertionError, reason='temporal unit in figurative use binds as a date; downstream concern', strict=True)),
     pytest.param(
         'domingo canta ópera lindamente',
-        marks=pytest.mark.xfail(reason='weekday homograph binds as the weekday once bare-weekday parsing lands engine-wide; downstream concern', strict=True)),
+        marks=pytest.mark.xfail(raises=AssertionError, reason='weekday homograph binds as the weekday once bare-weekday parsing lands engine-wide; downstream concern', strict=True)),
     pytest.param(
         'domingo de ramos festa',
-        marks=pytest.mark.xfail(reason='weekday homograph binds as the weekday once bare-weekday parsing lands engine-wide; downstream concern', strict=True)),
+        marks=pytest.mark.xfail(raises=AssertionError, reason='weekday homograph binds as the weekday once bare-weekday parsing lands engine-wide; downstream concern', strict=True)),
     pytest.param(
         'terça é um nome',
-        marks=pytest.mark.xfail(reason='weekday homograph binds as the weekday once bare-weekday parsing lands engine-wide; downstream concern', strict=True)),
+        marks=pytest.mark.xfail(raises=AssertionError, reason='weekday homograph binds as the weekday once bare-weekday parsing lands engine-wide; downstream concern', strict=True)),
     pytest.param(
         'sexta sentido de taxa',
-        marks=pytest.mark.xfail(reason='weekday homograph binds as the weekday once bare-weekday parsing lands engine-wide; downstream concern', strict=True)),
+        marks=pytest.mark.xfail(raises=AssertionError, reason='weekday homograph binds as the weekday once bare-weekday parsing lands engine-wide; downstream concern', strict=True)),
     'o natal chegou cedo',
 ]
 

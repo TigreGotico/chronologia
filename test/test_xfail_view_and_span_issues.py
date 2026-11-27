@@ -26,7 +26,7 @@ def _ends(span):
     return span.start, span.end
 
 
-@pytest.mark.xfail(strict=True, reason=VIEW)
+@pytest.mark.xfail(raises=AssertionError, strict=True, reason=VIEW)
 @pytest.mark.parametrize("lang,text,start,end", [
     ("de", "um 9 Uhr für 2 Stunden", datetime(2017, 6, 27, 9, 0), datetime(2017, 6, 27, 11, 0)),
     ("de", "Besprechung um 15:15 für 45 Minuten", datetime(2017, 6, 27, 15, 15), datetime(2017, 6, 27, 16, 0)),
@@ -46,7 +46,7 @@ def test_timespan_reads_the_clock_for_a_length(lang, text, start, end):
     assert _ends(extract_timespan(text, lang, MORNING)[0]) == (start, end)
 
 
-@pytest.mark.xfail(strict=True, reason=REMAINDER)
+@pytest.mark.xfail(raises=AssertionError, strict=True, reason=REMAINDER)
 @pytest.mark.parametrize("lang,text,remainder", [
     ("en", "please 5-12 June", "please"),
     ("en", "meet me 5-12 June ok", "meet me ok"),
@@ -59,7 +59,7 @@ def test_shared_range_keeps_unrelated_words_in_the_remainder(lang, text, remaind
     assert extract_candidates(text, lang, NOON)[0].remainder == remainder
 
 
-@pytest.mark.xfail(strict=True, reason=SENTENCE)
+@pytest.mark.xfail(raises=AssertionError, strict=True, reason=SENTENCE)
 @pytest.mark.parametrize("lang,text,start,end", [
     ("de", "Wir treffen uns am Montag. Der Bericht ist bis Freitag fällig.",
      datetime(2017, 7, 3), datetime(2017, 7, 4)),
@@ -71,7 +71,7 @@ def test_range_does_not_cross_a_full_stop(lang, text, start, end):
     assert _ends(extract_candidates(text, lang, NOON)[0].span) == (start, end)
 
 
-@pytest.mark.xfail(strict=True, reason=SENTENCE)
+@pytest.mark.xfail(raises=AssertionError, strict=True, reason=SENTENCE)
 def test_range_does_not_swallow_the_next_clause():
     text = ("From june 5th to june 12th we will travel, "
             "then rest next monday morning at 9 for 1 hour.")
@@ -80,7 +80,7 @@ def test_range_does_not_swallow_the_next_clause():
     assert _ends(extract_candidates(text, "en", MORNING)[0].span) == want
 
 
-@pytest.mark.xfail(strict=True, reason=NFD)
+@pytest.mark.xfail(raises=AssertionError, strict=True, reason=NFD)
 @pytest.mark.parametrize("lang,text", [
     ("fr", "dans 2 jours ouvrés"),
     ("ru", "3 рабочих дней"),
@@ -92,7 +92,7 @@ def test_nfd_remainder_equals_nfc(lang, text):
     assert extract_timespan(nfd, lang, MORNING)[1] == ""
 
 
-@pytest.mark.xfail(strict=True, reason=NFD)
+@pytest.mark.xfail(raises=AssertionError, strict=True, reason=NFD)
 @pytest.mark.parametrize("lang,text,start,end", [
     ("pt", "dia 5 de março de 2027", datetime(2027, 3, 5), datetime(2027, 3, 6)),
     ("fr", "le 5 février 2027", datetime(2027, 2, 5), datetime(2027, 2, 6)),

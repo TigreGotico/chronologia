@@ -79,7 +79,7 @@ def test_day_label_stays_out_of_the_summary(lang, text, summary):
     assert extract_event(text, lang, _ANCHOR).summary == summary
 
 
-@pytest.mark.xfail(strict=True, reason=_ISSUE)
+@pytest.mark.xfail(raises=AssertionError, strict=True, reason=_ISSUE)
 @pytest.mark.parametrize("lang,text,summary", _UNLABELLED)
 def test_unlabelled_day_word_stays_out_of_the_summary(lang, text, summary):
     assert extract_event(text, lang, _ANCHOR).summary == summary
@@ -174,7 +174,7 @@ _RELATIVE_MONTHS = [
 ]
 
 
-@pytest.mark.xfail(strict=True, reason=_MONTH_ISSUE)
+@pytest.mark.xfail(raises=AssertionError, strict=True, reason=_MONTH_ISSUE)
 @pytest.mark.parametrize("lang,text", _RELATIVE_MONTHS)
 def test_day_range_with_a_relative_month_end(lang, text):
     got = extract_timespan(text, lang, _RANGE_ANCHOR)

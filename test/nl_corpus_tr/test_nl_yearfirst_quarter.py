@@ -54,7 +54,7 @@ def test_bare_year_with_no_quarter_word_stays_whole_year():
     assert e == AstroDate(2021, 1, 1)
 
 
-@pytest.mark.xfail(reason="çeyreği (possessive-marked quarter noun) has no "
+@pytest.mark.xfail(raises=AssertionError, reason="çeyreği (possessive-marked quarter noun) has no "
                           "vocabulary surface; the phrase falls through to "
                           "the bare-year reading, four times too wide -- "
                           "see module docstring.", strict=True)

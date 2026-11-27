@@ -1,0 +1,36 @@
+{
+ "source": [
+  "Month and weekday names in lowercase: Acordo Ortográfico de 1990, Base XIX 1.º b), 'Nos nomes dos dias, meses, estações do ano: segunda-feira; outubro; primavera' (Papers: Languages/Portuguese/Orthography and Dictionaries/acordo-ortografico-1990-portal.md).",
+  "Day 1 is the ordinal 'primeiro', every other day a cardinal: Ciberdúvidas answer 32700, citing Cunha & Cintra, Nova Gramática do Português Contemporâneo, p. 374, 'salvo na designação do primeiro dia, em que é de regra o uso do numeral ordinal'.",
+  "A whole hour takes the noun: Cunha & Cintra via Ciberdúvidas 32700, 'às seis horas do dia primeiro de maio'.",
+  "Unit words 'horas', 'minutos', 'segundos' joined by 'e': Ciberdúvidas answer 14586, 'vinte horas, trinta minutos e vinte e quatro segundos'. The spoken form has no comma.",
+  "Zero hours take the plural in Portugal: Dicio, 'Zero grau ou zero graus', 'Em Portugal, o zero é encarado como plural: ... zero horas'.",
+  "Day periods: Unicode CLDR 49 supplemental dayPeriods.xml, rules for pt: night1 00:00-06:00, morning1 06:00-12:00, afternoon1 12:00-19:00, evening1 19:00-24:00, midnight 00:00, noon 12:00; pt.xml format names 'da madrugada', 'da manhã', 'da tarde', 'da noite', 'meia-noite', 'meio-dia'.",
+  "Minutes before the hour: Ciberdúvidas answer 38623, 'são três menos um quarto'; Priberam 'quarto' sense 3. Ciberdúvidas 38623 also gives 'um quarto' for 15 minutes. The half hour 'e meia' follows ovos-date-parser nice_time_pt, which quotes no source for it.",
+  "These quotes are the ones in ovos-date-parser ovos_date_parser/dates_pt.py; this file gives the same readings."
+ ],
+ "tags": ["pt", "pt-PT"],
+ "months": ["janeiro", "fevereiro", "março", "abril", "maio", "junho", "julho", "agosto", "setembro", "outubro", "novembro", "dezembro"],
+ "weekdays": ["segunda-feira", "terça-feira", "quarta-feira", "quinta-feira", "sexta-feira", "sábado", "domingo"],
+ "day_ordinal": [1],
+ "date_joiner": "de",
+ "and": "e",
+ "hour_gender": "feminine",
+ "count_gender": "masculine",
+ "year_gender": "masculine",
+ "zero_is_plural": true,
+ "units": {
+  "hour": ["hora", "horas"],
+  "minute": ["minuto", "minutos"],
+  "second": ["segundo", "segundos"]
+ },
+ "midnight": "meia-noite",
+ "noon": "meio-dia",
+ "day_periods": [[0, "da madrugada"], [6, "da manhã"], [12, "da tarde"], [19, "da noite"]],
+ "phrase": {
+  "before": "menos",
+  "before_minutes": [35, 40, 45, 50, 55],
+  "fractions": {"15": "e um quarto", "30": "e meia", "-15": "menos um quarto"},
+  "on_the_hour": "em ponto"
+ }
+}

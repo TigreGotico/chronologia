@@ -63,26 +63,26 @@ _RESOLVED = [
 _LIMITATIONS = [
     pytest.param(
         'juny as namme',
-        marks=pytest.mark.xfail(reason='month homograph used as a person/pet name binds as the month; expected limitation, disambiguation is downstream', strict=True)),
+        marks=pytest.mark.xfail(raises=AssertionError, reason='month homograph used as a person/pet name binds as the month; expected limitation, disambiguation is downstream', strict=True)),
     pytest.param(
         'augustus as foarnamme',
-        marks=pytest.mark.xfail(reason='month homograph used as a person/pet name binds as the month; expected limitation, disambiguation is downstream', strict=True)),
+        marks=pytest.mark.xfail(raises=AssertionError, reason='month homograph used as a person/pet name binds as the month; expected limitation, disambiguation is downstream', strict=True)),
     pytest.param(
         'july as namme',
-        marks=pytest.mark.xfail(reason='month homograph used as a person/pet name binds as the month; expected limitation, disambiguation is downstream', strict=True)),
+        marks=pytest.mark.xfail(raises=AssertionError, reason='month homograph used as a person/pet name binds as the month; expected limitation, disambiguation is downstream', strict=True)),
     pytest.param(
         'de maitiid fan de folken',
-        marks=pytest.mark.xfail(reason='season word in figurative use binds as the season; downstream concern', strict=True)),
+        marks=pytest.mark.xfail(raises=AssertionError, reason='season word in figurative use binds as the season; downstream concern', strict=True)),
     pytest.param(
         'de hjerst fan it libben',
-        marks=pytest.mark.xfail(reason='season word in figurative use binds as the season; downstream concern', strict=True)),
+        marks=pytest.mark.xfail(raises=AssertionError, reason='season word in figurative use binds as the season; downstream concern', strict=True)),
     pytest.param(
         'betiid yn de moarn',
-        marks=pytest.mark.xfail(reason='morning/tomorrow homograph binds as the next day; expected limitation', strict=True)),
+        marks=pytest.mark.xfail(raises=AssertionError, reason='morning/tomorrow homograph binds as the next day; expected limitation', strict=True)),
     'kryst kaam betiid',
     pytest.param(
         'om de middei hinne',
-        marks=pytest.mark.xfail(reason='structurally-safe class unexpectedly binds; recorded as a limitation', strict=True)),
+        marks=pytest.mark.xfail(raises=AssertionError, reason='structurally-safe class unexpectedly binds; recorded as a limitation', strict=True)),
 ]
 
 

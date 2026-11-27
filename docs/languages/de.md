@@ -90,6 +90,16 @@ The weekday and month names cite Unicode CLDR 47.
 3. Does the Nacht band really start at midnight for a German reader, given that `heute Nacht` said in the evening usually means the coming night?
 4. Are `Kalenden`, `Nonen` and `Iden` the forms a German text actually uses, or is the Latin left untranslated in most modern writing?
 
+## Regional variants
+
+The tag `de-DE` gets the same results as `de`. chronologia implements no regional difference for German in Germany: `de-DE` loads the `de` locale data, the same numtag lexicon and the same first day of the week.
+
+    >>> from datetime import datetime
+    >>> from chronologia import extract_timespan
+    >>> anchor = datetime(2027, 6, 2, 12, 0)
+    >>> extract_timespan("5. Juni 2027", "de", anchor)[0] == extract_timespan("5. Juni 2027", "de-DE", anchor)[0]
+    True
+
 ## Checked examples
 
 Each example below runs as a doctest with a fixed anchor, so the output does not depend on the machine. The first one shows which reader handles the numbers of this locale.
@@ -163,7 +173,6 @@ Each line is an open issue with a strict `xfail` test for this language. The lin
 
 **Dates, ranges and weeks**
 
-- A date built from two parts loses one of them. Example (reader `extract_timespan`, lang `de`, anchor 2117-09-03 13:30): `in 3 tagen um 15 uhr` gives 2117-09-06 13:30 to 2117-09-07 13:30 and `um 15 uhr` left over. [#1034](https://github.com/TigreGotico/chronologia/issues/1034)
 
 - Text that is no date reads as a date, or the wrong reading wins. Example (reader `extract_timespan`, lang `de`, anchor 2017-06-27 00:00): `am 0. januar` gives 2018-01-01 00:00 to 2018-02-01 00:00 and `am 0.` left over. [#1035](https://github.com/TigreGotico/chronologia/issues/1035)
 

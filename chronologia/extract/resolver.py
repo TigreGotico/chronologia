@@ -409,6 +409,9 @@ DATE_CONSTRUCTIONS = frozenset({
     # date -- letting the double nest "the day after the day after tomorrow"
     # step one more day past the inner result instead of stranding the outer.
     "named_day_after", "named_day_before",
+    # fr "jeudi en huit" is a whole day too, so "samedi en huit au soir" and
+    # "jeudi en huit à 10h" narrow it like any other date
+    "day_week_idiom",
     "scoped_bc", "scoped_ad", "decade_bc",
     "regnal_date", "roman_date", "era_date",
     "era_bc", "era_ad", "era_bp", "era_auc", "era_buddhist",
@@ -975,6 +978,39 @@ class Resolver:
         qty = self._offset_quantity(match)
         value = self._named_day_base(match, anchor) + timedelta(days=days * qty)
         return Resolution(_day_span(value), self._consumed(match))
+
+    def _resolve_day_week_idiom(self, match, anchor):
+        """fr "jeudi en huit", "demain en quinze": the named day, counted as
+        day one, then the same day one or two weeks on (TLFi s.v. "huit":
+        "En huit. Le même jour de la semaine suivante").
+
+        A weekday reads only when it falls on or after the anchor's weekday in
+        the locale's week.  There the coming weekday plus a week is also the
+        weekday of next week (Larousse s.v. "huit": "Lundi, mardi en huit,
+        lundi, mardi de la semaine prochaine").  Before it, the two counts
+        name different days a week apart, so the phrase refuses."""
+        weeks = self.spec.week_idioms.get(match.slots["WEEK_IDIOM"].text)
+        if weeks is None:
+            weeks = self.spec.week_idioms[
+                match.slots["WEEK_IDIOM"].raw.lower()]
+        day_tok = match.slots.get("DAY_WORD")
+        if day_tok is not None:
+            # only the day words the locale lists for the idiom
+            # (``marker_week_idiom_day.voc``: fr "aujourd'hui", "demain")
+            if day_tok.text not in self.spec.connectors.get(
+                    "week_idiom_day", frozenset()):
+                return None
+            base = _midnight(anchor) + timedelta(
+                days=self.spec.named_days[day_tok.text])
+        else:
+            target = self.spec.weekdays[match.slots["WEEKDAY"].text]
+            first = _WEEK_START.get(self.conventions.week_start, 0)
+            if (target - first) % 7 < (anchor.weekday() - first) % 7:
+                return None
+            base = _midnight(anchor) + timedelta(
+                days=(target - anchor.weekday()) % 7)
+        return Resolution(_day_span(base + timedelta(weeks=weeks)),
+                          self._consumed(match))
 
     def _resolve_named_day_offset_from(self, match, anchor):
         """"a month from tomorrow", "two months from today", "a week from
@@ -3185,10 +3221,10 @@ class Resolver:
                           self._consumed(match))
 
     def _zone_tzinfo(self, zone_tok):
-        """Parse a bound ZONE token into a fixed-offset
-        :class:`datetime.timezone`, or ``None`` when no zone is present.
+        """Parse a bound ZONE token into a tzinfo, or ``None`` when no zone
+        is present.
 
-        Three shapes resolve, all to a *fixed* offset:
+        Three shapes resolve to a *fixed* offset:
 
         * ``"utc"`` / ``"gmt"`` optionally with a signed offset ("utc+2",
           "gmt-5:30") -- the acronym's base offset (0 for UTC/GMT) plus the tail.
@@ -3201,12 +3237,16 @@ class Resolver:
         * a bare RFC/ISO signed numeric offset ("-0500", "+05:30", "-08:00"):
           hours = the leading digits, minutes = the trailing two.
 
-        Named-city / region words ("Berlin", "Eastern time") are out of scope --
-        they never bind here and leave the wall time naive."""
+        A city phrase from ``zone_cities.json`` ("new york time") is the one
+        DST-aware shape: it gives the IANA :class:`zoneinfo.ZoneInfo`."""
         if zone_tok is None:
             return None
         from datetime import timezone
         text = zone_tok.text
+        city_zone = self.spec.zone_cities.get(text)
+        if city_zone is not None:
+            from zoneinfo import ZoneInfo
+            return ZoneInfo(city_zone)
         # bare signed numeric offset: no acronym, sign + digits only.
         num = re.fullmatch(r"([+-])(\d{1,2}):?(\d{2})", text)
         if num is not None:
@@ -3554,6 +3594,7 @@ class Resolver:
         "weekday_offset": _resolve_weekday_offset,
         "named_day_span_idiom": _resolve_named_day_span_idiom,
         "named_day_offset_from": _resolve_named_day_offset_from,
+        "day_week_idiom": _resolve_day_week_idiom,
         "sametime_shift": _resolve_sametime_shift,
         "holiday_eve": _resolve_holiday_eve,
         "weekday_ref": _resolve_weekday_ref,

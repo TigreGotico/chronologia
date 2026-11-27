@@ -144,7 +144,7 @@ def multiword_surfaces(spec: LangSpec) -> Tuple[str, ...]:
                   spec.scope_units, spec.clock_fractions, spec.clock_dirs,
                   spec.decade_words, spec.weekend_words, spec.holidays,
                   spec.regnal_names, spec.archon_names, spec.dayparts,
-                  spec.jurisdictions):
+                  spec.jurisdictions, spec.zone_cities):
         seen.update(s for s in table if " " in s)
     for cal in spec.calendar_months.values():
         seen.update(s for s in cal if " " in s)

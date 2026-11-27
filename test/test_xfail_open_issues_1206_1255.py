@@ -17,7 +17,7 @@ URL = "https://github.com/TigreGotico/chronologia/issues/"
 
 
 def xfail(issue):
-    return pytest.mark.xfail(strict=True, reason=URL + str(issue))
+    return pytest.mark.xfail(raises=AssertionError, strict=True, reason=URL + str(issue))
 
 
 def duration_rows(issue, rows):
@@ -156,7 +156,7 @@ def test_timespan(lang, text, anchor, start, end, remainder):
         assert result.remainder == remainder
 
 
-@pytest.mark.xfail(strict=True, reason=URL + "1253")
+@pytest.mark.xfail(raises=AssertionError, strict=True, reason=URL + "1253")
 def test_aware_anchor_since_a_zoned_clock():
     anchor = datetime(2017, 6, 27, 12, 30, tzinfo=UTC)
     result = extract_timespan("since 1pm utc+2", "en", anchor)

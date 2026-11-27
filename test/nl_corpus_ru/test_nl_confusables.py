@@ -66,19 +66,19 @@ _RESOLVED = [
 _LIMITATIONS = [
     pytest.param(
         'апрель как имя',
-        marks=pytest.mark.xfail(reason='month homograph used as a person/pet name binds as the month; expected limitation, disambiguation is downstream', strict=True)),
+        marks=pytest.mark.xfail(raises=AssertionError, reason='month homograph used as a person/pet name binds as the month; expected limitation, disambiguation is downstream', strict=True)),
     pytest.param(
         'август как имя',
-        marks=pytest.mark.xfail(reason='month homograph used as a person/pet name binds as the month; expected limitation, disambiguation is downstream', strict=True)),
+        marks=pytest.mark.xfail(raises=AssertionError, reason='month homograph used as a person/pet name binds as the month; expected limitation, disambiguation is downstream', strict=True)),
     pytest.param(
         'весна народов',
-        marks=pytest.mark.xfail(reason='season word in figurative use binds as the season; downstream concern', strict=True)),
+        marks=pytest.mark.xfail(raises=AssertionError, reason='season word in figurative use binds as the season; downstream concern', strict=True)),
     pytest.param(
         'осень жизни',
-        marks=pytest.mark.xfail(reason='season word in figurative use binds as the season; downstream concern', strict=True)),
+        marks=pytest.mark.xfail(raises=AssertionError, reason='season word in figurative use binds as the season; downstream concern', strict=True)),
     pytest.param(
         'окружающая среда',
-        marks=pytest.mark.xfail(reason='weekday homograph binds as the weekday once bare-weekday parsing lands engine-wide; downstream concern', strict=True)),
+        marks=pytest.mark.xfail(raises=AssertionError, reason='weekday homograph binds as the weekday once bare-weekday parsing lands engine-wide; downstream concern', strict=True)),
     'рождество пришло рано',
 ]
 

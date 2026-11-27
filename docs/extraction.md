@@ -1389,7 +1389,9 @@ The parent is the calendar container that the phrase names. It is the current we
 
 ## Timezone-qualified clock times
 
-A clock time trailed by `UTC` or `GMT` (optionally with a fixed signed offset) resolves to an **aware** span. Its `tzinfo` carries the offset. So the same wall time in two zones is two different instants. Named-city zones are out of scope (there is no gazetteer): only UTC / GMT and a fixed offset resolve. A city word is left in the remainder and the time stays naive.
+A clock time trailed by `UTC` or `GMT` (optionally with a fixed signed offset) resolves to an **aware** span. Its `tzinfo` carries the offset. So the same wall time in two zones is two different instants. A city with a time cue ("New York time", "hora de Londres", "Londoner Zeit") resolves to the IANA zone of the city. The offset is the one on the target date, so DST applies. Each language lists its cities and cue patterns in `chronologia/locale/<lang>/zone_cities.json`. A city word with no time cue ("3pm Berlin", "I flew to New York at 3 pm") does not change the zone: the word stays in the remainder and the time stays naive.
+
+The day roll compares wall times on the anchor clock, because `extract_timespan` drops the tzinfo of the anchor.
 
 ```python
 span, _ = extract_timespan("3pm UTC", "en", anchor)
@@ -1400,6 +1402,10 @@ assert span.start.utcoffset() == timedelta(hours=2)
 
 span, _ = extract_timespan("noon UTC-5", "en", anchor)
 assert span.start.utcoffset() == timedelta(hours=-5)
+
+# a city time takes the DST offset of its zone on that date
+span, _ = extract_timespan("3pm New York time", "en", anchor)
+assert span.start.utcoffset() == timedelta(hours=-4)    # June: EDT
 
 # a bare clock with no zone stays naive
 assert extract_timespan("3pm", "en", anchor)[0].start.tzinfo is None

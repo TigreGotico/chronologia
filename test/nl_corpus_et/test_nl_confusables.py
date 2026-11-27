@@ -67,19 +67,19 @@ _RESOLVED = [
 _LIMITATIONS = [
     pytest.param(
         'vara hommikul',
-        marks=pytest.mark.xfail(reason='daypart adverb now binds as the CLDR time-of-day band (the daypart silent-drop fix); the intensifier is not modelled, disambiguation is downstream', strict=True)),
+        marks=pytest.mark.xfail(raises=AssertionError, reason='daypart adverb now binds as the CLDR time-of-day band (the daypart silent-drop fix); the intensifier is not modelled, disambiguation is downstream', strict=True)),
     pytest.param(
         'aprill kui nimi',
-        marks=pytest.mark.xfail(reason='month homograph used as a person/pet name binds as the month; expected limitation, disambiguation is downstream', strict=True)),
+        marks=pytest.mark.xfail(raises=AssertionError, reason='month homograph used as a person/pet name binds as the month; expected limitation, disambiguation is downstream', strict=True)),
     pytest.param(
         'juuni kui nimi',
-        marks=pytest.mark.xfail(reason='month homograph used as a person/pet name binds as the month; expected limitation, disambiguation is downstream', strict=True)),
+        marks=pytest.mark.xfail(raises=AssertionError, reason='month homograph used as a person/pet name binds as the month; expected limitation, disambiguation is downstream', strict=True)),
     pytest.param(
         'rahvaste kevad',
-        marks=pytest.mark.xfail(reason='season word in figurative use binds as the season; downstream concern', strict=True)),
+        marks=pytest.mark.xfail(raises=AssertionError, reason='season word in figurative use binds as the season; downstream concern', strict=True)),
     pytest.param(
         'elu sügis',
-        marks=pytest.mark.xfail(reason='season word in figurative use binds as the season; downstream concern', strict=True)),
+        marks=pytest.mark.xfail(raises=AssertionError, reason='season word in figurative use binds as the season; downstream concern', strict=True)),
     'jõulud tulid vara',
 ]
 

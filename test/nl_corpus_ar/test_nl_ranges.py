@@ -117,7 +117,7 @@ def test_fused_waw_daypart_range_endpoint(text):
 # remainder the multiword-merge pass was never asked to re-glue, so the
 # fused form still truncates.  Left open deliberately (tracked separately);
 # pinned here so a future fix flips this from xfail to a real assertion.
-@pytest.mark.xfail(reason="multiword month surfaces not covered by the fused-waw guard", strict=True)
+@pytest.mark.xfail(raises=AssertionError, reason="multiword month surfaces not covered by the fused-waw guard", strict=True)
 def test_fused_waw_multiword_month_not_yet_closed():
     ss, ee = start_end("بين آذار وكانون الأول")
     assert ss == AstroDate(2017, 3, 1) and ee == AstroDate(2018, 1, 1)

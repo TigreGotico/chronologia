@@ -62,7 +62,7 @@ FIXED_SPANS = {
 
 
 def _case(fixed, issue, *row):
-    marks = () if row[1] in fixed else pytest.mark.xfail(
+    marks = () if row[1] in fixed else pytest.mark.xfail(raises=AssertionError,
         strict=True, reason=URL.format(issue))
     return pytest.param(
         *row, marks=marks, id="{}-{}-{}".format(issue, row[0], row[1]))

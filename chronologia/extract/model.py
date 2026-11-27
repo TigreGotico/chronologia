@@ -452,6 +452,10 @@ class LangSpec:
     # per-calendar day-subdivision name (a lang.json fact); its unit->fraction
     # table lives in cycles.DAY_SUBDIVISIONS (French decimal time: 10h/100m/100s)
     day_subdivision: Optional[str] = None
+    # "<day> en huit" (fr): the numeral of a day-counted week idiom ->
+    # the number of weeks it adds, from ``week_idiom_<weeks>.voc``.  The
+    # named day is day one, so "huit" (eight) is one week on.
+    week_idioms: Mapping[str, int] = field(default_factory=dict)
     # regnal era surface -> (sequence key, segment name), from the
     # regnal_<seqkey>_<segname>.voc filename convention (Japanese nengō)
     regnal_names: Mapping[str, Tuple[str, str]] = field(default_factory=dict)
@@ -539,6 +543,10 @@ class LangSpec:
     # a trailing signed offset on the surface token ("utc+2") is added at
     # resolve time.  Facts from the ``clock_zone_<minutes>.voc`` convention.
     clock_zones: Mapping[str, int] = field(default_factory=dict)
+    # "<city> time" surface -> IANA zone name ("new york time" ->
+    # "America/New_York"), from ``zone_cities.json``.  The offset is
+    # resolved on the target date, so DST applies.
+    zone_cities: Mapping[str, str] = field(default_factory=dict)
     # country/region-name surface -> jurisdiction code ("portugal" -> "PT"),
     # from the ``jurisdiction_<code>.voc`` convention. Per-locale opt-in vocab
     # covering only the jurisdictions that locale names; empty for a locale

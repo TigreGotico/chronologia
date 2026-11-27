@@ -59,7 +59,7 @@ def test_date_with_postposed_weekday(text, s, e):
     assert start_end(text, A) == (s, e)
 
 
-@pytest.mark.xfail(strict=True, reason="id: prefixed 'Weekday, D Bulan YYYY' "
+@pytest.mark.xfail(raises=AssertionError, strict=True, reason="id: prefixed 'Weekday, D Bulan YYYY' "
                     "folds only the bare weekday (next Selasa on/after the "
                     "anchor) and strands the whole dated tail as residue, "
                     "instead of resolving to the named calendar day")

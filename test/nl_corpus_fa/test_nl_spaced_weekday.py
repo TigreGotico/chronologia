@@ -15,7 +15,7 @@ ISSUE = "https://github.com/TigreGotico/chronologia/issues/989"
 ANCHOR = datetime(2017, 6, 27, 13, 4)
 
 
-@pytest.mark.xfail(strict=True, reason=ISSUE)
+@pytest.mark.xfail(raises=AssertionError, strict=True, reason=ISSUE)
 def test_spaced_tuesday_at_one_am_is_a_tuesday():
     found = extract_timespan(
         "هوا سه شنبه ساعت یک بامداد چطور خواهد بود", "fa", ANCHOR)
@@ -23,7 +23,7 @@ def test_spaced_tuesday_at_one_am_is_a_tuesday():
         datetime(2017, 6, 27, 1, 0), datetime(2017, 7, 4, 1, 0))
 
 
-@pytest.mark.xfail(strict=True, reason=ISSUE)
+@pytest.mark.xfail(raises=AssertionError, strict=True, reason=ISSUE)
 def test_spaced_tuesday_morning_is_a_tuesday():
     found = extract_timespan("دمای پایین روز سه شنبه صبح چیست", "fa", ANCHOR)
     assert found.span.start.datetime().date() in (

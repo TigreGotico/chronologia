@@ -126,7 +126,7 @@ def test_multi_to_sentence_keeps_the_outer_range():
     assert (r.span.end.year, r.span.end.month, r.span.end.day) == (2026, 6, 27)
 
 
-@pytest.mark.xfail(reason="the tokenizer splits '2nd' into '2' + 'nd', so the "
+@pytest.mark.xfail(raises=AssertionError, reason="the tokenizer splits '2nd' into '2' + 'nd', so the "
                           "idiom's ordinal is not the connector's left "
                           "neighbour and neither the range guard nor the "
                           "weekday reading sees it",
