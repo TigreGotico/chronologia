@@ -1,0 +1,5 @@
+# "i" before a bare part-of-day noun names that part of today: "i aften" is
+# this evening and "i eftermiddag" this afternoon.  "i morgen" is tomorrow
+# and "i nat" is last night or tonight, so "morgen" and "nat" are not in
+# marker_meridiem_after_deixis.voc.
+i

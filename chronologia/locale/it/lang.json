@@ -86,6 +86,17 @@
       ],
       "prefer_future": true
     },
+    "clock_this_daypart": {
+      "orders": [
+        "at? CLOCK of? thisdeixis MERIDIEM ZONE?",
+        "at HOUR CLOCKDIR article? FRACTION of? thisdeixis MERIDIEM ZONE?",
+        "article HOUR CLOCKDIR article? FRACTION of? thisdeixis MERIDIEM ZONE?",
+        "at HOUR CLOCKDIR article? MINUTE of? thisdeixis MERIDIEM ZONE?",
+        "article HOUR CLOCKDIR article? MINUTE of? thisdeixis MERIDIEM ZONE?",
+        "at HOUR of? thisdeixis MERIDIEM ZONE?",
+        "article HOUR of? thisdeixis MERIDIEM ZONE?"
+      ]
+    },
     "military_time": {
       "orders": [
         "MILTIME hours",

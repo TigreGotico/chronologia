@@ -121,9 +121,6 @@ SPANS = (
         ("it", "tra il giorno 10 e le 8 di sera", A_2026, datetime(2026, 2, 10), None, None),
         ("ca", "entre el dia 10 i les 8 del vespre", A_2026, datetime(2026, 2, 10), None, None),
     ])
-    + span_rows(1234, [
-        ("it", "stasera dieci meno un quarto", datetime(2026, 10, 17, 12, 0), datetime(2026, 10, 17, 21, 45), None, None),
-    ])
     + span_rows(1254, [
         ("en", "9:30 utc", A_2017, datetime(2017, 6, 27, 21, 30, tzinfo=UTC), None, None),
     ] + [
