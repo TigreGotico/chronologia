@@ -275,6 +275,11 @@ def _duration_core(text: str, engine, anchor: Optional[datetime] = None,
         return None, k
 
     calendar_months = _DUR_CALENDAR_MONTHS if anchor is not None else {}
+    # "l'ora", "the hour": a definite article counts one only when the text
+    # names no other length ("dura dodici giorni ... non vedo l'ora").
+    definite = articles - indef - {
+        s for s, v in spec.quantifiers.items() if v == 1.0}
+    definite_reads = []
     total = 0.0
     months = 0.0
     found = False
@@ -572,13 +577,21 @@ def _duration_core(text: str, engine, anchor: Optional[datetime] = None,
                     count_tok.index, j):
                 i += 1
                 continue
-            _add(unit, count)
-            found = True
-            consumed.update(range(i, end))
+            if article_one in definite:
+                definite_reads.append((unit, count, range(i, end)))
+            else:
+                _add(unit, count)
+                found = True
+                consumed.update(range(i, end))
             i = end
             continue
         i += 1
 
+    if not found:
+        for unit, count, span in definite_reads:
+            _add(unit, count)
+            found = True
+            consumed.update(span)
     if not found:
         return None
     # A connective "and" bridging two consumed components ("two hours *and*
@@ -638,12 +651,18 @@ def _duration_core(text: str, engine, anchor: Optional[datetime] = None,
     # answer, not a partial one.  Any unconsumed calendar-unit surface means
     # the phrase named a length this function cannot express in whole; honour
     # the "3 months" convention across the whole compound and refuse.
+    # Only a counted unit names a length: "dieses Jahr" / "este ano" beside
+    # "acht Tage" is a deictic year, so it does not block the reading.
+    count_words = indef | fracs.keys() | {
+        s for s, v in spec.quantifiers.items() if v == 1.0}
     for tok in tokens:
         if tok.index in consumed:
             continue
         kind = spec.units.get(tok.text)
         if kind is not None and kind not in _DUR_UNIT_SECONDS:
-            return None
+            prev = tokens[tok.index - 1] if tok.index else None
+            if prev is None or prev.is_number or prev.text in count_words:
+                return None
     from chronologia.extract.pipeline import render_remainder
     remainder = render_remainder(text, [t for t in tokens
                                         if t.index not in consumed])
