@@ -66,3 +66,26 @@ def test_a_range_of_dates_is_not_moved_onto_the_day():
     r = extract_timespan("monday from june 3 to june 5", "en", A)
     assert r is not None
     assert (r.span.start.month, r.span.start.day) == (6, 3)
+
+
+def test_a_verb_particle_before_a_named_day_stays_in_the_remainder():
+    # "on" before "tomorrow" belongs to the verb (_fold_date_article)
+    start, _end, rem = _read("turn the lights on tomorrow from 10am to 11am", "en")
+    assert start == (*SAT, 10) and rem == "turn the lights on"
+
+
+def test_an_end_read_without_the_anchor_day_is_not_moved():
+    # "now" is the anchor instant: the day before the range does not move it
+    r = extract_timespan("monday from now to 11am", "en", A)
+    assert r is not None
+    assert (r.span.start.day, r.span.start.hour, r.remainder) == (27, 10, "monday")
+
+
+def test_a_zoned_end_moves_with_the_day():
+    # the same range as "from noon to 3:30 utc+2", one day on
+    r = extract_timespan("tomorrow from noon to 3:30 utc+2", "en", A)
+    base = extract_timespan("from noon to 3:30 utc+2", "en", A)
+    assert r is not None and base is not None and r.remainder == ""
+    assert r.span.start.day == base.span.start.day + 1
+    assert (r.span.start.hour, r.span.end.hour, r.span.end.minute) == (
+        base.span.start.hour, base.span.end.hour, base.span.end.minute)
