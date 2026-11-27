@@ -50,7 +50,7 @@ The `matin` then opens at 04:00, two hours before the English morning. The `apr�
 
 **Ranges** are `du … au …` and `entre … et …`. `depuis` opens one that runs up to the anchor, and `jusqu'à` closes one that starts there.
 
-**The present instant.** `maintenant` and `tout de suite`, said alone, read as the anchor instant, a span of no width, as English "now" does. TLFi gives "À l'instant, au moment où l'on dit «maintenant»" s.v. *maintenant* and "Aussitôt, sans délai" s.v. *suite*. Inside a longer phrase the words are no reading of their own.
+**The present instant.** `maintenant` and `tout de suite`, said alone, read as the anchor instant, a span of no width. TLFi gives "À l'instant, au moment où l'on dit «maintenant»" s.v. *maintenant* and "Aussitôt, sans délai" s.v. *suite*. Inside a longer phrase the words are no reading of their own.
 
 **Quarters, ISO weeks, decades and eras.** `le premier trimestre 2020` and `T1 2020` both resolve, as do `semaine 12`, `les années 80`, `les années quatre-vingt`, `44 av. J.-C.` and `1990 ap. J.-C.`. A before-present marker and the Julian, Unix, Anno Mundi and Holocene era prefixes all ship.
 
