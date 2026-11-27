@@ -3930,7 +3930,83 @@ def _candidate_veto(tokens, match, spec) -> bool:
             or _num_preamble_named_day_idiom_veto(tokens, match, spec)
             or _subday_named_day_idiom_veto(match, spec)
             or _stranded_year_veto(tokens, match, spec)
-            or _skip_one_idiom_veto(tokens, match, spec))
+            or _skip_one_idiom_veto(tokens, match, spec)
+            or _bare_holiday_modifier_veto(tokens, match, spec))
+
+
+#: connectors that mark the holiday next to them as a time ("on/at/during
+#: christmas", Turkish postposed "noel'de").  ``holiday_cue`` holds the time
+#: prepositions a locale has in no other connector ("pour noël").
+_HOLIDAY_TIME_CONNECTORS = ("on", "at", "in", "during", "holiday_cue")
+#: connectors that are a time cue only when they are not also the genitive
+#: "of" (French "de" is both "from" and "of").
+_HOLIDAY_BOUND_CONNECTORS = ("for_date", "before", "after", "until", "since",
+                             "from", "to")
+
+
+#: the most tokens a query that ends on a holiday name has ("when is easter")
+_HOLIDAY_QUERY_TOKENS = 4
+
+
+def _holiday_cues(spec):
+    def union(names):
+        return frozenset().union(*(spec.connectors.get(n, frozenset())
+                                   for n in names))
+    of = spec.connectors.get("of", frozenset())
+    cues = (union(_HOLIDAY_TIME_CONNECTORS)
+            | (union(_HOLIDAY_BOUND_CONNECTORS) - of)
+            | frozenset(spec.rel_markers))
+    return cues, of, union(("before", "after"))
+
+
+def _bare_holiday_modifier_veto(tokens, match, spec) -> bool:
+    """True for a bare holiday name with no time cue next to it.
+
+    A holiday name with no preposition of time, no relative marker and no
+    year is a noun modifier, not a date: "the christmas spirit", "chanson
+    de noël", "ovos de páscoa".  The cue stands just before the name, or
+    before its article ("on the easter weekend"), or before an "of" that
+    follows an offset word or a part of the day ("antes do natal", "le
+    matin du 14 juillet"), or just after the name, for
+    a locale with postpositions.  A name that ends a short query ("when
+    is easter", "jul") with no "of" before it or stands before a part of the day ("christmas
+    morning") is kept.
+    A name made with a weekday or the word for
+    day ("easter sunday", "dia de natal") names a day as a weekday does and
+    needs no cue.
+    """
+    if match.construction != "holiday_ref":
+        return False
+    if any(k != "HOLIDAY" for k in match.slots):
+        return False
+    if any(w in spec.weekdays or spec.units.get(w) == "day"
+           for w in match.slots["HOLIDAY"].text.split()):
+        return False
+    cues, of, offsets = _holiday_cues(spec)
+    end = match.span[1]
+    i = match.slots["HOLIDAY"].index - 1
+    if end == len(tokens):
+        if (len(tokens) <= _HOLIDAY_QUERY_TOKENS
+                and (i < 0 or tokens[i].text not in of)):
+            return False
+    elif tokens[end].text in cues or tokens[end].text in spec.dayparts:
+        return False
+    # a range or recurrence endpoint is a slice whose connector ("from",
+    # "antes") stands before it, outside the slice
+    sliced = tokens[0].char_start > 0
+    if i < 0:
+        return not sliced
+    prev = tokens[i].text
+    if prev in cues:
+        return False
+    if i == 0:
+        # "de navidad" is the bound a recurrence cut from "antes de navidad"
+        return not (sliced or prev in of)
+    before = tokens[i - 1].text
+    if prev in spec.connectors.get("article", frozenset()):
+        if before in cues:
+            return False
+    return not (prev in of and (before in offsets or before in spec.dayparts))
 
 
 #: the "for <duration>" bound marker vocabulary, keyed by spec identity so a
@@ -4199,6 +4275,36 @@ def _offset_is_day_or_coarser(match, spec) -> bool:
 _NIGHT_AFTER_DAYS = frozenset({"named_day", "weekday_ref"})
 
 
+def _is_whole_year(span) -> bool:
+    s, e = span.start, span.end
+    return ((s.month, s.day, s.hour, s.minute) == (1, 1, 0, 0)
+            and (e.year, e.month, e.day, e.hour, e.minute)
+            == (s.year + 1, 1, 1, 0, 0))
+
+
+def _fold_year_holiday(resolved, engine, tokens):
+    """Fold a whole-year reading into the one holiday beside it: "this year
+    at christmas", "quest'anno a natale" name that year's christmas, not the
+    year.  The two stand in one sentence."""
+    years = [(m, r) for m, r in resolved if _is_whole_year(r.value)
+             and m.construction != "holiday_ref"]
+    holidays = [(m, r) for m, r in resolved if m.construction == "holiday_ref"
+                and "YEAR" not in m.slots and "REL_MARKER" not in m.slots]
+    if len(years) != 1 or len(holidays) != 1:
+        return resolved
+    (ym, yr), (hm, hr) = years[0], holidays[0]
+    lo, hi = sorted((ym.span, hm.span))
+    if any(tokens[i].sentence_break_before for i in range(lo[1], hi[0] + 1)):
+        return resolved
+    folded = engine.resolver.holiday_in_year(
+        hm, yr.value.start.year,
+        sorted(set(yr.consumed) | set(hr.consumed)))
+    if folded is None:
+        return resolved
+    return [(hm, folded) if m is hm else (m, r)
+            for m, r in resolved if m is not ym]
+
+
 def _compose(resolved, engine, tokens, anchor=None, text=None):
     """Pick the single winning reading from the post-passed ``resolved`` matches.
 
@@ -4222,6 +4328,7 @@ def _compose(resolved, engine, tokens, anchor=None, text=None):
     public APIs never disagree on the composed primary.
     """
     spec = engine.spec
+    resolved = _fold_year_holiday(resolved, engine, tokens)
     resolved, apposed = _fold_apposed_weekday(resolved, spec, tokens, text)
     if resolved is None:
         return None, set(), None

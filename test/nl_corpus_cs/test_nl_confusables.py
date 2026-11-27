@@ -81,9 +81,7 @@ _LIMITATIONS = [
     pytest.param(
         'ostrý srp v ruce',
         marks=pytest.mark.xfail(raises=AssertionError, reason='bare month homograph used as a common word binds as the month; homograph disambiguation is a downstream (NLU) concern', strict=True)),
-    pytest.param(
-        'vánoce přišly brzy',
-        marks=pytest.mark.xfail(raises=AssertionError, reason='temporal token inside a fixed idiom binds literally; downstream concern', strict=True)),
+    'vánoce přišly brzy',
     # 'otočka o půl' ("a turn by a half") no longer binds: "půl" is now the
     # clock half-word (FRACTION), not a cardinal 0.5, and there is no hour for
     # it to count toward -- so the confusable is correctly declined.

@@ -268,7 +268,7 @@ def test_confusables_that_parse_are_not_punished_for_their_sentence():
     contract now is that they score like the reading they actually are, and
     disambiguation is the consumer's job."""
     lone = extract_candidates("christmas", "en", datetime(2017, 6, 27, 13, 4))
-    carried = extract_candidates("christmas came early that year", "en",
+    carried = extract_candidates("we spent christmas at home that year", "en",
                                  datetime(2017, 6, 27, 13, 4))
     assert lone and carried
     assert abs(lone[0].confidence - carried[0].confidence) <= PROSE_TOLERANCE

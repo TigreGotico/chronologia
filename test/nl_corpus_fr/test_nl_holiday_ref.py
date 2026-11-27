@@ -59,9 +59,8 @@ def test_explicit_year(text, ymd):
     assert start(text) == AstroDate(*ymd)
 
 
-def test_confusable_still_binds_easter():
-    r = parse("la chasse aux oeufs de pâques")
-    assert r is not None and r[0].start == AstroDate(2018, 4, 1)
+def test_confusable_modifier_does_not_bind_easter():
+    nomatch("la chasse aux oeufs de pâques")
 
 
 @pytest.mark.parametrize("text", [
@@ -72,7 +71,6 @@ def test_no_holiday_no_match(text):
     nomatch(text)
 
 
-@pytest.mark.xfail(raises=AssertionError, reason="holiday/first-name homograph (Noël) out of scope", strict=True)
 def test_name_homograph_should_not_bind():
     nomatch("mon ami noël est venu")
 
