@@ -151,9 +151,17 @@ def test_digit_numeral_is_no_idiom_and_refuses():
     nomatch("jeudi en 15", THU)
 
 
-def test_a_digit_numeral_before_a_unit_counts_like_the_spelled_one():
-    # "en 8 heures" counts hours, as "en huit heures" does
-    assert parse("jeudi en 8 heures", THU) == parse("jeudi en huit heures", THU)
+@pytest.mark.parametrize("text", ["jeudi en 8 heures", "jeudi en huit heures"])
+def test_a_digit_numeral_before_a_unit_counts_like_the_spelled_one(text):
+    # "en 8 heures" counts hours, as "en huit heures" does: no week idiom, but
+    # a clock at eight o'clock (08:00) on a Thursday, one minute wide, with no
+    # word left over
+    r = parse(text, THU)
+    assert r is not None
+    s, e = r.span.start, r.span.end
+    assert (s.hour, s.minute) == (8, 0) and r.remainder == ""
+    assert datetime(s.year, s.month, s.day).weekday() == 3
+    assert (e.hour, e.minute) == (8, 1) and (e.year, e.month, e.day) == (s.year, s.month, s.day)
 
 
 @pytest.mark.parametrize("text", [

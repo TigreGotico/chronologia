@@ -78,8 +78,12 @@ def _daypart_across_days(tokens: Tuple[Token, ...], spec) -> bool:
 
     A day is a weekday, a day word or a day number.  After a weekday or a day
     word the right end must be one too: a number there is a clock or an
-    address ("le soir de samedi à 9", "au 12 rue Victor Hugo").  A clock range
-    ("la nuit de 22 h à 6 h") is not a range of days.
+    address ("le soir de samedi à 9", "au 12 rue Victor Hugo").  After a whole
+    date a bare number is a clock after an at word ("le soir du 28 novembre à
+    9") and a day after another to word ("le soir du 28 novembre au 30").  A
+    relative word may follow the left day ("la nuit de samedi prochain à
+    dimanche").  A clock range ("la nuit de 22 h à 6 h") is not a range of
+    days.
     """
     heads = sorted((h.split() for h in
                     spec.connectors.get("daypart_across_days", ())),
@@ -89,6 +93,7 @@ def _daypart_across_days(tokens: Tuple[Token, ...], spec) -> bool:
     leads = (set(spec.connectors.get("from", ()))
              | set(spec.connectors.get("of", ())))
     tos = set(spec.connectors.get("to", ()))
+    ats = set(spec.connectors.get("at", ()))
     hour_words = (set(spec.connectors.get("oclock", ()))
                   | set(spec.connectors.get("hours", ()))
                   | {s for s, k in spec.units.items()
@@ -116,10 +121,10 @@ def _daypart_across_days(tokens: Tuple[Token, ...], spec) -> bool:
 
     def in_endpoint(tok):
         # what may stand inside the left end before the to word: "du 28
-        # novembre au", "de samedi 28 à"
+        # novembre au", "de samedi 28 à", "de samedi prochain à"
         return (tok.text in spec.months or tok.text in spec.weekdays
                 or tok.is_number or tok.mention is not None
-                or tok.text in leads)
+                or tok.text in leads or tok.text in spec.rel_markers)
 
     words = [t.text for t in tokens]
     for i in range(len(tokens)):
@@ -140,10 +145,14 @@ def _daypart_across_days(tokens: Tuple[Token, ...], spec) -> bool:
                     return True
                 if right == "num" and left == "num":
                     # after a whole date ("du 28 novembre") a bare number is
-                    # a clock ("à 9"); a day needs its month ("au 3 décembre")
+                    # a clock after an at word ("à 9"), and a day of the same
+                    # month after a to word that is no at word ("au 30"), as
+                    # the range reader lends it the month; a day may also
+                    # name its month ("à 3 décembre")
                     end = number_end(j + 1)
-                    if not dated or (end < len(tokens)
-                                     and words[end] in spec.months):
+                    if (not dated or words[j] not in ats
+                            or (end < len(tokens)
+                                and words[end] in spec.months)):
                         return True
                 break
             if not in_endpoint(tokens[j]):
