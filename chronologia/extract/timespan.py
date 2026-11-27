@@ -4869,8 +4869,10 @@ def _part_marker_veto(tokens, match, spec) -> bool:
     adjective or a participle, and before another word it qualifies that word:
     "dernier délai" (final deadline), "dernière minute", "pasado el plazo"
     (past the deadline).  So a lone marker reads as the year only at the end of
-    its clause or before a word that opens another phrase (a preposition or a
-    conjunction the locale lists, never an article).
+    its clause, before a subject or object pronoun that opens the next clause
+    ("fin janvier dernier je suis parti"), or before a word that opens another
+    phrase (a preposition or a conjunction the locale lists, never an
+    article).
     """
     if match.construction not in _MONTH_PART_CONSTRUCTIONS:
         return False
@@ -4897,6 +4899,14 @@ def _part_marker_veto(tokens, match, spec) -> bool:
     if nxt >= len(tokens) or tokens[nxt].break_before:
         return False
     word = tokens[nxt].text
+    # a subject or object pronoun opens the next clause ("fin janvier
+    # dernier je suis parti", "j'étais"): the locale's
+    # ``marker_year_marker_follow.voc``, elided forms matched as a prefix
+    follow = spec.connectors.get("year_marker_follow", frozenset())
+    if word in follow or any(
+            w[-1:] in "'’" and len(w) > 1 and word.startswith(w)
+            for w in follow):
+        return False
     articles = (spec.connectors.get("article", frozenset())
                 | spec.connectors.get("defart", frozenset()))
     return word in articles or not any(

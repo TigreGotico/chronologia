@@ -297,6 +297,32 @@ J15 = datetime(2027, 1, 15, 10, 0)
 LATE_JAN_2027 = (datetime(2027, 1, 1) + 2 * THIRD, datetime(2027, 2, 1))
 
 
+# A lone marker before a subject or object pronoun closes the year phrase:
+# the pronoun opens the clause that follows ("fin janvier dernier je suis
+# parti", "late january last year we went").  Said on 26 November 2026,
+# "janvier dernier" is January 2026 and "last year" is 2025.
+@pytest.mark.parametrize("lang,text,gold,rest", [
+    ("fr", "fin janvier dernier je suis parti", LATE_JAN_2026, "je suis parti"),
+    ("fr", "fin janvier dernier j'étais à paris", LATE_JAN_2026,
+     "j'étais à paris"),
+    ("fr", "fin janvier dernier il faisait froid", LATE_JAN_2026,
+     "il faisait froid"),
+    ("fr", "fin janvier dernier on est partis", LATE_JAN_2026,
+     "on est partis"),
+    ("es", "a finales de enero pasado yo fui", LATE_JAN_2026, "yo fui"),
+    ("es", "a finales de enero pasado me fui", LATE_JAN_2026, "me fui"),
+    ("pt", "final de janeiro passado eu fui", LATE_JAN_2026, "eu fui"),
+    ("it", "fine gennaio scorso io sono partito", LATE_JAN_2026,
+     "io sono partito"),
+    ("en", "late january last year we went", LATE_JAN_2025, "we went"),
+])
+def test_a_marker_before_a_pronoun_names_the_year(lang, text, gold, rest):
+    r = extract_timespan(text, lang, A)
+    assert r is not None
+    assert (r.span.start_datetime, r.span.end_datetime) == gold
+    assert r.remainder == rest
+
+
 @pytest.mark.parametrize("lang,text,gold,rest", [
     ("fr", "fin janvier dernier délai", LATE_JAN_2027, "dernier délai"),
     ("fr", "fin janvier, dernier délai", LATE_JAN_2027, "dernier délai"),

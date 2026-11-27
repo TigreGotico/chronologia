@@ -1,0 +1,35 @@
+# Words after a lone year marker ("fin janvier dernier je suis parti") that
+# open the next clause, so the marker closes the year phrase before them.
+# Subject and object clitic pronouns, elided forms included, and the neuter
+# demonstratives "ce", "c'", "ça". Source: Grevisse and Goosse, Le Bon Usage,
+# the chapter on personal pronouns (pronoms personnels conjoints) and on
+# demonstrative pronouns. "le", "la", "les" are also articles: before a noun
+# ("dernier le dossier") the marker still closes the phrase, a known cost.
+# Any other word after the marker may be the noun it qualifies ("dernier
+# délai", "dernière minute"), and the marker is then left over.
+je
+j'
+tu
+il
+elle
+on
+nous
+vous
+ils
+elles
+ce
+c'
+ça
+y
+en
+me
+m'
+te
+t'
+se
+s'
+le
+la
+les
+lui
+leur
