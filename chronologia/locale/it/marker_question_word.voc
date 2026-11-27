@@ -1,0 +1,5 @@
+# Question words that make a weekday phrase a question ("che giorno della settimana è natale").
+# Source: ovos-skill-date-time locale/it-IT/intents/weekday_for_date.intent ("che giorno della settimana è {date:date}",
+# "in che giorno cade {date:date}"); https://www.treccani.it/vocabolario/quale/ ("Come agg. o pron. interrogativo").
+che
+quale

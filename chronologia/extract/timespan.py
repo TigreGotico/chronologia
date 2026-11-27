@@ -4034,6 +4034,7 @@ def _has_weekday_question_phrase(tokens, start, end, spec) -> bool:
     "چه روزی از هفته") stands in the clause of the holiday name at
     tokens[start:end]."""
     texts = [t.text for t in tokens]
+    question_words = spec.connectors.get("question_word", frozenset())
     for phrase in spec.connectors.get("weekday_question", ()):
         words = phrase.split()
         n = len(words)
@@ -4041,8 +4042,17 @@ def _has_weekday_question_phrase(tokens, start, end, spec) -> bool:
             if texts[i:i + n] != words:
                 continue
             lo, hi = (i + n, start) if i < start else (end, i)
-            if not any(tokens[k].break_before for k in range(lo + 1, hi + 1)
-                       if k < len(tokens)):
+            if any(tokens[k].break_before for k in range(lo + 1, hi + 1)
+                   if k < len(tokens)):
+                continue
+            # "any day of the week" states no question; a question word
+            # must stand in the clause of the phrase.
+            first, last = min(i, start), max(i + n, end)
+            while first > 0 and not tokens[first].break_before:
+                first -= 1
+            while last < len(tokens) and not tokens[last].break_before:
+                last += 1
+            if any(texts[k] in question_words for k in range(first, last)):
                 return True
     return False
 

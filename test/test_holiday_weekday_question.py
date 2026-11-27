@@ -66,3 +66,13 @@ def test_holiday_modifier_before_a_weekday_keeps_its_date():
                                   "the new year resolutions"])
 def test_holiday_modifier_without_a_weekday_is_no_date(text):
     assert extract_timespan(text, lang="en", anchor=ANCHOR) is None
+
+
+@pytest.mark.parametrize("lang,text", [
+    ("en", "christmas songs any day of the week"),
+    ("en", "i love christmas trees every day of the week"),
+    ("pt", "o natal é bonito em qualquer dia da semana"),
+    ("it", "canzoni di natale ogni giorno della settimana"),
+])
+def test_weekday_phrase_without_a_question_word_is_no_date(lang, text):
+    assert extract_timespan(text, lang=lang, anchor=ANCHOR) is None

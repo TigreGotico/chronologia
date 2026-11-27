@@ -1,0 +1,5 @@
+# Question words that make a weekday phrase a question ("auf welchen Wochentag fällt Weihnachten").
+# Source: ovos-skill-date-time locale/de-DE/intents/weekday_for_date.intent ("Welcher Wochentag ist {date:date}").
+welcher
+welchen
+welchem
