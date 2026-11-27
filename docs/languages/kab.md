@@ -57,6 +57,10 @@ Most Kabyle vocabulary files carry no source comment. The month files for Januar
 3. Is `Awussu` a current alternate for August?
 4. Which of the Kabyle temporal words the locale ships are standard, and which are regional?
 
+## Regional variants
+
+The locale has one tag, `kab`. chronologia implements no regional variant of Kabyle.
+
 ## Checked examples
 
 Each example below runs as a doctest with a fixed anchor, so the output does not depend on the machine. The first one shows which reader handles the numbers of this locale.

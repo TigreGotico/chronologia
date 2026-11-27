@@ -34,6 +34,12 @@ To read a phrase, call `extract_timespan` with the phrase, the locale code and a
 
 **Relative offsets** run both ways with `dans` and `il y a`. `lang.json` allows the marker before or after the count. An optional article and an optional quantifier can stand in either position. The quantifiers include `quelques` and `plusieurs` for a vague three and `un`/`une` for one.
 
+**Eight and fifteen days.** Said or spelled, `dans huit jours` is seven days after the anchor and `dans quinze jours` fourteen, because French counts these days inclusively in everyday use ([ruling 18a](../rulings.md)). The Académie française gives "Huit jours, dans l'usage courant, une semaine entière en comptant le premier jour et le dernier" s.v. *huit*, and "Quinze jours, dans l'usage courant, deux semaines complètes" s.v. *quinze*. Lengths and recurrences read the same: `tous les quinze jours` repeats every fourteen days. A count in digits is literal, as the Code de procédure civile counts a délai (articles 641 and 642): `dans 15 jours` is fifteen days. So is a count after `délai`, a count before a word for the kind of day (`francs`, `calendaires`, `pleins`, `entiers`, `ouvrés`, `de travail`), and a count added to a larger unit (`dans deux mois et quinze jours`).
+
+**The week idiom.** `jeudi en huit` and `demain en quinze` name the same day one or two weeks on. The day named counts as day one, so `en huit` adds seven days and `en quinze` fourteen. TLFi gives "En huit. Le même jour de la semaine suivante" and the Académie française "au huitième jour à partir du jour où l'on parle ou qui sert de référence", both s.v. *huit*, with the same entries s.v. *quinze*. `d'aujourd'hui en huit` is the anchor's day a week on. The day words are `aujourd'hui` and `demain`, the two the Académie lists.
+
+A weekday reads only when it falls on or after the anchor's weekday in the week. Before it, the sources name two different days. Larousse (s.v. *huit*, its expressions) glosses "Lundi, mardi en huit, lundi, mardi de la semaine prochaine", while a week counted from the coming Monday, as the Académie and Wiktionnaire count, lands one week later. `vendredi en huit` said on a Tuesday is the Friday of next week.
+
 **The relative determiners** follow the noun in French. For that reason the locale sets `marker_position: post`, as in `la semaine prochaine` and `lundi dernier`. The locale overrides `rel_period` to accept a leading article, so the definite article on the noun does not block the read.
 
 **The clock** carries `heures` as the hour word, `et` and `moins` as the two directions, `quart` and `demi`/`demie` as the fractions, `du matin` and `du soir` as the meridiem phrases, and `midi` and `minuit` as points. The vocabulary cites the half word to TLFi and Larousse under *moitié*. The same file supplies the period sense ("l'une des deux parties égales"). `la première moitié de 2020` reads as the first half-year.
@@ -43,6 +49,8 @@ To read a phrase, call `extract_timespan` with the phrase, the locale code and a
 The `matin` then opens at 04:00, two hours before the English morning. The `après-midi` runs `[12:00, 18:00)`, and the `soir` runs `[18:00, 24:00)` with no band between it and the nuit. The hyphenated `après-midi` is canonicalised through the tokenizer, which splits the hyphen into two tokens that the loader re-glues. An ASCII-folded twin ships for the same reason the pm meridiem keeps one.
 
 **Ranges** are `du … au …` and `entre … et …`. `depuis` opens one that runs up to the anchor, and `jusqu'à` closes one that starts there.
+
+**The present instant.** `maintenant` and `tout de suite`, said alone, read as the anchor instant, a span of no width. TLFi gives "À l'instant, au moment où l'on dit «maintenant»" s.v. *maintenant* and "Aussitôt, sans délai" s.v. *suite*. Inside a longer phrase the words are no reading of their own.
 
 **Quarters, ISO weeks, decades and eras.** `le premier trimestre 2020` and `T1 2020` both resolve, as do `semaine 12`, `les années 80`, `les années quatre-vingt`, `44 av. J.-C.` and `1990 ap. J.-C.`. A before-present marker and the Julian, Unix, Anno Mundi and Holocene era prefixes all ship.
 
@@ -66,6 +74,12 @@ The weekday and month names cite Unicode CLDR 47.
 
 **The dotted date.** `15.06.2020`, `06.15.2020`, `15.6.2020` and `le 15.06.2020` all return nothing, and none of them yields a bare year either.
 
+**A weekday before the anchor's in the week, with `en huit`.** Said on a Tuesday, `lundi en huit` returns nothing, and so does `lundi en huit à 10h`. A clock beside the idiom has no day to land on.
+
+**The week idiom it cannot read whole.** `jeudi prochain en huit` and `le lundi suivant en huit` return nothing, as does `vendredi en huit ou en quinze`, which names two days. A word after the numeral that may be the noun it counts makes the phrase refuse: `le match de jeudi en huit manches` returns nothing. Prepositions, articles, day parts and clocks after the idiom keep it (`marker_week_idiom_follow.voc`). `depuis vendredi en huit` opens no span from the past: the idiom names a day after the anchor, so it reads that day and leaves `depuis` over, as `depuis demain` does.
+
+**A part of the day named by a range of days.** `la nuit de samedi à dimanche`, `la nuit du 28 au 29 novembre` and `le soir du 3 au 5 mai` return nothing, and so do `la soirée`, `la matinée` and `l'après-midi` of a range of days. The night from one day into the next is no band of one day: the `nuit` band is the small hours of the day named, and TLFi gives the night as running from dusk to dawn, with a fixed clock band only in law ("de 21 heures à 6 heures"). The evenings of several days are several bands. The words that head such a range are listed in `marker_daypart_across_days.voc`. A number after `à` beside a weekday is a clock, not a day: `le soir de samedi à 9` reads Saturday at nine in the evening.
+
 **A bare duration.** `quinze jours` returns nothing. A quantity without a direction marker is still only a quantity. A fortnight unit does ship, but it needs a marker to become a span.
 
 ## Open questions for a native speaker
@@ -75,6 +89,20 @@ The weekday and month names cite Unicode CLDR 47.
 3. Does `nuit` name the small hours of the day for a French reader? Or does `cette nuit`, said in the evening, name the night that is beginning?
 4. Does `le lundi` deserve a reading at all, given that it is genuinely ambiguous, and if so which of the two readings should win?
 5. Should a Republican-calendar year (`an II`) be readable, and in what surface?
+
+## Regional variants
+
+The tag `fr-FR` gets the same results as `fr`: the same locale data, the lexicon of France in numtag and the long scale. chronologia implements no other difference for `fr-FR`.
+
+The tags `fr-BE` and `fr-CH` read numbers with the Belgian and Swiss lexicons of numtag. Both read `septante` and `nonante`, and `fr-CH` also reads `huitante`. The tags `fr` and `fr-FR` do not read these words.
+
+    >>> from datetime import datetime
+    >>> from chronologia import extract_timespan
+    >>> anchor = datetime(2027, 6, 2, 12, 0)
+    >>> extract_timespan("dans septante jours", "fr-FR", anchor) is None
+    True
+    >>> extract_timespan("dans septante jours", "fr-BE", anchor)[0].start_datetime.date().isoformat()
+    '2027-08-11'
 
 ## Checked examples
 
@@ -108,6 +136,27 @@ Each example below runs as a doctest with a fixed anchor, so the output does not
     True
     >>> extract_timespan('quinze jours', "fr", anchor) is None
     True
+    >>> extract_timespan('la nuit de samedi à dimanche', "fr", anchor) is None
+    True
+    >>> extract_timespan('la nuit du 28 au 29 novembre', "fr", anchor) is None
+    True
+    >>> extract_timespan('le soir du 3 au 5 mai', "fr", anchor) is None
+    True
+    >>> extract_timespan('lundi en huit', "fr", anchor) is None
+    True
+    >>> extract_timespan('lundi en huit à 10h', "fr", anchor) is None
+    True
+    >>> extract_timespan('jeudi prochain en huit', "fr", anchor) is None
+    True
+    >>> extract_timespan('le lundi suivant en huit', "fr", anchor) is None
+    True
+    >>> extract_timespan('vendredi en huit ou en quinze', "fr", anchor) is None
+    True
+    >>> extract_timespan('le match de jeudi en huit manches', "fr", anchor) is None
+    True
+    >>> span, rest = extract_timespan('vendredi en huit', "fr", anchor)
+    >>> span.start_datetime.date().isoformat(), rest
+    ('2017-07-07', '')
 
 ## Known limits
 

@@ -1,14 +1,14 @@
 # Language provenance pages
 
 <!-- agent-hint
-covers: which languages have a provenance page, how each page is organised and which reader handles the numbers of each locale
-source: chronologia/locale/*/lang.json, chronologia/extract/numlayer.py:NUMTAG_LANGS, chronologia/extract/numfold_*.py
-generated: no
-verify: .venv/bin/python -c 'exec("import re,glob,os,json\nfrom chronologia.extract.numlayer import NUMTAG_LANGS as N\nT=open(\"docs/languages/index.md\").read()\nrows=re.findall(r\"^\\| \\[[^]]*\\]\\((\\w+)\\.md\\) \\| (\\w+) \\| (\\S+) \\|\",T,re.M)\nc={os.path.basename(os.path.dirname(f)) for f in glob.glob(\"chronologia/locale/*/lang.json\")}\nassert {r[1] for r in rows}==c and len(rows)==len(c)\nfor pg,code,rd in rows:\n    assert pg==code and os.path.exists(\"docs/languages/\"+pg+\".md\")\n    h=json.load(open(\"chronologia/locale/\"+code+\"/lang.json\")).get(\"hook\",\"\")\n    assert (rd==\"numtag\")==(code in N)\n    assert rd==\"numtag\" or h.startswith(\"chronologia.extract.\"+rd+\":\"),(code,rd,h)\nassert \"the \"+str(len(N))+\" locales in\" in T and \"other \"+str(len(c)-len(N))+\" locales\" in T\n")'
+covers: which languages and regional tags chronologia supports, per feature, and which reader handles the numbers of each tag
+source: tools/language_support.py, docs/languages/support.json, chronologia/locale/*/lang.json, chronologia/extract/numlayer.py:NUMTAG_LANGS
+generated: the support table, by tools/language_support.py write
+verify: .venv/bin/python -m pytest -q test/test_docs_language_support.py
 see: docs/index.md, docs/extraction.md
 -->
 
-This page lists the 61 locales, one page for each, and says which number reader serves each locale. Open the page for your language to see where its words come from, what it refuses and what a native speaker could still settle.
+This page lists the locales, one page for each, and gives the support of each language and leader tag, feature by feature. Open the page for your language to see where its words come from, what it refuses and what a native speaker could still settle.
 
 chronologia never guesses a linguistic surface. A construction ships in a locale only where an attested source supports it. Where the sources conflict, or nothing attests the phrase, the locale ships nothing and the phrase returns nothing. That rule makes a wrong answer rare. It also explains why an ordinary phrase in your language can come back empty.
 
@@ -36,73 +36,103 @@ A source named on these pages was consulted directly. Author and year appear whe
 
 ## How numbers are read
 
-numtag reads the spelled numbers of the 40 locales in `NUMTAG_LANGS` in `chronologia/extract/numlayer.py`. chronologia keeps no number words for them. The other 21 locales read numbers with their own `numfold_*` module in `chronologia/extract/`. The table names the reader of each locale.
+numtag reads the spelled numbers of the locales in `NUMTAG_LANGS` in `chronologia/extract/numlayer.py`. chronologia keeps no number words for them. The other locales read numbers with their own `numfold_*` module in `chronologia/extract/`. The Numbers column of the table names the reader of each tag. The tags `pt-BR`, `fr-BE` and `fr-CH` read numbers with a regional numtag lexicon.
 
-## Pages
+## Support table
 
-| Language | Code | Numbers |
-|:---|:---|:---|
-| [Albanian](sq.md) | sq | numfold_albanian |
-| [Arabic](ar.md) | ar | numtag |
-| [Aragonese](an.md) | an | numtag |
-| [Armenian](hy.md) | hy | numfold_armenian |
-| [Asturian](ast.md) | ast | numtag |
-| [Azerbaijani](az.md) | az | numtag |
-| [Basque](eu.md) | eu | numtag |
-| [Belarusian](be.md) | be | numfold_be |
-| [Bulgarian](bg.md) | bg | numtag |
-| [Catalan](ca.md) | ca | numtag |
-| [Croatian](hr.md) | hr | numtag |
-| [Czech](cs.md) | cs | numtag |
-| [Danish](da.md) | da | numtag |
-| [Dutch](nl.md) | nl | numtag |
-| [English](en.md) | en | numtag |
-| [Esperanto](eo.md) | eo | numfold_esperanto |
-| [Estonian](et.md) | et | numtag |
-| [Filipino](fil.md) | fil | numfold_filipino |
-| [Finnish](fi.md) | fi | numtag |
-| [French](fr.md) | fr | numtag |
-| [Galician](gl.md) | gl | numtag |
-| [Georgian](ka.md) | ka | numfold_georgian |
-| [German](de.md) | de | numtag |
-| [Greek](el.md) | el | numtag |
-| [Hausa](ha.md) | ha | numfold_chadic |
-| [Hebrew](he.md) | he | numtag |
-| [Hindi](hi.md) | hi | numfold_indic |
-| [Hungarian](hu.md) | hu | numtag |
-| [Icelandic](is.md) | is | numfold_icelandic |
-| [Indonesian](id.md) | id | numtag |
-| [Irish](ga.md) | ga | numfold_irish |
-| [Italian](it.md) | it | numtag |
-| [Kabyle](kab.md) | kab | numtag |
-| [Korean](ko.md) | ko | numfold_korean |
-| [Latvian](lv.md) | lv | numfold_latvian |
-| [Lithuanian](lt.md) | lt | numfold_baltic |
-| [Macedonian](mk.md) | mk | numfold_macedonian |
-| [Malay](ms.md) | ms | numtag |
-| [Maltese](mt.md) | mt | numfold_maltese |
-| [Mirandese](mwl.md) | mwl | numtag |
-| [Norwegian Bokmål](nb.md) | nb | numtag |
-| [Norwegian Nynorsk](nn.md) | nn | numtag |
-| [Occitan](oc.md) | oc | numtag |
-| [Persian](fa.md) | fa | numtag |
-| [Polish](pl.md) | pl | numtag |
-| [Portuguese](pt.md) | pt | numtag |
-| [Romanian](ro.md) | ro | numtag |
-| [Russian](ru.md) | ru | numtag |
-| [Serbian](sr.md) | sr | numfold_slavic |
-| [Slovak](sk.md) | sk | numtag |
-| [Slovenian](sl.md) | sl | numtag |
-| [Spanish](es.md) | es | numtag |
-| [Swahili](sw.md) | sw | numfold_bantu |
-| [Swedish](sv.md) | sv | numtag |
-| [Tamil](ta.md) | ta | numfold_dravidian |
-| [Thai](th.md) | th | numfold_thai |
-| [Turkish](tr.md) | tr | numtag |
-| [Ukrainian](uk.md) | uk | numtag |
-| [Vietnamese](vi.md) | vi | numfold_vietnamese |
-| [Welsh](cy.md) | cy | numfold_welsh |
-| [West Frisian](fy.md) | fy | numtag |
+The script `tools/language_support.py` writes this table. It reads the locale data in `chronologia/locale/<code>/` and the test results in `docs/languages/support.json`. The test `test/test_docs_language_support.py` writes the table again and fails when this page differs.
+
+Each cell gives a status, then the number of our own test rows that pass and the total of our own test rows, for that locale and feature. These counts come from the regression rows in this repository. They do not measure coverage of the language. A feature can show "yes" with a few rows and still fail most phrases that a speaker uses. For coverage, read the outside date benchmark in [benchmarks.md](../benchmarks.md).
+
+The status follows this rule:
+
+- **yes**: the locale data for the feature exists, and at least one of our test rows passes. "yes" does not mean that the feature is complete.
+- **partial**: the data exists and no test row passes, or a test row passes and the locale ships no data for the feature.
+- **no**: the data does not exist, and no test row passes.
+
+A test row counts for a feature when its file name in `test/nl_corpus_<code>/` matches the pattern of the feature in `FEATURES` in the script. A strict `xfail` row and a skipped row count as rows that do not pass. The Spoken column counts the rows in `test/test_spoken*_<code>.py`. It reads `chronologia.spoken.writes(tag)`, so a tag with no writer is "no".
+
+A regional tag reads the data of its base language, named in the Data column. The leader page of each language lists the forms that differ by region. The languages that have a language leader come first, in leader order. The other languages follow by name.
+
+Bengali and Marwari have no locale. `extract_timespan` raises `NotImplementedError` for `bn`, `bn-IN` and `mwr`. Issue [#1484](https://github.com/TigreGotico/chronologia/issues/1484) holds the questions for a native speaker. numtag reads Bengali numbers with its `bn` lexicon. Issue #1484 tracks Marwari.
+
+To measure the test rows again and write the table, run these commands:
+
+```bash
+python tools/language_support.py measure
+python tools/language_support.py write
+```
+
+<!-- support-table:start -->
+Cells: status, own test rows passed / own test rows.
+
+| Language | Tag | Data | Numbers | Dates | Clock | Durations | Relative days | Ranges | Recurrence | Holidays | Spoken |
+|:---|:---|:---|:---|:---|:---|:---|:---|:---|:---|:---|:---|
+| [Portuguese (Portugal)](pt.md) | pt-PT | pt | numtag | yes 175/175 | yes 321/321 | yes 18/18 | yes 127/127 | yes 112/112 | yes 139/139 | yes 360/361 | yes 1143/1143 |
+| [Portuguese (Brazil)](pt.md) | pt-BR | pt | numtag (pt-BR lexicon) | yes 175/175 | yes 321/321 | yes 18/18 | yes 127/127 | yes 112/112 | yes 139/139 | yes 360/361 | no |
+| [Spanish (Colombia)](es.md) | es-CO | es | numtag | yes 63/63 | yes 166/166 | yes 31/31 | yes 102/102 | yes 172/172 | yes 42/42 | yes 621/622 | no |
+| [French (France)](fr.md) | fr-FR | fr | numtag | yes 230/230 | yes 199/199 | yes 19/19 | yes 100/100 | yes 340/343 | yes 39/39 | yes 451/452 | no |
+| [Italian (Italy)](it.md) | it-IT | it | numtag | yes 47/47 | yes 194/194 | yes 8/8 | yes 86/86 | yes 140/140 | yes 18/18 | yes 341/342 | no |
+| [German (Germany)](de.md) | de-DE | de | numtag | yes 69/69 | yes 102/102 | yes 28/28 | yes 44/44 | yes 413/413 | yes 40/40 | yes 768/769 | no |
+| [Dutch (Netherlands)](nl.md) | nl-NL | nl | numtag | yes 659/659 | yes 156/156 | yes 19/19 | yes 31/31 | yes 313/313 | yes 11/11 | yes 696/696 | no |
+| [Danish (Denmark)](da.md) | da-DK | da | numtag | yes 33/33 | yes 116/116 | yes 16/16 | yes 30/30 | yes 345/345 | yes 19/19 | yes 391/391 | no |
+| [Kabyle](kab.md) | kab | kab | numtag | yes 98/98 | yes 85/85 | yes 13/13 | yes 27/27 | yes 6/6 | yes 8/8 | yes 7/7 | no |
+| [Hindi (India)](hi.md) | hi-IN | hi | numfold_indic | yes 52/52 | yes 47/47 | partial 0/0 | yes 71/71 | yes 20/20 | yes 27/27 | no 0/0 | no |
+| Bengali (India) | bn-IN | none | not supported, see [#1484](https://github.com/TigreGotico/chronologia/issues/1484) | no | no | no | no | no | no | no | no |
+| Marwari | mwr | none | not supported, see [#1484](https://github.com/TigreGotico/chronologia/issues/1484) | no | no | no | no | no | no | no | no |
+| [Albanian](sq.md) | sq | sq | numfold_albanian | partial 0/0 | yes 37/37 | partial 0/0 | yes 66/66 | partial 0/0 | partial 0/0 | no 0/0 | no |
+| [Arabic](ar.md) | ar | ar | numtag | yes 850/850 | yes 100/100 | yes 25/25 | yes 61/61 | yes 1158/1159 | yes 21/21 | yes 20/20 | no |
+| [Aragonese](an.md) | an | an | numtag | yes 38/38 | yes 42/42 | yes 14/14 | yes 26/26 | yes 10/10 | yes 19/19 | no 0/0 | no |
+| [Armenian](hy.md) | hy | hy | numfold_armenian | yes 35/35 | yes 26/26 | partial 0/0 | partial 0/0 | partial 0/0 | partial 0/0 | no 0/0 | no |
+| [Asturian](ast.md) | ast | ast | numtag | yes 278/278 | yes 58/58 | yes 14/14 | yes 61/61 | yes 104/104 | yes 20/20 | no 0/0 | no |
+| [Azerbaijani](az.md) | az | az | numtag | yes 414/414 | yes 147/147 | yes 13/13 | yes 34/34 | yes 150/150 | yes 10/10 | yes 67/67 | no |
+| [Basque](eu.md) | eu | eu | numtag | yes 643/643 | yes 29/29 | yes 16/16 | yes 129/129 | yes 4/4 | yes 6/6 | yes 33/33 | no |
+| [Belarusian](be.md) | be | be | numfold_be | yes 113/113 | yes 104/104 | partial 0/0 | yes 80/80 | partial 0/0 | partial 0/0 | no 0/0 | no |
+| [Bulgarian](bg.md) | bg | bg | numtag | yes 170/170 | yes 20/20 | yes 13/13 | yes 46/46 | yes 238/238 | yes 19/19 | yes 168/168 | no |
+| [Catalan](ca.md) | ca | ca | numtag | yes 2727/2728 | yes 178/178 | yes 14/14 | yes 96/96 | yes 370/370 | yes 20/20 | yes 226/239 | no |
+| [Croatian](hr.md) | hr | hr | numtag | yes 70/70 | yes 34/34 | yes 16/16 | yes 41/41 | yes 328/328 | yes 19/19 | yes 282/282 | no |
+| [Czech](cs.md) | cs | cs | numtag | yes 61/61 | yes 73/73 | yes 13/13 | yes 76/76 | yes 191/191 | yes 20/20 | yes 329/329 | no |
+| [English](en.md) | en | en | numtag | yes 393/393 | yes 300/300 | yes 92/92 | yes 164/164 | yes 722/727 | yes 242/242 | yes 1081/1082 | no |
+| [Esperanto](eo.md) | eo | eo | numfold_esperanto | yes 23/23 | yes 32/32 | partial 0/0 | partial 0/0 | no 0/0 | yes 25/25 | no 0/0 | no |
+| [Estonian](et.md) | et | et | numtag | yes 547/547 | yes 41/41 | yes 13/13 | yes 64/64 | yes 4/4 | yes 19/19 | yes 34/34 | no |
+| [Filipino](fil.md) | fil | fil | numfold_filipino | yes 60/60 | yes 71/71 | partial 0/0 | yes 54/54 | partial 0/0 | partial 0/0 | no 0/0 | no |
+| [Finnish](fi.md) | fi | fi | numtag | yes 471/471 | yes 95/96 | yes 13/13 | yes 29/29 | yes 16/16 | yes 10/10 | yes 188/188 | no |
+| [Galician](gl.md) | gl | gl | numtag | yes 1328/1328 | yes 118/118 | yes 14/14 | yes 95/95 | yes 144/144 | yes 20/20 | yes 225/226 | no |
+| [Georgian](ka.md) | ka | ka | numfold_georgian | yes 42/42 | yes 38/38 | partial 0/0 | yes 42/42 | no 0/0 | no 0/0 | no 0/0 | no |
+| [Greek](el.md) | el | el | numtag | yes 578/578 | yes 223/223 | yes 16/16 | yes 54/54 | yes 103/103 | yes 21/21 | yes 193/193 | no |
+| [Hausa](ha.md) | ha | ha | numfold_chadic | yes 64/64 | yes 35/35 | yes 2/2 | yes 44/44 | yes 17/17 | partial 0/0 | no 0/0 | no |
+| [Hebrew](he.md) | he | he | numtag | yes 327/327 | yes 45/45 | yes 19/19 | yes 92/92 | yes 81/82 | yes 49/49 | yes 16/16 | no |
+| [Hungarian](hu.md) | hu | hu | numtag | yes 568/568 | yes 57/57 | yes 15/15 | yes 34/34 | yes 18/18 | yes 10/10 | yes 326/326 | no |
+| [Icelandic](is.md) | is | is | numfold_icelandic | yes 42/42 | yes 50/50 | partial 0/0 | yes 66/66 | no 0/0 | no 0/0 | no 0/0 | no |
+| [Indonesian](id.md) | id | id | numtag | yes 769/769 | yes 40/40 | yes 18/18 | yes 33/33 | yes 213/213 | yes 38/38 | yes 106/106 | no |
+| [Irish](ga.md) | ga | ga | numfold_irish | yes 60/60 | yes 70/70 | partial 0/0 | yes 74/74 | yes 2/2 | partial 0/0 | no 0/0 | no |
+| [Korean](ko.md) | ko | ko | numfold_korean | yes 34/34 | yes 42/42 | yes 11/11 | yes 38/38 | no 0/0 | no 0/0 | no 0/0 | no |
+| [Latvian](lv.md) | lv | lv | numfold_latvian | yes 57/57 | yes 37/37 | partial 0/0 | yes 56/56 | partial 0/0 | partial 0/0 | no 0/0 | no |
+| [Lithuanian](lt.md) | lt | lt | numfold_baltic | yes 34/34 | yes 28/28 | partial 0/0 | yes 68/68 | yes 23/23 | partial 0/0 | no 0/0 | no |
+| [Macedonian](mk.md) | mk | mk | numfold_macedonian | yes 59/59 | yes 64/64 | partial 0/0 | yes 55/55 | partial 0/0 | partial 0/0 | no 0/0 | no |
+| [Malay](ms.md) | ms | ms | numtag | yes 38/38 | yes 36/36 | yes 14/14 | yes 29/29 | yes 15/15 | yes 36/36 | yes 22/22 | no |
+| [Maltese](mt.md) | mt | mt | numfold_maltese | yes 34/34 | yes 33/33 | partial 0/0 | partial 0/0 | partial 0/0 | partial 0/0 | no 0/0 | no |
+| [Mirandese](mwl.md) | mwl | mwl | numtag | yes 43/43 | yes 18/18 | yes 14/14 | yes 18/18 | yes 19/19 | yes 19/19 | no 0/0 | no |
+| [Norwegian Bokmål](nb.md) | nb | nb | numtag | yes 311/311 | yes 55/55 | yes 13/13 | yes 30/30 | yes 269/269 | yes 19/19 | yes 441/441 | no |
+| [Norwegian Nynorsk](nn.md) | nn | nn | numtag | yes 770/770 | yes 53/53 | yes 13/13 | yes 27/27 | yes 29/29 | yes 19/19 | yes 71/71 | no |
+| [Occitan](oc.md) | oc | oc | numtag | yes 29/29 | yes 67/67 | yes 14/14 | yes 54/54 | yes 16/16 | yes 20/20 | no 0/0 | no |
+| [Persian](fa.md) | fa | fa | numtag | yes 30/30 | yes 54/57 | yes 13/13 | yes 59/59 | yes 147/147 | yes 18/18 | yes 25/25 | no |
+| [Polish](pl.md) | pl | pl | numtag | yes 50/50 | yes 20/20 | yes 18/18 | yes 53/53 | yes 319/319 | yes 20/20 | yes 261/261 | no |
+| [Romanian](ro.md) | ro | ro | numtag | yes 19/19 | yes 45/45 | yes 14/14 | yes 85/85 | yes 332/332 | yes 19/19 | yes 306/306 | no |
+| [Russian](ru.md) | ru | ru | numtag | yes 122/122 | yes 94/94 | yes 20/20 | yes 72/72 | yes 695/695 | yes 19/19 | yes 219/219 | no |
+| [Serbian](sr.md) | sr | sr | numfold_slavic | yes 42/42 | yes 42/48 | partial 0/0 | partial 0/0 | partial 0/0 | partial 0/0 | no 0/0 | no |
+| [Slovak](sk.md) | sk | sk | numtag | yes 37/37 | yes 59/59 | yes 13/13 | yes 55/55 | yes 144/144 | yes 19/19 | yes 256/256 | no |
+| [Slovenian](sl.md) | sl | sl | numtag | yes 69/69 | yes 25/25 | yes 13/13 | yes 42/42 | yes 295/295 | yes 19/19 | yes 256/256 | no |
+| [Swahili](sw.md) | sw | sw | numfold_bantu | yes 41/41 | yes 81/81 | yes 34/34 | yes 50/50 | partial 0/0 | partial 0/0 | no 0/0 | no |
+| [Swedish](sv.md) | sv | sv | numtag | yes 275/275 | yes 64/64 | yes 13/13 | yes 27/27 | yes 811/811 | yes 19/19 | yes 410/410 | no |
+| [Tamil](ta.md) | ta | ta | numfold_dravidian | yes 28/28 | yes 21/21 | partial 0/0 | yes 53/53 | no 0/0 | partial 0/0 | no 0/0 | no |
+| [Thai](th.md) | th | th | numfold_thai | yes 30/30 | yes 33/33 | partial 0/0 | yes 63/63 | partial 0/0 | partial 0/0 | no 0/0 | no |
+| [Turkish](tr.md) | tr | tr | numtag | yes 1293/1293 | yes 278/278 | yes 13/13 | yes 36/36 | yes 135/135 | yes 19/19 | yes 201/201 | no |
+| [Ukrainian](uk.md) | uk | uk | numtag | yes 1294/1294 | yes 91/91 | yes 13/13 | yes 46/46 | yes 199/199 | yes 19/19 | yes 244/244 | no |
+| [Vietnamese](vi.md) | vi | vi | numfold_vietnamese | yes 54/54 | yes 46/46 | partial 0/0 | yes 51/51 | no 0/0 | no 0/0 | no 0/0 | no |
+| [Welsh](cy.md) | cy | cy | numfold_welsh | yes 45/45 | yes 59/59 | partial 0/0 | yes 73/73 | no 0/0 | yes 30/30 | no 0/0 | no |
+| [West Frisian](fy.md) | fy | fy | numtag | yes 29/29 | yes 54/54 | yes 13/13 | yes 27/27 | yes 29/29 | yes 18/18 | yes 17/17 | no |
+<!-- support-table:end -->
 
 ---
 [← Transparency: how correctness is checked](../transparency.md) · [Home](../index.md) · [Albanian →](sq.md)

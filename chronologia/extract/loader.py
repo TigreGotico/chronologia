@@ -15,6 +15,7 @@ filename                meaning
 ``unit_<kind>.voc``     offset unit ``kind`` (day/week/month/year/...)
 ``jurisdiction_<code>.voc``  country/region-name surface -> jurisdiction code ``code``
 ``named_day_<off>.voc`` named day at day-offset ``off`` (signed)
+``week_idiom_<n>.voc``  numeral of a week idiom ("jeudi en huit") adding ``n`` weeks
 ``daypart_<name>.voc`` surfaces naming the time-of-day band ``name``
 ``marker_past.voc``     direction marker, sign -1
 ``marker_future.voc``   direction marker, sign +1
@@ -103,6 +104,7 @@ _PREFIXED: List[Tuple[str, Tuple[str, ...], Callable[[str], Any]]] = [
     ("unit_dual_", ("dual_units",), str),
     ("unit_", ("units",), str),
     ("named_day_", ("named_days",), int),
+    ("week_idiom_", ("week_idioms",), int),
     ("clock_fraction_prev_", ("clock_fractions_prev", "clock_fractions"), int),
     ("clock_fraction_", ("clock_fractions",), int),
     ("clock_dir_minute_", ("clock_dir_minutes",), int),

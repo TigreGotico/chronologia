@@ -38,7 +38,8 @@ from chronologia.extract.impossible import capture, raising, reports_impossible
 from chronologia.extract.loader import LOCALE_DIR, load_lang_spec
 from chronologia.extract.matcher import (ConstructionMatcher,
                                          alarm_marker_span,
-                                         is_alarm_bare_range)
+                                         is_alarm_bare_range,
+                                         week_idiom_state)
 from chronologia.extract.model import (LangSpec, Resolution, Token)
 from chronologia.extract.normaliser import TemporalNormaliser
 from chronologia.extract.pipeline import (consumed_extent, consumed_pieces,
@@ -2178,6 +2179,10 @@ def _definite_endpoint(sub, spec):
     is chosen for it.  A marker may span words: "the following", "que viene",
     "from now".
     """
+    # fr "vendredi en huit" names one day after the anchor
+    if any(week_idiom_state(tuple(sub), i, spec) in ("ok", "open")
+           for i in range(len(sub))):
+        return True
     words = [t.text for t in sub]
     phrases = {" ".join(words[i:j]) for i in range(len(words))
                for j in range(i + 1, min(i + 3, len(words)) + 1)}
@@ -3903,6 +3908,40 @@ def _cued_day_veto(tokens, match, spec) -> bool:
     return False
 
 
+def _homograph_veto(tokens, match, spec) -> bool:
+    """True for a match made only of surfaces in ``marker_homograph.voc`` with
+    no time cue beside it.
+
+    Some date words are homographs of a more frequent word: pt "verão" is
+    also "they will see", sv "vår" is also "our".  Alone, such a word takes
+    its frequent sense.  A cue keeps the date sense: a connector right before
+    it (a preposition, a demonstrative, an article), a relative marker right
+    after it ("vara trecută"), a word from ``marker_homograph_cue.voc`` on
+    either side (Kabyle "deg tafsut", "lḥedd-agi"), a daypart right after it
+    ("lḥedd ṣṣbeḥ"), or a number on either side.  A cue that the match
+    consumes ("no verão", "verão de 2027") makes a longer match, which this
+    veto leaves alone.  A word that is the whole input keeps the date sense.
+    """
+    words = spec.connectors.get("homograph")
+    if not words:
+        return False
+    b, e = match.span
+    if e - b == len(tokens) or any(t.text not in words for t in tokens[b:e]):
+        return False
+    if b > 0:
+        prev = tokens[b - 1]
+        if prev.is_number or any(prev.text in v for k, v in spec.connectors.items()
+                                 if k != "homograph"):
+            return False
+    if e < len(tokens):
+        nxt = tokens[e]
+        if (nxt.is_number or nxt.text in spec.rel_markers
+                or nxt.text in spec.dayparts
+                or nxt.text in spec.connectors.get("homograph_cue", ())):
+            return False
+    return True
+
+
 def _candidate_veto(tokens, match, spec) -> bool:
     """Combined pre-selection veto: readings whose surrounding context makes
     them the WRONG parse ("the new year" is the period not the holiday; a
@@ -3924,6 +3963,7 @@ def _candidate_veto(tokens, match, spec) -> bool:
             or _relday_daypart_homograph_veto(tokens, match, spec)
             or _participle_season_veto(tokens, match, spec)
             or _cued_day_veto(tokens, match, spec)
+            or _homograph_veto(tokens, match, spec)
             or _num_preamble_named_day_idiom_veto(tokens, match, spec)
             or _subday_named_day_idiom_veto(match, spec)
             or _stranded_year_veto(tokens, match, spec)
@@ -4825,6 +4865,12 @@ def _compose_core(tokens, engine, anchor, enable=(), jurisdiction=None,
         if group is not None and group not in enable:
             continue
         res = engine.resolver.resolve(match, anchor, scale_mode, jurisdiction)
+        # fr "lundi en huit" said on a Thursday names a day the dictionaries
+        # disagree on; a clock or day part beside it ("lundi en huit à 10h")
+        # has no day to land on, so the whole utterance refuses rather than
+        # timing the anchor's day.
+        if res is None and match.construction == "day_week_idiom":
+            return [], None
         if res is None and "BDAY" in match.slots and (
                 "MONTH" in match.slots or engine.spec.units.get(
                     match.slots["SCOPE_UNIT"].text) == "month"):
@@ -4834,6 +4880,16 @@ def _compose_core(tokens, engine, anchor, enable=(), jurisdiction=None,
                 res = replace(res, value=_since_month(
                     match, res.value, tokens, engine, anchor, scale_mode))
             resolved.append((match, res))
+    # A week idiom that no reading of the idiom claims ("jeudi prochain en
+    # huit", the second idiom of "vendredi en huit ou en quinze", "en huit
+    # manches" after a day) names a day the other readings would only miss:
+    # the utterance refuses rather than read the bare day.
+    claimed = {i for m, _r in resolved if m.construction == "day_week_idiom"
+               for i in range(*m.span)}
+    if any(i not in claimed
+           and week_idiom_state(tokens, i, engine.spec) in ("ok", "open")
+           for i in range(len(tokens))):
+        return [], None
     # business-day counting ("in 5 business days", "the next working day",
     # "3 working days after christmas"); jurisdiction scopes the holiday lookup.
     # Runs before the anchored-offset pass so a "N working days after <date>"
