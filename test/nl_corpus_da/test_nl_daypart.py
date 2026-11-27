@@ -67,3 +67,21 @@ def test_adversarial_never_raises(text):
     result. What must never happen is an exception escaping the parser.
     """
     parse(text)
+
+
+# Den Danske Ordbog, "morgen", expression "i morgen tidlig": "på et tidligt
+# tidspunkt den følgende dags morgen".  The first row is DDO's own citation
+# (Berlingske Tidende, 1998).
+@pytest.mark.parametrize("text", [
+    'i morgen tidlig',
+    'Mødet mellem de tre ledere bliver indledt i morgen tidlig',
+])
+def test_i_morgen_tidlig_is_tomorrow_morning(text):
+    s = span(text)
+    assert (s.start, s.end) == (AstroDate(2017, 6, 28, 5, 0),
+                                AstroDate(2017, 6, 28, 10, 0))
+
+
+@pytest.mark.parametrize("text", ['for tidlig', 'han kom tidlig'])
+def test_bare_tidlig_is_no_date(text):
+    assert parse(text) is None
