@@ -52,8 +52,13 @@ NO_DATE = [
         "a whole", "an entire", "a mere", "an extra")]
 
 
-@pytest.mark.xfail(raises=AssertionError, strict=True, reason=ISSUE)
-@pytest.mark.parametrize("lang,text,anchor", NO_DATE)
+FIXED_NO_DATE = {"mai vorbim", "vreau mai mult"}
+
+
+@pytest.mark.parametrize("lang,text,anchor", [
+    row if row[1] in FIXED_NO_DATE else pytest.param(
+        *row, marks=pytest.mark.xfail(raises=AssertionError, strict=True, reason=ISSUE))
+    for row in NO_DATE])
 def test_it_is_no_date(lang, text, anchor):
     assert extract_timespan(text, lang, anchor) is None
 

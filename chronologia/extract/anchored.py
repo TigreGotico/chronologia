@@ -406,8 +406,46 @@ def _try_offset_postfix(tokens, match: Match, res: Resolution, spec: LangSpec,
 _FIXPOINT_CAP = 32
 
 
+#: how many tokens a postposed from-phrase's offset may span before its
+#: direction word ("आज से **तीन दिन** बाद"): a quantity and a unit.
+_FROM_POST_OFFSET_SPAN = 2
+
+
+def _try_from_postposed(tokens, match: Match, res: Resolution, spec: LangSpec,
+                        from_phrases, gap):
+    """Compose ``REF <from> [NUM] UNIT <direction>`` for a locale whose
+    ``from`` marker is postposed (Hindi "आज से तीन दिन बाद", three days
+    from today).
+
+    Returns the composed pair, ``False`` when the from-phrase opens an
+    offset that the order cannot read (the reference must then give no
+    reading), or ``None`` when the order does not apply.
+    """
+    e = match.span[1]
+    for words in from_phrases:
+        f = e + len(words)
+        if [t.text for t in tokens[e:f]] != words:
+            continue
+        for k in range(f + 1, min(len(tokens), f + _FROM_POST_OFFSET_SPAN + 1)):
+            sign = spec.directions.get(tokens[k].text)
+            if sign is None:
+                continue
+            pre = _parse_preamble(tokens, k, spec, gap)
+            if pre is None or pre["kind"] != "unit" or pre["start"] != f:
+                return False
+            base = _offset_base(res.value, sign, pre["unit"])
+            span = _astro_day_span(_shift(base, pre["unit"],
+                                          sign * pre["qty"]))
+            lo = match.span[0]
+            consumed = tuple(sorted(set(res.consumed)
+                                    | set(range(lo, k + 1))))
+            return (Match(match.construction, (lo, k + 1), match.slots,
+                          match.calendar), Resolution(span, consumed))
+    return None
+
+
 def _one_offset_pass(tokens, resolved: List[Pair], spec: LangSpec,
-                     dir_phrases, gap) -> Tuple[List[Pair], int]:
+                     dir_phrases, gap, from_phrases=()) -> Tuple[List[Pair], int]:
     """A single composition pass over ``resolved``.
 
     Returns ``(out, grown)`` where ``grown`` is the number of tokens the
@@ -416,6 +454,7 @@ def _one_offset_pass(tokens, resolved: List[Pair], spec: LangSpec,
     """
     composed = {}
     claimed = set()
+    refused = set()
     grown = 0
     for match, res in resolved:
         is_date = match.construction in DATE_CONSTRUCTIONS
@@ -431,6 +470,12 @@ def _one_offset_pass(tokens, resolved: List[Pair], spec: LangSpec,
                or (_try_offset_postfix(tokens, match, res, spec,
                                        dir_phrases, gap) if is_date
                   else None))
+        if got is None and is_date and from_phrases:
+            got = _try_from_postposed(tokens, match, res, spec,
+                                      from_phrases, gap)
+            if got is False:
+                refused.add(id(match))
+                continue
         if got is not None:
             gained = set(range(*got[0].span)) - set(range(*match.span))
             if not gained:
@@ -441,10 +486,12 @@ def _one_offset_pass(tokens, resolved: List[Pair], spec: LangSpec,
             composed[id(match)] = got
             claimed.update(gained)
             grown += len(gained)
-    if not composed:
+    if not composed and not refused:
         return resolved, 0
     out: List[Pair] = []
     for match, res in resolved:
+        if id(match) in refused:
+            continue
         if id(match) in composed:
             out.append(composed[id(match)])
         elif not any(i in claimed for i in range(*match.span)):
@@ -816,7 +863,9 @@ def apply_anchored_offset(tokens, resolved: List[Pair],
     # date_range construction are never affected either way -- they match
     # their own token patterns and never reach this pass.
     from_as_after = spec.connectors.get("offset_after", frozenset())
-    if not after and not before and not from_as_after:
+    from_phrases = (_phrases(spec.connectors.get("from", ()))
+                    if spec.positions.get("from") == "post" else [])
+    if not after and not before and not from_as_after and not from_phrases:
         return resolved
     gap = _gap_words(spec)
     dir_phrases = ([(1, w) for w in _phrases(after | from_as_after)]
@@ -826,7 +875,7 @@ def apply_anchored_offset(tokens, resolved: List[Pair],
     # termination, with _FIXPOINT_CAP as a hard backstop.
     for _ in range(_FIXPOINT_CAP):
         resolved, grown = _one_offset_pass(tokens, resolved, spec,
-                                           dir_phrases, gap)
+                                           dir_phrases, gap, from_phrases)
         if grown == 0:
             break
     return resolved

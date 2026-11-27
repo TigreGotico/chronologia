@@ -71,9 +71,7 @@ _LIMITATIONS = [
     pytest.param(
         'august som namn',
         marks=pytest.mark.xfail(raises=AssertionError, reason='month homograph used as a person/pet name binds as the month; expected limitation, disambiguation is downstream', strict=True)),
-    pytest.param(
-        'folkas vår',
-        marks=pytest.mark.xfail(raises=AssertionError, reason='season word in figurative use binds as the season; downstream concern', strict=True)),
+    'folkas vår',
     pytest.param(
         'livets haust',
         marks=pytest.mark.xfail(raises=AssertionError, reason='season word in figurative use binds as the season; downstream concern', strict=True)),
