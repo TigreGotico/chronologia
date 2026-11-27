@@ -2,9 +2,41 @@
 
 <!-- agent-hint
 covers: how the differential benchmark against dateparser and dateutil and the cross-view harness run and what their numbers mean
-source: benchmark/run.py, benchmark/adapter.py, benchmark/crossview.py, benchmark/SCOREBOARD.md
+source: tools/plot_benchmarks.py, docs/benchmarks/odp_vs_chronologia.json, benchmark/run.py, benchmark/adapter.py, benchmark/crossview.py, benchmark/SCOREBOARD.md
 generated: no
-verify: for f in $(grep '^python benchmark/run.py' docs/benchmarks.md | grep -o -- '--[a-z-]*' | sort -u); do .venv/bin/python benchmark/run.py --help | grep -q -- "$f" || exit 1; done && .venv/bin/python -m benchmark.crossview --help | grep -q disagree && for f in $(sed -n '/^## Comparing two trees/,/^## Caveats/p' docs/benchmarks.md | grep -o -- '--[a-z-]*' | sort -u); do (.venv/bin/python -m benchmark.crossview run --help; .venv/bin/python -m benchmark.crossview diff --help; .venv/bin/python -m benchmark.crossview disagree --help) | grep -q -- "$f" || exit 1; done && .venv/bin/python -c 'exec("import os,re\nt=open(\"docs/benchmarks.md\").read()\nfor q in set(re.findall(r\"\\x60((?:benchmark|test|examples)/[^\\x60<>*:]+)\\x60\",t)): assert os.path.exists(q.rstrip(\"/\")),q\nassert os.path.exists(\"benchmark/SCOREBOARD.md\")\n")'
+verify: for f in $(grep '^python benchmark/run.py' docs/benchmarks.md | grep -o -- '--[a-z-]*' | sort -u); do .venv/bin/python benchmark/run.py --help | grep -q -- "$f" || exit 1; done && .venv/bin/python -m benchmark.crossview --help | grep -q disagree && for f in $(sed -n '/^## Against ovos-date-parser
+
+This comparison scores chronologia and ovos-date-parser 0.29 on the same outside date benchmark. The benchmark rows come from the bench classes in `tools/bench/data/date_*.jsonl` of the agent workspace, not from the corpora of this repository. A row is correct only when the reader gives the gold value. The `source` key of the result file names the chronologia commit and the benchmark version that the numbers come from.
+
+<img alt="Strict correct rate per leader locale: chronologia is higher than ovos-date-parser 0.29 in all ten measured locales, from nl 0.86 against 0.35 to fr 0.84 against 0.73." src="benchmarks/odp_vs_chronologia.png">
+
+`tools/plot_benchmarks.py` makes this figure, the table below and `benchmarks/odp_vs_chronologia.json` from the summary TSV of the bench scorer. To make them again, run this command:
+
+```bash
+python tools/plot_benchmarks.py <path to table.tsv>
+```
+
+<!-- odp-table:start -->
+| Locale | Rows | chronologia | ovos-date-parser 0.29 | Ready |
+|:---|---:|---:|---:|:---|
+| pt-PT | 1488 | 0.784 | 0.413 | no |
+| pt-BR | 1506 | 0.786 | 0.424 | no |
+| es | 1506 | 0.803 | 0.468 | no |
+| es-CO | 0 | not measured | not measured | not measured |
+| fr | 1496 | 0.840 | 0.729 | no |
+| it | 1498 | 0.754 | 0.407 | no |
+| de | 1492 | 0.792 | 0.532 | no |
+| nl | 1441 | 0.860 | 0.348 | no |
+| da | 1491 | 0.669 | 0.463 | no |
+| kab | 1328 | 0.503 | 0.312 | no |
+| hi | 1429 | 0.638 | 0.287 | no |
+| bn | 0 | not measured | not measured | not measured |
+| mwr | 0 | not measured | not measured | not measured |
+<!-- odp-table:end -->
+
+A higher total rate does not make a locale ready. The ready flag needs a rate at least as high on every bench class. [languages/index.md](languages/index.md#support-table) explains the flag. es-CO, bn and mwr have no bench rows.
+
+## Comparing two trees/,/^## Caveats/p' docs/benchmarks.md | grep -o -- '--[a-z-]*' | sort -u); do (.venv/bin/python -m benchmark.crossview run --help; .venv/bin/python -m benchmark.crossview diff --help; .venv/bin/python -m benchmark.crossview disagree --help) | grep -q -- "$f" || exit 1; done && .venv/bin/python -c 'exec("import os,re\nt=open(\"docs/benchmarks.md\").read()\nfor q in set(re.findall(r\"\\x60((?:benchmark|test|examples)/[^\\x60<>*:]+)\\x60\",t)): assert os.path.exists(q.rstrip(\"/\")),q\nassert os.path.exists(\"benchmark/SCOREBOARD.md\")\n")'
 see: docs/extraction.md, docs/transparency.md
 -->
 
