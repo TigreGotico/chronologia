@@ -35,6 +35,11 @@ NO_DATE = [
     ("ro", "Vara mea Ioana a deschis o mică brutărie lângă gară."),
     ("ro", "Mai e timp."),
     ("sq", "Gjyshi im bën verë të kuqe shumë të shijshme."),
+    ("de", "Onkel August hat den alten Gartenzaun ganz allein repariert."),
+    ("de", "Im Zirkus brachte der dumme August alle Kinder zum Lachen."),
+    ("da", "Min nabo August har bygget et fuglehus af gamle brædder."),
+    ("da", "Maj har malet hele køkkenet grønt."),
+    ("es", "¡Miércoles, se me volvió a caer el café encima del teclado!"),
 ]
 
 DATED = [
@@ -42,6 +47,17 @@ DATED = [
     ("pt-PT", "este verão vamos à praia", datetime(2026, 6, 1)),
     ("pt-PT", "o verão de 2027", datetime(2027, 6, 1)),
     ("pt-BR", "o verão chegou", datetime(2026, 6, 1)),
+    ("pt-PT", "no verão de 2020 fomos ao Algarve", datetime(2020, 6, 1)),
+    ("de", "im Sommer fahren wir an die Ostsee", datetime(2026, 6, 1)),
+    ("de", "im August fahren wir an die Ostsee", datetime(2026, 8, 1)),
+    ("de", "am 3. August komme ich zurück", datetime(2026, 8, 3)),
+    ("de", "der August 2020 war sehr heiß", datetime(2020, 8, 1)),
+    ("da", "i sommer rejser vi til Skagen", datetime(2026, 6, 1)),
+    ("da", "i august rejser vi til Skagen", datetime(2026, 8, 1)),
+    ("da", "hun kommer den 3. maj", datetime(2026, 5, 3)),
+    ("es", "en verano vamos a la playa", datetime(2026, 6, 1)),
+    # Anchor Tuesday 2026-03-10: the next Wednesday is 2026-03-11.
+    ("es", "nos vemos el miércoles", datetime(2026, 3, 11)),
     ("sv", "vi reser i vår", datetime(2026, 3, 1)),
     ("nb", "vi reiser i vår", datetime(2026, 3, 1)),
     ("ro", "plecăm în mai", datetime(2026, 5, 1)),

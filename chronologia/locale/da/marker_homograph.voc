@@ -1,0 +1,8 @@
+# Date words that alone take a more frequent non-date sense. A preposition,
+# demonstrative, number or year beside the word keeps the date sense.
+# august: adjective "ophøjet, værdig" (Den Danske Ordbog "august", adjektiv),
+# and a male first name. maj: a female first name (Den Danske Ordbog "Maj").
+# The month takes a preposition, a day number or a year: "i august",
+# "den 3. maj", "maj 2020".
+august
+maj
