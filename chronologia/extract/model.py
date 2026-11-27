@@ -456,6 +456,10 @@ class LangSpec:
     # per-calendar day-subdivision name (a lang.json fact); its unit->fraction
     # table lives in cycles.DAY_SUBDIVISIONS (French decimal time: 10h/100m/100s)
     day_subdivision: Optional[str] = None
+    # "<day> en huit" (fr): the numeral of a day-counted week idiom ->
+    # the number of weeks it adds, from ``week_idiom_<weeks>.voc``.  The
+    # named day is day one, so "huit" (eight) is one week on.
+    week_idioms: Mapping[str, int] = field(default_factory=dict)
     # regnal era surface -> (sequence key, segment name), from the
     # regnal_<seqkey>_<segname>.voc filename convention (Japanese nengō)
     regnal_names: Mapping[str, Tuple[str, str]] = field(default_factory=dict)

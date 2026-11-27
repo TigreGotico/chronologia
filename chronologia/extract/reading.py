@@ -63,6 +63,68 @@ class Reading:
     right: Optional[Reading] = None
 
 
+def _daypart_across_days(tokens: Tuple[Token, ...], spec) -> bool:
+    """A part of the day named by a range of days: fr "la nuit de samedi à
+    dimanche", "le soir du 3 au 5 mai", "l'après-midi du lundi au vendredi".
+
+    The night from one day into the next, or the evenings of several days,
+    is no band of one day, and reading the part of the day alone gives the
+    anchor's band with the days left over.  A locale lists the day-part words
+    that head such a range in ``marker_daypart_across_days.voc``; a phrase
+    with one of them, then a from or of word, a day, a to word and a day in
+    the same sentence, has no reading.
+
+    A day is a weekday, a day word or a day number.  After a weekday or a day
+    word the right end must be one too: a number there is a clock or an
+    address ("le soir de samedi à 9", "au 12 rue Victor Hugo").  A clock range
+    ("la nuit de 22 h à 6 h") is not a range of days.
+    """
+    heads = sorted((h.split() for h in
+                    spec.connectors.get("daypart_across_days", ())),
+                   key=len, reverse=True)
+    if not heads:
+        return False
+    leads = (set(spec.connectors.get("from", ()))
+             | set(spec.connectors.get("of", ())))
+    tos = set(spec.connectors.get("to", ()))
+    hour_words = (set(spec.connectors.get("oclock", ()))
+                  | set(spec.connectors.get("hours", ()))
+                  | {s for s, k in spec.units.items()
+                     if k in ("hour", "minute", "second")})
+
+    def day_kind(i):
+        if i >= len(tokens) or tokens[i].sentence_break_before:
+            return None
+        tok = tokens[i]
+        if tok.text in spec.weekdays or tok.text in spec.named_days:
+            return "word"
+        if not (tok.is_number or tok.mention is not None) or ":" in tok.text:
+            return None
+        j = i + 1
+        while j < len(tokens) and tokens[j].mention is not None \
+                and tokens[j].mention is tok.mention:
+            j += 1
+        return ("num" if j >= len(tokens) or tokens[j].text not in hour_words
+                else None)
+
+    words = [t.text for t in tokens]
+    for i in range(len(tokens)):
+        n = next((len(h) for h in heads if words[i:i + len(h)] == h), 0)
+        if not n or i + n + 1 >= len(tokens) or words[i + n] not in leads:
+            continue
+        left = day_kind(i + n + 1)
+        if left is None:
+            continue
+        for j in range(i + n + 2, len(tokens)):
+            if tokens[j].sentence_break_before:
+                break
+            if words[j] in tos:
+                right = day_kind(j + 1)
+                if right == "word" or (right == "num" and left == "num"):
+                    return True
+    return False
+
+
 def read(text: str, lang: str, anchor: datetime,
          jurisdiction: Optional[str] = None, enable: Tuple[str, ...] = (),
          scale: Optional[str] = None, first: bool = False) -> List[Reading]:
@@ -75,6 +137,8 @@ def read(text: str, lang: str, anchor: datetime,
     spec = engine.spec
     scale_mode = _resolve_scale_mode(lang, scale)
     raw = pretokens(text, spec)
+    if _daypart_across_days(raw, spec):
+        return []
     readings = []
     # a "since A until B" directional range comes first: its "since" would let
     # the closed range split on "until" and lose the past anchoring
