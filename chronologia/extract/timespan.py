@@ -3931,7 +3931,7 @@ def _homograph_veto(tokens, match, spec) -> bool:
     if b > 0:
         prev = tokens[b - 1]
         if prev.is_number or any(prev.text in v for k, v in spec.connectors.items()
-                                 if k != "homograph"):
+                                 if k != "homograph" and not k.startswith("cued_day")):
             return False
     if e < len(tokens):
         nxt = tokens[e]
