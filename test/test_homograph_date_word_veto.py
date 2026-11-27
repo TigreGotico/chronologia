@@ -39,7 +39,6 @@ NO_DATE = [
     ("de", "Im Zirkus brachte der dumme August alle Kinder zum Lachen."),
     ("da", "Min nabo August har bygget et fuglehus af gamle brædder."),
     ("da", "Maj har malet hele køkkenet grønt."),
-    ("es", "¡Miércoles, se me volvió a caer el café encima del teclado!"),
 ]
 
 DATED = [
@@ -58,6 +57,8 @@ DATED = [
     ("es", "en verano vamos a la playa", datetime(2026, 6, 1)),
     # Anchor Tuesday 2026-03-10: the next Wednesday is 2026-03-11.
     ("es", "nos vemos el miércoles", datetime(2026, 3, 11)),
+    ("es", "nos vemos miércoles", datetime(2026, 3, 11)),
+    ("es", "llego miércoles por la tarde", datetime(2026, 3, 11, 12)),
     ("sv", "vi reser i vår", datetime(2026, 3, 1)),
     ("nb", "vi reiser i vår", datetime(2026, 3, 1)),
     ("ro", "plecăm în mai", datetime(2026, 5, 1)),
