@@ -98,9 +98,9 @@ def test_inflected_easter_sunday_is_easter_not_a_sunday(lang, text):
     assert day(text, lang) == EASTER
 
 
-@pytest.mark.xfail(raises=AssertionError, strict=True,
-                   reason="TigreGotico/chronologia#1486: no hi holiday names")
-def test_hindi_christmas_has_no_data():
+# hi has holiday names since #1539, and पर marks one as a date
+# (hi/marker_holiday_cue.voc).  Formerly a strict xfail for #1486.
+def test_hindi_christmas_with_par_is_christmas():
     assert day("इस बार क्रिसमस पर हम दादी के घर जाएँगे।", "hi") == CHRISTMAS
 
 
