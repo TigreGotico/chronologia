@@ -99,3 +99,8 @@ def test_masculine_ordinal_after_o_is_no_clock():
 ])
 def test_known_gap_fraction_clock_before_another_word(text, expected):
     assert start(text) == ad(expected)
+
+
+def test_spelled_date_of_the_1790s():
+    assert start("trzeciego maja tysiąc siedemset dziewięćdziesiątego pierwszego roku") == ad(
+        datetime(1791, 5, 3))
