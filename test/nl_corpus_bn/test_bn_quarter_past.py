@@ -40,6 +40,16 @@ def test_quarter_past(text, h):
     assert start(text) == next_clock(h, 15)
 
 
+@pytest.mark.parametrize("text,h", [
+    ("তিনটে বাজে", 3),
+    ("তিনটা বাজে", 3),
+    ("চারটে বাজে", 4),
+])
+def test_hour_classifier_strikes(text, h):
+    # numtag reads "তিনটে" as one number; the classifier must stay a word
+    assert start(text) == next_clock(h, 0)
+
+
 def test_quarter_past_gold_is_clock_arithmetic():
     assert next_clock(5, 15) == ad(ANCHOR.replace(hour=17, minute=15))
     assert next_clock(1, 15) == ad(ANCHOR.replace(hour=13, minute=15))

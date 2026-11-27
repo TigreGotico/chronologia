@@ -1155,12 +1155,20 @@ def number_fold(lang: str, cfg: Mapping) -> Tuple[Fold, Optional[Fold]]:
          for row in cfg.get("compounds", ())
          for head, reading in row["heads"].items()),
         key=lambda h: len(h[0]), reverse=True))
+    tails = frozenset(t for _, _, ts in heads for t in ts)
+
+    def split_tails(tokens: Tuple[Token, ...]) -> Claims:
+        # numtag reads the whole word "তিনটে" as one number, so the tail split
+        # from it is inside the mention and stays a word only when claimed
+        return ({i for i, t in enumerate(tokens)
+                 if t.mention is not None and t.text in tails
+                 and t.char_start != t.mention.char_span[0]}, set(), {})
 
     def run(tokens: Tuple[Token, ...]) -> Tuple[Token, ...]:
         if markers:
             tokens = collapse_marked_h_clock(tokens, markers)
-        folded = fold(tokens, words, table=table,
-                      ordinal_suffixes=suffixes, phrases=phrases)
+        folded = fold(tokens, words, extra=split_tails if tails else None,
+                      table=table, ordinal_suffixes=suffixes, phrases=phrases)
         return fraction_counts(folded, fractions) if fractions else folded
 
     if not heads:
