@@ -651,9 +651,9 @@ def _duration_core(text: str, engine, anchor: Optional[datetime] = None,
     # answer, not a partial one.  Any unconsumed calendar-unit surface means
     # the phrase named a length this function cannot express in whole; honour
     # the "3 months" convention across the whole compound and refuse.
-    # Only a counted unit names a length: "dieses Jahr" / "este ano" beside
-    # "acht Tage" is a deictic year, so it does not block the reading.
-    count_words = indef | fracs.keys() | {
+    # A unit after a count or an article ("3 days into the month") blocks
+    # the reading; "dieses Jahr" / "este ano" beside "acht Tage" does not.
+    count_words = articles | fracs.keys() | {
         s for s, v in spec.quantifiers.items() if v == 1.0}
     for tok in tokens:
         if tok.index in consumed:

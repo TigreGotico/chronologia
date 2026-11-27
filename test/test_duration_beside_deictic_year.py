@@ -29,6 +29,8 @@ _LENGTHS = [
            "sporcarmi le mani.", timedelta(days=12)),
     ("it", "dura l'ora intera", timedelta(hours=1)),
     ("en", "the hour", timedelta(hours=1)),
+    # chronologia#1206: "na het uur" is "past the hour"
+    ("nl", "vijf minuten na het uur", timedelta(minutes=5)),
 ]
 
 _NO_LENGTH = [

@@ -30,8 +30,7 @@ def span_rows(issue, rows):
 
 # (lang, text, anchor, seconds, remainder or None)
 DURATIONS = (
-    duration_rows(1206, [("nl", "vijf minuten na het uur", A_2017, 300, "na het uur")])
-    + duration_rows(1207, [
+    duration_rows(1207, [
         ("he", "ספירה לאחור של שלוש שעות ועשר דקות", A_2017, 11400, None),
         ("he", "שלוש שעות ועשר דקות", A_2017, 11400, None),
     ])
