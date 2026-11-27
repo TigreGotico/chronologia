@@ -125,7 +125,7 @@ def extract_duration(
     The calendar units (month, year, decade) have no fixed length, so they
     are counted on the calendar from ``anchor``: "3 months" from 31 January
     is the time to 30 April.  A ``date`` anchor is its midnight.  With no
-    anchor a calendar unit has no length, and a text naming one returns
+    anchor a calendar unit has no length, and a text that counts one returns
     ``None``.  The months are added first and a day the new month lacks is
     pinned to its last day, then the fixed-width units are added (W3C XML
     Schema 1.1 Part 2, E.3.3 "Adding durations to dateTimes": "The ·months·
@@ -180,7 +180,7 @@ def _duration_core(text: str, engine, anchor: Optional[datetime] = None,
     cached engine object is reused, and no lang-string plumbing has to be
     threaded through the single-span resolver just for this.
 
-    With no ``anchor`` a calendar unit has no length, and a text naming one
+    With no ``anchor`` a calendar unit has no length, and a text counting one
     returns ``None``.  With ``calendar_needs_marker`` the text must name a
     calendar unit right after a duration marker ("for 3 months"), or the
     result is ``None``.
