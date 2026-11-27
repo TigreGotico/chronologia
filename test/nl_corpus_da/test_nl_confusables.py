@@ -62,14 +62,12 @@ _RESOLVED = [
     'et tabt årti',
     'julen kom tidligt',
     'rejse til mars',
+    'august som navn',
 ]
 
 _LIMITATIONS = [
     pytest.param(
         'juni som navn',
-        marks=pytest.mark.xfail(raises=AssertionError, reason='month homograph used as a person/pet name binds as the month; expected limitation, disambiguation is downstream', strict=True)),
-    pytest.param(
-        'august som navn',
         marks=pytest.mark.xfail(raises=AssertionError, reason='month homograph used as a person/pet name binds as the month; expected limitation, disambiguation is downstream', strict=True)),
     pytest.param(
         'folkenes forår',

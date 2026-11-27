@@ -1334,7 +1334,7 @@ def _variant_endpoint(text, sub, engine, anchor, scale_mode="short"):
     """
     folded = fold_tokens(tuple(sub), engine.spec, text)
     core = _resolve_core(folded, engine, anchor, text=text,
-                         scale_mode=scale_mode)
+                         scale_mode=scale_mode, endpoint=True)
     if core is None:
         return None
     span, consumed = core
@@ -2002,7 +2002,7 @@ def _resolve_endpoint(text, sub, engine, anchor, scale_mode="short"):
         return None
     folded = fold_tokens(tuple(sub), engine.spec, text)
     core = _resolve_core(folded, engine, anchor, text=text,
-                         scale_mode=scale_mode)
+                         scale_mode=scale_mode, endpoint=True)
     if core is None:
         return None
     span, consumed = core
@@ -2202,7 +2202,7 @@ def _monthly_endpoint(text, sub, engine):
     """
     spec = engine.spec
     folded = fold_tokens(tuple(sub), spec, text)
-    veto = lambda m: _candidate_veto(folded, m, spec)   # noqa: E731
+    veto = lambda m: _candidate_veto(folded, m, spec, True)   # noqa: E731
     for match in engine.matcher.match(folded, veto):
         if "REL_MARKER" in match.slots or "MONTH" in match.slots:
             continue
@@ -3943,7 +3943,7 @@ def _homograph_veto(tokens, match, spec) -> bool:
     return True
 
 
-def _candidate_veto(tokens, match, spec) -> bool:
+def _candidate_veto(tokens, match, spec, endpoint=False) -> bool:
     """Combined pre-selection veto: readings whose surrounding context makes
     them the WRONG parse ("the new year" is the period not the holiday; a
     non-clause-final "be" is the verb not the era; a plain year stranding a
@@ -3964,7 +3964,7 @@ def _candidate_veto(tokens, match, spec) -> bool:
             or _relday_daypart_homograph_veto(tokens, match, spec)
             or _participle_season_veto(tokens, match, spec)
             or _cued_day_veto(tokens, match, spec)
-            or _homograph_veto(tokens, match, spec)
+            or (not endpoint and _homograph_veto(tokens, match, spec))
             or _num_preamble_named_day_idiom_veto(tokens, match, spec)
             or _subday_named_day_idiom_veto(match, spec)
             or _stranded_year_veto(tokens, match, spec)
@@ -4932,7 +4932,7 @@ def _lone_spoken_hour(res, rep, anchor, spec, tokens, matches, text=None):
 
 
 def _resolve_core(tokens, engine, anchor, enable=(), jurisdiction=None,
-                  text=None, scale_mode="short"):
+                  text=None, scale_mode="short", endpoint=False):
     """The single-span resolution over an already-tokenized stream.
 
     :func:`_compose_core` and then :func:`_core_veto`, returning ``(span,
@@ -4942,7 +4942,7 @@ def _resolve_core(tokens, engine, anchor, enable=(), jurisdiction=None,
     re-based slice of the same stream.
     """
     winner = _compose_core(tokens, engine, anchor, enable, jurisdiction, text,
-                           scale_mode)[1]
+                           scale_mode, endpoint=endpoint)[1]
     if winner is None:
         return None
     res, consumed, rep = winner
@@ -4961,18 +4961,21 @@ WHOLE_REFUSAL = _WholeRefusal()
 
 
 def _compose_core(tokens, engine, anchor, enable=(), jurisdiction=None,
-                  text=None, scale_mode="short", whole=False):
+                  text=None, scale_mode="short", whole=False,
+                  endpoint=False):
     """Match, resolve and post-pass ``tokens``, then compose the winner.
 
     Returns ``(resolved, winner)``: the post-passed ``(match, resolution)``
     pairs, and the winner as ``(resolution, consumed, representative
     match)`` or ``None``.  ``whole`` marks the whole utterance, where a bare
     month after "since" names the one that has begun (:func:`_since_month`);
-    a range endpoint follows the range rules instead.
+    a range endpoint follows the range rules instead.  ``endpoint`` marks a
+    range endpoint slice: the range connector is the time cue that keeps a
+    homograph date word ("von Juni bis August").
     """
     resolved = []
     refused = []
-    veto = lambda m: _candidate_veto(tokens, m, engine.spec)   # noqa: E731
+    veto = lambda m: _candidate_veto(tokens, m, engine.spec, endpoint)   # noqa: E731
     for match in engine.matcher.match(tokens, veto):
         # construction-group gate: a construction tagged ``"group": <g>`` in
         # lang.json is OFF unless ``g`` is in ``enable``.  The raw-Latin date
