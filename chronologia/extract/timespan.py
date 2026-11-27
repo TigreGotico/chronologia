@@ -3301,8 +3301,12 @@ def _impossible_date_veto_inner(tokens, consumed, text, engine, anchor):
                 and tokens[i + 1].text in (set(engine.spec.units)
                                            | set(engine.spec.singular_units))):
             continue
+        # an article that opens the span takes no numeral before it as a day:
+        # da "fylder halvfems den 16. september" is an age, then a date
         abuts = ((i > 0 and tokens[i - 1].index in consumed)
-                 or (i + 1 < len(tokens) and tokens[i + 1].index in consumed))
+                 or (i + 1 < len(tokens) and tokens[i + 1].index in consumed
+                     and tokens[i + 1].text
+                     not in engine.spec.connectors.get("article", ())))
         if abuts and extract_timespan(t.text, engine.spec.lang, anchor) is None:
             return True                              # impossible day-of-month
     return False
@@ -3872,6 +3876,39 @@ def _skip_one_idiom_veto(tokens, match, spec) -> bool:
             and marker_names_a_reference(tokens, match.span[1] - 1, spec))
 
 
+def _cued_day_veto(tokens, match, spec) -> bool:
+    """True for a match that holds a ``named_day_cued_<off>.voc`` surface with
+    no cue word directly beside it.
+
+    pl "dzisiejszy", el "σημερινός" and es "hodierno" mean "today's" and,
+    more often, "present-day" ("dzisiejsza młodzież").  The day sense needs a
+    cue: the next word is a unit, a daypart or a word of
+    ``marker_cued_day_cue.voc`` ("dzisiejszy dzień", "dzisiejsze spotkanie"),
+    or the word before is a word of ``marker_cued_day_cue_before.voc`` or a
+    unit, for a locale that ships that file ("la sesión hodierna").
+    """
+    words = spec.connectors.get("cued_day")
+    if not words:
+        return False
+    after = spec.connectors.get("cued_day_cue", frozenset())
+    before = spec.connectors.get("cued_day_cue_before", frozenset())
+    b, e = match.span
+    for i in range(b, e):
+        if tokens[i].text not in words:
+            continue
+        if i + 1 < len(tokens):
+            nxt = tokens[i + 1].text
+            if (nxt in after or nxt in spec.units or nxt in spec.singular_units
+                    or nxt in spec.dayparts):
+                continue
+        if before and i > 0:
+            prev = tokens[i - 1].text
+            if prev in before or prev in spec.units or prev in spec.singular_units:
+                continue
+        return True
+    return False
+
+
 def _homograph_veto(tokens, match, spec) -> bool:
     """True for a match made only of surfaces in ``marker_homograph.voc`` with
     no time cue beside it.
@@ -3895,7 +3932,7 @@ def _homograph_veto(tokens, match, spec) -> bool:
     if b > 0:
         prev = tokens[b - 1]
         if prev.is_number or any(prev.text in v for k, v in spec.connectors.items()
-                                 if k != "homograph"):
+                                 if k != "homograph" and not k.startswith("cued_day")):
             return False
     if e < len(tokens):
         nxt = tokens[e]
@@ -3926,6 +3963,7 @@ def _candidate_veto(tokens, match, spec) -> bool:
             or _month_holiday_collision_veto(tokens, match, spec)
             or _relday_daypart_homograph_veto(tokens, match, spec)
             or _participle_season_veto(tokens, match, spec)
+            or _cued_day_veto(tokens, match, spec)
             or _homograph_veto(tokens, match, spec)
             or _num_preamble_named_day_idiom_veto(tokens, match, spec)
             or _subday_named_day_idiom_veto(match, spec)

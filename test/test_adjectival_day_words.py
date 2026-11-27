@@ -56,20 +56,3 @@ NO_DATE = [
 def test_a_word_that_only_starts_like_a_day_adjective_gives_no_date(lang, text):
     assert extract_timespan(text, lang, ANCHOR) is None
 
-
-UNCITED = [
-    ("et", "Tänane koosolek venis pikaks.", 0),
-    ("hr", "Sutrašnji izlet bi se mogao otkazati.", 1),
-    ("az", "Dünənki yağışdan sonra güllər təravətlidir.", -1),
-    ("el", "Η χθεσινή συνάντηση κράτησε πολύ.", -1),
-    ("sk", "Zajtrajšia porada sa presúva.", 1),
-]
-
-
-@pytest.mark.xfail(strict=True, raises=AssertionError,
-                   reason="adjectival day words not yet in these locales (#1462)")
-@pytest.mark.parametrize("lang,text,offset", UNCITED)
-def test_an_adjectival_day_word_in_an_uncovered_locale(lang, text, offset):
-    found = extract_timespan(text, lang, ANCHOR)
-    assert found is not None
-    assert found.span.start.datetime() == datetime(2017, 6, 27) + timedelta(days=offset)

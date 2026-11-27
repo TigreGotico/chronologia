@@ -1,5 +1,7 @@
 # Unicode CLDR 47, locale da, cldr-dates-full/main/da/dateFields.json.
 # day.relative-type--1.
 igår
-går
 i går
+# Source: en.wiktionary.org, entry "gårsdag", Danish noun; the definite and genitive forms name the same day.
+gårsdagen
+gårsdagens
