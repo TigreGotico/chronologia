@@ -100,6 +100,11 @@ The tags `pt` and `pt-PT` get the same results. The tag `pt-BR` loads the same `
     >>> spoken.spoken_date("pt-BR", day=16, month=7)
     'dezesseis de julho'
 
+A weekday alone gives the weekday name. The index is 0 for Monday, as `datetime.weekday()`.
+
+    >>> spoken.spoken_date("pt-PT", weekday=4)
+    'sexta-feira'
+
 ## Checked examples
 
 Each example below runs as a doctest with a fixed anchor, so the output does not depend on the machine. The first one shows which reader handles the numbers of this locale.
