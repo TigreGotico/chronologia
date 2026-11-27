@@ -1,0 +1,35 @@
+# Day-part words that, named by a range of days, give no reading:
+# "la nuit de samedi à dimanche", "le soir du 3 au 5 mai",
+# "l'après-midi du lundi au vendredi".
+# The night runs from one day into the next: TLFi (CNRTL) s.v. "nuit", II.A:
+# "depuis la disparition de la lumière qui suit le coucher du soleil jusqu'à
+# l'apparition du jour qui précède le lever du soleil", which depends on the
+# place and the season; the only fixed clock band it gives is legal ("DR.
+# Espace de temps qui s'étend de 21 heures à 6 heures"). The locale's "nuit"
+# band is the small hours of one day (Unicode CLDR 47, fr), so it cannot hold
+# that night, and the evening, morning or afternoon of a range of days names
+# several bands, not one span.
+# The other surfaces each name a part of a day in TLFi (CNRTL):
+# "soirée": "Partie de la journée, à durée variable, se situant entre la
+# tombée du jour et le moment où l'on se couche"; "matinée": "Partie de la
+# journée qui va du lever du soleil à midi"; "après-midi": "Partie de la
+# journée comprise entre le repas de midi et le repas du soir"; "nuitée":
+# "Espace de temps que dure une nuit".
+nuit
+nuits
+nuitée
+nuitées
+soir
+soirs
+soirée
+soirées
+matin
+matins
+matinée
+matinées
+après-midi
+après-midis
+après midi
+après midis
+apres-midi
+apres midi
