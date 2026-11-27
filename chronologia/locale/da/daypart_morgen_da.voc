@@ -9,3 +9,5 @@
 # clock_meridiem_am.voc ("klokken ni om morgenen" == 09:00).
 morgenen
 morgen
+# "tidlig" right after "i morgen" (marker_daypart_after_day.voc).
+tidlig
