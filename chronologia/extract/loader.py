@@ -94,6 +94,10 @@ _EXACT = {
     "marker_counted_noun": (("counted_noun", _SET),),
     "marker_upcoming": (("upcoming", _SET),),
     "marker_alarm_joiner": (("alarm_joiners", _SET),),
+    "marker_week_idiom_follow": (("week_idiom_follow", _SET),),
+    "marker_week_idiom_join": (("week_idiom_join", _SET),),
+    "marker_day_count_literal_before": (("day_count_literal_before", _SET),),
+    "marker_day_count_literal_after": (("day_count_literal_after", _SET),),
 }
 
 # ``<prefix><rest>.voc``: every surface maps to ``convert(rest)`` in each
