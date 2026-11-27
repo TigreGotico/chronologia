@@ -1865,7 +1865,7 @@ def _ground_until(rec, text, ctx, lang, anchor):
         if k and low[:k] == words:
             stripped = " ".join(text.split()[k:])
             break
-    got = extract_timespan(stripped, lang, anchor=anchor)
+    got = extract_timespan(stripped, lang, anchor=anchor, _endpoint=True)
     if got is None:
         return None
     return _replace(rec, until=got[0].start)

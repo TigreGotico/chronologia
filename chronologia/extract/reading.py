@@ -127,8 +127,11 @@ def _daypart_across_days(tokens: Tuple[Token, ...], spec) -> bool:
 
 def read(text: str, lang: str, anchor: datetime,
          jurisdiction: Optional[str] = None, enable: Tuple[str, ...] = (),
-         scale: Optional[str] = None, first: bool = False) -> List[Reading]:
+         scale: Optional[str] = None, first: bool = False,
+         endpoint: bool = False) -> List[Reading]:
     """Every reading of ``text``; only the first one when ``first`` is set.
+    ``endpoint`` marks the payload of a range or "until" word, which is the
+    cue that keeps a homograph date word.
 
     ``anchor`` is a naive datetime.  ``first`` stops before the runner-up
     points are enumerated, which ``extract_timespan`` never needs.
@@ -172,7 +175,7 @@ def read(text: str, lang: str, anchor: datetime,
     # reading claims it; under a range it is one more reading of the words
     resolved, winner = _compose_core(tokens, engine, anchor, enable,
                                      jurisdiction, text, scale_mode,
-                                     whole=not readings)
+                                     whole=not readings, endpoint=endpoint)
     rep = None
     if winner is not None:
         res, won, rep = winner
