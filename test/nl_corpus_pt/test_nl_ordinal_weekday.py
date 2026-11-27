@@ -15,8 +15,11 @@ ordinals with no weekday twin -- primeiro/-a, terceiro/-a, último/-a -- so
 every case has one unambiguous reading.
 
 [[EP vs BP]]: the ordinal + "-feira" weekday construction is shared; nothing
-here is norm-specific.  Bare named month resolves within the anchor's year
-2017 (anchor Tuesday 2017-06-27).
+here is norm-specific.  A bare named month takes the year the month alone
+takes (ruling 1, changed on 26 November 2026; before, it resolved within the
+anchor's year 2017): 2017 for a month that holds or follows the anchor
+(Tuesday 2017-06-27), 2018 for one that has ended before it (janeiro, março).  A weekday of junho that has
+ended at the anchor (before 2017-06-27 13:04) is 2018 too.
 """
 from calendar import monthrange
 from datetime import datetime, timedelta
@@ -33,13 +36,29 @@ _ORD = {"primeiro": ("o", 1), "primeira": ("a", 1),
         "terceiro": ("o", 3), "terceira": ("a", 3),
         "último": ("o", -1), "última": ("a", -1)}
 
-_YEAR = 2017
+def _year(month):
+    # ruling 1: a month that has ended at the anchor (June 2017) is next year's
+    return 2017 + (month < 6)
+
+
+def _occurrence(year, month, weekday, n):
+    days = [d for d in range(1, monthrange(year, month)[1] + 1)
+            if datetime(year, month, d).weekday() == weekday]
+    return days[n - 1] if n > 0 else days[-1]
 
 
 def _nth_weekday(month, weekday, n):
-    days = [d for d in range(1, monthrange(_YEAR, month)[1] + 1)
-            if datetime(_YEAR, month, d).weekday() == weekday]
-    return days[n - 1] if n > 0 else days[-1]
+    """(year, day) the phrase takes."""
+    year = _year(month)
+    day = _occurrence(year, month, weekday, n)
+    if (month == 6 and datetime(year, month, day) + timedelta(days=1)
+            <= datetime(2017, 6, 27, 13, 4)):
+        # ruling 1 (26 November 2026): a part of a month is read as a span; a
+        # weekday of June 2017 before the anchor has ended, so it is that
+        # weekday of June 2018 (recomputed: weekdays move)
+        year += 1
+        day = _occurrence(year, month, weekday, n)
+    return year, day
 
 
 def _cases():
@@ -55,9 +74,9 @@ def _cases():
 
 @pytest.mark.parametrize("text,month,weekday,n", _cases())
 def test_nth_weekday_of_month(text, month, weekday, n):
-    day = _nth_weekday(month, weekday, n)
+    year, day = _nth_weekday(month, weekday, n)
     s, e = start_end(text)
-    assert (s.year, s.month, s.day) == (_YEAR, month, day), f"{text!r} -> {s}"
+    assert (s.year, s.month, s.day) == (year, month, day), f"{text!r} -> {s}"
     assert span(text).width == timedelta(days=1)
     assert parse(text)[1] == "", f"unconsumed rest in {text!r}"
 

@@ -8,7 +8,8 @@ months; 30-day months split cleanly on 10-day marks.
 
 Gold divides the calendar-month interval into equal thirds INDEPENDENTLY of the
 parser.  March is already covered by test_nl_month_fuzzy, so it is skipped here.
-Anchor 2017-06-27; bare month resolves within the anchor year 2017.
+Anchor 2017-06-27; a bare month takes the year the month alone takes (ruling 1,
+changed 26 November 2026): 2018 for January to May, 2017 for June to December.
 """
 from datetime import datetime
 
@@ -38,9 +39,17 @@ def _ad(dt):
 
 _CASES = []
 for _m, _gen in _GEN.items():
-    _ths = _thirds(2017, _m)
+    # ruling 1 (changed 26 November 2026): a part of a month takes its month's year; a month that has ended at the anchor is next year's
+    _ths = _thirds(2017 + (_m < 6), _m)
     for _i, _part in enumerate(_PARTS):
-        _CASES.append((f"{_part} {_gen}", _ths[_i][0], _ths[_i][1]))
+        _th = _ths[_i]
+        # ruling 1 (26 November 2026): a part of a month is read as a span; a
+        # part of the anchor's own month that has ended at 2017-06-27 13:04
+        # (početak, sredina of June) is June 2018, the part that holds it
+        # (kraj) stays 2017
+        if _m == 6 and _th[1] <= datetime(2017, 6, 27, 13, 4):
+            _th = _thirds(2018, _m)[_i]
+        _CASES.append((f"{_part} {_gen}", _th[0], _th[1]))
 
 
 @pytest.mark.parametrize("phrase,s,e", _CASES, ids=[c[0] for c in _CASES])

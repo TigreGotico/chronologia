@@ -9,6 +9,9 @@ from datetime import datetime
 
 def test_o_segundo_luns_de_marzo():
     phrase = 'o segundo luns de marzo'
-    assert start(phrase) == ad(datetime(2018, 3, 12))
+    # ruling 1 (26 November 2026): a part of a month takes its month's year;
+    # the anchor here is June 2018 (the module docstring's 2017 is stale), so
+    # March has ended and it is March 2019: second Monday = 11 March 2019
+    assert start(phrase) == ad(datetime(2019, 3, 11))
     assert parse(phrase)[1] == ""
 

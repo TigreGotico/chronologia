@@ -66,8 +66,10 @@ def test_season_relative(text, s, e):
 
 def test_anfang_juni():
     s = span("anfang juni")
-    assert s.start == AstroDate(2017, 6, 1)
-    assert s.end <= AstroDate(2017, 6, 15)
+    # ruling 1 (26 November 2026): a part of a month is read as a span; early
+    # June 2017 has ended at the anchor (2017-06-27), so it is early June 2018
+    assert s.start == AstroDate(2018, 6, 1)
+    assert s.end <= AstroDate(2018, 6, 15)
 
 
 def test_ende_dezember():

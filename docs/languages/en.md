@@ -169,7 +169,7 @@ Each line is an open issue with a strict `xfail` test for this language. The lin
 
 - The nth weekday of a month reads as the whole month. [#1290](https://github.com/TigreGotico/chronologia/issues/1290)
 
-- A range whose end is a movable feast, a weekday date or a clocked date reads a year long. Example (reader `extract_timespan`, lang `en`, anchor 2026-11-22 09:00): `from early march to easter` gives 2026-03-01 00:00 to 2027-03-29 00:00. [#1309](https://github.com/TigreGotico/chronologia/issues/1309)
+- A range whose end is a movable feast, a weekday date or a clocked date reads a year long. Example (reader `extract_timespan`, lang `en`, anchor 2026-04-06 09:00): `from early april to easter` gives 2026-04-01 00:00 to 2027-03-29 00:00. [#1309](https://github.com/TigreGotico/chronologia/issues/1309)
 
 - A list of two days reads as a clock or as the wrong day. Example (reader `extract_timespan`, lang `en`, anchor 2026-11-22 09:00): `on the 14th and 15th of may` gives 2026-12-14 00:00 to 2026-12-15 00:00 and `and 15th of may` left over. [#1311](https://github.com/TigreGotico/chronologia/issues/1311)
 

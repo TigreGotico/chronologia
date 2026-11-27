@@ -1,0 +1,13 @@
+# Words after a lone year marker that open the next clause, so the marker
+# closes the year phrase before them. Subject pronouns. Source: Huddleston
+# and Pullum, The Cambridge Grammar of the English Language (2002), the
+# chapter on personal pronouns. English puts its year marker before the month
+# ("last january") or reads a year phrase ("january last year"), so the list
+# is kept for parity with the other locales.
+i
+we
+you
+he
+she
+they
+it

@@ -20,18 +20,25 @@ def _d(s):
 
 
 # -- Nth week of a month (Monday-aligned) ---------------------------------
+# Ruling 1 (changed on 26 November 2026): a part of a month takes its month's
+# year -- a month that has ended at the anchor (2017-06-27) is 2018, so
+# January, March and May are 2018 (week 1 = the first Monday of the month).
 
 @pytest.mark.parametrize("text,iso", [
-    ("the first week of june", "2017-6-5"),
-    ("the second week of june", "2017-6-12"),
-    ("the third week of june", "2017-6-19"),
+    # ruling 1 (26 November 2026): a part of a month is read as a span; weeks
+    # 1 to 3 of June 2017 (from 5, 12, 19 June) have ended at the anchor, so
+    # they are June 2018 (Jun 1 is a Friday: Mondays 4, 11, 18, 25); week 4
+    # (from 26 June 2017) holds the anchor and stays 2017
+    ("the first week of june", "2018-6-4"),
+    ("the second week of june", "2018-6-11"),
+    ("the third week of june", "2018-6-18"),
     ("the fourth week of june", "2017-6-26"),
     ("the first week of july", "2017-7-3"),
     ("the second week of december", "2017-12-11"),
-    ("the first week of january", "2017-1-2"),
-    ("the third week of march", "2017-3-20"),
+    ("the first week of january", "2018-1-1"),
+    ("the third week of march", "2018-3-19"),
     ("the fourth week of september", "2017-9-25"),
-    ("the second week of may", "2017-5-8"),
+    ("the second week of may", "2018-5-14"),
 ])
 def test_week_of_month(text, iso):
     assert start(text) == _d(iso)
@@ -225,11 +232,15 @@ def test_two_digit_pivot_scoping():
 # -- fuzzy month thirds (early/mid/late <month>) --------------------------
 
 @pytest.mark.parametrize("text,ymd,maxdays", [
-    ("early june", (2017, 6, 1), 11),
-    ("mid june", (2017, 6, 11), 11),
+    # ruling 1 (26 November 2026): a part of a month is read as a span; early
+    # June (1 to 11 June) and mid June (11 to 21 June) 2017 have ended at the
+    # anchor (2017-06-27), so they are June 2018
+    ("early june", (2018, 6, 1), 11),
+    ("mid june", (2018, 6, 11), 11),
     # 31-day months slice into fractional-day thirds; the date still lands
     ("late december", (2017, 12, 21), 11),
-    ("early january", (2017, 1, 1), 11),
+    # ruling 1 (26 November 2026): January has ended at the anchor -> 2018
+    ("early january", (2018, 1, 1), 11),
 ])
 def test_early_june(text, ymd, maxdays):
     s = start(text)
@@ -302,7 +313,9 @@ def test_season_fuzzy_consumes_part():
 def test_season_fuzzy_controls():
     assert start_end("spring 2027") == (AstroDate(2027, 3, 1), AstroDate(2027, 6, 1))
     s = start("early june")
-    assert (s.year, s.month, s.day) == (2017, 6, 1)
+    # ruling 1 (26 November 2026): early June 2017 has ended at the anchor, so
+    # it is early June 2018
+    assert (s.year, s.month, s.day) == (2018, 6, 1)
 
 
 # -- decades: spoken, digit, bare-tens (nearest-past century) -------------

@@ -62,7 +62,9 @@ def test_span_is_one_day():
 
 def test_scoped_ordinal_third_friday_of_march_unchanged():
     # "the third Friday of March" -> nth-weekday-of-month (#288), NOT touched
-    assert start("the third Friday of March") == AstroDate(2017, 3, 17)
+    # ruling 1 (26 November 2026): March has ended at the anchor, so it is
+    # March 2018, whose Fridays are 2, 9, 16, 23, 30
+    assert start("the third Friday of March") == AstroDate(2018, 3, 16)
 
 
 def test_weekday_after_next_unchanged():

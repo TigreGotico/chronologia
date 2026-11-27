@@ -51,11 +51,13 @@ def test_arabic_rabi_not_caught_as_spring():
 
 
 def test_czech_last_friday_of_month():
-    # cs gained marker_ordlast ("poslední"). Last Friday of May 2026 = 2026-05-29
-    # (independent: May 2026 Fridays are 1, 8, 15, 22, 29).
+    # cs gained marker_ordlast ("poslední"). Ruling 1 (26 November 2026): a part
+    # of a month with no year takes its month's year; the anchor is 2026-07-31,
+    # May has ended, so it is May 2027.  Last Friday of May 2027 = 2027-05-28
+    # (independent: May 2027 Fridays are 7, 14, 21, 28).
     r = extract_timespan("poslední pátek v květnu", "cs", _A)
     assert r is not None
-    assert r[0].start_datetime.date().isoformat() == "2026-05-29"
+    assert r[0].start_datetime.date().isoformat() == "2027-05-28"
 
 
 # --- since <weekday> resolves to the most recent PAST occurrence (weekly cycle,

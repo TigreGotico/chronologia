@@ -58,6 +58,10 @@ def test_decades(text, base):
     ("תחילת ינואר", 1), ("אמצע יולי", 7), ("סוף דצמבר", 12),
 ])
 def test_month_fuzzy_within(text, month):
+    # ruling 1 (changed 26 November 2026): a part of a month takes its month's year;
+    # January has ended at the anchor (2017-06-27), so it is January 2018; July and
+    # December are still 2017
+    year = 2017 + (month < 6)
     sp = span(text)
-    assert sp.start.month == month and sp.start.year == 2017
+    assert sp.start.month == month and sp.start.year == year
     assert sp.start < sp.end

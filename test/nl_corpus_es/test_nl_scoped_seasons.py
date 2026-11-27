@@ -7,7 +7,10 @@ import pytest
 from ._corpus import AstroDate, start, start_end, span, nomatch
 
 
-def _week_of_month(n, year=2017, month=6):
+# ruling 1 (26 November 2026): a part of a month is read as a span; weeks 1 to 3
+# of June 2017 ended before the anchor (2017-06-27), so they are the weeks of
+# June 2018 (its Mondays: 4, 11, 18, 25)
+def _week_of_month(n, year=2018, month=6):
     first = date(year, month, 1)
     d = first + timedelta(weeks=n) - timedelta(days=1)
     monday = d - timedelta(days=d.weekday())
@@ -58,6 +61,7 @@ def test_decades(text, base):
 
 # -- fuzzy month edges (early third) ---------------------------------------
 def test_early_month():
+    # ruling 1 (26 November 2026): early June 2017 has ended at the anchor, so it is early June 2018
     s, e = start_end("principios de junio")
-    assert s == AstroDate(2017, 6, 1)
+    assert s == AstroDate(2018, 6, 1)
     assert (e - s).days <= 11

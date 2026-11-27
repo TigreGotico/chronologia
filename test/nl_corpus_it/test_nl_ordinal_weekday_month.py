@@ -2,7 +2,10 @@
 """Italian "Nth <weekday> di <mese>" -- nth-weekday-of-month.
 
 Gold is computed in-file by walking the calendar (``datetime`` only), never by
-the parser. Anchor Tue 2017-06-27, so a bare month binds its 2017 occurrence.
+the parser. Anchor Tue 2017-06-27.  A bare month takes the year the month alone
+takes (ruling 1, changed on 26 November 2026; before, it bound its 2017
+occurrence): marzo has ended at the anchor, so it is March 2018; luglio,
+settembre and novembre stay 2017.
 
 Every ordinal 1st..5th and ``ultimo`` resolves the Nth weekday of the named
 month. ``terzo`` / ``quarto`` / ``quinto`` are spelled like the Italian
@@ -44,7 +47,8 @@ for _art, _wd, _wdname in [("il", 0, "lunedì"), ("il", 1, "martedì"),
         for _ordword, _n in _ORD_OK:
             _art2 = "l'" if _ordword == "ultimo" else "il"
             _txt = f"{_art2} {_ordword} {_wdname} di {_moname}"
-            _gold = _nth_weekday(2017, _m, _wd, _n)
+            # ruling 1: a month that has ended at the anchor is next year's
+            _gold = _nth_weekday(2017 + (_m < 6), _m, _wd, _n)
             _OK_CASES.append((_txt, AstroDate(_gold.year, _gold.month, _gold.day)))
 
 
@@ -54,7 +58,8 @@ def test_ordinal_weekday_ok(text, gold):
 
 
 @pytest.mark.parametrize("text,gold", [
-    ("il terzo lunedì di marzo", AstroDate(2017, 3, 20)),
+    # ruling 1: marzo has ended at the anchor, so it is March 2018
+    ("il terzo lunedì di marzo", AstroDate(2018, 3, 19)),
     ("il quarto giovedì di novembre", AstroDate(2017, 11, 23)),
     ("il terzo martedì di luglio", AstroDate(2017, 7, 18)),
 ])

@@ -9,14 +9,17 @@ named month, NOT the next literal weekday.
 Gold is computed by an independent calendar oracle (:func:`_nth_weekday` /
 :func:`_last_weekday`) that never touches the parser: it walks from the 1st of
 the month to the offset of the requested weekday and steps by weeks.  A bare
-month resolves within the anchor year (2017) whether it is past or future, so
-every expected date lives in 2017 unless an explicit year is given.
+month takes the year the month alone takes (ruling 1, changed on 26 November
+2026: it used to be the anchor year 2017 whether the month was past or future):
+a month that has ended before the anchor, enero to mayo, is 2018, and junio to
+diciembre stay in 2017, unless an explicit year is given.  A weekday of junio that
+has ended at the anchor (before 2017-06-27 13:04) is also 2018.
 
 Anchor: Tuesday 2017-06-27.  ``cuarto``/``quinto`` (4th/5th) are NOT asserted
 here -- the engine does not yet resolve them (see the campaign BUG list).
 """
 import calendar
-from datetime import date, timedelta
+from datetime import date, datetime, timedelta
 
 import pytest
 
@@ -51,14 +54,26 @@ def _last_weekday(year, month, wd):
 
 def _cases():
     out = []
+    # ruling 1: a part of a month takes its month's year (anchor June 2017)
+    def yr(m):
+        return 2017 + (m < 6)
+
+    def pick(m, f, *args):
+        g = f(yr(m), m, *args)
+        if m == 6 and (datetime(g.year, g.month, g.day) + timedelta(days=1)
+                       <= datetime(2017, 6, 27, 13, 4)):
+            # ruling 1 (26 November 2026): a part of a month is read as a span;
+            # a weekday of June 2017 before the anchor has ended, so it is that
+            # weekday of June 2018 (recomputed: weekdays move)
+            g = f(2018, m, *args)
+        return g
     for ow, n in _ORD:
         for wn, wd in _WD:
             for mn, m in _MONTHS:
-                g = _nth_weekday(2017, m, wd, n)
-                out.append((f"el {ow} {wn} de {mn}", g))
+                out.append((f"el {ow} {wn} de {mn}", pick(m, _nth_weekday, wd, n)))
     for wn, wd in _WD:
         for mn, m in _MONTHS:
-            out.append((f"el último {wn} de {mn}", _last_weekday(2017, m, wd)))
+            out.append((f"el último {wn} de {mn}", pick(m, _last_weekday, wd)))
     return out
 
 
