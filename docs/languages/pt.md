@@ -79,6 +79,25 @@ The month names, `sábado`, `domingo` and the weekday abbreviations except `sab`
 3. Do the day-part bands differ between European and Brazilian usage in ways that the shared CLDR row hides, in particular where `tarde` ends?
 4. Are `calendas`, `nonas` and `idos` the forms Portuguese historical writing uses?
 
+## Regional variants
+
+The tags `pt` and `pt-PT` get the same results. The tag `pt-BR` loads the same `pt` locale data, with three differences:
+
+- The week starts on Sunday, from CLDR `weekData/firstDay`. On Wednesday 2 June 2027, `próxima semana` starts on Sunday 6 June for `pt-BR` and on Monday 7 June for `pt-PT`.
+- numtag reads the numbers with its `pt-BR` lexicon, so `bilhão` is 10^9. With `pt-PT`, `bilião` is 10^12. The deep-time scale is short for `pt-BR` and long for `pt-PT`.
+- The spoken writer (`chronologia.spoken`) has the tags `pt` and `pt-PT` only. For `pt-BR` it raises `UnsupportedForm`.
+
+    >>> from datetime import datetime
+    >>> from chronologia import extract_timespan
+    >>> from chronologia import spoken
+    >>> anchor = datetime(2027, 6, 2, 12, 0)
+    >>> extract_timespan("próxima semana", "pt-PT", anchor)[0].start_datetime.date().isoformat()
+    '2027-06-07'
+    >>> extract_timespan("próxima semana", "pt-BR", anchor)[0].start_datetime.date().isoformat()
+    '2027-06-06'
+    >>> spoken.writes("pt-PT"), spoken.writes("pt-BR")
+    (True, False)
+
 ## Checked examples
 
 Each example below runs as a doctest with a fixed anchor, so the output does not depend on the machine. The first one shows which reader handles the numbers of this locale.

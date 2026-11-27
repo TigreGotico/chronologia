@@ -76,6 +76,20 @@ The weekday and month names cite Unicode CLDR 47.
 4. Does `le lundi` deserve a reading at all, given that it is genuinely ambiguous, and if so which of the two readings should win?
 5. Should a Republican-calendar year (`an II`) be readable, and in what surface?
 
+## Regional variants
+
+The tag `fr-FR` gets the same results as `fr`: the same locale data, the lexicon of France in numtag and the long scale. chronologia implements no other difference for `fr-FR`.
+
+The tags `fr-BE` and `fr-CH` read numbers with the Belgian and Swiss lexicons of numtag. Both read `septante` and `nonante`, and `fr-CH` also reads `huitante`. The tags `fr` and `fr-FR` do not read these words.
+
+    >>> from datetime import datetime
+    >>> from chronologia import extract_timespan
+    >>> anchor = datetime(2027, 6, 2, 12, 0)
+    >>> extract_timespan("dans septante jours", "fr-FR", anchor) is None
+    True
+    >>> extract_timespan("dans septante jours", "fr-BE", anchor)[0].start_datetime.date().isoformat()
+    '2027-08-11'
+
 ## Checked examples
 
 Each example below runs as a doctest with a fixed anchor, so the output does not depend on the machine. The first one shows which reader handles the numbers of this locale.

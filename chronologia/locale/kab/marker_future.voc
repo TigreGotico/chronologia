@@ -1,0 +1,10 @@
+# The Kabyle preposition "deg" ("in") before a counted span gives a future
+# offset.  Kabyle sentences on Tatoeba, with the English they are paired with:
+#   8691123 "Ad d-nuɣal deg kraḍ n wayyuren."  -- "We'll be back in three months."
+#   8691127 "Ad d-neqqel deg kraḍ n wayyuren." -- "We'll be back in three months."
+#   8865882 "... ad awḍeɣ ɣer uɣerbaz ɣef uḍar deg 10 n tesdidin."
+#           -- "I can walk to school in ten minutes."
+deg
+# "sya" ("from here, from now") before a counted span, Tatoeba 11266136
+# "Ad teffeɣ tmacint sya tlata n dqayeq." -- "The train is leaving in three minutes."
+sya
