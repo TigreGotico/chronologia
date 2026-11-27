@@ -91,7 +91,7 @@ def explain(text: str, spec: LangSpec, anchor: datetime) -> ExplainTrace:
     # context rules out (a bare Scandinavian "jul" as the month) never wins
     # the trace while it loses the real parse.  Imported here because
     # timespan imports this module.
-    from chronologia.extract.timespan import _candidate_veto
+    from chronologia.extract.vetoes import _candidate_veto
     vetoed = {id(c) for c in candidates
               if _candidate_veto(tokens, c.match, spec)}
     selected = matcher._select([c for c in candidates
