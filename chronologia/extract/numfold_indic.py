@@ -392,6 +392,7 @@ def _surfaces(name: str) -> frozenset:
 
 _PAST_VERBS = _surfaces("marker_tense_past.voc")
 _FUTURE_VERBS = _surfaces("marker_tense_future.voc")
+_FUTURE_SUFFIXES = tuple(_surfaces("marker_tense_future_suffix.voc"))
 #: the named_day surfaces the pass writes for कल; one line in each file.
 _YESTERDAY = next(iter(_surfaces("named_day_-1.voc")))
 _TOMORROW = next(iter(_surfaces("named_day_1.voc")))
@@ -424,7 +425,10 @@ def _kal_direction(tokens: Tuple[Token, ...]) -> Tuple[Token, ...]:
         if t.text != "कल" or t.trailing_hyphen or _is_ease_noun(tokens, i):
             continue
         after = {tok.text for tok in tokens[i + 1:]}
-        past, future = bool(after & _PAST_VERBS), bool(after & _FUTURE_VERBS)
+        past = bool(after & _PAST_VERBS)
+        future = bool(after & _FUTURE_VERBS) or any(
+            w.endswith(s) and len(w) > len(s)
+            for w in after for s in _FUTURE_SUFFIXES)
         if past != future:
             out[i] = replace(t, text=_YESTERDAY if past else _TOMORROW)
             changed = True

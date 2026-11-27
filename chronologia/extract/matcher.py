@@ -1254,6 +1254,12 @@ class ConstructionMatcher:
                             and not self._licenses_daypart(tokens, start, end)):
                         continue
                     if (name == "daypart_ref" and "DAYPART" in slots
+                            and slots["DAYPART"].text in self.spec.connectors.get(
+                                "daypart_after_day", frozenset())
+                            and (start == 0 or tokens[start - 1].text
+                                 not in self.spec.named_days)):
+                        continue
+                    if (name == "daypart_ref" and "DAYPART" in slots
                             and "REL_MARKER" not in slots
                             and self.spec.conventions.daypart_proper_noun_guard
                             and start > 0
