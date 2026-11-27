@@ -34,6 +34,7 @@ from chronologia.extract.impossible import (bad_day, decline, ordinal_cap,
                                             reports_impossible)
 from chronologia.extract.numlayer import NUMTAG_LANGS
 from chronologia.extract.pipeline import fold_tokens, pretokens, require_text
+from chronologia.extract import reading
 from chronologia.extract.reading import read
 from chronologia.extract.resolver import _nth_weekday_of_month as _month_weekday
 from chronologia.extract.resolver import scoped_ordinal_n, scoped_ordinal_split
@@ -44,6 +45,7 @@ from chronologia.extract.timespan import (_RANGE_BETWEEN, _RANGE_FROM,
                                           _exclusion_vetoes, _extract_range,
                                           _resolve_scale_mode,
                                           _extract_directional_range,
+                                          _is_whole_duration, _point_result,
                                           _since_marker_before,
                                           _since_month, _timespan_engine,
                                           _WEEKDAY_LABELABLE_DATES,
@@ -1865,10 +1867,22 @@ def _ground_until(rec, text, ctx, lang, anchor):
         if k and low[:k] == words:
             stripped = " ".join(text.split()[k:])
             break
-    got = extract_timespan(stripped, lang, anchor=anchor, _endpoint=True)
-    if got is None:
+    # the until word is the cue that keeps a homograph date word ("bis August")
+    readings = reading.read(stripped, lang, anchor, first=True, endpoint=True)
+    if not readings:
         return None
-    return _replace(rec, until=got[0].start)
+    got = readings[0]
+    if got.kind == "span":
+        span, rem = got.span, got.remainder
+    else:
+        res = _point_result(stripped, got.tokens, got.span, got.claimed,
+                            got.match, _timespan_engine(lang), anchor)
+        if res is None:
+            return None
+        span, rem = res
+    if rem and _is_whole_duration(stripped, lang):
+        return None
+    return _replace(rec, until=span.start)
 
 
 def _apply_bounds(rec, consumed, ctx, lang, anchor, range_words):

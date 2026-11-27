@@ -2841,8 +2841,6 @@ def extract_timespan(
         jurisdiction: Optional[str] = None,
         enable: Tuple[str, ...] = (),
         scale: Optional[str] = None,
-        *,
-        _endpoint: bool = False,
 ) -> Optional[DateSpanResult]:
     """Extract a :class:`~chronologia.DateSpan` from natural-language ``text``.
 
@@ -2901,8 +2899,7 @@ def extract_timespan(
     anchor = anchor or datetime.now()
     if isinstance(anchor, datetime):
         anchor = anchor.replace(tzinfo=None)
-    readings = read(text, lang, anchor, jurisdiction, enable, scale, first=True,
-                    endpoint=_endpoint)
+    readings = read(text, lang, anchor, jurisdiction, enable, scale, first=True)
     res = None
     if readings:
         got = readings[0]
