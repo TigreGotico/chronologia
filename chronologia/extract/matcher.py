@@ -758,6 +758,24 @@ class ConstructionMatcher:
                             in self.spec.connectors.get(
                                 "this_not_weekday", frozenset())):
                         continue
+                    # A weekday joined to a market noun by a link word
+                    # ("ssuq l letnayen", the Monday market) names the market,
+                    # not a date.  Without the link the market is a place
+                    # ("ɣer ssuq ssebt-agi", to the market this Saturday).
+                    # Dictionary spelling writes the link into the weekday
+                    # token ("ssuq el_lḥedd").  The market nouns and the link
+                    # words are locale facts (``marker_weekday_market.voc``
+                    # and ``marker_weekday_link.voc``).
+                    if name == "weekday_ref" and start > 0:
+                        _markets = self.spec.connectors.get(
+                            "weekday_market", frozenset())
+                        if ((start > 1 and tokens[start - 2].text in _markets
+                             and tokens[start - 1].text
+                             in self.spec.connectors.get(
+                                 "weekday_link", frozenset()))
+                                or (tokens[start - 1].text in _markets
+                                    and "_" in tokens[start].text)):
+                            continue
                     # A marker contracted with its preposition ("deste",
                     # "desta") always comes before its noun, so a match never
                     # ends on it: "a semana deste natal" is the week of

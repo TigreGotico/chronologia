@@ -64,6 +64,17 @@
       "orders": [
         "article? WEEKEND"
       ]
+    },
+    "weekday_ref": {
+      "orders": [
+        "weekday_lead weekday_link? WEEKDAYFULL REL_MARKER",
+        "weekday_lead weekday_link? WEEKDAYFULL"
+      ]
+    },
+    "weekday_of_week": {
+      "orders": [
+        "weekday_lead weekday_link? WEEKDAYFULL of? article? UNIT REL_MARKER"
+      ]
     }
   },
   "conventions": {
