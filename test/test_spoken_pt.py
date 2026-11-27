@@ -99,7 +99,7 @@ def test_bad_times(clock, options):
     lambda: spoken_date("pt-PT", day=1, month=5, case="genitive"),
     lambda: spoken_year("pt-PT", 2024, ordinal=True),
     lambda: spoken_date("hi", day=1, month=5),
-    lambda: spoken_date("pt-BR", day=1, month=5),
+    lambda: spoken_date("pt-AO", day=1, month=5),
 ])
 def test_unsupported(call):
     with pytest.raises(UnsupportedForm):
@@ -119,7 +119,7 @@ def test_year_range(year):
 
 @pytest.mark.parametrize("tag,expected", [
     ("pt-PT", True), ("pt", True), ("pt_PT", True), ("pt-PT-x-lisbon", True),
-    ("pt-BR", False), ("en-US", False), ("it", False)])
+    ("pt-BR", True), ("pt-AO", False), ("en-US", False), ("it", False)])
 def test_writes(tag, expected):
     assert writes(tag) is expected
 
