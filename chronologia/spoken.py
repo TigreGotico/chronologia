@@ -102,8 +102,9 @@ def _check_year(year: int):
 
 
 def _check_date(day, month, year, weekday):
-    if day is None and month is None and year is None:
-        raise ValueError("a date needs a day, a month or a year")
+    alone = day is None and month is None and year is None
+    if alone and weekday is None:
+        raise ValueError("a date needs a day, a month, a year or a weekday")
     if year is not None:
         _check_year(year)
     if month is not None and not 1 <= month <= 12:
@@ -116,7 +117,7 @@ def _check_date(day, month, year, weekday):
         if not 1 <= day <= last:
             raise ValueError(f"day {day} does not exist in month {month}")
     if weekday is not None:
-        if day is None:
+        if day is None and not alone:
             raise ValueError("a weekday needs a day")
         if not 0 <= weekday <= 6:
             raise ValueError(f"weekday {weekday} is outside 0 to 6")
@@ -137,7 +138,8 @@ def spoken_date(tag: str, *, day: Optional[int] = None,
                 declension: Optional[str] = None) -> str:
     """The spoken form of a full or partial date.
 
-    A day alone gives the day reading, a month alone the month name.
+    A day alone gives the day reading, a month alone the month name and a
+    weekday alone the weekday name.
     ``weekday`` is 0 for Monday, as ``datetime.weekday()``.
     """
     rules, base = _rules(tag, "date")
@@ -154,7 +156,7 @@ def spoken_date(tag: str, *, day: Optional[int] = None,
         words.append(_number(year, base, rules["year_gender"]))
     date = f" {rules['date_joiner']} ".join(words)
     if weekday is not None:
-        date = f"{rules['weekdays'][weekday]} {date}"
+        date = f"{rules['weekdays'][weekday]} {date}".rstrip()
     return date
 
 
