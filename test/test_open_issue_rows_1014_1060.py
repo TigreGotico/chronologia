@@ -47,6 +47,7 @@ def _matches(expected, value):
 
 # Rows that read right on dev: plain tests that keep the fix.
 FIXED_SPANS = {
+    "الساعة التاسعة إلا ربعاً",
     "یک زنگ ساعت برای هفت صبح بگذار",
     "یک هشدار جدید برای ساعت هشت شب تنظیم کن",
     "tedd át a megbeszélést három órára",
@@ -54,6 +55,8 @@ FIXED_SPANS = {
     "väck mig i morgon bitti",
     "vilka larm har jag till i morgon",
     "duas horas e três quartos",
+    "léeme las alarmas de mañana",
+    "amósame as alarmas de mañá",
 }
 FIXED_LENGTHS = {
     "sæt en timer",

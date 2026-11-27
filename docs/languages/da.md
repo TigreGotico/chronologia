@@ -28,9 +28,9 @@ To read a phrase, call `extract_timespan` with the phrase, the locale code and a
 
 **Weekdays and months** ship wide and abbreviated. The vocabulary cites Unicode CLDR 47 for most of them.
 
-**The named days** come from Unicode CLDR 47, `cldr-dates-full/main/da/dateFields.json`, whose five day relative-type entries are `i forgårs`, `i går`, `i dag`, `i morgen` and `i overmorgen`. Each ships beside a solid-spelled twin (`iforgårs`, `igår`, `idag`, `imorgen`, `iovermorgen`) and the bare `går`, `morgen`, `forgårs` and `overmorgen` ship as well. Those extra forms are not in the cited file.
+**The named days** come from Unicode CLDR 47, `cldr-dates-full/main/da/dateFields.json`, whose five day relative-type entries are `i forgårs`, `i går`, `i dag`, `i morgen` and `i overmorgen`. Each ships beside a solid-spelled twin (`iforgårs`, `igår`, `idag`, `imorgen`, `iovermorgen`) and the bare `går`, `forgårs` and `overmorgen` ship as well. Those extra forms are not in the cited file.
 
-The bare `morgen` is the one that costs something. It is registered as tomorrow, which is what CLDR's `i morgen` means once the `i` is dropped. But `morgen` on its own is also the ordinary Danish word for the morning. A bare `morgen` therefore resolves to tomorrow's whole day.
+The bare `morgen` is not a named day. en.wiktionary gives Danish `morgen` only as the noun "morning" and `i morgen` as the adverb "tomorrow". A bare `morgen` is the morning band, and `på mandag morgen` is Monday from 05:00 to 10:00.
 
 **The date line** is little-endian with a dotted ordinal day: `den 3. oktober 1990` resolves, so does the bare `3. oktober 1990`. `ordinal_dot` is on and Danish writes the dotted civil date. `15.06.2020` reads, as does the ISO `2020-06-15`.
 
@@ -52,9 +52,11 @@ The hour word `to` is unusable there even with the at-marker. `klokken to om eft
 
 The literal hour twelve reads wrong on the morning side. `klokken tolv om formiddagen` is midnight rather than noon. The fractional forms inherit it one hour lower still: `halv tolv om formiddagen` is 23:30 and `kvart i tolv om formiddagen` 23:45, where a Danish speaker means 11:30 and 11:45. The meridiem attaches to the hour *as spoken*, twelve is rewritten to zero on the AM side. Only then does the fraction roll the hour back. None of these leave a remainder.
 
-**Day parts** take their band boundaries from the Unicode CLDR 47 day-period chart, whose Danish rows read `nat` from 00:00, `morgen` from 05:00, `formiddag` from 10:00, `eftermiddag` from 12:00 and `aften` from 18:00. All five ship as vocabulary: four in both the bare and the definite form (`nat`/`natten`, `formiddag`/`formiddagen`, `eftermiddag`/`eftermiddagen`, `aften`/`aftenen`). `morgen` ships definite-only (see below). The `formiddag` is the late morning English cannot name in one word.
+**Day parts** take their band boundaries from the Unicode CLDR 47 day-period chart, whose Danish rows read `nat` from 00:00, `morgen` from 05:00, `formiddag` from 10:00, `eftermiddag` from 12:00 and `aften` from 18:00. All five ship as vocabulary in both the bare and the definite form (`nat`/`natten`, `morgen`/`morgenen`, `formiddag`/`formiddagen`, `eftermiddag`/`eftermiddagen`, `aften`/`aftenen`). The `formiddag` is the late morning English cannot name in one word.
 
-The `morgen` band is transcribed in `chronologia/dayparts.py`. It ships only under its definite surface `morgenen`, and the bare `morgen` that the sibling day parts (`aften`/`aftenen`, `nat`/`natten`) ship is left out. Bare `morgen` stays reserved for the relative-day "tomorrow" reading. `morgenen` never appears in that idiom (`i morgen` is always the bare form). `morgenen` alone reads as the 05:00 to 10:00 band, and `klokken ni om morgenen` is 09:00.
+The `morgen` band is transcribed in `chronologia/dayparts.py`. `klokken ni om morgenen` is 09:00.
+
+**An indefinite day part names no date.** The article `en` before a day part, with at most one word between, makes the phrase indefinite: `en kold morgen i februar` and `en aften i maj` return nothing. A spoken hour after `klokken` is not an article: `klokken et om natten` is 01:00.
 
 **`en timer` is the device.** The word `timer` is the plural of `time` (hour) and also the loan noun for a timer. So `sæt en timer` is no length of one hour. The function `extract_duration` gives `None` for it. The file `marker_article_noun.voc` lists `timer` with the Wiktionary entry `timer` as its source. The phrase `lav en timer på ti minutter` is a length of ten minutes, with `lav en timer på` left over.
 
@@ -74,7 +76,7 @@ A bare toward-hour phrase for one o'clock names the half hour before one, 00:30 
 
 ## Weaker provenance
 
-The named days carry a precise CLDR locator. But the solid spellings and the bare `går`/`morgen`/`forgårs`/`overmorgen` that ship beside them do not appear in that file and rest on nothing recorded.
+The named days carry a precise CLDR locator. But the solid spellings and the bare `går`/`forgårs`/`overmorgen` that ship beside them do not appear in that file and rest on nothing recorded.
 
 Den Danske Ordbog is the source named in the day-part and `sidste` vocabulary headers. `ordnet.dk` cannot be read by an automated client, so those citations are unchecked. The Danish Wiktionary entries agree with them: `formiddag` is glossed "Tidspunkt før middag, om morgenen", `eftermiddag` "Tidspunkt ca. mellem kl. 12 og 18", `middag` the point around twelve when the sun stands highest, and `sidste` "Modsat første". The day-part *boundaries* do not depend on the dictionary at all. They are the CLDR chart.
 
@@ -125,6 +127,10 @@ Each example below runs as a doctest with a fixed anchor, so the output does not
     ('2017-06-27T12:45:00', '')
     >>> anchor = datetime(2017, 6, 27, 13, 4)
     >>> extract_timespan("80'erne", "da", anchor) is None
+    True
+    >>> extract_timespan('en kold morgen i februar', "da", anchor) is None
+    True
+    >>> extract_timespan('en aften i maj', "da", anchor) is None
     True
     >>> extract_timespan('firserne', "da", anchor) is None
     True

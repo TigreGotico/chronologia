@@ -85,7 +85,7 @@ The tags `pt` and `pt-PT` get the same results. The tag `pt-BR` loads the same `
 
 - The week starts on Sunday, from CLDR `weekData/firstDay`. On Wednesday 2 June 2027, `próxima semana` starts on Sunday 6 June for `pt-BR` and on Monday 7 June for `pt-PT`.
 - numtag reads the numbers with its `pt-BR` lexicon, so `bilhão` is 10^9. With `pt-PT`, `bilião` is 10^12. The deep-time scale is short for `pt-BR` and long for `pt-PT`.
-- The spoken writer (`chronologia.spoken`) has the tags `pt` and `pt-PT` only. For `pt-BR` it raises `UnsupportedForm`.
+- The spoken writer (`chronologia.spoken`) reads the `pt-BR` block of `locale/pt/spoken.json`. numtag gives the pt-BR number words (`dezesseis`), zero takes the singular (`zero hora`), and 12:30 in the phrase style is `meio-dia e meio`. The phrase style has no pt-BR reading for the quarter hours, the minutes before the hour and `em ponto`.
 
     >>> from datetime import datetime
     >>> from chronologia import extract_timespan
@@ -96,7 +96,9 @@ The tags `pt` and `pt-PT` get the same results. The tag `pt-BR` loads the same `
     >>> extract_timespan("próxima semana", "pt-BR", anchor)[0].start_datetime.date().isoformat()
     '2027-06-06'
     >>> spoken.writes("pt-PT"), spoken.writes("pt-BR")
-    (True, False)
+    (True, True)
+    >>> spoken.spoken_date("pt-BR", day=16, month=7)
+    'dezesseis de julho'
 
 ## Checked examples
 

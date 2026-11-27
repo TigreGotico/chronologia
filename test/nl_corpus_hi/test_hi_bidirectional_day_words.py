@@ -2,8 +2,8 @@
 
 Hindi has one word for yesterday and tomorrow (कल) and one for the day before
 yesterday and the day after tomorrow (परसों).  Only the verb's tense separates
-the two readings, and this engine parses noun phrases, not verbs, so there is
-nothing in a bare कल that could pick a direction.
+the two readings, so there is nothing in a bare कल that could pick a
+direction.  A कल with a verb after it is pinned in test_hi_native_answers.
 
 Two independent primary sources say so.  CLDR 47 maps locale hi's
 relative-type--1 AND relative-type-1 to the same string कल, and its -2 and +2

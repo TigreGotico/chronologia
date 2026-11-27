@@ -83,9 +83,7 @@ _LIMITATIONS = [
     pytest.param(
         'jesen života',
         marks=pytest.mark.xfail(raises=AssertionError, reason='season word in figurative use binds as the season; downstream concern', strict=True)),
-    pytest.param(
-        'božić je došao rano',
-        marks=pytest.mark.xfail(raises=AssertionError, reason='temporal token inside a fixed idiom binds literally; downstream concern', strict=True)),
+    'božić je došao rano',
 ]
 
 

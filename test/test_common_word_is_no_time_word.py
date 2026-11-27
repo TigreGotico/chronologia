@@ -21,7 +21,6 @@ ANCHOR = datetime(2017, 6, 27, 13, 4, tzinfo=LISBON)
 MAY_ANCHOR = datetime(2026, 10, 17, 12, 0, tzinfo=LISBON)
 
 NO_DATE = [
-    ("da", "Hvornår går det løs med at regne?", ANCHOR),
     ("oc", "Quants quilomètres per ora fa lo vent?", ANCHOR),
     ("en", "the last third may be the hardest", datetime(2026, 11, 22, 9, 0)),
     ("en", "it may be late", MAY_ANCHOR),
@@ -30,6 +29,10 @@ NO_DATE = [
     ("nb", "hei hvordan går det", ANCHOR),
     ("nn", "hei korleis går det", ANCHOR),
 ]
+
+
+def test_da_gaar_without_i_is_the_verb():
+    assert extract_timespan("Hvornår går det løs med at regne?", "da", ANCHOR) is None
 
 
 @pytest.mark.xfail(raises=AssertionError, strict=True, reason=ISSUE)
@@ -45,7 +48,6 @@ def test_en_fall_before_friday_night_leaves_friday_night_the_date():
     assert found.span.start.datetime().date() == datetime(2017, 6, 30).date()
 
 
-@pytest.mark.xfail(raises=AssertionError, strict=True, reason=ISSUE)
 def test_da_her_til_morgen_is_this_morning():
     found = extract_timespan(
         "Hvad tid gryr dagen her til morgen i dag?", "da", ANCHOR)

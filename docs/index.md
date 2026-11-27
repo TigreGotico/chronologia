@@ -82,6 +82,7 @@ Three terms recur in every guide. A **span** is a stretch of time with a start a
 | [languages/az.md](languages/az.md) | The sources, the weaker evidence and the refusals of the Azerbaijani (`az`) locale. |
 | [languages/eu.md](languages/eu.md) | The sources, the weaker evidence and the refusals of the Basque (`eu`) locale. |
 | [languages/be.md](languages/be.md) | The sources, the weaker evidence and the refusals of the Belarusian (`be`) locale. |
+| [languages/bn.md](languages/bn.md) | The sources, the weaker evidence and the refusals of the Bengali (`bn`) locale. |
 | [languages/bg.md](languages/bg.md) | The sources, the weaker evidence and the refusals of the Bulgarian (`bg`) locale. |
 | [languages/ca.md](languages/ca.md) | The sources, the weaker evidence and the refusals of the Catalan (`ca`) locale. |
 | [languages/hr.md](languages/hr.md) | The sources, the weaker evidence and the refusals of the Croatian (`hr`) locale. |

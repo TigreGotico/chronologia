@@ -135,7 +135,7 @@ Sixty-one languages load. They are not all tested to the same depth, and three b
 **Broadly covered:** Italian, Polish, Czech, Slovak, Slovenian, Croatian, Bulgarian, Ukrainian, Swedish, Danish, Norwegian (Bokmål and Nynorsk), Finnish,
 Estonian, Hungarian, Greek, Turkish, Azerbaijani, Persian, Indonesian, Malay, Catalan, Galician, Romanian, Basque and Frisian. Each has its own test corpus. The tests run again whenever a shared mechanism changes, so the common constructions work. The idiomatic long tail is thinner, and bug reports help most there.
 
-**Early:** Albanian, Aragonese, Armenian, Asturian, Belarusian, Esperanto, Filipino, Georgian, Hausa, Hindi, Icelandic, Irish, Kabyle,
+**Early:** Albanian, Aragonese, Armenian, Asturian, Belarusian, Bengali, Esperanto, Filipino, Georgian, Hausa, Hindi, Icelandic, Irish, Kabyle,
 Korean, Latvian, Lithuanian, Macedonian, Maltese, Mirandese, Occitan, Serbian, Swahili, Tamil, Thai, Vietnamese and Welsh. The vocabulary is in place and the engine is shared, so a lot already works. No native speaker has read these languages end to end. Several omit constructions that their source grammars do not use in the same way:
 
 - Welsh has no seasons and no millennium unit.

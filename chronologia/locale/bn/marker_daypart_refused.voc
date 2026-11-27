@@ -1,0 +1,12 @@
+# এক "one, a" before a day part makes the phrase indefinite: H.-R. Thompson,
+# Bengali (LOALL 18, John Benjamins 2012), "akta sundor sokal a beautiful
+# morning"; the classifier forms একটা and একটি are the same numeral.
+এক
+একটা
+একটি
+# কাল, কালকে and পরশু name a day in either direction: Thompson, "kal tomorrow,
+# yesterday, kalke tomorrow, yesterday".  Before a day part they would move
+# it to an unknown day, so the phrase is refused (issue #1484).
+কাল
+কালকে
+পরশু

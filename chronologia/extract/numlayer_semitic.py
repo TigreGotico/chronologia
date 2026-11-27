@@ -102,6 +102,23 @@ _AR_FEM_HOUR = {
 _AR_FEM_HOUR_TEEN = {"الحادية": 11, "الثانية": 12}
 
 
+# A clock fraction may stand between the hour and the am/pm particle:
+# "الرابعة والربع مساء", "التاسعة إلا ربعا مساء".
+_AR_CLOCK_FRACTION = frozenset({"النصف", "نصف", "الربع", "ربع", "ربعا"})
+_AR_CLOCK_TO = frozenset({"إلا", "الا"})
+
+
+def _ar_clock_follows(tokens, j):
+    """True when an am/pm particle follows at ``j``, alone or after a clock
+    fraction ("والربع مساء", "إلا ربعا مساء")."""
+    words = [t.text for t in tokens[j:j + 3]] + ["", "", ""]
+    if words[0][:1] == "و" and words[0][1:] in _AR_CLOCK_FRACTION:
+        return words[1] in _AR_CLOCK_MERIDIEM
+    if words[0] in _AR_CLOCK_TO and words[1] in _AR_CLOCK_FRACTION:
+        return words[2] in _AR_CLOCK_MERIDIEM
+    return words[0] in _AR_CLOCK_MERIDIEM
+
+
 def _ar_clock_token(hour, first, last):
     text = "%d:00" % hour
     return Token(text=text, raw=text, index=first.index,
@@ -118,18 +135,14 @@ def _ar_clock_hour_fold(tokens):
         # two-word teen hour: الحادية عشرة (11) / الثانية عشرة (12)
         if (not t.is_number and t.text in _AR_FEM_HOUR_TEEN and i + 1 < n
                 and tokens[i + 1].text == "عشرة"):
-            after = tokens[i + 2] if i + 2 < n else None
-            if prev_at or (after is not None
-                           and after.text in _AR_CLOCK_MERIDIEM):
+            if prev_at or _ar_clock_follows(tokens, i + 2):
                 out.append(_ar_clock_token(_AR_FEM_HOUR_TEEN[t.text],
                                            t, tokens[i + 1]))
                 i, changed = i + 2, True
                 continue
         # single-word hour الواحدة..العاشرة
         if not t.is_number and t.text in _AR_FEM_HOUR:
-            after = tokens[i + 1] if i + 1 < n else None
-            if prev_at or (after is not None
-                           and after.text in _AR_CLOCK_MERIDIEM):
+            if prev_at or _ar_clock_follows(tokens, i + 1):
                 out.append(_ar_clock_token(_AR_FEM_HOUR[t.text], t, t))
                 i, changed = i + 1, True
                 continue
@@ -142,9 +155,6 @@ _CLOCK_TEXT = _re.compile(r"\d{1,2}:\d{2}(?::\d{2})?$")
 # Clock-fraction surfaces (``clock_fraction_{30,15}.voc``) without the article
 # or the "و" proclitic.  "الساعة الثالثة والنصف" tokenises as [CLOCK][والنصف], a
 # fused token that is neither CLOCKDIR nor FRACTION.
-_AR_CLOCK_FRACTION = frozenset({"النصف", "نصف", "الربع", "ربع"})
-
-
 def _ar_clock_fraction_split(tokens):
     """Split a "و"-glued clock fraction ("والنصف" -> "و" + "النصف") that follows
     a folded CLOCK token, leaving every other و-glued word ("وعشرون") alone."""
