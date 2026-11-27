@@ -1,0 +1,62 @@
+[
+ {
+  "label": "pt-PT",
+  "n": 1488,
+  "chronologia": 0.784,
+  "odp": 0.413
+ },
+ {
+  "label": "pt-BR",
+  "n": 1506,
+  "chronologia": 0.786,
+  "odp": 0.424
+ },
+ {
+  "label": "es",
+  "n": 1506,
+  "chronologia": 0.803,
+  "odp": 0.468
+ },
+ {
+  "label": "fr-FR · fr",
+  "n": 1496,
+  "chronologia": 0.84,
+  "odp": 0.729
+ },
+ {
+  "label": "it-IT · it",
+  "n": 1498,
+  "chronologia": 0.754,
+  "odp": 0.407
+ },
+ {
+  "label": "de-DE · de",
+  "n": 1492,
+  "chronologia": 0.792,
+  "odp": 0.532
+ },
+ {
+  "label": "nl-NL · nl",
+  "n": 1441,
+  "chronologia": 0.86,
+  "odp": 0.348
+ },
+ {
+  "label": "da-DK · da",
+  "n": 1491,
+  "chronologia": 0.669,
+  "odp": 0.463
+ },
+ {
+  "label": "kab",
+  "n": 1328,
+  "chronologia": 0.503,
+  "odp": 0.312
+ },
+ {
+  "label": "hi-IN · hi",
+  "n": 1429,
+  "chronologia": 0.638,
+  "odp": 0.287
+ }
+]

@@ -4,7 +4,7 @@ The table comes from two sources: the locale data in chronologia/locale/ and
 the test results in docs/languages/support.json.
 
     python tools/language_support.py measure   # run the test rows, write support.json
-    python tools/language_support.py write     # write the table into the index
+    python tools/language_support.py write     # write the ready flags and the table
     python tools/language_support.py check     # exit 1 when the index differs
 """
 import glob
@@ -20,6 +20,7 @@ ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 LOCALE = os.path.join(ROOT, "chronologia", "locale")
 RESULTS = os.path.join(ROOT, "docs", "languages", "support.json")
 INDEX = os.path.join(ROOT, "docs", "languages", "index.md")
+BENCH = os.path.join(ROOT, "docs", "benchmarks", "odp_vs_chronologia.json")
 sys.path.insert(0, ROOT)
 START = "<!-- support-table:start -->"
 END = "<!-- support-table:end -->"
@@ -46,6 +47,9 @@ LEADERS = [
     ("kab", "Kabyle"), ("hi-IN", "Hindi (India)"),
     ("bn-IN", "Bengali (India)"), ("mwr", "Marwari"),
 ]
+#: leader tag -> the bench locale that measures it
+BENCH_TAG = {"fr-FR": "fr", "it-IT": "it", "de-DE": "de", "nl-NL": "nl",
+             "da-DK": "da", "hi-IN": "hi"}
 NO_LOCALE_ISSUE = "https://github.com/TigreGotico/chronologia/issues/1484"
 
 NAMES = {
@@ -145,10 +149,30 @@ def measure():
             counts = [outcome.get(os.path.basename(p), (0, 0)) for p in ps]
             results[code][feature] = [sum(c[0] for c in counts), sum(c[1] for c in counts)]
         print(code, results[code], file=sys.stderr)
+    write_ready(results)
+    save(results)
+    print(f"{len(results)} locales in, {len(results)} locales written to {RESULTS}")
+
+
+def ready_flags(code):
+    """{bench tag: ready} for the bench locales of one data code.
+
+    A tag is ready when chronologia is correct at least as often as
+    ovos-date-parser 0.29 on every bench class."""
+    bench = json.load(open(BENCH, encoding="utf-8"))["locales"]
+    return {tag: v["ready"] for tag, v in bench.items()
+            if tag == code or tag.startswith(code + "-")}
+
+
+def write_ready(results):
+    for code in results:
+        results[code]["ready"] = ready_flags(code)
+
+
+def save(results):
     with open(RESULTS, "w", encoding="utf-8") as f:
         json.dump(results, f, indent=1, sort_keys=True)
         f.write("\n")
-    print(f"{len(results)} locales in, {len(results)} locales written to {RESULTS}")
 
 
 def cell(code, feature, tag, results):
@@ -168,20 +192,25 @@ def cell(code, feature, tag, results):
 def row(name, tag, code, results):
     link = f"[{name}]({code}.md)"
     cells = [cell(code, f, tag, results) for f in COLUMNS]
-    return f"| {link} | {tag} | {code} | {number_reader(code, tag)} | " + " | ".join(cells) + " |"
+    ready = results[code]["ready"].get(BENCH_TAG.get(tag, tag))
+    ready = "not measured" if ready is None else "yes" if ready else "no"
+    return (f"| {link} | {tag} | {code} | {number_reader(code, tag)} | "
+            + " | ".join(cells) + f" | {ready} |")
 
 
 def table():
     results = json.load(open(RESULTS, encoding="utf-8"))
     codes = locales()
-    head = "| Language | Tag | Data | Numbers | " + " | ".join(c.capitalize() for c in COLUMNS) + " |"
-    lines = ["Cells: status, own test rows passed / own test rows.", "", head, "|" + ":---|" * (4 + len(COLUMNS))]
+    head = ("| Language | Tag | Data | Numbers | "
+            + " | ".join(c.capitalize() for c in COLUMNS) + " | Ready |")
+    lines = ["Cells: status, own test rows passed / own test rows.", "", head,
+             "|" + ":---|" * (5 + len(COLUMNS))]
     for tag, name in LEADERS:
         code = tag.split("-")[0]
         if code in codes:
             lines.append(row(name, tag, code, results))
         else:
-            gap = " | ".join(["no"] * len(COLUMNS))
+            gap = " | ".join(["no"] * len(COLUMNS) + ["no"])
             lines.append(f"| {name} | {tag} | none | not supported, see "
                          f"[#1484]({NO_LOCALE_ISSUE}) | {gap} |")
     leader_codes = {t.split("-")[0] for t, _ in LEADERS}
@@ -202,6 +231,9 @@ if __name__ == "__main__":
     if command == "measure":
         measure()
     elif command == "write":
+        results = json.load(open(RESULTS, encoding="utf-8"))
+        write_ready(results)
+        save(results)
         text = rendered_index()
         with open(INDEX, "w", encoding="utf-8") as f:
             f.write(text)

@@ -7,6 +7,7 @@ ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 sys.path.insert(0, os.path.join(ROOT, "tools"))
 
 import language_support  # noqa: E402
+import plot_benchmarks  # noqa: E402
 
 
 def test_index_matches_the_generated_table():
@@ -22,7 +23,15 @@ def test_results_cover_every_locale_and_feature():
         results = json.load(f)
     assert sorted(results) == language_support.locales()
     for code, features in results.items():
-        assert sorted(features) == sorted(language_support.COLUMNS), code
+        assert sorted(features) == sorted(language_support.COLUMNS + ["ready"]), code
+
+
+def test_ready_flags_match_the_benchmark():
+    with open(language_support.RESULTS, encoding="utf-8") as f:
+        results = json.load(f)
+    for code in language_support.locales():
+        assert results[code]["ready"] == language_support.ready_flags(code), (
+            code, "run python tools/language_support.py write")
 
 
 def test_results_count_the_rows_of_the_mapped_files():
@@ -33,3 +42,20 @@ def test_results_count_the_rows_of_the_mapped_files():
         files = language_support.test_files(code)
         for feature, paths in files.items():
             assert (results[code][feature][1] == 0) == (not paths), (code, feature)
+
+
+def test_benchmark_table_matches_the_result_file():
+    with open(plot_benchmarks.OUT + ".json", encoding="utf-8") as f:
+        data = json.load(f)
+    with open(plot_benchmarks.PAGE, encoding="utf-8") as f:
+        assert plot_benchmarks.rendered_page(data) == f.read(), (
+            "docs/benchmarks.md differs from the result file; run tools/plot_benchmarks.py")
+
+
+def test_benchmark_section_is_outside_html_comments():
+    import re
+    with open(plot_benchmarks.PAGE, encoding="utf-8") as f:
+        visible = re.sub(r"<!--(?!\s*odp-table:).*?-->", "", f.read(), flags=re.S)
+    assert "\n## Against ovos-date-parser\n" in visible
+    assert visible.count(plot_benchmarks.START) == 1
+    assert visible.count(plot_benchmarks.END) == 1
