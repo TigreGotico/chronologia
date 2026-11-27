@@ -58,14 +58,12 @@ def test_confusable_returns_none(text):
 
 _RESOLVED = [
     'ein verlorenes jahrzehnt',
+    'august als vorname',
 ]
 
 _LIMITATIONS = [
     pytest.param(
         'juni als name',
-        marks=pytest.mark.xfail(raises=AssertionError, reason='month homograph used as a person/pet name binds as the month; expected limitation, disambiguation is downstream', strict=True)),
-    pytest.param(
-        'august als vorname',
         marks=pytest.mark.xfail(raises=AssertionError, reason='month homograph used as a person/pet name binds as the month; expected limitation, disambiguation is downstream', strict=True)),
     pytest.param(
         'der frühling der völker',
