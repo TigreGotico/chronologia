@@ -88,15 +88,17 @@ START = [
 ]
 
 
-@pytest.mark.xfail(strict=True, reason=ISSUE)
+@pytest.mark.xfail(strict=True, raises=AssertionError, reason=ISSUE)
 @pytest.mark.parametrize("lang,text,anchor,expected", START)
 def test_the_reading_keeps_both_parts(lang, text, anchor, expected):
-    start = extract_timespan(text, lang, anchor).span.start.datetime()
+    found = extract_timespan(text, lang, anchor)
+    assert found is not None, f"no reading for {text!r}"
+    start = found.span.start.datetime()
     assert (start.date() if isinstance(expected, date)
             and not isinstance(expected, datetime) else start) == expected
 
 
-@pytest.mark.xfail(strict=True, reason=ISSUE)
+@pytest.mark.xfail(raises=AssertionError, strict=True, reason=ISSUE)
 @pytest.mark.parametrize("lang,text,anchor,expected", [
     ("nl", "binnen 3 uur", datetime(2026, 10, 17, 12, 0),
      datetime(2026, 10, 17, 15, 0)),
@@ -111,7 +113,7 @@ def test_the_whole_phrase_is_the_date(lang, text, anchor, expected):
     assert found.remainder == ""
 
 
-@pytest.mark.xfail(strict=True, reason=ISSUE)
+@pytest.mark.xfail(raises=AssertionError, strict=True, reason=ISSUE)
 def test_half_of_two_weeks_before_easter_monday_keeps_the_clock():
     # Easter Monday 2027 is 29 March; one week before is 22 March
     found = extract_timespan(
@@ -121,7 +123,7 @@ def test_half_of_two_weeks_before_easter_monday_keeps_the_clock():
     assert found.remainder == ""
 
 
-@pytest.mark.xfail(strict=True, reason=ISSUE)
+@pytest.mark.xfail(raises=AssertionError, strict=True, reason=ISSUE)
 @pytest.mark.parametrize("lang,text", [
     ("es", "cada mañana"), ("gl", "cada mañá"), ("ast", "cada mañana"),
 ])

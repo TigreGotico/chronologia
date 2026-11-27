@@ -17,7 +17,7 @@ DAILY = "FREQ=DAILY;BYHOUR=8"
 WEEKDAYS = "FREQ=WEEKLY;BYDAY=MO,TU,WE,TH,FR;BYHOUR=8"
 
 
-@pytest.mark.xfail(strict=True, reason=ISSUE)
+@pytest.mark.xfail(strict=True, raises=AssertionError, reason=ISSUE)
 @pytest.mark.parametrize("lang,text,rule", [
     ("en", "weekday mornings at 8", WEEKDAYS),
     ("en", "mornings at 8", DAILY),
@@ -26,4 +26,6 @@ WEEKDAYS = "FREQ=WEEKLY;BYDAY=MO,TU,WE,TH,FR;BYHOUR=8"
     ("pt", "nas manhãs às 8", DAILY),
 ])
 def test_a_daypart_before_a_clock_is_a_rule(lang, text, rule):
-    assert str(extract_recurrence(text, lang, ANCHOR).recurrence) == rule
+    found = extract_recurrence(text, lang, ANCHOR)
+    assert found is not None, f"no reading for {text!r}"
+    assert str(found.recurrence) == rule

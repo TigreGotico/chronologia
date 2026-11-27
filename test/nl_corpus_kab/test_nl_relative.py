@@ -1,10 +1,8 @@
 # -*- coding: utf-8 -*-
 """Relative day words and clock readings in Kabyle.
 
-Kabyle offers no citable directional 'N units ago / in N units' offset
-vocabulary in the legacy corpus (its extract_duration is directionless), so
-this locale intentionally ships no relative_offset construction; only the
-attested relative-day words resolve.  That gap is documented, not faked."""
+The future offsets ("deg kraḍ n wayyuren") are in
+test_nl_offset_relative_sourced.py."""
 from datetime import timedelta
 import pytest
 from ._corpus import ANCHOR, start

@@ -14,7 +14,7 @@ from chronologia import extract_timespan
 ISSUE = "https://github.com/TigreGotico/chronologia/issues/1098"
 
 
-@pytest.mark.xfail(strict=True, reason=ISSUE)
+@pytest.mark.xfail(strict=True, raises=AssertionError, reason=ISSUE)
 @pytest.mark.parametrize("text,start", [
     ("after the fourth of july", datetime(2027, 7, 5, 0, 0)),
     ("after july fourth", datetime(2027, 7, 5, 0, 0)),
@@ -24,4 +24,5 @@ ISSUE = "https://github.com/TigreGotico/chronologia/issues/1098"
 ])
 def test_after_a_day_starts_the_day_after_it(text, start):
     found = extract_timespan(text, "en", datetime(2026, 10, 17, 12, 0))
+    assert found is not None, f"no reading for {text!r}"
     assert found.span.start.datetime() == start

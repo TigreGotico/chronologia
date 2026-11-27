@@ -37,7 +37,7 @@ def test_masculine_ordinal_after_o_is_no_clock():
     assert parse("o druhom etape") is None
 
 
-@pytest.mark.xfail(strict=True, reason="https://github.com/TigreGotico/chronologia/issues/1221")
+@pytest.mark.xfail(raises=AssertionError, strict=True, reason="https://github.com/TigreGotico/chronologia/issues/1221")
 @pytest.mark.parametrize("text,expected", [
     ("pol deviatej zavolaj mame", datetime(2017, 6, 27, 20, 30)),
 ])
@@ -45,6 +45,6 @@ def test_known_gap_fraction_clock_before_another_word(text, expected):
     assert start(text) == ad(expected)
 
 
-@pytest.mark.xfail(strict=True, reason="https://github.com/TigreGotico/chronologia/issues/1227")
+@pytest.mark.xfail(raises=AssertionError, strict=True, reason="https://github.com/TigreGotico/chronologia/issues/1227")
 def test_known_gap_o_prvej_before_a_noun_is_no_clock():
     assert parse("kniha o prvej svetovej vojne") is None

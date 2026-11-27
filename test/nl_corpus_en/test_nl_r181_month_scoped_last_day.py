@@ -58,7 +58,7 @@ def test_month_scoped_last_day(text, rrule, remainder):
     assert got[1] == remainder
 
 
-@pytest.mark.xfail(strict=True, reason=(
+@pytest.mark.xfail(raises=AssertionError, strict=True, reason=(
     "the POSITIVE-count sibling (generic day-unit interval branch, "
     "_UNIT_FREQ) does not yet scope to a named month -- correct gold is "
     "FREQ=YEARLY;BYMONTH=6;BYMONTHDAY=3, remainder ''; currently reads "

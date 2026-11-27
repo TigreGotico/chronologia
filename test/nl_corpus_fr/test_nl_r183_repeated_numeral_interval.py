@@ -14,7 +14,12 @@ LANG = "fr"
 
 _CASES = [
     ("de deux en deux jours", "FREQ=DAILY;INTERVAL=2", ""),
-    ("de quinze en quinze jours", "FREQ=DAILY;INTERVAL=15", ""),
+    # "quinze jours" is two weeks (Académie française, 9th ed., s.v.
+    # "quinze": "Quinze jours, dans l'usage courant, deux semaines
+    # complètes"; TLFi s.v. "quinze": "Tous les quinze jours" under "Deux
+    # semaines"), so the restated count is fourteen days
+    ("de quinze en quinze jours", "FREQ=DAILY;INTERVAL=14", ""),
+    ("de huit en huit jours", "FREQ=DAILY;INTERVAL=7", ""),
     ("de trois en trois mois", "FREQ=MONTHLY;INTERVAL=3", ""),
 ]
 

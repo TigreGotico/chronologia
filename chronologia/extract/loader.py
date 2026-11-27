@@ -15,6 +15,7 @@ filename                meaning
 ``unit_<kind>.voc``     offset unit ``kind`` (day/week/month/year/...)
 ``jurisdiction_<code>.voc``  country/region-name surface -> jurisdiction code ``code``
 ``named_day_<off>.voc`` named day at day-offset ``off`` (signed)
+``week_idiom_<n>.voc``  numeral of a week idiom ("jeudi en huit") adding ``n`` weeks
 ``daypart_<name>.voc`` surfaces naming the time-of-day band ``name``
 ``marker_past.voc``     direction marker, sign -1
 ``marker_future.voc``   direction marker, sign +1
@@ -103,6 +104,7 @@ _PREFIXED: List[Tuple[str, Tuple[str, ...], Callable[[str], Any]]] = [
     ("unit_dual_", ("dual_units",), str),
     ("unit_", ("units",), str),
     ("named_day_", ("named_days",), int),
+    ("week_idiom_", ("week_idioms",), int),
     ("clock_fraction_prev_", ("clock_fractions_prev", "clock_fractions"), int),
     ("clock_fraction_", ("clock_fractions",), int),
     ("clock_dir_minute_", ("clock_dir_minutes",), int),
@@ -375,6 +377,26 @@ def _load_holidays(spec: LangSpec) -> Tuple[Dict[str, str], Dict[str, str]]:
     return holidays, sources
 
 
+def _load_zone_cities(lang_dir: str, cfg: dict) -> Dict[str, str]:
+    """``zone_cities.json``: every pattern x city-name surface -> IANA zone.
+
+    Each surface is stored in its token-canonical form, so a merged token
+    ("new york time") equals it whatever the punctuation ("New York-tid")."""
+    path = os.path.join(lang_dir, "zone_cities.json")
+    if not os.path.exists(path):
+        return {}
+    with open(path, encoding="utf-8") as fh:
+        data = json.load(fh)
+    tokenizer = Tokenizer(_tokenizer_modes(cfg.get("tokenizer", {})))
+    out = {}
+    for zone, names in data["cities"].items():
+        for name in names:
+            for pattern in data["patterns"]:
+                surface = pattern.format(city=name).lower()
+                out[" ".join(t.text for t in tokenizer.tokenize(surface))] = zone
+    return out
+
+
 def load_lang_spec(lang: str, locale_dir: str = LOCALE_DIR) -> LangSpec:
     lang_dir = os.path.join(locale_dir, lang)
     with open(os.path.join(lang_dir, "lang.json"), encoding="utf-8") as fh:
@@ -408,7 +430,8 @@ def load_lang_spec(lang: str, locale_dir: str = LOCALE_DIR) -> LangSpec:
         quantifiers={s: float(val)
                      for val, forms in cfg.get("quantifiers", {}).items()
                      for s in forms},
-        positions=cfg.get("positions", {}))
+        positions=cfg.get("positions", {}),
+        zone_cities=_load_zone_cities(lang_dir, cfg))
 
     # Bad locale data raises here, with locale and field context, instead of
     # silently disabling a construction.

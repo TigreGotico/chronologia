@@ -15,7 +15,7 @@ from chronologia import extract_duration
 ISSUE = "https://github.com/TigreGotico/chronologia/issues/1075"
 
 
-@pytest.mark.xfail(strict=True, reason=ISSUE)
+@pytest.mark.xfail(raises=AssertionError, strict=True, reason=ISSUE)
 @pytest.mark.parametrize("text", [
     "dans septante-et-un jours", "dans septante et un jours",
 ])

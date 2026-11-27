@@ -1899,6 +1899,9 @@ def _apply_bounds(rec, consumed, ctx, lang, anchor, range_words):
         if dur is None or (dur.remainder and _calendar(text)
                            and _another_start(dur.remainder)):
             return None
+        if not isinstance(rec, Recurrence):
+            # a holiday stream has no COUNT: the length ends at an UNTIL
+            return _replace(rec, until=anchor + dur[0])
         count = _count_from_duration(rec.freq, dur[0], rec.interval)
         if count is None:
             return None

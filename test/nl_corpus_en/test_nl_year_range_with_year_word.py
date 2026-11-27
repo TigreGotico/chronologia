@@ -16,7 +16,7 @@ ISSUE = "https://github.com/TigreGotico/chronologia/issues/1054"
 ANCHOR = datetime(2026, 1, 30, 10, 0)
 
 
-@pytest.mark.xfail(strict=True, reason=ISSUE)
+@pytest.mark.xfail(raises=AssertionError, strict=True, reason=ISSUE)
 @pytest.mark.parametrize("lang,text,remainder", [
     ("en", "between the years two thousand and two thousand and ten in Europe",
      "in Europe"),

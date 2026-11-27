@@ -145,7 +145,7 @@ def test_a_clock_word_folds_in_front_of_a_clock(lang, text):
     assert remainder == ""
 
 
-@pytest.mark.xfail(strict=True, reason=(
+@pytest.mark.xfail(raises=AssertionError, strict=True, reason=(
     "tokens are casefolded, so the noun 'Morgen' (morning) matches the named "
     "day 'morgen' (tomorrow): chronologia reads tomorrow and 'am' stays"))
 def test_am_morgen_is_the_morning():

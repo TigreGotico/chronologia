@@ -15,7 +15,7 @@ from chronologia import extract_timespan
 ISSUE = "https://github.com/TigreGotico/chronologia/issues/1079"
 
 
-@pytest.mark.xfail(strict=True, reason=ISSUE)
+@pytest.mark.xfail(raises=AssertionError, strict=True, reason=ISSUE)
 @pytest.mark.parametrize("text", [
     "um 11:00 nachts", "um 11 Uhr nachts", "um elf Uhr nachts",
 ])
@@ -24,7 +24,7 @@ def test_de_eleven_at_night_is_23_00(text):
     assert found.span.start.datetime() == datetime(2017, 6, 27, 23, 0)
 
 
-@pytest.mark.xfail(strict=True, reason=ISSUE)
+@pytest.mark.xfail(raises=AssertionError, strict=True, reason=ISSUE)
 def test_en_night_at_one_is_01_00():
     found = extract_timespan("night at 1", "en", datetime(2026, 11, 22, 12, 0))
     assert found.span.start.datetime() == datetime(2026, 11, 23, 1, 0)

@@ -53,11 +53,13 @@ FIXED_SPANS = {
     "avísame de luns a venres pola mañá sobre as 7",
     "at 8 tonight",
     "remind me to call the bank tomorrow morning",
+    "deg snat n dduṛt",
+    "tafsut i d-iteddun",
 }
 
 
 def _case(fixed, issue, *row):
-    marks = () if row[1] in fixed else pytest.mark.xfail(
+    marks = () if row[1] in fixed else pytest.mark.xfail(raises=AssertionError,
         strict=True, reason=URL.format(issue))
     return pytest.param(
         *row, marks=marks, id="{}-{}-{}".format(issue, row[0], row[1]))

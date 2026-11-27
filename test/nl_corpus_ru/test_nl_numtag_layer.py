@@ -44,17 +44,17 @@ def test_ordinal_after_a_locative_preposition_is_no_clock():
     assert parse("на втором этаже") is None
 
 
-@pytest.mark.xfail(strict=True, reason="https://github.com/TigreGotico/chronologia/issues/1192")
+@pytest.mark.xfail(raises=AssertionError, strict=True, reason="https://github.com/TigreGotico/chronologia/issues/1192")
 def test_known_gap_amount_of_a_thousand_is_no_year():
     assert start("за тысячу рублей вчера") == ad(datetime(2017, 6, 26))
 
 
-@pytest.mark.xfail(strict=True, reason="https://github.com/TigreGotico/chronologia/issues/1193")
+@pytest.mark.xfail(raises=AssertionError, strict=True, reason="https://github.com/TigreGotico/chronologia/issues/1193")
 def test_known_gap_hour_and_minute_clock():
     assert start("в девять тридцать") == ad(datetime(2017, 6, 27, 21, 30))
 
 
-@pytest.mark.xfail(strict=True, reason="https://github.com/TigreGotico/chronologia/issues/1194")
+@pytest.mark.xfail(raises=AssertionError, strict=True, reason="https://github.com/TigreGotico/chronologia/issues/1194")
 def test_known_gap_first_half_of_the_day():
     result = parse("в первой половине дня", datetime(2026, 11, 18, 8, 0))
     assert result is None or result.span.start != ad(datetime(2026, 11, 18, 13, 0))
@@ -69,7 +69,7 @@ def test_ordinal_after_about_is_no_clock(text):
     assert parse(text) is None
 
 
-@pytest.mark.xfail(strict=True, reason="https://github.com/TigreGotico/chronologia/issues/1221")
+@pytest.mark.xfail(raises=AssertionError, strict=True, reason="https://github.com/TigreGotico/chronologia/issues/1221")
 @pytest.mark.parametrize("text,expected", [
     ("в половине девятого позвони маме", datetime(2017, 6, 27, 20, 30)),
     ("в четверть девятого позвони маме", datetime(2017, 6, 27, 20, 15)),

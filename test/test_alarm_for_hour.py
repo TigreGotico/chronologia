@@ -214,7 +214,7 @@ def test_each_locale_joiner_shares_the_later_meridiem(text, lang):
     assert found.span.end.datetime() == datetime(2026, 11, 17, 20, 1)
 
 
-@pytest.mark.xfail(
+@pytest.mark.xfail(raises=AssertionError,
     strict=True, reason="https://github.com/TigreGotico/chronologia/issues/1058")
 def test_nl_joiner_shares_the_later_meridiem_without_uur():
     found = extract_timespan("wekker voor 7 of 8 's avonds", "nl", ANCHOR)
