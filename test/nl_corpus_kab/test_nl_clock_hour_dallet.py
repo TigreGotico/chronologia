@@ -3,8 +3,8 @@
 
 Source: J.-M. Dallet, Dictionnaire kabyle-français, parler des At Mangellat
 (SELAF, Paris, 1982).  The page of each hour form is beside its row.  The
-forms with the article vowel ("ezzuj", "elxemsa", "eɛecṛa") are Dallet's own
-clock examples: "d ezzuj" p. 938, "d elxemsa" p. 902, "d eɛecṛa ɣir ɛecrin,
+forms with the article vowel ("ezzuj", "elxemsa", "elɛecṛa") are Dallet's own
+clock examples: "d ezzuj" p. 938, "d elxemsa" p. 902, "d elɛecṛa ɣiṛ ɛecrin,
 il est 10 heures moins 20" p. 634.
 
 Anchor Tuesday 2017-06-27 13:04.  Gold is worked out by hand from the anchor:
@@ -27,13 +27,13 @@ _HOURS = [
     ("d elxemsa n tmeddit", (2017, 6, 27, 17, 0)),     # p. 902
     ("ɣef sett n tmeddit", (2017, 6, 27, 18, 0)),      # p. 793
     ("ɣef essebɛa n tmeddit", (2017, 6, 27, 19, 0)),   # p. 756
-    ("d eɛecṛa n tmeddit", (2017, 6, 27, 22, 0)),      # p. 634
+    ("d elɛecṛa n tmeddit", (2017, 6, 27, 22, 0)),      # p. 634
     ("ɣef eḥdac n tmeddit", (2017, 6, 27, 23, 0)),     # p. 305
     ("ɣef eḥdac n yiḍ", (2017, 6, 27, 23, 0)),         # p. 305
     ("ɣef eṭṭnac n uzal", (2017, 6, 28, 12, 0)),       # p. 826
     # "ɣir", "moins (dans le compte des heures)", p. 634: 10 minus 20.
-    ("d eɛecṛa ɣir ɛecrin n tṣebḥit", (2017, 6, 28, 9, 40)),
-    ("d eɛecṛa ɣir ɛecrin", (2017, 6, 27, 21, 40)),
+    ("d elɛecṛa ɣir ɛecrin n tṣebḥit", (2017, 6, 28, 9, 40)),
+    ("d elɛecṛa ɣir ɛecrin", (2017, 6, 27, 21, 40)),
 ]
 
 
