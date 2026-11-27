@@ -20,7 +20,8 @@ from chronologia.extract.model import Match, Token
 from chronologia.extract.pipeline import (consumed_extent, fold_tokens,
                                           join_extents, pretokens,
                                           render_remainder)
-from chronologia.extract.timespan import (_candidate_veto, _compose_core,
+from chronologia.extract.timespan import (WHOLE_REFUSAL, _candidate_veto,
+                                          _compose_core,
                                           _extract_directional_range,
                                           _extract_open_range, _extract_range,
                                           _is_new_year_slice, _is_now_slice,
@@ -92,36 +93,61 @@ def _daypart_across_days(tokens: Tuple[Token, ...], spec) -> bool:
                   | {s for s, k in spec.units.items()
                      if k in ("hour", "minute", "second")})
 
+    def number_end(i):
+        """The index after the number run that starts at ``i``."""
+        j = i + 1
+        while j < len(tokens) and tokens[j].mention is not None \
+                and tokens[j].mention is tokens[i].mention:
+            j += 1
+        return j
+
     def day_kind(i):
-        if i >= len(tokens) or tokens[i].sentence_break_before:
+        if i >= len(tokens) or tokens[i].break_before:
             return None
         tok = tokens[i]
         if tok.text in spec.weekdays or tok.text in spec.named_days:
             return "word"
         if not (tok.is_number or tok.mention is not None) or ":" in tok.text:
             return None
-        j = i + 1
-        while j < len(tokens) and tokens[j].mention is not None \
-                and tokens[j].mention is tok.mention:
-            j += 1
+        j = number_end(i)
         return ("num" if j >= len(tokens) or tokens[j].text not in hour_words
                 else None)
+
+    def in_endpoint(tok):
+        # what may stand inside the left end before the to word: "du 28
+        # novembre au", "de samedi 28 à"
+        return (tok.text in spec.months or tok.text in spec.weekdays
+                or tok.is_number or tok.mention is not None
+                or tok.text in leads)
 
     words = [t.text for t in tokens]
     for i in range(len(tokens)):
         n = next((len(h) for h in heads if words[i:i + len(h)] == h), 0)
-        if not n or i + n + 1 >= len(tokens) or words[i + n] not in leads:
+        if (not n or i + n + 1 >= len(tokens) or words[i + n] not in leads
+                or tokens[i + n].break_before):
             continue
         left = day_kind(i + n + 1)
         if left is None:
             continue
+        dated = False
         for j in range(i + n + 2, len(tokens)):
-            if tokens[j].sentence_break_before:
+            if tokens[j].break_before:
                 break
             if words[j] in tos:
                 right = day_kind(j + 1)
-                if right == "word" or (right == "num" and left == "num"):
+                if right == "word":
                     return True
+                if right == "num" and left == "num":
+                    # after a whole date ("du 28 novembre") a bare number is
+                    # a clock ("à 9"); a day needs its month ("au 3 décembre")
+                    end = number_end(j + 1)
+                    if not dated or (end < len(tokens)
+                                     and words[end] in spec.months):
+                        return True
+                break
+            if not in_endpoint(tokens[j]):
+                break
+            dated = dated or words[j] in spec.months
     return False
 
 
@@ -173,6 +199,8 @@ def read(text: str, lang: str, anchor: datetime,
     resolved, winner = _compose_core(tokens, engine, anchor, enable,
                                      jurisdiction, text, scale_mode,
                                      whole=not readings)
+    if resolved is WHOLE_REFUSAL:
+        return readings
     rep = None
     if winner is not None:
         res, won, rep = winner

@@ -456,6 +456,17 @@ class LangSpec:
     # the number of weeks it adds, from ``week_idiom_<weeks>.voc``.  The
     # named day is day one, so "huit" (eight) is one week on.
     week_idioms: Mapping[str, int] = field(default_factory=dict)
+    # Word sets of the week idiom and of the "huit jours" reading, kept out of
+    # ``connectors`` because they are function words ("à", "ou", "pour") that
+    # must not become link words of other readings: what may follow the idiom
+    # (``marker_week_idiom_follow.voc``), what joins a second idiom to it
+    # (``marker_week_idiom_join.voc``), and what keeps a count of days
+    # literal before the count or after the day noun
+    # (``marker_day_count_literal_before/after.voc``).
+    week_idiom_follow: FrozenSet[str] = frozenset()
+    week_idiom_join: FrozenSet[str] = frozenset()
+    day_count_literal_before: FrozenSet[str] = frozenset()
+    day_count_literal_after: FrozenSet[str] = frozenset()
     # regnal era surface -> (sequence key, segment name), from the
     # regnal_<seqkey>_<segname>.voc filename convention (Japanese nengō)
     regnal_names: Mapping[str, Tuple[str, str]] = field(default_factory=dict)

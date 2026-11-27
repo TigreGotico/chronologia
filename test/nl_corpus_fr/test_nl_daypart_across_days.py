@@ -92,3 +92,20 @@ def test_every_view_refuses_the_range_of_evenings():
     assert extract_candidates("le soir du lundi au vendredi", "fr", THU) == []
     assert extract_event("réunion le soir du lundi au vendredi", "fr",
                          THU) is None
+
+
+def test_a_dated_evening_keeps_its_clock():
+    # "à 9" after a whole date is a clock: 21:00 on 28 November 2026
+    r = parse("le soir du 28 novembre à 9", THU)
+    assert r is not None
+    assert r[0].start == ad(datetime(2026, 11, 28, 21, 0))
+
+
+@pytest.mark.parametrize("text", [
+    "le soir. De samedi à dimanche",
+    "le soir de samedi, la réunion est reportée à lundi",
+])
+def test_no_range_of_days_across_a_break(text):
+    # the part of the day does not govern a range in another clause or
+    # sentence, so the phrase is not refused outright
+    assert parse(text, THU) is not None
