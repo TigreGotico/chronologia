@@ -1157,3 +1157,12 @@ assumption               | ro | adormirea maicii domnului ;; sfânta maria mare
 romania_childrens_day    | ro | ziua copilului ;; ziua internațională a copilului
 romania_national_day     | ro | ziua națională ;; ziua națională a româniei ;; ziua marii uniri
 romania_union_day        | ro | unirea principatelor ;; ziua unirii principatelor române ;; mica unire
+#
+# --- Hindi ---
+# source: native answer, chronologia#1484 (comment 7209012484). क्रिसमस ईव and
+# न्यू ईयर ईव are the spoken forms; the written पूर्व संध्या forms are not
+# used in speech, so they are not listed.
+new_year                 | hi | नया साल ;; नए साल
+new_year_eve             | hi | न्यू ईयर ईव
+christmas_eve            | hi | क्रिसमस ईव
+christmas                | hi | क्रिसमस ;; क्रिसमस के दिन
