@@ -77,7 +77,7 @@ Cells: status, own test rows passed / own test rows.
 | [Dutch (Netherlands)](nl.md) | nl-NL | nl | numtag | yes 659/659 | yes 156/156 | yes 19/19 | yes 31/31 | yes 313/313 | yes 11/11 | yes 696/696 | no |
 | [Danish (Denmark)](da.md) | da-DK | da | numtag | yes 33/33 | yes 116/116 | yes 16/16 | yes 30/30 | yes 345/345 | yes 19/19 | yes 391/391 | no |
 | [Kabyle](kab.md) | kab | kab | numtag | yes 98/98 | yes 85/85 | yes 13/13 | yes 27/27 | yes 6/6 | yes 8/8 | yes 7/7 | no |
-| [Hindi (India)](hi.md) | hi-IN | hi | numfold_indic | yes 52/52 | yes 47/47 | partial 0/0 | yes 71/71 | partial 0/0 | yes 27/27 | no 0/0 | no |
+| [Hindi (India)](hi.md) | hi-IN | hi | numfold_indic | yes 52/52 | yes 47/47 | partial 0/0 | yes 71/71 | yes 20/20 | yes 27/27 | no 0/0 | no |
 | Bengali (India) | bn-IN | none | not supported, see [#1484](https://github.com/TigreGotico/chronologia/issues/1484) | no | no | no | no | no | no | no | no |
 | Marwari | mwr | none | not supported, see [#1484](https://github.com/TigreGotico/chronologia/issues/1484) | no | no | no | no | no | no | no | no |
 | [Albanian](sq.md) | sq | sq | numfold_albanian | partial 0/0 | yes 37/37 | partial 0/0 | yes 66/66 | partial 0/0 | partial 0/0 | no 0/0 | no |
