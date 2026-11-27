@@ -15,6 +15,11 @@ Two things had to be true for these to resolve:
   sees only a shorter, partial reference ("monday" inside "monday after
   christmas").
 
+Ruling 1 (changed on 26 November 2026): the month of an nth-weekday reference
+with no year takes the year the month alone takes -- ANCHOR.year if the month
+holds or follows the anchor, ANCHOR.year + 1 if it ended before it (March and
+May have, so they are 2018; November is still 2017).
+
 Every expected value is derived here by independent ``datetime`` arithmetic
 (and, for business days, the civil-holiday calendar -- not the extract
 parser), then asserted against the parser's span.
@@ -81,7 +86,8 @@ def us(text):
     ('the last monday of may', 5, MON, -1),
 ])
 def test_nth_weekday_of_month_standalone(text, month, wd, n):
-    ref = nth_weekday(ANCHOR.year, month, wd, n)
+    # ruling 1: a month that has ended at the anchor is next year's
+    ref = nth_weekday(ANCHOR.year + (month < ANCHOR.month), month, wd, n)
     s = span(text)
     assert s.start == AstroDate(ref.year, ref.month, ref.day)
     assert s.end == s.start + timedelta(days=1)
@@ -96,7 +102,8 @@ def test_nth_weekday_of_month_standalone(text, month, wd, n):
     ('the day before the first monday of march', 3, MON, 1, -1),
 ])
 def test_day_offset_of_nth_weekday(text, month, wd, n, off_days):
-    ref = nth_weekday(ANCHOR.year, month, wd, n)
+    # ruling 1: a month that has ended at the anchor is next year's
+    ref = nth_weekday(ANCHOR.year + (month < ANCHOR.month), month, wd, n)
     expect = ref + timedelta(days=off_days)
     s = span(text)
     assert s.start == AstroDate(expect.year, expect.month, expect.day)
@@ -106,7 +113,8 @@ def test_day_offset_of_nth_weekday(text, month, wd, n, off_days):
 
 def test_two_weeks_after_first_monday_of_march():
     text = 'two weeks after the first monday of march'
-    ref = nth_weekday(ANCHOR.year, 3, MON, 1)
+    # ruling 1: March has ended at the anchor, so it is March 2018
+    ref = nth_weekday(ANCHOR.year + 1, 3, MON, 1)
     expect = ref + timedelta(weeks=2)
     assert span(text).start == AstroDate(expect.year, expect.month, expect.day)
     assert parse(text)[1] == ""
@@ -126,7 +134,8 @@ def test_working_days_after_monday_after_christmas():
 
 def test_business_days_before_first_monday_of_march():
     text = '2 business days before the first monday of march'
-    ref = nth_weekday(ANCHOR.year, 3, MON, 1)
+    # ruling 1: March has ended at the anchor, so it is March 2018
+    ref = nth_weekday(ANCHOR.year + 1, 3, MON, 1)
     expect = nth_business_day(ref, 2, -1, 5, None)
     r = extract_timespan(text, "en", ANCHOR)
     assert r is not None

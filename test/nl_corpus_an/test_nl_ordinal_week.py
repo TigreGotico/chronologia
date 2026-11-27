@@ -20,13 +20,15 @@ from ._corpus import ANCHOR
 from ruling17 import moved
 
 
+# ruling 1 (26 November 2026): a part of a month takes its month's year; March
+# and January have ended at the anchor (5 June 2018), so they are 2019.
 @pytest.mark.parametrize("text,start,end", [
-    ("a primera semana de marzo", (2018, 3, 5), (2018, 3, 12)),
-    ("a segunda semana de marzo", (2018, 3, 12), (2018, 3, 19)),
-    ("a tercer semana de marzo", (2018, 3, 19), (2018, 3, 26)),
-    ("a tercera semana de marzo", (2018, 3, 19), (2018, 3, 26)),
-    ("a cuatrena semana de marzo", (2018, 3, 26), (2018, 4, 2)),
-    ("a segunda semana de chinero", (2018, 1, 8), (2018, 1, 15)),
+    ("a primera semana de marzo", (2019, 3, 4), (2019, 3, 11)),
+    ("a segunda semana de marzo", (2019, 3, 11), (2019, 3, 18)),
+    ("a tercer semana de marzo", (2019, 3, 18), (2019, 3, 25)),
+    ("a tercera semana de marzo", (2019, 3, 18), (2019, 3, 25)),
+    ("a cuatrena semana de marzo", (2019, 3, 25), (2019, 4, 1)),
+    ("a segunda semana de chinero", (2019, 1, 14), (2019, 1, 21)),
 ])
 def test_nth_week_of_month(text, start, end):
     s, e = start_end(text)

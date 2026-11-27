@@ -6,7 +6,8 @@ early/mid/late thirds). Before this order existed, month NAMES were not
 MONTH construction won the shared span -- "erste Hälfte von" stranded in the
 remainder (a silent-wrong, too-wide answer). Edges hand-derived (anchor
 2017-06-27). Controls guard the year-scoped half and the bare month, which
-must stay unchanged."""
+must stay unchanged.  Ruling 1 (26 November 2026): a part of a month takes its
+month's year, so February (ended at the anchor) is February 2018."""
 import pytest
 from chronologia.astrodate import AstroDate
 from ._corpus import start_end
@@ -14,7 +15,8 @@ from ._corpus import start_end
 _CASES = [
     ('erste Hälfte von August', 2017, 8, 1, 0, 2017, 8, 16, 12),
     ('zweite Hälfte von August', 2017, 8, 16, 12, 2017, 9, 1, 0),
-    ('erste Hälfte von Februar', 2017, 2, 1, 0, 2017, 2, 15, 0),
+    # ruling 1: February has ended at the anchor, so it is February 2018
+    ('erste Hälfte von Februar', 2018, 2, 1, 0, 2018, 2, 15, 0),
     ('erste Hälfte von August 2027', 2027, 8, 1, 0, 2027, 8, 16, 12),
 ]
 

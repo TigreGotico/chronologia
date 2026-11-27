@@ -2178,12 +2178,26 @@ def _definite_endpoint(sub, spec):
     underspecified recurring reference that only lands on a point once a cycle
     is chosen for it.  A marker may span words: "the following", "que viene",
     "from now".
+
+    The ordinal "last" of a part of a month ("the last day of february",
+    "el último lunes de enero") is no marker: a month named later in the
+    endpoint, but not right after the word, takes the word as the ordinal
+    of its part, and the part follows its month's year (ruling 1).  "last
+    january" keeps the marker reading.
     """
     # fr "vendredi en huit" names one day after the anchor
     if any(week_idiom_state(tuple(sub), i, spec) in ("ok", "open")
            for i in range(len(sub))):
         return True
     words = [t.text for t in sub]
+    ordlast = spec.connectors.get("ordlast", ())
+
+    def ordinal_last(i):
+        return (words[i] in ordlast and i + 1 < len(words)
+                and words[i + 1] not in spec.months
+                and any(w in spec.months for w in words[i + 2:]))
+
+    words = ["" if ordinal_last(i) else w for i, w in enumerate(words)]
     phrases = {" ".join(words[i:j]) for i in range(len(words))
                for j in range(i + 1, min(i + 3, len(words)) + 1)}
     return (any(p in spec.named_days or p in spec.rel_markers
@@ -2268,6 +2282,12 @@ def _since_start(ep, sub, engine, anchor, now, text):
     wk = _bare_weekday_endpoint(sub, engine, anchor, backward=True)
     if wk is not None:
         return wk[0].start, wk[1], wk[2], wk[3]
+    search = _yearly_search(text, sub, engine, ep)
+    if search is not None:
+        years, accept = search
+        found = _search_back(text, sub, engine, anchor, now, years, accept)
+        return (None if found is None
+                else (found[0].start, found[1], found[2], found[3]))
     if ep is None:
         return None
     start = ep[0].start
@@ -2286,7 +2306,10 @@ def _since_start(ep, sub, engine, anchor, now, text):
         # prefer_future flung forward, so never roll it: in the past it opens
         # the span, in the future "since" it is contradictory and is refused.
         return (start, ep[1], ep[2], ep[3]) if start <= now else None
-    if any(t.text in spec.weekdays for t in sub):
+    if (any(t.text in spec.weekdays for t in sub)
+            and not any(t.text in spec.months for t in sub)):
+        # A weekday of a named month ("since the first monday of january")
+        # recurs with its month, yearly, and is read back below.
         # An UNqualified weekday (the bare-weekday-alone case is handled by
         # _bare_weekday_endpoint above; this is a weekday carrying a clock, e.g.
         # "monday 3pm").  It recurs WEEKLY, so roll the whole endpoint --
@@ -2311,7 +2334,7 @@ def _since_start(ep, sub, engine, anchor, now, text):
             lambda at: _resolve_endpoint(text, sub, engine, at),
             anchor, start, now)
         if back is not None:
-            return back[0].start, ep[1], ep[2], ep[3]
+            start = back[0].start
     while start > now:
         pulled = (start + timedelta(days=-1) if is_clock
                   else _minus_one_year(start))
@@ -2319,6 +2342,79 @@ def _since_start(ep, sub, engine, anchor, now, text):
             break
         start = pulled
     return start, ep[1], ep[2], ep[3]
+
+
+#: How far back "since" looks for a part of a named month: the anchor's year
+#: and the year before (ruling 1).
+_SINCE_PART_YEARS = 1
+#: How far back "since" looks for a day of a month said with its weekday
+#: ("since monday 3 march").  A day other than 29 February falls on each
+#: weekday within 11 years in the Gregorian calendar (ruling 1).
+_SINCE_WEEKDAY_YEARS = 11
+#: 29 February comes round within 8 years (1896 to 1904 at most).
+_SINCE_LEAP_DAY_YEARS = 8
+
+
+def _yearly_search(text, sub, engine, ep):
+    """``(years, accept)`` for a "since" endpoint that is read back by year,
+    or ``None`` for one the other rules read.
+
+    A part of a named month ("since the fifth friday of may", "since early
+    october") is the latest one at or before now in the anchor's year or the
+    year before.  A day of a month said with a weekday ("since monday 3
+    march", "since tuesday 29 february") is the latest such day on that
+    weekday within eleven years.  29 February alone is the latest one within
+    eight years.  ``accept(start)`` keeps a reading."""
+    spec = engine.spec
+    if not any(t.text in spec.months for t in sub):
+        return None
+    days = {spec.weekdays[t.text] for t in sub if t.text in spec.weekdays}
+    if _month_part_endpoint(text, sub, engine):
+        return _SINCE_PART_YEARS, lambda start: True
+    if ep is None or ep[0].end - ep[0].start > timedelta(days=1):
+        return None
+    if len(days) == 1:
+        weekday = days.pop()
+        return (_SINCE_WEEKDAY_YEARS,
+                lambda start: start.weekday() == weekday)
+    if (ep[0].start.month, ep[0].start.day) == (2, 29):
+        return _SINCE_LEAP_DAY_YEARS, lambda start: True
+    return None
+
+
+def _month_part_endpoint(text, sub, engine):
+    """Whether ``sub`` reads as a part of a named month with no year or
+    marker of its own (ruling 1)."""
+    spec = engine.spec
+    folded = fold_tokens(tuple(sub), spec, text)
+    veto = lambda m: _candidate_veto(folded, m, spec)   # noqa: E731
+    return any(m.construction in _MONTH_PART_CONSTRUCTIONS
+               and "MONTH" in m.slots
+               and not {"YEAR", "GYEAR", "REL_MARKER", "ERA"} & set(m.slots)
+               for m in engine.matcher.match(folded, veto))
+
+
+def _search_back(text, sub, engine, anchor, now, years, accept):
+    """The latest reading at or before ``now`` of a yearly endpoint, from the
+    readings made on 1 January of each year from the next one back to
+    ``years`` before ``now``'s year, or ``None``.  A reading on 1 January may
+    be a span that holds that day (the last week of December)."""
+    best = None
+    floor = now.year - years
+    for year in range(now.year + 1, floor - 1, -1):
+        if not MINYEAR <= year <= MAXYEAR:
+            continue
+        at = anchor.replace(year=year, month=1, day=1, hour=0, minute=0,
+                            second=0, microsecond=0)
+        got = _resolve_endpoint(text, sub, engine, at)
+        if got is None:
+            continue
+        start = got[0].start
+        when = _in_zone_of(now, start)
+        if (start <= when and start.year >= floor and accept(start)
+                and (best is None or start > best[0].start)):
+            best = got
+    return best
 
 
 #: The constructions that read a bare month as its next occurrence.
@@ -2516,6 +2612,17 @@ def _extract_open_range(text, tokens, engine, anchor, scale_mode="short"):
         return (_resolve_endpoint(text, sub, engine, anchor, scale_mode=scale_mode)
                 or _bare_weekday_endpoint(sub, engine, anchor))
 
+    def since_endpoint(sub):
+        # a part of a named month the next year lacks ("since the fifth
+        # friday of may" said after May) reads nothing forward: "since" then
+        # reads it back from the anchor (:func:`_yearly_search`)
+        ep = endpoint(sub)
+        if ep is None:
+            search = _yearly_search(text, sub, engine, None)
+            if search is not None:
+                ep = _search_back(text, sub, engine, anchor, now, *search)
+        return ep
+
     def until_span(ep, sub):
         if ep is None:
             return None
@@ -2550,7 +2657,7 @@ def _extract_open_range(text, tokens, engine, anchor, scale_mode="short"):
                 in spec.connectors.get("until_amount", ())):
             # "hasta cuántos grados": the limit is an amount, not a time
             return None
-        ep = endpoint(tokens[k:])
+        ep = (since_endpoint if build is since_span else endpoint)(tokens[k:])
         return marked(build(ep, tokens[k:]), tokens[:k]) \
             if ep is not None else None
 
@@ -2562,7 +2669,8 @@ def _extract_open_range(text, tokens, engine, anchor, scale_mode="short"):
         for words in surf:
             m = len(words)
             if m and m < n and [t.text for t in tokens[n - m:]] == words:
-                ep = endpoint(tokens[:n - m])
+                ep = (since_endpoint if build is since_span
+                      else endpoint)(tokens[:n - m])
                 got = marked(build(ep, tokens[:n - m]), tokens[n - m:]) \
                     if ep is not None else None
                 if got is not None:
@@ -2592,7 +2700,8 @@ def _extract_open_range(text, tokens, engine, anchor, scale_mode="short"):
                     char_end=(last.char_end - len(a)
                               if last.char_end is not None else None))
                 sub_a = tuple(tokens[:-1]) + (stripped,)
-                ep = endpoint(sub_a)
+                ep = (since_endpoint if build is since_span
+                      else endpoint)(sub_a)
                 got = marked(build(ep, sub_a), (last,)) \
                     if ep is not None else None
                 if got is not None:
@@ -3969,6 +4078,7 @@ def _candidate_veto(tokens, match, spec, endpoint=False) -> bool:
             or _subday_named_day_idiom_veto(match, spec)
             or _stranded_year_veto(tokens, match, spec)
             or _skip_one_idiom_veto(tokens, match, spec)
+            or _part_marker_veto(tokens, match, spec)
             or _bare_holiday_modifier_veto(tokens, match, spec))
 
 
@@ -4949,6 +5059,78 @@ def _resolve_core(tokens, engine, anchor, enable=(), jurisdiction=None,
     if _core_veto(tokens, consumed, rep, engine, anchor, text):
         return None
     return res.value, consumed
+
+
+#: The constructions that name a part of a named month (ruling 1).
+_MONTH_PART_CONSTRUCTIONS = frozenset({
+    "month_fuzzy", "half_period", "quarter_of_month", "weekend_of_month",
+    "scoped_ordinal"})
+
+#: The connector kinds that may follow a lone marker after the month of a
+#: part ("fin janvier dernier à Paris"): words that start another temporal or
+#: prepositional phrase, never a word the marker could qualify as a noun.
+_MARKER_FOLLOW_KINDS = ("at", "to", "until", "since", "and", "from", "in",
+                        "during", "between", "before", "after")
+
+
+def _part_marker_veto(tokens, match, spec) -> bool:
+    """True for a part of a month whose year marker cannot be a year marker.
+
+    A part of a month reads a marker after its month as the month's year
+    ("fin janvier dernier", "late january last year").  No clause break may
+    stand inside that phrase: "fin janvier, dernier délai" closes the date at
+    the comma.  A lone marker word ("dernier", "pasado", "próximo") is also an
+    adjective or a participle, and before another word it qualifies that word:
+    "dernier délai" (final deadline), "dernière minute", "pasado el plazo"
+    (past the deadline).  So a lone marker reads as the year only at the end of
+    its clause, before a subject or object pronoun that opens the next clause
+    ("fin janvier dernier je suis parti"), or before a word that opens another
+    phrase (a preposition or a conjunction the locale lists, never an
+    article).
+    """
+    if match.construction not in _MONTH_PART_CONSTRUCTIONS:
+        return False
+    month_tok = match.slots.get("MONTH")
+    if month_tok is None:
+        return False
+    tail = tokens[month_tok.index + 1:match.span[1]]
+    # one order takes the marker on either side of the year word ("last
+    # year", "del año que viene"): a year word needs exactly one marker
+    if ("YEAR" not in match.slots and "GYEAR" not in match.slots
+            and any(t.text in spec.connectors.get("year_word", ())
+                    for t in tail)
+            and sum(t.text in spec.rel_markers for t in tail) != 1):
+        return True
+    rel_tok = match.slots.get("REL_MARKER")
+    if rel_tok is None or rel_tok.index <= month_tok.index:
+        return False
+    if any(tokens[i].break_before
+           for i in range(month_tok.index + 1, match.span[1])):
+        return True
+    if rel_tok.index != month_tok.index + 1 or match.span[1] != rel_tok.index + 1:
+        return False                                # a year phrase
+    # a lone marker agrees with the month, a masculine noun in the Romance
+    # locales: "dernière" in "fin janvier dernière je pense" or "pasada" in
+    # "enero pasada la fecha" qualifies the next word (marker_month_marker.voc)
+    agree = spec.connectors.get("month_marker")
+    if agree and rel_tok.text not in agree:
+        return True
+    nxt = match.span[1]
+    if nxt >= len(tokens) or tokens[nxt].break_before:
+        return False
+    word = tokens[nxt].text
+    # a subject or object pronoun opens the next clause ("fin janvier
+    # dernier je suis parti", "j'étais"): the locale's
+    # ``marker_year_marker_follow.voc``, elided forms matched as a prefix
+    follow = spec.connectors.get("year_marker_follow", frozenset())
+    if word in follow or any(
+            w[-1:] in "'’" and len(w) > 1 and word.startswith(w)
+            for w in follow):
+        return False
+    articles = (spec.connectors.get("article", frozenset())
+                | spec.connectors.get("defart", frozenset()))
+    return word in articles or not any(
+        word in spec.connectors.get(kind, ()) for kind in _MARKER_FOLLOW_KINDS)
 
 
 def _compose_core(tokens, engine, anchor, enable=(), jurisdiction=None,

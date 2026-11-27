@@ -66,12 +66,22 @@ def test_nth_weekday_of_month_year_led(y, mo, ordw, wdw):
     assert start(text) == ad(gold)
 
 
-# ---- Nth weekday of a named month, no year (anchor year 2017) -------------
+# ---- Nth weekday of a named month, no year (anchor June 2017) --------------
+# Ruling 1 (changed on 26 November 2026): a part of a month takes the year the
+# month alone takes.  It used to be the anchor year for every month; a month
+# that has ended before the anchor (January to May) is now the next year's.
 ANCHOR_Y = 2017
+ANCHOR_M = 6
+
+
+def _noyear_year(mo):
+    return ANCHOR_Y + (mo < ANCHOR_M)
+
+
 NTH_NOYEAR_CASES = [
-    (1, "lehen", "astelehena"),       # 2017-01-02
-    (3, "bigarren", "ostirala"),      # 2017-03-10
-    (6, "hirugarren", "asteartea"),   # 2017-06-20
+    (1, "lehen", "astelehena"),       # 2018-01-01
+    (3, "bigarren", "ostirala"),      # 2018-03-09
+    (6, "hirugarren", "asteartea"),   # 2018-06-19 (20 June 2017 has ended)
     (10, "laugarren", "igandea"),     # 2017-10-22
 ]
 
@@ -79,7 +89,12 @@ NTH_NOYEAR_CASES = [
 @pytest.mark.parametrize("mo,ordw,wdw", NTH_NOYEAR_CASES)
 def test_nth_weekday_of_month_no_year(mo, ordw, wdw):
     text = f"{MONTH_GEN[mo]} {ordw} {wdw}"
-    gold = _nth_weekday(ANCHOR_Y, mo, WD[wdw], ORD[ordw])
+    gold = _nth_weekday(_noyear_year(mo), mo, WD[wdw], ORD[ordw])
+    if mo == ANCHOR_M and gold + timedelta(days=1) <= datetime(2017, 6, 27, 13, 4):
+        # ruling 1 (26 November 2026): a part of a month is read as a span; the
+        # 3rd Tuesday of June 2017 (20 June) has ended at the anchor, so it is
+        # the 3rd Tuesday of June 2018
+        gold = _nth_weekday(ANCHOR_Y + 1, mo, WD[wdw], ORD[ordw])
     assert gold.weekday() == WD[wdw] and gold.month == mo
     assert start(text) == ad(gold)
 
@@ -107,6 +122,6 @@ def test_last_weekday_of_month_year_led(y, mo, wdw):
                                     (12, "igandea")])
 def test_last_weekday_of_month_no_year(mo, wdw):
     text = f"{MONTH_GEN[mo]} azken {wdw}"
-    gold = _last_weekday(ANCHOR_Y, mo, WD[wdw])
+    gold = _last_weekday(_noyear_year(mo), mo, WD[wdw])
     assert gold.weekday() == WD[wdw] and gold.month == mo
     assert start(text) == ad(gold)

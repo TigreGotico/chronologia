@@ -24,7 +24,8 @@ def test_season_relative(text, s, e):
     assert start_end(text) == (AstroDate(*s), AstroDate(*e))
 
 
-@pytest.mark.parametrize("text,sm,end", [('byrjinga av juni', (2017, 6), (2017, 6, 11)), ('slutten av desember', (2017, 12), (2018, 1, 1))])
+# ruling 1 (26 November 2026): a part of a month is read as a span; early June 2017 has ended at the anchor (2017-06-27), so it is early June 2018
+@pytest.mark.parametrize("text,sm,end", [('byrjinga av juni', (2018, 6), (2018, 6, 11)), ('slutten av desember', (2017, 12), (2018, 1, 1))])
 def test_fuzzy_month(text, sm, end):
     s = span(text)
     assert (s.start.year, s.start.month) == sm

@@ -45,8 +45,10 @@ def test_second_offset_duration(text, secs):
 
 #: (sentence, expected span start, expected span end) as date triples
 _ORDINALS = [
-    ("el segundo lunes de marzo", (2017, 3, 13), (2017, 3, 14)),
-    ("la segunda semana de marzo", (2017, 3, 13), (2017, 3, 20)),
+    # ruling 1 (26 November 2026): a part of a month takes its month's year;
+    # March has ended at the anchor (June 2017), so it is March 2018
+    ("el segundo lunes de marzo", (2018, 3, 12), (2018, 3, 13)),
+    ("la segunda semana de marzo", (2018, 3, 12), (2018, 3, 19)),
     ("el segundo trimestre de 2018", (2018, 4, 1), (2018, 7, 1)),
     ("el segundo día de marzo", (2018, 3, 2), (2018, 3, 3)),
 ]

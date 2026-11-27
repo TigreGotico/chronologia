@@ -57,6 +57,9 @@ FIXED_SPANS = {
     "duas horas e três quartos",
     "léeme las alarmas de mañana",
     "amósame as alarmas de mañá",
+    "stelle bitte einen wecker für morgen früh um sechs",
+    "weck mich morgen früh um halb sieben",
+    "morgen früh um 6 uhr",
 }
 FIXED_LENGTHS = {
     "sæt en timer",

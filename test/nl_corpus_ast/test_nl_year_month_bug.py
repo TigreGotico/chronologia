@@ -34,10 +34,12 @@ def test_month_de_year_bug(text, xs, xe):
 
 def _high_ordinal_cases():
     out = []
-    # 4th weekdays that genuinely exist in March 2017
+    # 4th weekdays that genuinely exist in March; ruling 1 (26 November 2026): a
+    # part of a month takes its month's year, and March has ended at the anchor
+    # (June 2017), so it is March 2018
     for on, n in (("cuartu", 4),):
         for wn, w in (("llunes", 0), ("xueves", 3), ("vienres", 4)):
-            d = nth_weekday(2017, 3, w, n)
+            d = nth_weekday(2018, 3, w, n)
             assert d is not None
             out.append((f"el {on} {wn} de marzu", datetime(d.year, d.month, d.day)))
     return out

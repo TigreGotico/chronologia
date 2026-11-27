@@ -74,13 +74,16 @@ def test_a_bare_second_is_no_length():
 
 def test_article_before_a_noun_keeps_the_ordinal():
     """"a second chance" is no length, and "a second week of march" is the
-    second week of March (the 13th to the 20th in 2017), not one second."""
+    second week of March (the 12th to the 19th in 2018: ruling 1, changed on 26
+    November 2026, a part of a month takes its month's year, and March has
+    ended at the 2017-06-27 anchor; the first Monday is the 5th), not one
+    second."""
     assert extract_duration("a second chance", "en") is None
     assert extract_timespan("a second chance", "en", ANCHOR) is None
     r = extract_timespan("a second week of march", "en", ANCHOR)
     assert r is not None
-    assert r.span.start == AstroDate(2017, 3, 13)
-    assert r.span.end == AstroDate(2017, 3, 20)
+    assert r.span.start == AstroDate(2018, 3, 12)
+    assert r.span.end == AstroDate(2018, 3, 19)
 
 
 def test_ordinal_list_before_a_weekday_keeps_its_recurrence():

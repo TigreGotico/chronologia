@@ -6,7 +6,8 @@ only 1st/2nd; 3rd and up stranded and the whole month was returned -- a silent
 wrong answer this guards against.  scoped_ordinal binds "ORD UNIT of MONTH" (the
 Bulgarian connector is "на"); the definite feminine ordinal must fold to its
 digit.  Weeks Monday-started; edges by independent arithmetic (anchor
-2017-06-27)."""
+2017-06-27).  With no year the month takes the year the month alone takes (ruling 1,
+changed 26 November 2026): April and May have ended at the anchor, so 2018."""
 from datetime import date, datetime, timedelta
 
 import pytest
@@ -23,13 +24,14 @@ def _nth_week(y, m, n):
 
 
 @pytest.mark.parametrize("text,y,m,n", [
-    ('първата седмица на април', 2017, 4, 1),
-    ('втората седмица на април', 2017, 4, 2),
-    ('третата седмица на април', 2017, 4, 3),
-    ('четвъртата седмица на април', 2017, 4, 4),
-    ('трета седмица на април', 2017, 4, 3),
-    ('третата седмица на май', 2017, 5, 3),
-    ('четвъртата седмица на май', 2017, 5, 4),
+    # ruling 1 (changed 26 November 2026): April and May have ended at the anchor, so they are 2018
+    ('първата седмица на април', 2018, 4, 1),
+    ('втората седмица на април', 2018, 4, 2),
+    ('третата седмица на април', 2018, 4, 3),
+    ('четвъртата седмица на април', 2018, 4, 4),
+    ('трета седмица на април', 2018, 4, 3),
+    ('третата седмица на май', 2018, 5, 3),
+    ('четвъртата седмица на май', 2018, 5, 4),
 ])
 def test_nth_week_of_month(text, y, m, n):
     assert start_end(text) == _nth_week(y, m, n)
