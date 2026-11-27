@@ -1,0 +1,6 @@
+# আজ "today" before থেকে and an offset counts the offset from the anchor day:
+# H.-R. Thompson, Bengali (LOALL 18, John Benjamins 2012), "aj theke robibar
+# poryonto from today until Sunday".  Unicode CLDR 47, common/main/bn.xml,
+# day relative type 0, gives আজ.
+আজ
+আজকে

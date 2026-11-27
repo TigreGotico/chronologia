@@ -100,4 +100,4 @@ Each line is an open issue with a strict `xfail` test for this language. The lin
 - The preposition and the year noun stay in the remainder. Example (reader `extract_timespan`, lang `bg`, anchor 2017-06-27 13:04): `2024 година` gives 2024-01-01 00:00 to 2025-01-01 00:00 and `година` left over. [#1190](https://github.com/TigreGotico/chronologia/issues/1190)
 
 ---
-[← Belarusian](be.md) · [Home](../index.md) · [Catalan →](ca.md)
+[← Bengali](bn.md) · [Home](../index.md) · [Catalan →](ca.md)

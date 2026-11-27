@@ -1,0 +1,8 @@
+# আজ "today": Unicode CLDR 47, common/main/bn.xml, day relative type 0.  আজকে: H.-R. Thompson, Bengali (LOALL 18, John Benjamins 2012),
+# "aj, ajke today" (Roman script only).  আজকের is its genitive.
+# There is NO file for bare কাল or পরশু: H.-R. Thompson, Bengali (LOALL 18, John Benjamins 2012) lists
+# "kal tomorrow, yesterday, kalke tomorrow, yesterday".  Only the verb
+# separates the two, so the words are refused (issue #1484).
+আজ
+আজকে
+আজকের
