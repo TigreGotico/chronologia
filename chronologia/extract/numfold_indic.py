@@ -11,7 +11,7 @@ the tables below are the language's own closed class, transcribed word by word
 from the dictionary source cited beside each of them, and the value of a run is
 read by :func:`read_run` here.
 
-Three passes compose into :data:`fold_hi`, in this order:
+Five passes compose into :data:`fold_hi`, in this order:
 
 * the **Devanagari digit** pass, which rewrites a numeral written in the native
   digits to its ASCII spelling so a slot bound by a digit pattern (the ``CLOCK``
@@ -20,7 +20,16 @@ Three passes compose into :data:`fold_hi`, in this order:
 * the **ordinal** pass, for the ordinal an ``ORD`` slot reads
   ("इक्कीसवीं सदी" -- the twenty-first century);
 * the **cardinal** pass, which joins a well-formed composed numeral into one
-  token ("दो हज़ार चौबीस" == 2024).
+  token ("दो हज़ार चौबीस" == 2024);
+* the **कल** pass, which reads the direction of कल (yesterday or tomorrow)
+  from the tense of a verb after it ("कल की दावत कैसी थी" is yesterday,
+  "कल की दावत में आना ज़रूर" is tomorrow).  Source: native answer,
+  chronologia#1484 (comment 7209012484).  The verb lists are the locale files
+  ``marker_tense_past.voc`` and ``marker_tense_future.voc``;
+* the **holiday genitive** pass, which hides a holiday name that का, की or
+  के follows.  The genitive makes the name an attribute of the next noun
+  ("क्रिसमस के गीत", Christmas songs) or of a written eve form that the
+  native answer rejects ("क्रिसमस की पूर्व संध्या"), not a date.
 
 Hindi nouns counted by a numeral take the OBLIQUE case, which for the -आ stems
 is a plain -ए ("दो घंटे", "तीन हफ़्ते"); that is a fact of the noun and lives in
@@ -28,7 +37,11 @@ the ``unit_*.voc`` surfaces, not here.
 """
 from __future__ import annotations
 
+from dataclasses import replace
+from pathlib import Path
 from typing import Callable, Dict, Optional, Tuple
+
+from ovos_spec_tools import read_resource_file
 
 from chronologia.extract.model import Token
 from chronologia.extract.numfold_engine import reindex
@@ -370,4 +383,86 @@ def _compose(*passes: Callable) -> Callable:
     return run
 
 
-fold_hi = _compose(_devanagari_digits, _ordinal_rewrite, _cardinal_rewrite)
+_HI_DIR = Path(__file__).resolve().parent.parent / "locale" / "hi"
+
+
+def _surfaces(name: str) -> frozenset:
+    return frozenset(read_resource_file(_HI_DIR / name))
+
+
+_PAST_VERBS = _surfaces("marker_tense_past.voc")
+_FUTURE_VERBS = _surfaces("marker_tense_future.voc")
+#: the named_day surfaces the pass writes for कल; one line in each file.
+_YESTERDAY = next(iter(_surfaces("named_day_-1.voc")))
+_TOMORROW = next(iter(_surfaces("named_day_1.voc")))
+
+
+#: कल is also the noun "ease, peace, relief" (en.wiktionary.org, entry "कल",
+#: etymology 4), as in "दिल को कल नहीं पड़ रही थी".  A form of पड़ना right
+#: after कल (or after its नहीं) marks that noun.
+_EASE_VERBS = frozenset(("पड़", "पड़ा", "पड़ी", "पड़े", "पड़ता", "पड़ती",
+                         "पड़ते", "पड़ना"))
+
+
+def _is_ease_noun(tokens: Tuple[Token, ...], i: int) -> bool:
+    j = i + 1
+    if j < len(tokens) and tokens[j].text == "नहीं":
+        j += 1
+    return j < len(tokens) and tokens[j].text in _EASE_VERBS
+
+
+def _kal_direction(tokens: Tuple[Token, ...]) -> Tuple[Token, ...]:
+    """Rewrite कल to yesterday or tomorrow by the tense of the verbs after it.
+
+    Only one tense may follow: no verb, or a verb of each tense, keeps the
+    bare कल, which the locale refuses.  A hyphen after कल makes it the noun
+    "machine, part" of a compound (कल-पुर्ज़े; en.wiktionary.org, entry
+    "कल", etymology 3), never a day.
+    """
+    out, changed = list(tokens), False
+    for i, t in enumerate(tokens):
+        if t.text != "कल" or t.trailing_hyphen or _is_ease_noun(tokens, i):
+            continue
+        after = {tok.text for tok in tokens[i + 1:]}
+        past, future = bool(after & _PAST_VERBS), bool(after & _FUTURE_VERBS)
+        if past != future:
+            out[i] = replace(t, text=_YESTERDAY if past else _TOMORROW)
+            changed = True
+    return tuple(out) if changed else tokens
+
+
+def _hindi_holiday_names() -> Tuple[Tuple[str, ...], ...]:
+    path = Path(__file__).resolve().parent.parent / "holiday_data" / "i18n" / "well_known.tab"
+    names = set()
+    for line in path.read_text(encoding="utf-8").splitlines():
+        cells = [c.strip() for c in line.split("|")]
+        if len(cells) == 3 and cells[1] == "hi":
+            names.update(tuple(n.split()) for n in cells[2].split(";;"))
+    return tuple(sorted(names, key=len, reverse=True))
+
+
+_HOLIDAY_NAMES = _hindi_holiday_names()
+_GENITIVE = frozenset(("का", "की", "के"))
+
+
+def _holiday_genitive(tokens: Tuple[Token, ...]) -> Tuple[Token, ...]:
+    """Hide a holiday name that a genitive postposition follows."""
+    out, changed, texts = list(tokens), False, [t.text for t in tokens]
+    i = 0
+    while i < len(tokens):
+        name = next((n for n in _HOLIDAY_NAMES
+                     if tuple(texts[i:i + len(n)]) == n), None)
+        if name is None:
+            i += 1
+            continue
+        end = i + len(name)
+        if end < len(tokens) and texts[end] in _GENITIVE:
+            for j in range(i, end):
+                out[j] = replace(tokens[j], text=tokens[j].text + "_attr")
+            changed = True
+        i = end
+    return tuple(out) if changed else tokens
+
+
+fold_hi = _compose(_devanagari_digits, _ordinal_rewrite, _cardinal_rewrite,
+                   _kal_direction, _holiday_genitive)
