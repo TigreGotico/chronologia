@@ -1,0 +1,2110 @@
+{
+ "an": {
+  "clock": [
+   42,
+   42
+  ],
+  "dates": [
+   38,
+   38
+  ],
+  "durations": [
+   14,
+   14
+  ],
+  "holidays": [
+   0,
+   0
+  ],
+  "ranges": [
+   10,
+   10
+  ],
+  "recurrence": [
+   19,
+   19
+  ],
+  "relative days": [
+   26,
+   26
+  ],
+  "spoken": [
+   0,
+   0
+  ]
+ },
+ "ar": {
+  "clock": [
+   100,
+   100
+  ],
+  "dates": [
+   850,
+   850
+  ],
+  "durations": [
+   25,
+   25
+  ],
+  "holidays": [
+   20,
+   20
+  ],
+  "ranges": [
+   1158,
+   1159
+  ],
+  "recurrence": [
+   21,
+   21
+  ],
+  "relative days": [
+   61,
+   61
+  ],
+  "spoken": [
+   0,
+   0
+  ]
+ },
+ "ast": {
+  "clock": [
+   58,
+   58
+  ],
+  "dates": [
+   278,
+   278
+  ],
+  "durations": [
+   14,
+   14
+  ],
+  "holidays": [
+   0,
+   0
+  ],
+  "ranges": [
+   104,
+   104
+  ],
+  "recurrence": [
+   20,
+   20
+  ],
+  "relative days": [
+   61,
+   61
+  ],
+  "spoken": [
+   0,
+   0
+  ]
+ },
+ "az": {
+  "clock": [
+   147,
+   147
+  ],
+  "dates": [
+   414,
+   414
+  ],
+  "durations": [
+   13,
+   13
+  ],
+  "holidays": [
+   67,
+   67
+  ],
+  "ranges": [
+   150,
+   150
+  ],
+  "recurrence": [
+   10,
+   10
+  ],
+  "relative days": [
+   34,
+   34
+  ],
+  "spoken": [
+   0,
+   0
+  ]
+ },
+ "be": {
+  "clock": [
+   104,
+   104
+  ],
+  "dates": [
+   113,
+   113
+  ],
+  "durations": [
+   0,
+   0
+  ],
+  "holidays": [
+   0,
+   0
+  ],
+  "ranges": [
+   0,
+   0
+  ],
+  "recurrence": [
+   0,
+   0
+  ],
+  "relative days": [
+   80,
+   80
+  ],
+  "spoken": [
+   0,
+   0
+  ]
+ },
+ "bg": {
+  "clock": [
+   20,
+   20
+  ],
+  "dates": [
+   170,
+   170
+  ],
+  "durations": [
+   13,
+   13
+  ],
+  "holidays": [
+   168,
+   168
+  ],
+  "ranges": [
+   238,
+   238
+  ],
+  "recurrence": [
+   19,
+   19
+  ],
+  "relative days": [
+   46,
+   46
+  ],
+  "spoken": [
+   0,
+   0
+  ]
+ },
+ "bn": {
+  "clock": [
+   0,
+   0
+  ],
+  "dates": [
+   0,
+   0
+  ],
+  "durations": [
+   0,
+   0
+  ],
+  "holidays": [
+   0,
+   0
+  ],
+  "ranges": [
+   0,
+   0
+  ],
+  "recurrence": [
+   0,
+   0
+  ],
+  "relative days": [
+   6,
+   10
+  ],
+  "spoken": [
+   0,
+   0
+  ]
+ },
+ "ca": {
+  "clock": [
+   178,
+   178
+  ],
+  "dates": [
+   2727,
+   2728
+  ],
+  "durations": [
+   14,
+   14
+  ],
+  "holidays": [
+   226,
+   239
+  ],
+  "ranges": [
+   370,
+   370
+  ],
+  "recurrence": [
+   20,
+   20
+  ],
+  "relative days": [
+   96,
+   96
+  ],
+  "spoken": [
+   0,
+   0
+  ]
+ },
+ "cs": {
+  "clock": [
+   73,
+   73
+  ],
+  "dates": [
+   61,
+   61
+  ],
+  "durations": [
+   13,
+   13
+  ],
+  "holidays": [
+   329,
+   329
+  ],
+  "ranges": [
+   191,
+   191
+  ],
+  "recurrence": [
+   20,
+   20
+  ],
+  "relative days": [
+   76,
+   76
+  ],
+  "spoken": [
+   0,
+   0
+  ]
+ },
+ "cy": {
+  "clock": [
+   59,
+   59
+  ],
+  "dates": [
+   45,
+   45
+  ],
+  "durations": [
+   0,
+   0
+  ],
+  "holidays": [
+   0,
+   0
+  ],
+  "ranges": [
+   0,
+   0
+  ],
+  "recurrence": [
+   30,
+   30
+  ],
+  "relative days": [
+   73,
+   73
+  ],
+  "spoken": [
+   0,
+   0
+  ]
+ },
+ "da": {
+  "clock": [
+   116,
+   116
+  ],
+  "dates": [
+   33,
+   33
+  ],
+  "durations": [
+   16,
+   16
+  ],
+  "holidays": [
+   391,
+   391
+  ],
+  "ranges": [
+   345,
+   345
+  ],
+  "recurrence": [
+   19,
+   19
+  ],
+  "relative days": [
+   30,
+   30
+  ],
+  "spoken": [
+   0,
+   0
+  ]
+ },
+ "de": {
+  "clock": [
+   102,
+   102
+  ],
+  "dates": [
+   69,
+   69
+  ],
+  "durations": [
+   28,
+   28
+  ],
+  "holidays": [
+   768,
+   769
+  ],
+  "ranges": [
+   413,
+   413
+  ],
+  "recurrence": [
+   40,
+   40
+  ],
+  "relative days": [
+   44,
+   44
+  ],
+  "spoken": [
+   0,
+   0
+  ]
+ },
+ "el": {
+  "clock": [
+   223,
+   223
+  ],
+  "dates": [
+   578,
+   578
+  ],
+  "durations": [
+   16,
+   16
+  ],
+  "holidays": [
+   193,
+   193
+  ],
+  "ranges": [
+   103,
+   103
+  ],
+  "recurrence": [
+   21,
+   21
+  ],
+  "relative days": [
+   54,
+   54
+  ],
+  "spoken": [
+   0,
+   0
+  ]
+ },
+ "en": {
+  "clock": [
+   300,
+   300
+  ],
+  "dates": [
+   393,
+   393
+  ],
+  "durations": [
+   92,
+   92
+  ],
+  "holidays": [
+   1081,
+   1082
+  ],
+  "ranges": [
+   722,
+   727
+  ],
+  "recurrence": [
+   242,
+   242
+  ],
+  "relative days": [
+   164,
+   164
+  ],
+  "spoken": [
+   0,
+   0
+  ]
+ },
+ "eo": {
+  "clock": [
+   32,
+   32
+  ],
+  "dates": [
+   23,
+   23
+  ],
+  "durations": [
+   0,
+   0
+  ],
+  "holidays": [
+   0,
+   0
+  ],
+  "ranges": [
+   0,
+   0
+  ],
+  "recurrence": [
+   25,
+   25
+  ],
+  "relative days": [
+   0,
+   0
+  ],
+  "spoken": [
+   0,
+   0
+  ]
+ },
+ "es": {
+  "clock": [
+   166,
+   166
+  ],
+  "dates": [
+   63,
+   63
+  ],
+  "durations": [
+   31,
+   31
+  ],
+  "holidays": [
+   621,
+   622
+  ],
+  "ranges": [
+   172,
+   172
+  ],
+  "recurrence": [
+   42,
+   42
+  ],
+  "relative days": [
+   102,
+   102
+  ],
+  "spoken": [
+   0,
+   0
+  ]
+ },
+ "et": {
+  "clock": [
+   41,
+   41
+  ],
+  "dates": [
+   547,
+   547
+  ],
+  "durations": [
+   13,
+   13
+  ],
+  "holidays": [
+   34,
+   34
+  ],
+  "ranges": [
+   4,
+   4
+  ],
+  "recurrence": [
+   19,
+   19
+  ],
+  "relative days": [
+   64,
+   64
+  ],
+  "spoken": [
+   0,
+   0
+  ]
+ },
+ "eu": {
+  "clock": [
+   29,
+   29
+  ],
+  "dates": [
+   643,
+   643
+  ],
+  "durations": [
+   16,
+   16
+  ],
+  "holidays": [
+   33,
+   33
+  ],
+  "ranges": [
+   4,
+   4
+  ],
+  "recurrence": [
+   6,
+   6
+  ],
+  "relative days": [
+   129,
+   129
+  ],
+  "spoken": [
+   0,
+   0
+  ]
+ },
+ "fa": {
+  "clock": [
+   54,
+   57
+  ],
+  "dates": [
+   30,
+   30
+  ],
+  "durations": [
+   13,
+   13
+  ],
+  "holidays": [
+   25,
+   25
+  ],
+  "ranges": [
+   147,
+   147
+  ],
+  "recurrence": [
+   18,
+   18
+  ],
+  "relative days": [
+   59,
+   59
+  ],
+  "spoken": [
+   0,
+   0
+  ]
+ },
+ "fi": {
+  "clock": [
+   95,
+   96
+  ],
+  "dates": [
+   471,
+   471
+  ],
+  "durations": [
+   13,
+   13
+  ],
+  "holidays": [
+   188,
+   188
+  ],
+  "ranges": [
+   16,
+   16
+  ],
+  "recurrence": [
+   10,
+   10
+  ],
+  "relative days": [
+   29,
+   29
+  ],
+  "spoken": [
+   0,
+   0
+  ]
+ },
+ "fil": {
+  "clock": [
+   71,
+   71
+  ],
+  "dates": [
+   60,
+   60
+  ],
+  "durations": [
+   0,
+   0
+  ],
+  "holidays": [
+   0,
+   0
+  ],
+  "ranges": [
+   0,
+   0
+  ],
+  "recurrence": [
+   0,
+   0
+  ],
+  "relative days": [
+   54,
+   54
+  ],
+  "spoken": [
+   0,
+   0
+  ]
+ },
+ "fr": {
+  "clock": [
+   199,
+   199
+  ],
+  "dates": [
+   230,
+   230
+  ],
+  "durations": [
+   19,
+   19
+  ],
+  "holidays": [
+   451,
+   452
+  ],
+  "ranges": [
+   340,
+   343
+  ],
+  "recurrence": [
+   39,
+   39
+  ],
+  "relative days": [
+   100,
+   100
+  ],
+  "spoken": [
+   0,
+   0
+  ]
+ },
+ "fy": {
+  "clock": [
+   54,
+   54
+  ],
+  "dates": [
+   29,
+   29
+  ],
+  "durations": [
+   13,
+   13
+  ],
+  "holidays": [
+   17,
+   17
+  ],
+  "ranges": [
+   29,
+   29
+  ],
+  "recurrence": [
+   18,
+   18
+  ],
+  "relative days": [
+   27,
+   27
+  ],
+  "spoken": [
+   0,
+   0
+  ]
+ },
+ "ga": {
+  "clock": [
+   70,
+   70
+  ],
+  "dates": [
+   60,
+   60
+  ],
+  "durations": [
+   0,
+   0
+  ],
+  "holidays": [
+   0,
+   0
+  ],
+  "ranges": [
+   2,
+   2
+  ],
+  "recurrence": [
+   0,
+   0
+  ],
+  "relative days": [
+   74,
+   74
+  ],
+  "spoken": [
+   0,
+   0
+  ]
+ },
+ "gl": {
+  "clock": [
+   118,
+   118
+  ],
+  "dates": [
+   1328,
+   1328
+  ],
+  "durations": [
+   14,
+   14
+  ],
+  "holidays": [
+   225,
+   226
+  ],
+  "ranges": [
+   144,
+   144
+  ],
+  "recurrence": [
+   20,
+   20
+  ],
+  "relative days": [
+   95,
+   95
+  ],
+  "spoken": [
+   0,
+   0
+  ]
+ },
+ "ha": {
+  "clock": [
+   35,
+   35
+  ],
+  "dates": [
+   64,
+   64
+  ],
+  "durations": [
+   2,
+   2
+  ],
+  "holidays": [
+   0,
+   0
+  ],
+  "ranges": [
+   17,
+   17
+  ],
+  "recurrence": [
+   0,
+   0
+  ],
+  "relative days": [
+   44,
+   44
+  ],
+  "spoken": [
+   0,
+   0
+  ]
+ },
+ "he": {
+  "clock": [
+   45,
+   45
+  ],
+  "dates": [
+   327,
+   327
+  ],
+  "durations": [
+   19,
+   19
+  ],
+  "holidays": [
+   16,
+   16
+  ],
+  "ranges": [
+   81,
+   82
+  ],
+  "recurrence": [
+   49,
+   49
+  ],
+  "relative days": [
+   92,
+   92
+  ],
+  "spoken": [
+   0,
+   0
+  ]
+ },
+ "hi": {
+  "clock": [
+   47,
+   47
+  ],
+  "dates": [
+   52,
+   52
+  ],
+  "durations": [
+   0,
+   0
+  ],
+  "holidays": [
+   0,
+   0
+  ],
+  "ranges": [
+   20,
+   20
+  ],
+  "recurrence": [
+   27,
+   27
+  ],
+  "relative days": [
+   71,
+   71
+  ],
+  "spoken": [
+   0,
+   0
+  ]
+ },
+ "hr": {
+  "clock": [
+   34,
+   34
+  ],
+  "dates": [
+   70,
+   70
+  ],
+  "durations": [
+   16,
+   16
+  ],
+  "holidays": [
+   282,
+   282
+  ],
+  "ranges": [
+   328,
+   328
+  ],
+  "recurrence": [
+   19,
+   19
+  ],
+  "relative days": [
+   41,
+   41
+  ],
+  "spoken": [
+   0,
+   0
+  ]
+ },
+ "hu": {
+  "clock": [
+   57,
+   57
+  ],
+  "dates": [
+   568,
+   568
+  ],
+  "durations": [
+   15,
+   15
+  ],
+  "holidays": [
+   326,
+   326
+  ],
+  "ranges": [
+   18,
+   18
+  ],
+  "recurrence": [
+   10,
+   10
+  ],
+  "relative days": [
+   34,
+   34
+  ],
+  "spoken": [
+   0,
+   0
+  ]
+ },
+ "hy": {
+  "clock": [
+   26,
+   26
+  ],
+  "dates": [
+   35,
+   35
+  ],
+  "durations": [
+   0,
+   0
+  ],
+  "holidays": [
+   0,
+   0
+  ],
+  "ranges": [
+   0,
+   0
+  ],
+  "recurrence": [
+   0,
+   0
+  ],
+  "relative days": [
+   0,
+   0
+  ],
+  "spoken": [
+   0,
+   0
+  ]
+ },
+ "id": {
+  "clock": [
+   40,
+   40
+  ],
+  "dates": [
+   769,
+   769
+  ],
+  "durations": [
+   18,
+   18
+  ],
+  "holidays": [
+   106,
+   106
+  ],
+  "ranges": [
+   213,
+   213
+  ],
+  "recurrence": [
+   38,
+   38
+  ],
+  "relative days": [
+   33,
+   33
+  ],
+  "spoken": [
+   0,
+   0
+  ]
+ },
+ "is": {
+  "clock": [
+   50,
+   50
+  ],
+  "dates": [
+   42,
+   42
+  ],
+  "durations": [
+   0,
+   0
+  ],
+  "holidays": [
+   0,
+   0
+  ],
+  "ranges": [
+   0,
+   0
+  ],
+  "recurrence": [
+   0,
+   0
+  ],
+  "relative days": [
+   66,
+   66
+  ],
+  "spoken": [
+   0,
+   0
+  ]
+ },
+ "it": {
+  "clock": [
+   194,
+   194
+  ],
+  "dates": [
+   47,
+   47
+  ],
+  "durations": [
+   8,
+   8
+  ],
+  "holidays": [
+   341,
+   342
+  ],
+  "ranges": [
+   140,
+   140
+  ],
+  "recurrence": [
+   18,
+   18
+  ],
+  "relative days": [
+   86,
+   86
+  ],
+  "spoken": [
+   0,
+   0
+  ]
+ },
+ "ka": {
+  "clock": [
+   38,
+   38
+  ],
+  "dates": [
+   42,
+   42
+  ],
+  "durations": [
+   0,
+   0
+  ],
+  "holidays": [
+   0,
+   0
+  ],
+  "ranges": [
+   0,
+   0
+  ],
+  "recurrence": [
+   0,
+   0
+  ],
+  "relative days": [
+   42,
+   42
+  ],
+  "spoken": [
+   0,
+   0
+  ]
+ },
+ "kab": {
+  "clock": [
+   85,
+   85
+  ],
+  "dates": [
+   98,
+   98
+  ],
+  "durations": [
+   13,
+   13
+  ],
+  "holidays": [
+   7,
+   7
+  ],
+  "ranges": [
+   6,
+   6
+  ],
+  "recurrence": [
+   8,
+   8
+  ],
+  "relative days": [
+   27,
+   27
+  ],
+  "spoken": [
+   0,
+   0
+  ]
+ },
+ "ko": {
+  "clock": [
+   42,
+   42
+  ],
+  "dates": [
+   34,
+   34
+  ],
+  "durations": [
+   11,
+   11
+  ],
+  "holidays": [
+   0,
+   0
+  ],
+  "ranges": [
+   0,
+   0
+  ],
+  "recurrence": [
+   0,
+   0
+  ],
+  "relative days": [
+   38,
+   38
+  ],
+  "spoken": [
+   0,
+   0
+  ]
+ },
+ "lt": {
+  "clock": [
+   28,
+   28
+  ],
+  "dates": [
+   34,
+   34
+  ],
+  "durations": [
+   0,
+   0
+  ],
+  "holidays": [
+   0,
+   0
+  ],
+  "ranges": [
+   23,
+   23
+  ],
+  "recurrence": [
+   0,
+   0
+  ],
+  "relative days": [
+   68,
+   68
+  ],
+  "spoken": [
+   0,
+   0
+  ]
+ },
+ "lv": {
+  "clock": [
+   37,
+   37
+  ],
+  "dates": [
+   57,
+   57
+  ],
+  "durations": [
+   0,
+   0
+  ],
+  "holidays": [
+   0,
+   0
+  ],
+  "ranges": [
+   0,
+   0
+  ],
+  "recurrence": [
+   0,
+   0
+  ],
+  "relative days": [
+   56,
+   56
+  ],
+  "spoken": [
+   0,
+   0
+  ]
+ },
+ "mk": {
+  "clock": [
+   64,
+   64
+  ],
+  "dates": [
+   59,
+   59
+  ],
+  "durations": [
+   0,
+   0
+  ],
+  "holidays": [
+   0,
+   0
+  ],
+  "ranges": [
+   0,
+   0
+  ],
+  "recurrence": [
+   0,
+   0
+  ],
+  "relative days": [
+   55,
+   55
+  ],
+  "spoken": [
+   0,
+   0
+  ]
+ },
+ "ms": {
+  "clock": [
+   36,
+   36
+  ],
+  "dates": [
+   38,
+   38
+  ],
+  "durations": [
+   14,
+   14
+  ],
+  "holidays": [
+   22,
+   22
+  ],
+  "ranges": [
+   15,
+   15
+  ],
+  "recurrence": [
+   36,
+   36
+  ],
+  "relative days": [
+   29,
+   29
+  ],
+  "spoken": [
+   0,
+   0
+  ]
+ },
+ "mt": {
+  "clock": [
+   33,
+   33
+  ],
+  "dates": [
+   34,
+   34
+  ],
+  "durations": [
+   0,
+   0
+  ],
+  "holidays": [
+   0,
+   0
+  ],
+  "ranges": [
+   0,
+   0
+  ],
+  "recurrence": [
+   0,
+   0
+  ],
+  "relative days": [
+   0,
+   0
+  ],
+  "spoken": [
+   0,
+   0
+  ]
+ },
+ "mwl": {
+  "clock": [
+   18,
+   18
+  ],
+  "dates": [
+   43,
+   43
+  ],
+  "durations": [
+   14,
+   14
+  ],
+  "holidays": [
+   0,
+   0
+  ],
+  "ranges": [
+   19,
+   19
+  ],
+  "recurrence": [
+   19,
+   19
+  ],
+  "relative days": [
+   18,
+   18
+  ],
+  "spoken": [
+   0,
+   0
+  ]
+ },
+ "nb": {
+  "clock": [
+   55,
+   55
+  ],
+  "dates": [
+   311,
+   311
+  ],
+  "durations": [
+   13,
+   13
+  ],
+  "holidays": [
+   441,
+   441
+  ],
+  "ranges": [
+   269,
+   269
+  ],
+  "recurrence": [
+   19,
+   19
+  ],
+  "relative days": [
+   30,
+   30
+  ],
+  "spoken": [
+   0,
+   0
+  ]
+ },
+ "nl": {
+  "clock": [
+   156,
+   156
+  ],
+  "dates": [
+   659,
+   659
+  ],
+  "durations": [
+   19,
+   19
+  ],
+  "holidays": [
+   696,
+   696
+  ],
+  "ranges": [
+   313,
+   313
+  ],
+  "recurrence": [
+   11,
+   11
+  ],
+  "relative days": [
+   31,
+   31
+  ],
+  "spoken": [
+   0,
+   0
+  ]
+ },
+ "nn": {
+  "clock": [
+   53,
+   53
+  ],
+  "dates": [
+   770,
+   770
+  ],
+  "durations": [
+   13,
+   13
+  ],
+  "holidays": [
+   71,
+   71
+  ],
+  "ranges": [
+   29,
+   29
+  ],
+  "recurrence": [
+   19,
+   19
+  ],
+  "relative days": [
+   27,
+   27
+  ],
+  "spoken": [
+   0,
+   0
+  ]
+ },
+ "oc": {
+  "clock": [
+   67,
+   67
+  ],
+  "dates": [
+   29,
+   29
+  ],
+  "durations": [
+   14,
+   14
+  ],
+  "holidays": [
+   0,
+   0
+  ],
+  "ranges": [
+   16,
+   16
+  ],
+  "recurrence": [
+   20,
+   20
+  ],
+  "relative days": [
+   54,
+   54
+  ],
+  "spoken": [
+   0,
+   0
+  ]
+ },
+ "pl": {
+  "clock": [
+   20,
+   20
+  ],
+  "dates": [
+   50,
+   50
+  ],
+  "durations": [
+   18,
+   18
+  ],
+  "holidays": [
+   261,
+   261
+  ],
+  "ranges": [
+   319,
+   319
+  ],
+  "recurrence": [
+   20,
+   20
+  ],
+  "relative days": [
+   53,
+   53
+  ],
+  "spoken": [
+   0,
+   0
+  ]
+ },
+ "pt": {
+  "clock": [
+   321,
+   321
+  ],
+  "dates": [
+   175,
+   175
+  ],
+  "durations": [
+   18,
+   18
+  ],
+  "holidays": [
+   360,
+   361
+  ],
+  "ranges": [
+   112,
+   112
+  ],
+  "recurrence": [
+   139,
+   139
+  ],
+  "relative days": [
+   127,
+   127
+  ],
+  "spoken": [
+   1143,
+   1143
+  ]
+ },
+ "ro": {
+  "clock": [
+   45,
+   45
+  ],
+  "dates": [
+   19,
+   19
+  ],
+  "durations": [
+   14,
+   14
+  ],
+  "holidays": [
+   306,
+   306
+  ],
+  "ranges": [
+   332,
+   332
+  ],
+  "recurrence": [
+   19,
+   19
+  ],
+  "relative days": [
+   85,
+   85
+  ],
+  "spoken": [
+   0,
+   0
+  ]
+ },
+ "ru": {
+  "clock": [
+   94,
+   94
+  ],
+  "dates": [
+   122,
+   122
+  ],
+  "durations": [
+   20,
+   20
+  ],
+  "holidays": [
+   219,
+   219
+  ],
+  "ranges": [
+   695,
+   695
+  ],
+  "recurrence": [
+   19,
+   19
+  ],
+  "relative days": [
+   72,
+   72
+  ],
+  "spoken": [
+   0,
+   0
+  ]
+ },
+ "sk": {
+  "clock": [
+   59,
+   59
+  ],
+  "dates": [
+   37,
+   37
+  ],
+  "durations": [
+   13,
+   13
+  ],
+  "holidays": [
+   256,
+   256
+  ],
+  "ranges": [
+   144,
+   144
+  ],
+  "recurrence": [
+   19,
+   19
+  ],
+  "relative days": [
+   55,
+   55
+  ],
+  "spoken": [
+   0,
+   0
+  ]
+ },
+ "sl": {
+  "clock": [
+   25,
+   25
+  ],
+  "dates": [
+   69,
+   69
+  ],
+  "durations": [
+   13,
+   13
+  ],
+  "holidays": [
+   256,
+   256
+  ],
+  "ranges": [
+   295,
+   295
+  ],
+  "recurrence": [
+   19,
+   19
+  ],
+  "relative days": [
+   42,
+   42
+  ],
+  "spoken": [
+   0,
+   0
+  ]
+ },
+ "sq": {
+  "clock": [
+   37,
+   37
+  ],
+  "dates": [
+   0,
+   0
+  ],
+  "durations": [
+   0,
+   0
+  ],
+  "holidays": [
+   0,
+   0
+  ],
+  "ranges": [
+   0,
+   0
+  ],
+  "recurrence": [
+   0,
+   0
+  ],
+  "relative days": [
+   66,
+   66
+  ],
+  "spoken": [
+   0,
+   0
+  ]
+ },
+ "sr": {
+  "clock": [
+   42,
+   48
+  ],
+  "dates": [
+   42,
+   42
+  ],
+  "durations": [
+   0,
+   0
+  ],
+  "holidays": [
+   0,
+   0
+  ],
+  "ranges": [
+   0,
+   0
+  ],
+  "recurrence": [
+   0,
+   0
+  ],
+  "relative days": [
+   0,
+   0
+  ],
+  "spoken": [
+   0,
+   0
+  ]
+ },
+ "sv": {
+  "clock": [
+   64,
+   64
+  ],
+  "dates": [
+   275,
+   275
+  ],
+  "durations": [
+   13,
+   13
+  ],
+  "holidays": [
+   410,
+   410
+  ],
+  "ranges": [
+   811,
+   811
+  ],
+  "recurrence": [
+   19,
+   19
+  ],
+  "relative days": [
+   27,
+   27
+  ],
+  "spoken": [
+   0,
+   0
+  ]
+ },
+ "sw": {
+  "clock": [
+   81,
+   81
+  ],
+  "dates": [
+   41,
+   41
+  ],
+  "durations": [
+   34,
+   34
+  ],
+  "holidays": [
+   0,
+   0
+  ],
+  "ranges": [
+   0,
+   0
+  ],
+  "recurrence": [
+   0,
+   0
+  ],
+  "relative days": [
+   50,
+   50
+  ],
+  "spoken": [
+   0,
+   0
+  ]
+ },
+ "ta": {
+  "clock": [
+   21,
+   21
+  ],
+  "dates": [
+   28,
+   28
+  ],
+  "durations": [
+   0,
+   0
+  ],
+  "holidays": [
+   0,
+   0
+  ],
+  "ranges": [
+   0,
+   0
+  ],
+  "recurrence": [
+   0,
+   0
+  ],
+  "relative days": [
+   53,
+   53
+  ],
+  "spoken": [
+   0,
+   0
+  ]
+ },
+ "th": {
+  "clock": [
+   33,
+   33
+  ],
+  "dates": [
+   30,
+   30
+  ],
+  "durations": [
+   0,
+   0
+  ],
+  "holidays": [
+   0,
+   0
+  ],
+  "ranges": [
+   0,
+   0
+  ],
+  "recurrence": [
+   0,
+   0
+  ],
+  "relative days": [
+   63,
+   63
+  ],
+  "spoken": [
+   0,
+   0
+  ]
+ },
+ "tr": {
+  "clock": [
+   278,
+   278
+  ],
+  "dates": [
+   1293,
+   1293
+  ],
+  "durations": [
+   13,
+   13
+  ],
+  "holidays": [
+   201,
+   201
+  ],
+  "ranges": [
+   135,
+   135
+  ],
+  "recurrence": [
+   19,
+   19
+  ],
+  "relative days": [
+   36,
+   36
+  ],
+  "spoken": [
+   0,
+   0
+  ]
+ },
+ "uk": {
+  "clock": [
+   91,
+   91
+  ],
+  "dates": [
+   1294,
+   1294
+  ],
+  "durations": [
+   13,
+   13
+  ],
+  "holidays": [
+   244,
+   244
+  ],
+  "ranges": [
+   199,
+   199
+  ],
+  "recurrence": [
+   19,
+   19
+  ],
+  "relative days": [
+   46,
+   46
+  ],
+  "spoken": [
+   0,
+   0
+  ]
+ },
+ "vi": {
+  "clock": [
+   46,
+   46
+  ],
+  "dates": [
+   54,
+   54
+  ],
+  "durations": [
+   0,
+   0
+  ],
+  "holidays": [
+   0,
+   0
+  ],
+  "ranges": [
+   0,
+   0
+  ],
+  "recurrence": [
+   0,
+   0
+  ],
+  "relative days": [
+   51,
+   51
+  ],
+  "spoken": [
+   0,
+   0
+  ]
+ }
+}
