@@ -376,7 +376,6 @@ def test_leading_zero_number_before_minutes_is_a_length(text, seconds):
     assert result.duration == timedelta(seconds=seconds)
 
 
-@pytest.mark.xfail(raises=AssertionError, strict=True, reason=URL + "1332")
 def test_es_length_before_manana_is_tomorrow():
     event = extract_event("reunión de dos horas mañana", "es", ANCHOR)
     assert event is not None

@@ -20,6 +20,9 @@
    10,
    10
   ],
+  "ready": {
+   "an": false
+  },
   "recurrence": [
    19,
    19
@@ -54,6 +57,9 @@
    1158,
    1159
   ],
+  "ready": {
+   "ar": false
+  },
   "recurrence": [
    21,
    21
@@ -88,6 +94,9 @@
    104,
    104
   ],
+  "ready": {
+   "ast": false
+  },
   "recurrence": [
    20,
    20
@@ -122,6 +131,9 @@
    150,
    150
   ],
+  "ready": {
+   "az": false
+  },
   "recurrence": [
    10,
    10
@@ -156,6 +168,7 @@
    0,
    0
   ],
+  "ready": {},
   "recurrence": [
    0,
    0
@@ -190,6 +203,9 @@
    238,
    238
   ],
+  "ready": {
+   "bg": false
+  },
   "recurrence": [
    19,
    19
@@ -224,6 +240,7 @@
    0,
    0
   ],
+  "ready": {},
   "recurrence": [
    0,
    0
@@ -258,6 +275,9 @@
    370,
    370
   ],
+  "ready": {
+   "ca": false
+  },
   "recurrence": [
    20,
    20
@@ -292,6 +312,9 @@
    191,
    191
   ],
+  "ready": {
+   "cs": false
+  },
   "recurrence": [
    20,
    20
@@ -326,6 +349,7 @@
    0,
    0
   ],
+  "ready": {},
   "recurrence": [
    30,
    30
@@ -360,6 +384,9 @@
    345,
    345
   ],
+  "ready": {
+   "da": false
+  },
   "recurrence": [
    19,
    19
@@ -394,6 +421,9 @@
    413,
    413
   ],
+  "ready": {
+   "de": false
+  },
   "recurrence": [
    40,
    40
@@ -428,6 +458,9 @@
    103,
    103
   ],
+  "ready": {
+   "el": false
+  },
   "recurrence": [
    21,
    21
@@ -462,6 +495,9 @@
    722,
    727
   ],
+  "ready": {
+   "en": false
+  },
   "recurrence": [
    242,
    242
@@ -496,6 +532,9 @@
    0,
    0
   ],
+  "ready": {
+   "eo": false
+  },
   "recurrence": [
    25,
    25
@@ -530,6 +569,9 @@
    172,
    172
   ],
+  "ready": {
+   "es": false
+  },
   "recurrence": [
    42,
    42
@@ -564,6 +606,9 @@
    4,
    4
   ],
+  "ready": {
+   "et": false
+  },
   "recurrence": [
    19,
    19
@@ -598,6 +643,9 @@
    4,
    4
   ],
+  "ready": {
+   "eu": false
+  },
   "recurrence": [
    6,
    6
@@ -632,6 +680,9 @@
    147,
    147
   ],
+  "ready": {
+   "fa": false
+  },
   "recurrence": [
    18,
    18
@@ -666,6 +717,9 @@
    16,
    16
   ],
+  "ready": {
+   "fi": false
+  },
   "recurrence": [
    10,
    10
@@ -700,6 +754,7 @@
    0,
    0
   ],
+  "ready": {},
   "recurrence": [
    0,
    0
@@ -734,6 +789,11 @@
    340,
    343
   ],
+  "ready": {
+   "fr": false,
+   "fr-BE": false,
+   "fr-CH": false
+  },
   "recurrence": [
    39,
    39
@@ -768,6 +828,9 @@
    29,
    29
   ],
+  "ready": {
+   "fy": false
+  },
   "recurrence": [
    18,
    18
@@ -802,6 +865,7 @@
    2,
    2
   ],
+  "ready": {},
   "recurrence": [
    0,
    0
@@ -836,6 +900,9 @@
    144,
    144
   ],
+  "ready": {
+   "gl": false
+  },
   "recurrence": [
    20,
    20
@@ -870,6 +937,7 @@
    17,
    17
   ],
+  "ready": {},
   "recurrence": [
    0,
    0
@@ -904,6 +972,9 @@
    81,
    82
   ],
+  "ready": {
+   "he": false
+  },
   "recurrence": [
    49,
    49
@@ -938,6 +1009,9 @@
    20,
    20
   ],
+  "ready": {
+   "hi": false
+  },
   "recurrence": [
    27,
    27
@@ -972,6 +1046,9 @@
    328,
    328
   ],
+  "ready": {
+   "hr": false
+  },
   "recurrence": [
    19,
    19
@@ -1006,6 +1083,9 @@
    18,
    18
   ],
+  "ready": {
+   "hu": false
+  },
   "recurrence": [
    10,
    10
@@ -1040,6 +1120,7 @@
    0,
    0
   ],
+  "ready": {},
   "recurrence": [
    0,
    0
@@ -1074,6 +1155,9 @@
    213,
    213
   ],
+  "ready": {
+   "id": false
+  },
   "recurrence": [
    38,
    38
@@ -1108,6 +1192,7 @@
    0,
    0
   ],
+  "ready": {},
   "recurrence": [
    0,
    0
@@ -1142,6 +1227,9 @@
    140,
    140
   ],
+  "ready": {
+   "it": false
+  },
   "recurrence": [
    18,
    18
@@ -1176,6 +1264,7 @@
    0,
    0
   ],
+  "ready": {},
   "recurrence": [
    0,
    0
@@ -1210,6 +1299,9 @@
    6,
    6
   ],
+  "ready": {
+   "kab": false
+  },
   "recurrence": [
    8,
    8
@@ -1244,6 +1336,7 @@
    0,
    0
   ],
+  "ready": {},
   "recurrence": [
    0,
    0
@@ -1278,6 +1371,9 @@
    23,
    23
   ],
+  "ready": {
+   "lt": false
+  },
   "recurrence": [
    0,
    0
@@ -1312,6 +1408,7 @@
    0,
    0
   ],
+  "ready": {},
   "recurrence": [
    0,
    0
@@ -1346,6 +1443,7 @@
    0,
    0
   ],
+  "ready": {},
   "recurrence": [
    0,
    0
@@ -1380,6 +1478,9 @@
    15,
    15
   ],
+  "ready": {
+   "ms": false
+  },
   "recurrence": [
    36,
    36
@@ -1414,6 +1515,9 @@
    0,
    0
   ],
+  "ready": {
+   "mt": false
+  },
   "recurrence": [
    0,
    0
@@ -1448,6 +1552,9 @@
    19,
    19
   ],
+  "ready": {
+   "mwl": false
+  },
   "recurrence": [
    19,
    19
@@ -1482,6 +1589,9 @@
    269,
    269
   ],
+  "ready": {
+   "nb": false
+  },
   "recurrence": [
    19,
    19
@@ -1516,6 +1626,9 @@
    313,
    313
   ],
+  "ready": {
+   "nl": false
+  },
   "recurrence": [
    11,
    11
@@ -1550,6 +1663,9 @@
    29,
    29
   ],
+  "ready": {
+   "nn": false
+  },
   "recurrence": [
    19,
    19
@@ -1584,6 +1700,9 @@
    16,
    16
   ],
+  "ready": {
+   "oc": false
+  },
   "recurrence": [
    20,
    20
@@ -1618,6 +1737,9 @@
    319,
    319
   ],
+  "ready": {
+   "pl": false
+  },
   "recurrence": [
    20,
    20
@@ -1652,6 +1774,10 @@
    112,
    112
   ],
+  "ready": {
+   "pt-BR": false,
+   "pt-PT": false
+  },
   "recurrence": [
    139,
    139
@@ -1686,6 +1812,9 @@
    332,
    332
   ],
+  "ready": {
+   "ro": false
+  },
   "recurrence": [
    19,
    19
@@ -1720,6 +1849,9 @@
    695,
    695
   ],
+  "ready": {
+   "ru": true
+  },
   "recurrence": [
    19,
    19
@@ -1754,6 +1886,9 @@
    144,
    144
   ],
+  "ready": {
+   "sk": false
+  },
   "recurrence": [
    19,
    19
@@ -1788,6 +1923,9 @@
    295,
    295
   ],
+  "ready": {
+   "sl": false
+  },
   "recurrence": [
    19,
    19
@@ -1822,6 +1960,9 @@
    0,
    0
   ],
+  "ready": {
+   "sq": false
+  },
   "recurrence": [
    0,
    0
@@ -1856,6 +1997,9 @@
    0,
    0
   ],
+  "ready": {
+   "sr": false
+  },
   "recurrence": [
    0,
    0
@@ -1890,6 +2034,9 @@
    811,
    811
   ],
+  "ready": {
+   "sv": false
+  },
   "recurrence": [
    19,
    19
@@ -1924,6 +2071,7 @@
    0,
    0
   ],
+  "ready": {},
   "recurrence": [
    0,
    0
@@ -1958,6 +2106,7 @@
    0,
    0
   ],
+  "ready": {},
   "recurrence": [
    0,
    0
@@ -1992,6 +2141,7 @@
    0,
    0
   ],
+  "ready": {},
   "recurrence": [
    0,
    0
@@ -2026,6 +2176,9 @@
    135,
    135
   ],
+  "ready": {
+   "tr": false
+  },
   "recurrence": [
    19,
    19
@@ -2060,6 +2213,9 @@
    199,
    199
   ],
+  "ready": {
+   "uk": false
+  },
   "recurrence": [
    19,
    19
@@ -2094,6 +2250,7 @@
    0,
    0
   ],
+  "ready": {},
   "recurrence": [
    0,
    0

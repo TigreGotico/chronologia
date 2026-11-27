@@ -44,8 +44,6 @@ DURATIONS = (
     ])
     + duration_rows(1210, [
         ("da", "ni og fyrre sekunder", A_2017, 49, None),
-        ("kab", "mraw d yiwen n tesdidin", A_2017, 660, None),
-        ("kab", "mraw d sin n tesdidin", A_2017, 720, None),
         ("kab", "ɛecrin d yiwen n tesdidin", A_2017, 1260, None),
     ])
     + duration_rows(1211, [
