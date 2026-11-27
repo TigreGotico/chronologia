@@ -4,21 +4,46 @@
 
 The input is the per-bench summary TSV of the date bench scorer
 (columns bench, side, lang, n, chronologia_correct, odp029_correct, ...).
-The script writes docs/benchmarks/odp_vs_chronologia.json,
-docs/benchmarks/odp_vs_chronologia.png and the table in docs/benchmarks.md.
+The script writes docs/benchmarks/odp_vs_chronologia.json, the figure
+docs/img/odp_vs_chronologia{.json,.svg,-dark.svg}, and the figure and the
+table between the odp-table markers in docs/benchmarks.md.
 """
 import csv
 import json
 import os
 import sys
 
+sys.path.insert(0, os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "docs", "img"))
+from plot_style import save  # noqa: E402
+
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 OUT = os.path.join(ROOT, "docs", "benchmarks", "odp_vs_chronologia")
+FIGURE = os.path.join(ROOT, "docs", "img", "odp_vs_chronologia")
 PAGE = os.path.join(ROOT, "docs", "benchmarks.md")
 START = "<!-- odp-table:start -->"
 END = "<!-- odp-table:end -->"
-LEADERS = ["pt-PT", "pt-BR", "es", "es-CO", "fr", "it", "de", "nl", "da",
-           "kab", "hi", "bn", "mwr"]
+#: (leader tag, bench locale or None, locale data code)
+LEADERS = [
+    ("pt-PT", "pt-PT", "pt"), ("pt-BR", "pt-BR", "pt"), ("es-CO", None, "es"),
+    ("fr-FR", "fr", "fr"), ("it-IT", "it", "it"), ("de-DE", "de", "de"),
+    ("nl-NL", "nl", "nl"), ("da-DK", "da", "da"), ("kab", "kab", "kab"),
+    ("hi-IN", "hi", "hi"), ("bn-IN", None, None), ("mwr", None, None),
+]
+#: bench rows without a region tag, shown next to the leader they relate to
+EXTRA = {"es-CO": ("es", "es")}
+
+
+def rows():
+    for tag, bench, code in LEADERS:
+        yield tag, bench, code
+        if tag in EXTRA:
+            yield "", *EXTRA[tag]
+
+
+def bench_label(tag, bench):
+    if bench is None:
+        return "none"
+    return bench if bench == tag or "-" in bench else f"{bench} (rows with no region tag)"
 
 
 def summarise(path):
@@ -48,51 +73,71 @@ def summarise(path):
     return {"source": header, "locales": out}
 
 
+def figure_data(data):
+    return [{"label": f"{tag or bench} \u00b7 {bench}" if tag and tag != bench else bench,
+             "n": data["locales"][bench]["n"],
+             "chronologia": data["locales"][bench]["chronologia"],
+             "odp": data["locales"][bench]["odp"]}
+            for tag, bench, _ in rows() if bench in data["locales"]]
+
+
+def alt(fig):
+    gaps = sorted(fig, key=lambda r: r["chronologia"] - r["odp"])
+    lo, hi = gaps[0], gaps[-1]
+    wins = sum(r["chronologia"] > r["odp"] for r in fig)
+    return (f"Strict correct rate per leader locale: chronologia is higher than "
+            f"ovos-date-parser 0.29 in {wins} of {len(fig)} measured bench locales; "
+            f"largest gap {hi['label']} {hi['chronologia']:.2f} against {hi['odp']:.2f}, "
+            f"smallest gap {lo['label']} {lo['chronologia']:.2f} against {lo['odp']:.2f}.")
+
+
 def table(data):
-    lines = ["| Locale | Rows | chronologia | ovos-date-parser 0.29 | Ready |",
-             "|:---|---:|---:|---:|:---|"]
-    for lang in LEADERS:
-        v = data["locales"].get(lang)
+    lines = ["| Leader tag | Bench rows | Locale data | Rows | chronologia | ovos-date-parser 0.29 | Ready |",
+             "|:---|:---|:---|---:|---:|---:|:---|"]
+    for tag, bench, code in rows():
+        v = data["locales"].get(bench)
         if v is None:
-            lines.append(f"| {lang} | 0 | not measured | not measured | not measured |")
+            lines.append(f"| {tag} | {bench_label(tag, bench)} | {code or 'none'} | 0 "
+                         "| not measured | not measured | not measured |")
         else:
             ready = "yes" if v["ready"] else "no"
-            lines.append(f"| {lang} | {v['n']} | {v['chronologia']:.3f} | {v['odp']:.3f} | {ready} |")
+            lines.append(f"| {tag} | {bench_label(tag, bench)} | {code} | {v['n']} "
+                         f"| {v['chronologia']:.3f} | {v['odp']:.3f} | {ready} |")
     return "\n".join(lines)
+
+
+def block(data):
+    picture = ("<picture>\n"
+               '  <source media="(prefers-color-scheme: dark)" srcset="img/odp_vs_chronologia-dark.svg">\n'
+               f'  <img alt="{alt(figure_data(data))}" src="img/odp_vs_chronologia.svg">\n'
+               "</picture>")
+    return f"{picture}\n\n{table(data)}"
 
 
 def rendered_page(data):
     text = open(PAGE, encoding="utf-8").read()
     before, rest = text.split(START, 1)
     _, after = rest.split(END, 1)
-    return f"{before}{START}\n{table(data)}\n{END}{after}"
+    return f"{before}{START}\n{block(data)}\n{END}{after}"
 
 
-def plot(data, path):
-    import matplotlib
-    matplotlib.use("Agg")
-    import matplotlib.pyplot as plt
-
-    shown = [l for l in LEADERS if l in data["locales"]]
-    missing = [l for l in LEADERS if l not in data["locales"]]
-    fig, ax = plt.subplots(figsize=(8, 0.55 * len(shown) + 1.6), dpi=120)
-    y = range(len(shown))
+def draw(fig, theme, rows):
+    ax = fig.subplots()
+    y = range(len(rows))
     h = 0.38
-    for off, key, label, color in ((-h / 2, "chronologia", "chronologia", "#2a6fdb"),
-                                   (h / 2, "odp", "ovos-date-parser 0.29", "#e08a1e")):
-        vals = [data["locales"][l][key] for l in shown]
-        bars = ax.barh([i + off for i in y], vals, h, label=label, color=color)
-        ax.bar_label(bars, labels=[f"{v:.2f}" for v in vals], padding=3, fontsize=8)
-    ax.set_yticks(list(y), [f"{l} (n={data['locales'][l]['n']})" for l in shown])
+    for i, (key, label) in enumerate((("chronologia", "chronologia"),
+                                      ("odp", "ovos-date-parser 0.29"))):
+        vals = [r[key] for r in rows]
+        bars = ax.barh([j + (i - 0.5) * h for j in y], vals, h, label=label,
+                       color=theme["series"][i])
+        ax.bar_label(bars, labels=[f"{v:.2f}" for v in vals], padding=3, fontsize=8,
+                     color=theme["text"])
+    ax.set_yticks(list(y), [f"{r['label']} (n={r['n']})" for r in rows])
     ax.invert_yaxis()
-    ax.set_xlim(0, 1.08)
+    ax.set_xlim(0, 1.1)
+    ax.grid(axis="y", visible=False)
     ax.set_xlabel("strict correct rate")
-    ax.spines[["top", "right"]].set_visible(False)
-    ax.legend(loc="lower right", frameon=False)
-    if missing:
-        fig.text(0.01, 0.01, "No bench rows: " + ", ".join(missing), fontsize=8)
-    fig.tight_layout(rect=(0, 0.03, 1, 1))
-    fig.savefig(path, metadata={"Software": None})
+    ax.legend(loc="lower right")
 
 
 if __name__ == "__main__":
@@ -104,5 +149,5 @@ if __name__ == "__main__":
     page = rendered_page(data)
     with open(PAGE, "w", encoding="utf-8") as f:
         f.write(page)
-    if os.environ.get("DOCS_FIGURES_DATA_ONLY") != "1":
-        plot(data, OUT + ".png")
+    fig = figure_data(data)
+    save(FIGURE, draw, fig, height=0.5 * len(fig) + 1.0)

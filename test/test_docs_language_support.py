@@ -50,3 +50,12 @@ def test_benchmark_table_matches_the_result_file():
     with open(plot_benchmarks.PAGE, encoding="utf-8") as f:
         assert plot_benchmarks.rendered_page(data) == f.read(), (
             "docs/benchmarks.md differs from the result file; run tools/plot_benchmarks.py")
+
+
+def test_benchmark_section_is_outside_html_comments():
+    import re
+    with open(plot_benchmarks.PAGE, encoding="utf-8") as f:
+        visible = re.sub(r"<!--(?!\s*odp-table:).*?-->", "", f.read(), flags=re.S)
+    assert "\n## Against ovos-date-parser\n" in visible
+    assert visible.count(plot_benchmarks.START) == 1
+    assert visible.count(plot_benchmarks.END) == 1
