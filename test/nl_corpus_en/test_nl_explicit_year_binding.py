@@ -38,7 +38,7 @@ def test_fuzzy_month_binds_trailing_year(text, s, e):
     assert parse(text)[1] == ""            # year consumed, no remainder
 
 
-def test_fuzzy_month_no_year_stays_anchor_year():
+def test_fuzzy_month_no_year_is_next_occurrence():
     # ruling 1 (26 November 2026): a part of a month takes its month's year,
     # so the bare reading is no longer anchor-year March: March has ended at
     # the anchor (2017-06-27), so it is March 2018 (31 days / 3 as before).

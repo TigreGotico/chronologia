@@ -46,7 +46,7 @@ Every holiday rule needs a frozen gold value in `test/holiday_golds/`. A tier fl
 
 Numbers: numtag reads the numbers of the languages in `NUMTAG_LANGS` in `chronologia/extract/numlayer.py`. The other 21 locales use their own `numfold_*` module. The table is in [docs/languages/index.md](docs/languages/index.md).
 
-Ambiguous phrases follow [docs/rulings.md](docs/rulings.md). A change to a ruling changes that page. `test/ruling17_pins.txt`, `test/ruling23_pins.txt` and `test/ruling1_pins.txt` list the tests whose expected value a ruling changed.
+Ambiguous phrases follow [docs/rulings.md](docs/rulings.md). A change to a ruling changes that page. `test/ruling17_pins.txt`, `test/ruling23_pins.txt` and `test/ruling1_pins.txt` list the tests whose expected value a ruling changed. `test/test_ruling1_pins.py` checks that every test in `test/ruling1_pins.txt` still exists.
 
 Every python block in `README.md` and `docs/*.md` must run. `test/test_docs_examples.py` runs them ([CONTRIBUTING.md](CONTRIBUTING.md)). Mark an illustrative block with `# doctest: skip`.
 

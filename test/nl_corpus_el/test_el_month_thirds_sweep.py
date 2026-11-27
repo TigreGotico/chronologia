@@ -25,18 +25,33 @@ GEN = {
 PART = {"αρχές": "early", "μέσα": "mid", "τέλη": "late"}
 
 
-def _third(y, mo, part):
+def _third_dt(y, mo, part):
     s = datetime(y, mo, 1)
     e = datetime(y + 1, 1, 1) if mo == 12 else datetime(y, mo + 1, 1)
     w = (e - s) / 3
-    lo, hi = {"early": (s, s + w), "mid": (s + w, s + 2 * w),
-              "late": (s + 2 * w, e)}[part]
+    return {"early": (s, s + w), "mid": (s + w, s + 2 * w),
+            "late": (s + 2 * w, e)}[part]
+
+
+def _third(y, mo, part):
+    lo, hi = _third_dt(y, mo, part)
     return AstroDate.from_datetime(lo), AstroDate.from_datetime(hi)
+
+
+def _year(mo, part):
+    """Year a bare part of month ``mo`` takes against the anchor ``A``."""
+    y = A.year + (mo < A.month)
+    # ruling 1 (26 November 2026): a part of a month is read as a span; in the
+    # anchor's own month, a part that has ended at the anchor (early and mid
+    # June 2017) is next year's, a part that holds it (late June) stays
+    if mo == A.month and _third_dt(y, mo, part)[1] <= A:
+        y += 1
+    return y
 
 
 _CASES = [
     # ruling 1 (changed 26 November 2026): a part of a month takes its month's year; a month that has ended at the anchor is next year's
-    (f"{word} {GEN[mo]}", A.year + (mo < A.month), mo, part)
+    (f"{word} {GEN[mo]}", _year(mo, part), mo, part)
     for mo in range(1, 13) for word, part in PART.items()
 ]
 

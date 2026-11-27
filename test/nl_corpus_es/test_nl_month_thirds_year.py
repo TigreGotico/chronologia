@@ -43,7 +43,7 @@ def test_late_month_third_binds_explicit_year():
     assert start_end("a finales de marzo de 2019") == _G["late"]
 
 
-def test_yearless_month_third_stays_anchor_year_regression():
+def test_yearless_month_third_is_next_occurrence_regression():
     # WITHOUT a year the third takes the year the month alone takes.  Ruling 1
     # changed on 26 November 2026: it used to be the anchor's own year (2017);
     # March has ended at the anchor (June 2017), so it is March 2018.  The

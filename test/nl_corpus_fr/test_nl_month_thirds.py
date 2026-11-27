@@ -26,22 +26,36 @@ import pytest
 
 from chronologia.astrodate import AstroDate
 
-from ._corpus import start_end, nomatch
+from ._corpus import ANCHOR, start_end, nomatch
 
 
 def _year(month):
     # ruling 1: a month that has ended at the anchor (June 2017) is next year's
-    return 2017 + (month < 6)
+    return ANCHOR.year + (month < ANCHOR.month)
 
 
-def _third(month, part):
-    y = _year(month)
+def _bounds(y, month, part):
     s = datetime(y, month, 1)
     e = datetime(y + 1, 1, 1) if month == 12 else datetime(y, month + 1, 1)
     w = (e - s) / 3
-    lo, hi = {"debut": (s, s + w),
-              "milieu": (s + w, s + 2 * w),
-              "fin": (s + 2 * w, e)}[part]
+    return {"debut": (s, s + w),
+            "milieu": (s + w, s + 2 * w),
+            "fin": (s + 2 * w, e)}[part]
+
+
+def _part_year(month, part):
+    # ruling 1 (26 November 2026): a part of a month is read as a span; in the
+    # anchor's own month (June 2017) a third that ended at or before the anchor
+    # is June 2018's (debut 1-11 June and milieu 11-21 June have ended; fin,
+    # 21 June to 1 July, holds the anchor and stays 2017)
+    y = _year(month)
+    if month == ANCHOR.month and _bounds(y, month, part)[1] <= ANCHOR:
+        y += 1
+    return y
+
+
+def _third(month, part):
+    lo, hi = _bounds(_part_year(month, part), month, part)
     return AstroDate.from_datetime(lo), AstroDate.from_datetime(hi)
 
 
@@ -75,10 +89,17 @@ def test_thirds_partition_the_month(month):
     d_s, d_e = start_end(f"début {_MONTHS[month]}")
     m_s, m_e = start_end(f"mi-{_MONTHS[month]}")
     f_s, f_e = start_end(f"fin {_MONTHS[month]}")
-    assert d_e == m_s and m_e == f_s          # contiguous
-    y = _year(month)
-    assert d_s == AstroDate(y, month, 1)      # opens the month
-    end = AstroDate(y + 1, 1, 1) if month == 12 else AstroDate(y, month + 1, 1)
+    # ruling 1: in June 2017 debut and milieu have ended (2018) while fin holds
+    # the anchor (2017), so the thirds are contiguous only within one year
+    assert d_e == m_s                          # contiguous
+    if _part_year(month, "milieu") == _part_year(month, "fin"):
+        assert m_e == f_s
+    else:
+        assert m_e == AstroDate(f_s.year + 1, f_s.month, f_s.day)
+    yd = _part_year(month, "debut")
+    yf = _part_year(month, "fin")
+    assert d_s == AstroDate(yd, month, 1)     # opens the month
+    end = AstroDate(yf + 1, 1, 1) if month == 12 else AstroDate(yf, month + 1, 1)
     assert f_e == end                          # closes the month
 
 

@@ -98,6 +98,11 @@ BASE_GRAMMAR: Dict[str, List[str]] = {
         "article? ordlast DAYUNIT? BDAY DAYUNIT? of? REL_MARKER? article? EVERY? SCOPE_UNIT",
         "article? ORD UNIT of MONTH of? YEAR?",
         "article? ordlast UNIT of MONTH of? YEAR?",
+        # a year phrase after the month ("the first week of january next
+        # year", "o último dia de janeiro do ano passado") names the month's
+        # year, as it does after the month alone (ruling 1)
+        "article? ORD UNIT of MONTH of? article? REL_MARKER? year_word REL_MARKER?",
+        "article? ordlast UNIT of MONTH of? article? REL_MARKER? year_word REL_MARKER?",
         "article? ORD UNIT of article? year_word YEAR?",
         "article? ordlast UNIT of article? year_word YEAR?",
         # "the 12th month of 2026" / "the 100th day of 2026": a bare trailing
@@ -238,6 +243,8 @@ BASE_GRAMMAR: Dict[str, List[str]] = {
     "weekend_of_month": [
         "article? ORD WEEKEND of MONTH of? YEAR? ERA?",
         "article? ordlast WEEKEND of MONTH of? YEAR? ERA?",
+        "article? ORD WEEKEND of MONTH of? article? REL_MARKER? year_word REL_MARKER?",
+        "article? ordlast WEEKEND of MONTH of? article? REL_MARKER? year_word REL_MARKER?",
     ],
     # "last/next <season>" ("next winter"), "<season> of <year>" ("summer of
     # 2024") and the bare "<season> <year>?" ("summer 2024", or a deictic
@@ -339,6 +346,8 @@ BASE_GRAMMAR: Dict[str, List[str]] = {
         "article? NUM half of? REL_MARKER? article? SCOPE_UNIT",
         "article? NUM half of? MONTH of? YEAR? ERA?",
         "article? ordlast half of? MONTH of? YEAR? ERA?",
+        "article? NUM half of? MONTH of? article? REL_MARKER? year_word REL_MARKER?",
+        "article? ordlast half of? MONTH of? article? REL_MARKER? year_word REL_MARKER?",
     ],
     # "the first/second/third/fourth quarter of <month>" -- a quarter of a
     # NAMED MONTH's span (distinct from ``quarter_ref``'s calendar quarter of
@@ -359,6 +368,8 @@ BASE_GRAMMAR: Dict[str, List[str]] = {
     "quarter_of_month": [
         "article? NUM quarter_word of? MONTH of? YEAR? ERA?",
         "article? ordlast quarter_word of? MONTH of? YEAR? ERA?",
+        "article? NUM quarter_word of? MONTH of? article? REL_MARKER? year_word REL_MARKER?",
+        "article? ordlast quarter_word of? MONTH of? article? REL_MARKER? year_word REL_MARKER?",
     ],
     # "early/mid/late <month>" ("early March" -> the first third of March, a
     # ~10-day span; "late December" -> the last third).  ``PART`` binds the
@@ -388,6 +399,10 @@ BASE_GRAMMAR: Dict[str, List[str]] = {
     # ``extend``; those locales carry the trailing ``YEAR?`` on their own order.
     "month_fuzzy": [
         "article? PART of? MONTH of? YEAR?",
+        # a year phrase after the month ("late january last year", "Ende
+        # Januar letzten Jahres", "principios de enero del año que viene")
+        # names the month's year, as it does after the month alone (ruling 1)
+        "article? PART of? MONTH of? article? REL_MARKER? year_word REL_MARKER?",
     ],
     # "early/mid/late <season> [year]" ("early spring 2027" -> the first
     # third of spring 2027; "late winter" -> the last third of the anchor
@@ -584,7 +599,32 @@ MARKER_POSTFIX_ORDERS: Dict[str, List[str]] = {
         "during? MONTH REL_MARKER",
         "during? DAY? MONTH of? article? year_word REL_MARKER",
     ],
+    # a lone marker after the month of a part ("fin janvier dernier",
+    # "finales de enero pasado") reads as it does after the month alone.
+    # These follow ``calendar_date``'s knob (see ``_POSTFIX_KNOB``).
+    "month_fuzzy": [
+        "article? PART of? MONTH REL_MARKER",
+    ],
+    "half_period": [
+        "article? NUM half of? MONTH REL_MARKER",
+        "article? ordlast half of? MONTH REL_MARKER",
+    ],
+    "quarter_of_month": [
+        "article? NUM quarter_word of? MONTH REL_MARKER",
+        "article? ordlast quarter_word of? MONTH REL_MARKER",
+    ],
+    "weekend_of_month": [
+        "article? ORD WEEKEND of MONTH REL_MARKER",
+        "article? ordlast WEEKEND of MONTH REL_MARKER",
+    ],
 }
+
+#: A construction whose postfix orders follow another construction's
+#: ``marker_position``: a part of a month takes its lone trailing marker where
+#: the month alone takes one ("janvier dernier").
+_POSTFIX_KNOB = {"month_fuzzy": "calendar_date", "half_period": "calendar_date",
+                 "quarter_of_month": "calendar_date",
+                 "weekend_of_month": "calendar_date"}
 
 # ---------------------------------------------------------------------------
 # Knob-generated orders for the YEAR-first season surface, keyed BY
@@ -719,7 +759,7 @@ def merge_orders(cfg: Mapping,
         # ``weekday_ref``; ``both`` names that symmetry explicitly while
         # ``post`` reads as the locale's dominant idiom.  The distinction is
         # reserved for any future construction whose base is itself postposed.
-        if _marker_pos(name) in ("post", "both"):
+        if _marker_pos(_POSTFIX_KNOB.get(name, name)) in ("post", "both"):
             contrib += MARKER_POSTFIX_ORDERS.get(name, [])
         # ``season_year_order`` gates the YEAR-first season surface, exactly as
         # ``marker_position`` gates the postposed marker.  ``season_first``

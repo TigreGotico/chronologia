@@ -65,12 +65,24 @@ def _build():
                 # have ended and are next year's
                 year = anchor_year + (mo < 6)
                 for ord_name, n in _ORDINALS:
+                    y = year
                     if n is None:
                         art = "l'últim "
-                        expected = _last_weekday(year, mo, wd)
+                        expected = _last_weekday(y, mo, wd)
                     else:
                         art = "el %s " % ord_name
-                        expected = _nth_weekday(year, mo, wd, n)
+                        expected = _nth_weekday(y, mo, wd, n)
+                    if (mo == 6 and expected is not None
+                            and expected + timedelta(days=1)
+                            <= datetime(anchor_year, 6, 27, 13, 4)):
+                        # ruling 1 (26 November 2026): a part of a month is read
+                        # as a span; a weekday of June before the anchor has
+                        # ended, so it is next year's, recomputed in that year
+                        y = anchor_year + 1
+                        if n is None:
+                            expected = _last_weekday(y, mo, wd)
+                        else:
+                            expected = _nth_weekday(y, mo, wd, n)
                     text = "%s%s %s%s" % (art, wd_name, prep, mo_name)
                     if expected is None:
                         miss.append((text, anchor_year))

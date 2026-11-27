@@ -181,7 +181,7 @@ def test_fifth_week_of_march_2027():
     assert r.span.end == AstroDate(2027, 4, 5)
 
 
-def test_fifth_weekend_of_may_2026():
+def test_fifth_weekend_of_may_2027():
     # ruling 1 (26 November 2026): a part of a month takes its month's year;
     # the anchor is 2026-08-10, May has ended, so it is May 2027.
     # independent arithmetic: May 2027 Saturdays are 1/8/15/22/29 -- the 5th

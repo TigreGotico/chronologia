@@ -43,8 +43,11 @@ def test_198th_decade():
 
 def test_3rd_week_of_june():
     r = _one("zthe 3 zweek zof zjun")
-    # anchor year 2017; 3rd week of June 2017 (Monday-aligned)
-    assert r.value.start == AstroDate(2017, 6, 19)
+    # ruling 1 (26 November 2026): a part of a month is read as a span; the
+    # 3rd week of June 2017 (from 19 June) has ended at the anchor
+    # (2017-06-27), so it is June 2018 (Monday-aligned: Jun 1 2018 is a Friday,
+    # weeks start 4, 11, 18, 25)
+    assert r.value.start == AstroDate(2018, 6, 18)
     assert r.value.resolution == DateTimeResolution.WEEK
 
 def test_3rd_week_of_june_explicit_year():

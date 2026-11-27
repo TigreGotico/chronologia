@@ -2328,14 +2328,38 @@ def _since_start(ep, sub, engine, anchor, now, text):
             lambda at: _resolve_endpoint(text, sub, engine, at),
             anchor, start, now)
         if back is not None:
-            return back[0].start, ep[1], ep[2], ep[3]
+            start = back[0].start
     while start > now:
         pulled = (start + timedelta(days=-1) if is_clock
                   else _minus_one_year(start))
         if pulled is None:
             break
         start = pulled
+    weekday = _said_weekday(sub, spec, ep[0])
+    if weekday is not None:
+        # "since monday 3 march": a weekday said beside a day of a named month
+        # names a 3 March that is a Monday, the latest one at or before now.
+        # A day of a month comes back to its weekday within 28 years in the
+        # Gregorian calendar (29 February within 28 leap years at most), and a
+        # date that never falls on it names no day.
+        for _ in range(40):
+            if start is None or start.weekday() == weekday:
+                break
+            start = _minus_one_year(start)
+        if start is None or start.weekday() != weekday:
+            return None
     return start, ep[1], ep[2], ep[3]
+
+
+def _said_weekday(sub, spec, span):
+    """The weekday (Monday 0) said beside a day of a named month in an
+    endpoint one day wide ("monday 3 march"), or ``None``."""
+    if span.end - span.start != timedelta(days=1):
+        return None
+    if not any(t.text in spec.months for t in sub):
+        return None
+    days = {spec.weekdays[t.text] for t in sub if t.text in spec.weekdays}
+    return days.pop() if len(days) == 1 else None
 
 
 #: The constructions that read a bare month as its next occurrence.
@@ -3947,7 +3971,8 @@ def _candidate_veto(tokens, match, spec) -> bool:
             or _num_preamble_named_day_idiom_veto(tokens, match, spec)
             or _subday_named_day_idiom_veto(match, spec)
             or _stranded_year_veto(tokens, match, spec)
-            or _skip_one_idiom_veto(tokens, match, spec))
+            or _skip_one_idiom_veto(tokens, match, spec)
+            or _part_marker_veto(tokens, match, spec))
 
 
 #: the "for <duration>" bound marker vocabulary, keyed by spec identity so a
@@ -4822,98 +4847,60 @@ def _resolve_core(tokens, engine, anchor, enable=(), jurisdiction=None,
     return res.value, consumed
 
 
-#: The constructions that name a part of a named month.  Ruling 1 gives a
-#: part the year of its month (:meth:`Resolver._month_year`).
+#: The constructions that name a part of a named month (ruling 1).
 _MONTH_PART_CONSTRUCTIONS = frozenset({
     "month_fuzzy", "half_period", "quarter_of_month", "weekend_of_month",
     "scoped_ordinal"})
 
+#: The connector kinds that may follow a lone marker after the month of a
+#: part ("fin janvier dernier à Paris"): words that start another temporal or
+#: prepositional phrase, never a word the marker could qualify as a noun.
+_MARKER_FOLLOW_KINDS = ("at", "to", "until", "since", "and", "from", "in",
+                        "during", "between", "before", "after")
 
-def _month_part_year_phrase(tokens, resolved, engine, anchor, scale_mode,
-                            jurisdiction):
-    """Give a part of a month the year of a year phrase after its month.
 
-    "fin janvier dernier", "late january last year" and "the first week of
-    january next year" put the year phrase after the month, outside the
-    part's own match ("fin janvier", "late january").  The month reading
-    that starts at that month ("janvier dernier", "january last year") binds
-    the phrase and names the month's year.  The part takes that year and
-    the phrase's words, as ruling 1 gives a part its month's year: "fin
-    janvier dernier" said in November 2026 is late January 2026, not the
-    January after the anchor.  A part that binds its own year or marker is
-    left as it is, and so is a month reading with a day or an era.  The
-    joined reading replaces the readings it covers; a reading that crosses
-    its edge keeps the utterance as it was.
+def _part_marker_veto(tokens, match, spec) -> bool:
+    """True for a part of a month whose year marker cannot be a year marker.
+
+    A part of a month reads a marker after its month as the month's year
+    ("fin janvier dernier", "late january last year").  No clause break may
+    stand inside that phrase: "fin janvier, dernier délai" closes the date at
+    the comma.  A lone marker word ("dernier", "pasado", "próximo") is also an
+    adjective or a participle, and before another word it qualifies that word:
+    "dernier délai" (final deadline), "dernière minute", "pasado el plazo"
+    (past the deadline).  So a lone marker reads as the year only at the end of
+    its clause or before a word that opens another phrase (a preposition or a
+    conjunction the locale lists, never an article).
     """
-    spec = engine.spec
-
-    def part(m):
-        month_tok = m.slots.get("MONTH")
-        return (m.construction in _MONTH_PART_CONSTRUCTIONS
-                and month_tok is not None
-                and not {"YEAR", "GYEAR", "REL_MARKER", "ERA"} & set(m.slots)
-                and month_tok.index == max(t.index for t in m.slots.values()))
-
-    def year_phrase(m):
-        month_tok = m.slots.get("MONTH")
-        return (m.construction == "calendar_date"
-                and month_tok is not None
-                and m.span[0] == month_tok.index
-                and m.span[1] > m.span[0] + 1
-                and not {"DAY", "ERA"} & set(m.slots)
-                and {"YEAR", "REL_MARKER"} & set(m.slots))
-
-    # the raw candidates are read only when the winners show one of the two
-    # halves: a part that ends at its month before more words, or a month
-    # that a year phrase follows
-    if not any((part(m) and m.span[1] < len(tokens)) or year_phrase(m)
-               for m, _ in resolved):
-        return resolved
-    parts, phrases = [], {}
-    for cand in engine.matcher._candidates(tokens):
-        m = cand.match
-        if m.doubt or _candidate_veto(tokens, m, spec):
-            continue
-        if part(m):
-            parts.append(m)
-        elif year_phrase(m) and m.span[1] > phrases.get(m.span[0], (0,))[0]:
-            phrases[m.span[0]] = (m.span[1], m)
-    joined = []
-    for m in parts:
-        phrase = phrases.get(m.slots["MONTH"].index)
-        if phrase is None or phrase[0] <= m.span[1]:
-            continue
-        end, c = phrase
-        month = engine.resolver.resolve(c, anchor, scale_mode, jurisdiction)
-        if month is None:
-            continue
-        year = month.value.start.year
-        year_tok = Token(text=str(year), raw=str(year), index=end - 1,
-                         is_number=True, value=year)
-        whole = replace(m, span=(m.span[0], end),
-                        slots={**m.slots, "YEAR": year_tok})
-        res = engine.resolver.resolve(whole, anchor, scale_mode, jurisdiction)
-        if res is not None:
-            joined.append((whole, res))
-    out = list(resolved)
-    changed = False
-    # the widest joined reading first; a narrower one that crosses it is
-    # dropped by the crossing test below
-    for whole, res in sorted(joined, key=lambda j: (-j[0].length,
-                                                    j[0].span)):
-        lo, hi = whole.span
-        inside = {id(m) for m, _ in out
-                  if lo <= m.span[0] and m.span[1] <= hi}
-        crossing = any(m.span[0] < hi and lo < m.span[1]
-                       and id(m) not in inside for m, _ in out)
-        if crossing or not inside:
-            continue
-        out = [(m, r) for m, r in out if id(m) not in inside]
-        out.append((whole, res))
-        changed = True
-    if changed:
-        out.sort(key=lambda mr: mr[0].span)
-    return out if changed else resolved
+    if match.construction not in _MONTH_PART_CONSTRUCTIONS:
+        return False
+    month_tok = match.slots.get("MONTH")
+    if month_tok is None:
+        return False
+    tail = tokens[month_tok.index + 1:match.span[1]]
+    # one order takes the marker on either side of the year word ("last
+    # year", "del año que viene"): a year word needs exactly one marker
+    if ("YEAR" not in match.slots and "GYEAR" not in match.slots
+            and any(t.text in spec.connectors.get("year_word", ())
+                    for t in tail)
+            and sum(t.text in spec.rel_markers for t in tail) != 1):
+        return True
+    rel_tok = match.slots.get("REL_MARKER")
+    if rel_tok is None or rel_tok.index <= month_tok.index:
+        return False
+    if any(tokens[i].break_before
+           for i in range(month_tok.index + 1, match.span[1])):
+        return True
+    if rel_tok.index != month_tok.index + 1 or match.span[1] != rel_tok.index + 1:
+        return False                                # a year phrase
+    nxt = match.span[1]
+    if nxt >= len(tokens) or tokens[nxt].break_before:
+        return False
+    word = tokens[nxt].text
+    articles = (spec.connectors.get("article", frozenset())
+                | spec.connectors.get("defart", frozenset()))
+    return word in articles or not any(
+        word in spec.connectors.get(kind, ()) for kind in _MARKER_FOLLOW_KINDS)
 
 
 def _compose_core(tokens, engine, anchor, enable=(), jurisdiction=None,
@@ -4964,8 +4951,6 @@ def _compose_core(tokens, engine, anchor, enable=(), jurisdiction=None,
            and week_idiom_state(tokens, i, engine.spec) in ("ok", "open")
            for i in range(len(tokens))):
         return [], None
-    resolved = _month_part_year_phrase(tokens, resolved, engine, anchor,
-                                       scale_mode, jurisdiction)
     # business-day counting ("in 5 business days", "the next working day",
     # "3 working days after christmas"); jurisdiction scopes the holiday lookup.
     # Runs before the anchored-offset pass so a "N working days after <date>"

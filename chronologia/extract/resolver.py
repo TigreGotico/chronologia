@@ -335,6 +335,11 @@ def _point_span(dt: datetime, unit: str) -> DateSpan:
     return DateSpan(start, end)
 
 
+def _naive_end(span) -> datetime:
+    """The end of ``span`` as a naive datetime, to compare with the anchor."""
+    return span.end.datetime().replace(tzinfo=None)
+
+
 def _day_span(dt: datetime) -> DateSpan:
     """Day-wide span ``[midnight(dt), next midnight)``."""
     start = AstroDate.from_datetime(_midnight(dt))
@@ -1600,10 +1605,17 @@ class Resolver:
                                        n, "weekend"))
             return Resolution(DateSpan(start, start + timedelta(days=2)),
                               self._consumed(match))
-        year = (_pivot_two_digit_year(year_tok, anchor.year) if year_tok
-                else self._month_year(month, anchor))
-        value = _nth_weekend_of_month(year, month,
-                                      self.conventions.weekend_start, n)
+        year, bare = self._part_month_year(match, month, anchor)
+        weekend_start = self.conventions.weekend_start
+
+        def weekend_end(y):
+            day = _nth_weekend_of_month(y, month, weekend_start, n)
+            return (None if day is None
+                    else datetime(day.year, day.month, day.day)
+                    + timedelta(days=2))
+
+        year = self._part_year(year, bare, month, anchor, weekend_end)
+        value = _nth_weekend_of_month(year, month, weekend_start, n)
         if value is None:                            # no such Nth weekend
             # a year the speaker did not name is only the anchor's: some
             # other year may hold the weekend
@@ -1984,17 +1996,59 @@ class Resolver:
 
         A month that holds the anchor is this month, and a month that has
         ended is next year's ("janvier" said in June 2017 is January 2018).
-        A part of a month ("early january", "the first week of january",
-        "the last day of january") names a span inside that month, so it
-        takes the same year: the part may have passed while its month has
-        not ("early november" said on 26 November is this November's).  The
-        locale's ``calendar_date`` ``prefer_future`` flag gates the roll, as
-        it gates the bare month."""
-        if (month < anchor.month
-                and self.spec.construction_flags.get(
-                    "calendar_date", {}).get("prefer_future", False)):
+        The locale's ``calendar_date`` ``prefer_future`` flag gates the roll,
+        as it gates the bare month."""
+        if month < anchor.month and self._rolls():
             return anchor.year + 1
         return anchor.year
+
+    def _rolls(self):
+        return self.spec.construction_flags.get(
+            "calendar_date", {}).get("prefer_future", False)
+
+    def _part_month_year(self, match, month, anchor):
+        """``(year, bare)`` for the named month of a part of a month.
+
+        An explicit ``YEAR`` names the year.  A ``REL_MARKER`` after the month
+        reads as it does after a month alone: a year phrase ("of next year",
+        "letzten Jahres") shifts the anchor's year, and a lone marker
+        ("janvier dernier", "enero pasado") names the latest such month that
+        has ended or the first one after the anchor's month.  With neither,
+        the month is the bare month of ruling 1, and ``bare`` is true: the
+        part itself then rolls once it has ended (:meth:`_part_year`)."""
+        year_tok = match.slots.get("YEAR")
+        if year_tok is not None:
+            return _pivot_two_digit_year(year_tok, anchor.year), False
+        month_tok = match.slots["MONTH"]
+        rel_tok = match.slots.get("REL_MARKER")
+        if rel_tok is None or rel_tok.index < month_tok.index:
+            return self._month_year(month, anchor), rel_tok is None
+        rel = self.spec.rel_markers[rel_tok.text]
+        if (match.span[1] > rel_tok.index + 1
+                or rel_tok.index > month_tok.index + 1):
+            return anchor.year + rel, False         # a year phrase
+        if rel < 0:                                 # "janvier dernier"
+            return anchor.year - (month >= anchor.month), False
+        if rel > 0:                                 # "janvier prochain"
+            return anchor.year + (month <= anchor.month), False
+        return anchor.year, False
+
+    def _part_year(self, year, bare, month, anchor, end_of):
+        """The year of a part of a month with no year or marker of its own.
+
+        Ruling C reads the part as a span: a part that holds the anchor or is
+        still ahead is this year's, and a part of the anchor's own month that
+        has ended is next year's ("early november" said on 26 November 2026
+        is early November 2027, "late november" is this one).  In any other
+        month the part keeps the month's year (:meth:`_month_year`).
+        ``end_of(year)`` is the end of the part in that year as a naive
+        datetime, or ``None`` when that year has no such part."""
+        if not bare or month != anchor.month or not self._rolls():
+            return year
+        end = end_of(year)
+        if end is not None and end <= anchor.replace(tzinfo=None):
+            return year + 1
+        return year
 
     def _resolve_month_fuzzy(self, match, anchor):
         """"early/mid/late <month>": the early/mid/late third of that month,
@@ -2004,9 +2058,11 @@ class Resolver:
         from chronologia import subdivide
         month = self.spec.months[match.slots["MONTH"].text]
         part = self.spec.period_parts[match.slots["PART"].text]
-        year_tok = match.slots.get("YEAR")
-        year = (_pivot_two_digit_year(year_tok, anchor.year)
-                if year_tok is not None else self._month_year(month, anchor))
+        year, bare = self._part_month_year(match, month, anchor)
+        year = self._part_year(
+            year, bare, month, anchor,
+            lambda y: _naive_end(subdivide(_gregorian_month_span(y, month),
+                                           part)))
         span = subdivide(_gregorian_month_span(year, month), part)
         return Resolution(DateSpan(span.start, span.end), self._consumed(match))
 
@@ -2108,11 +2164,13 @@ class Resolver:
                 # era_bc/era_ad constructions and calendar_date/
                 # weekend_of_month use -- see the ``ERA`` slot's docstring.
                 year = _year_with_era(year_tok, era_tok, self.spec)
-            else:
-                year = (_pivot_two_digit_year(year_tok, anchor.year)
-                        if year_tok is not None
-                        else self._month_year(month, anchor))
             part = "first_half" if n == 1 else "second_half"
+            if year_tok is None or era_tok is None:
+                year, bare = self._part_month_year(match, month, anchor)
+                year = self._part_year(
+                    year, bare, month, anchor,
+                    lambda y: _naive_end(subdivide(
+                        _gregorian_month_span(y, month), part)))
             span = subdivide(_gregorian_month_span(year, month), part)
             return Resolution(DateSpan(span.start, span.end),
                               self._consumed(match))
@@ -2190,9 +2248,11 @@ class Resolver:
             # order and calendar_date/weekend_of_month use.
             year = _year_with_era(year_tok, era_tok, self.spec)
         else:
-            year = (_pivot_two_digit_year(year_tok, anchor.year)
-                    if year_tok is not None
-                    else self._month_year(month, anchor))
+            year, bare = self._part_month_year(match, month, anchor)
+            year = self._part_year(
+                year, bare, month, anchor,
+                lambda y: _naive_end(subdivide(
+                    _gregorian_month_span(y, month), part)))
         span = subdivide(_gregorian_month_span(year, month), part)
         return Resolution(DateSpan(span.start, span.end), self._consumed(match))
 
@@ -2321,12 +2381,15 @@ class Resolver:
                 # a relative year phrase ("of november next year", "de
                 # noviembre del año que viene") shifts the anchor's year
                 rel_tok = match.slots.get("REL_MARKER")
-                if year_tok:
-                    year = _pivot_two_digit_year(year_tok, anchor.year)
-                elif rel_tok:
-                    year = anchor.year + self.spec.rel_markers[rel_tok.text]
-                else:                               # the bare month's year
-                    year = self._month_year(month, anchor)
+                year, bare = self._part_month_year(match, month, anchor)
+
+                def weekday_end(y):
+                    day = _nth_weekday_of_month(y, month, target, n)
+                    return (None if day is None
+                            else datetime(day.year, day.month, day.day)
+                            + timedelta(days=1))
+
+                year = self._part_year(year, bare, month, anchor, weekday_end)
                 value = _nth_weekday_of_month(year, month, target, n)
                 cap_month, cap_year = month, year if year_tok else None
             elif gyear_tok is not None:              # bare year, no month:
@@ -2468,9 +2531,16 @@ class Resolver:
         scope_tok = match.slots.get("SCOPE_UNIT")
         if month_tok is not None:                   # month-scoped (named month)
             month = self.spec.months[month_tok.text]
-            if year_tok is None:                    # the bare month's year
-                year = self._month_year(month, anchor)
             res = _UNIT_OF_MONTH[unit_kind]
+            if year_tok is None:
+                year, bare = self._part_month_year(match, month, anchor)
+
+                def unit_end(y):
+                    day = _date_ordinal(n, date(y, month, 1), res)
+                    return (None if day is None else _unit_end(
+                        AstroDate.from_date(day), unit_kind).datetime())
+
+                year = self._part_year(year, bare, month, anchor, unit_end)
             value = _date_ordinal(n, date(year, month, 1), res)
             # A year-less "Nth day of <month>" names the date its digit form
             # names: the next such day, as ``calendar_date`` reads "15 march".

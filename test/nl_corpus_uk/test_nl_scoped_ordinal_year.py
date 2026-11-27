@@ -18,7 +18,7 @@ def test_scoped_ordinal_binds_trailing_genitive_year():
     assert parse('третій понеділок березня 2019')[1] == ''
 
 
-def test_scoped_ordinal_no_year_stays_anchor_year():
+def test_scoped_ordinal_no_year_is_next_occurrence():
     # ruling 1 (changed 26 November 2026): with no year the month takes the year the
     # month alone takes; March has ended at the anchor (2017-06-27), so it is March
     # 2018 and its 3rd Monday is the 19th (it was the 20th of March 2017).

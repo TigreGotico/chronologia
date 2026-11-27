@@ -1,10 +1,12 @@
-"""A part of a month follows its month's year (ruling 1).
+"""A part of a month is its next occurrence (ruling 1).
 
 A month named without a day is its next occurrence as a span: the month that
 holds the anchor is this one, a month that has ended is next year's.  A part
-of that month ("early january", "the first week of january", "the last day of
-january", "the first half of january") names a span inside the month, so it
-takes the month's year.  An explicit year wins.  A year phrase after the month
+of a month ("early january", "the first week of january", "the last day of
+january", "the first half of january") is a span too, and ruling C reads it
+the same way: a part that holds the anchor or is still ahead is this year's,
+a part that has ended is next year's.  In a month other than the anchor's,
+that is the month's year.  An explicit year wins.  A year phrase after the month
 ("janvier dernier", "january next year") names the month's year as the bare
 month reads it, and the part takes that year too.
 
@@ -21,12 +23,19 @@ January has 31 days.  A third is 10 days 8 hours, so early January runs to
 11 January 08:00 and late January starts on 21 January 16:00.  A half is
 15 days 12 hours, and a quarter is 7 days 18 hours.
 
-December 2026 has not started and November 2026 holds the anchor, so both
-stay in 2026: late December is 21 December 16:00 to 1 January 2027, early
-November is 1 to 11 November (a 30-day month, thirds of 10 days), the first
-Monday of November 2026 is the 2nd (1 November 2026 is a Sunday), and the
-first week of December 2026 starts on Monday 7 December (1 December is a
-Tuesday).
+December 2026 has not started, so late December is 21 December 16:00 to
+1 January 2027, and the first week of December 2026 starts on Monday
+7 December (1 December is a Tuesday).
+
+November 2026 holds the anchor.  A 30-day month thirds into 10 days.  Late
+November (21 November to 1 December) holds the anchor, so it is this year's.
+Early November (1 to 11 November) and mid November (11 to 21 November) have
+ended, so they are November 2027's.  1 November 2026 is a Sunday, so its first
+Monday, the 2nd, has passed; 26 November 2027 is a Friday, so 1 November 2027
+is a Monday.  The Saturdays of November 2026 are the 7th, 14th, 21st and 28th,
+so its last weekend (28 to 30 November) is ahead.  26 November 2026 is the
+fourth Thursday of the month, so "the fourth thursday of november" holds the
+anchor and is that day.
 """
 from datetime import datetime, timedelta
 
@@ -165,7 +174,8 @@ def test_the_bare_month_and_its_first_day_are_next_year(lang, month,
 # -- the month that holds the anchor and a month still ahead stay -------------
 
 LATE_DEC = (datetime(2026, 12, 1) + 2 * THIRD, datetime(2027, 1, 1))
-EARLY_NOV = (datetime(2026, 11, 1), datetime(2026, 11, 11))
+EARLY_NOV_2027 = (datetime(2027, 11, 1), datetime(2027, 11, 11))
+LATE_NOV = (datetime(2026, 11, 21), datetime(2026, 12, 1))
 
 
 @pytest.mark.parametrize("lang,text,gold", [
@@ -178,17 +188,16 @@ EARLY_NOV = (datetime(2026, 11, 1), datetime(2026, 11, 11))
      (datetime(2026, 12, 7), datetime(2026, 12, 14))),
     ("fr", "la première semaine de décembre",
      (datetime(2026, 12, 7), datetime(2026, 12, 14))),
-    # November holds the anchor: it is this November, as "november" is,
-    # even where the part has already passed
-    ("en", "early november", EARLY_NOV),
-    ("fr", "début novembre", EARLY_NOV),
-    ("pt", "início de novembro", EARLY_NOV),
-    ("es", "principios de noviembre", EARLY_NOV),
-    ("de", "Anfang November", EARLY_NOV),
-    ("en", "the first monday of november",
-     (datetime(2026, 11, 2), datetime(2026, 11, 3))),
-    ("es", "el primer lunes de noviembre",
-     (datetime(2026, 11, 2), datetime(2026, 11, 3))),
+    # a part of November that holds the anchor or is still ahead
+    ("en", "late november", LATE_NOV),
+    ("fr", "fin novembre", LATE_NOV),
+    ("pt", "final de novembro", LATE_NOV),
+    ("es", "finales de noviembre", LATE_NOV),
+    ("de", "Ende November", LATE_NOV),
+    ("en", "the last weekend of november",
+     (datetime(2026, 11, 28), datetime(2026, 11, 30))),
+    ("en", "the fourth thursday of november",
+     (datetime(2026, 11, 26), datetime(2026, 11, 27))),
     ("en", "the last day of november",
      (datetime(2026, 11, 30), datetime(2026, 12, 1))),
     ("fr", "le dernier jour de novembre",
@@ -196,6 +205,36 @@ EARLY_NOV = (datetime(2026, 11, 1), datetime(2026, 11, 11))
 ])
 def test_this_month_and_a_month_ahead_keep_the_anchor_year(lang, text, gold):
     assert _span(text, lang) == gold
+
+
+# -- a part of the anchor's month that has ended is next year's ---------------
+
+@pytest.mark.parametrize("lang,text,gold", [
+    ("en", "early november", EARLY_NOV_2027),
+    ("fr", "début novembre", EARLY_NOV_2027),
+    ("pt", "início de novembro", EARLY_NOV_2027),
+    ("es", "principios de noviembre", EARLY_NOV_2027),
+    ("de", "Anfang November", EARLY_NOV_2027),
+    ("en", "mid november", (datetime(2027, 11, 11), datetime(2027, 11, 21))),
+    ("fr", "mi-novembre", (datetime(2027, 11, 11), datetime(2027, 11, 21))),
+    # as "the first day of november" and "le 2 novembre" are next year's
+    ("en", "the first monday of november",
+     (datetime(2027, 11, 1), datetime(2027, 11, 2))),
+    ("es", "el primer lunes de noviembre",
+     (datetime(2027, 11, 1), datetime(2027, 11, 2))),
+    ("en", "the first week of november",
+     (datetime(2027, 11, 1), datetime(2027, 11, 8))),
+])
+def test_a_part_of_this_month_that_has_ended_is_next_years(lang, text, gold):
+    assert _span(text, lang) == gold
+
+
+@pytest.mark.parametrize("lang,text", [
+    ("en", "since early november"),
+    ("fr", "depuis début novembre"),
+])
+def test_since_a_part_of_this_month_reads_back(lang, text):
+    assert _span(text, lang) == (datetime(2026, 11, 1), A)
 
 
 # -- an explicit year wins -----------------------------------------------------
@@ -234,9 +273,44 @@ LATE_JAN_2025 = (datetime(2025, 1, 1) + 2 * THIRD, datetime(2025, 2, 1))
     # 1 January 2025 is a Wednesday, so the first Saturday is the 4th
     ("pt", "o primeiro fim de semana de janeiro do ano passado",
      (datetime(2025, 1, 4), datetime(2025, 1, 6))),
+    # 2025 is a common year: the first half of January 2025 runs to the 16th
+    # 12:00; "the first weekend of january next year" is 2 to 4 January 2027
+    ("en", "the first half of january last year",
+     (datetime(2025, 1, 1), datetime(2025, 1, 1) + HALF)),
+    ("en", "the first weekend of january next year", FIRST_WEEKEND_JAN),
+    ("en", "the last day of january next year", LAST_DAY_JAN),
+    ("it", "fine gennaio dello scorso anno", LATE_JAN_2025),
 ])
 def test_a_year_phrase_after_the_month_names_the_parts_year(lang, text, gold):
     assert _span(text, lang) == gold
+
+
+# -- a marker word that a noun may follow is no year phrase -------------------
+
+# said on Friday 15 January 2027: January holds the anchor.  Late January 2027
+# (21 January 16:00 to 1 February) is ahead; early January 2027 (to 11 January
+# 08:00) has ended, so early January is January 2028's.  "dernier délai",
+# "dernier recours", "dernière minute" and "pasado el plazo" are idioms ("final
+# deadline", "last resort", "last minute", "past the deadline"): the marker
+# names no year, and a comma ends the phrase it could close.
+J15 = datetime(2027, 1, 15, 10, 0)
+LATE_JAN_2027 = (datetime(2027, 1, 1) + 2 * THIRD, datetime(2027, 2, 1))
+
+
+@pytest.mark.parametrize("lang,text,gold,rest", [
+    ("fr", "fin janvier dernier délai", LATE_JAN_2027, "dernier délai"),
+    ("fr", "fin janvier, dernier délai", LATE_JAN_2027, "dernier délai"),
+    ("fr", "fin janvier dernier recours", LATE_JAN_2027, "dernier recours"),
+    ("fr", "début janvier dernière minute",
+     (datetime(2028, 1, 1), datetime(2028, 1, 1) + THIRD), "dernière minute"),
+    ("es", "a finales de enero pasado el plazo", LATE_JAN_2027,
+     "pasado el plazo"),
+])
+def test_a_marker_before_a_noun_names_no_year(lang, text, gold, rest):
+    r = extract_timespan(text, lang, J15)
+    assert r is not None
+    assert (r.span.start_datetime, r.span.end_datetime) == gold
+    assert r.remainder == rest
 
 
 # -- "since": the part that has begun, as "since october" reads it ------------
@@ -265,6 +339,28 @@ def test_since_a_part_of_a_month_reads_back(lang, text):
 ])
 def test_since_a_day_of_a_named_month_reads_back_a_year(lang, text, start):
     assert _span(text, lang) == (start, A)
+
+
+# "since <weekday> <day> <month>" is the latest such day at or before the
+# anchor whose weekday agrees.  3 March 2026 is a Tuesday and 3 March 2025 a
+# Monday; 2 March 2026 is a Monday.  5 January fell on a Monday in 2026, a
+# Sunday in 2025, a Friday in 2024, a Thursday in 2023, a Wednesday in 2022
+# and a Tuesday in 2021.
+@pytest.mark.parametrize("lang,text,start", [
+    ("en", "since monday 3 march", datetime(2025, 3, 3)),
+    ("fr", "depuis lundi 3 mars", datetime(2025, 3, 3)),
+    ("en", "since tuesday 5 january", datetime(2021, 1, 5)),
+    ("en", "since monday the 2nd of march", datetime(2026, 3, 2)),
+])
+def test_since_a_weekday_and_date_agree(lang, text, start):
+    assert _span(text, lang) == (start, A)
+
+
+def test_from_last_weekday_and_date_to_today():
+    # "last tuesday 3 march" is 3 March 2026, a Tuesday; today ends at
+    # midnight on 27 November 2026
+    assert _span("from last tuesday 3 march to today", "en") \
+        == (datetime(2026, 3, 3), datetime(2026, 11, 27))
 
 
 # -- ranges ----------------------------------------------------------------

@@ -3,7 +3,8 @@
 Ordinals 1..5 (primeru..quintu) resolve for Asturian.  Without an explicit year the
 month takes the year the month alone takes (ruling 1, which changed on
 26 November 2026: it used to be the anchor year 2017 for every month; a month that
-ended before the anchor, January to May, is now 2018); a trailing ``de <year>`` pins it.
+ended before the anchor, January to May, is now 2018; so is an occurrence in June that
+ended before the anchor, 2017-06-27 13:04); a trailing ``de <year>`` pins it.
 """
 from datetime import datetime, timedelta
 
@@ -19,7 +20,14 @@ def _bare_cases():
         for w, wn in WD.items():
             for n, on in ORD.items():
                 # ruling 1: a part of a month takes its month's year
-                d = nth_weekday(ANCHOR.year + (m < ANCHOR.month), m, w, n)
+                y = ANCHOR.year + (m < ANCHOR.month)
+                d = nth_weekday(y, m, w, n)
+                if m == ANCHOR.month and d is not None \
+                        and datetime(d.year, d.month, d.day) + timedelta(days=1) <= ANCHOR:
+                    # ruling 1 (26 November 2026): a part of a month is read as a
+                    # span; a weekday of June 2017 before the anchor has ended,
+                    # so it is that weekday of June 2018 (weekdays recomputed)
+                    d = nth_weekday(y + 1, m, w, n)
                 if d is None:
                     continue
                 out.append((f"el {on} {wn} de {MON[m]}", datetime(d.year, d.month, d.day)))
@@ -27,7 +35,7 @@ def _bare_cases():
 
 
 @pytest.mark.parametrize("text,expected", _bare_cases())
-def test_ordinal_weekday_anchor_year(text, expected):
+def test_ordinal_weekday_next_occurrence(text, expected):
     s, e = start_end(text)
     assert s == ad(expected)
     assert e - s == timedelta(days=1)

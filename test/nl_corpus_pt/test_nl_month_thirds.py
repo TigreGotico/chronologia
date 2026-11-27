@@ -20,7 +20,7 @@ first cut at the 11th 08:00 (31/3 = 10 d 8 h) and February (N=28) at the
 year the month alone takes (ruling 1, changed on 26 November 2026; before, it
 resolved within the anchor's own year 2017): 2017 for a month that holds or
 follows the anchor 2017-06-27, 2018 for one that has ended before it (janeiro
-to maio).
+to maio).  A third of junho that has ended at the anchor (the first two) is 2018 too.
 """
 from calendar import monthrange
 from datetime import datetime, timedelta
@@ -42,11 +42,18 @@ def _year(month):
     return 2017 + (month < 6)
 
 
-def _third_edges(month, third):
-    n = monthrange(_year(month), month)[1]
-    base = datetime(_year(month), month, 1)
+def _third_edges(month, third, year=None):
+    year = _year(month) if year is None else year
+    n = monthrange(year, month)[1]
+    base = datetime(year, month, 1)
     cuts = [base + timedelta(days=n) * k / 3 for k in range(4)]
-    return cuts[third - 1], cuts[third]
+    edges = cuts[third - 1], cuts[third]
+    if month == 6 and year == 2017 and edges[1] <= datetime(2017, 6, 27, 13, 4):
+        # ruling 1 (26 November 2026): a part of a month is read as a span; a
+        # third of June 2017 that ended at the anchor (the first, 1 to 11 June,
+        # and the second, 11 to 21 June) is that third of June 2018
+        return _third_edges(month, third, 2018)
+    return edges
 
 
 def _cases():

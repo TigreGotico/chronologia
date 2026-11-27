@@ -1280,7 +1280,10 @@ def test_cardinal_plural_unit_is_not_the_ordinal_day_of_month():
     assert _start("the 2nd day of June") == (2018, 6, 2)
     assert _start("the 100th day of the year") == (2017, 4, 10)
     assert _start("the last day of the month") == (2017, 6, 30)
-    assert _start("the third week of June") == (2017, 6, 19)
+    # ruling 1 (26 November 2026): a part of a month is read as a span; the
+    # third week of June 2017 (from 19 June) has ended at the anchor, so it is
+    # June 2018 (Jun 1 2018 is a Friday: weeks start Mon 4, 11, 18, 25)
+    assert _start("the third week of June") == (2018, 6, 18)
     assert _start("the 21st century") == (2000, 1, 1)
     assert _start("the 3rd quarter of 2018") == (2018, 7, 1)
     assert _start("the first decade of the 21st century") == (2000, 1, 1)

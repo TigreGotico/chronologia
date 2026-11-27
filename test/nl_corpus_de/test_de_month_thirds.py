@@ -51,7 +51,14 @@ _CASES = []
 for _name, _m in _MONTHS:
     # ruling 1: a part of a month takes its month's year; January to May have
     # ended at the anchor (June 2017), so they are 2018
-    _a, _mi, _e = _thirds(2017 + (_m < 6), _m)
+    _y = 2017 + (_m < 6)
+    _a, _mi, _e = _thirds(_y, _m)
+    # ruling 1 (26 November 2026): a part of a month is read as a span; in the
+    # anchor's own month (June 2017) anfang (to 11 June) and mitte (to 21 June)
+    # have ended at 2017-06-27, so they are June 2018; ende (21 June to 1 July)
+    # holds the anchor and stays 2017
+    if _m == 6:
+        _a, _mi, _ = _thirds(2018, _m)
     _CASES.append((f"anfang {_name}", _a[0], _a[1]))
     _CASES.append((f"mitte {_name}", _mi[0], _mi[1]))
     _CASES.append((f"ende {_name}", _e[0], _e[1]))

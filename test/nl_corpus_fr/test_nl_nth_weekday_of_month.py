@@ -17,17 +17,30 @@ Day), which makes the enumeration easy to cross-check by hand.
 Anchor: Tuesday 2017-06-27 13:04.
 """
 import calendar
-from datetime import date
+from datetime import date, datetime, timedelta
 
 import pytest
 
 from chronologia.astrodate import AstroDate
 
-from ._corpus import span, start_end
+from ._corpus import ANCHOR, span, start_end
 
 
 _WD = {"lundi": 0, "mardi": 1, "mercredi": 2, "jeudi": 3,
        "vendredi": 4, "samedi": 5, "dimanche": 6}
+
+
+def _nth_year(month, weekday, n):
+    """The year a bare "n-th weekday of month" takes (ruling 1, 26 November
+    2026): a month before the anchor's is next year's; in the anchor's own
+    month, a day whose one-day span ended at or before the anchor is next
+    year's too (June 2017: before the 27th has ended, so it is June 2018)."""
+    year = ANCHOR.year + (month < ANCHOR.month)
+    if month == ANCHOR.month:
+        d = _nth(year, month, weekday, n)
+        if datetime(year, month, d.day) + timedelta(days=1) <= ANCHOR:
+            year += 1
+    return year
 
 
 def _nth(year, month, weekday, n):
@@ -58,8 +71,9 @@ _BARE = [
 @pytest.mark.parametrize("text,wd,mo,n", _BARE)
 def test_bare_nth_weekday(text, wd, mo, n):
     s, e = start_end(text)
-    # ruling 1: a month that has ended at the anchor (June 2017) is next year's
-    assert s == _nth(2017 + (mo < 6), mo, wd, n), f"{text!r} -> {s}"
+    # ruling 1: a month that has ended at the anchor (June 2017) is next year's;
+    # in June itself a day that ended before the anchor is June 2018's
+    assert s == _nth(_nth_year(mo, wd, n), mo, wd, n), f"{text!r} -> {s}"
     assert (e - s).days == 1
 
 
@@ -116,6 +130,7 @@ def _sweep():
 @pytest.mark.parametrize("text,wd,mo,n", _sweep())
 def test_sweep_nth_weekday(text, wd, mo, n):
     s, e = start_end(text)
-    # ruling 1: a month that has ended at the anchor (June 2017) is next year's
-    assert s == _nth(2017 + (mo < 6), mo, wd, n), f"{text!r} -> {s}"
+    # ruling 1: a month that has ended at the anchor (June 2017) is next year's;
+    # in June itself a day that ended before the anchor is June 2018's
+    assert s == _nth(_nth_year(mo, wd, n), mo, wd, n), f"{text!r} -> {s}"
     assert (e - s).days == 1

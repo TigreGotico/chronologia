@@ -81,7 +81,7 @@ def _noyear_year(mo):
 NTH_NOYEAR_CASES = [
     (1, "lehen", "astelehena"),       # 2018-01-01
     (3, "bigarren", "ostirala"),      # 2018-03-09
-    (6, "hirugarren", "asteartea"),   # 2017-06-20
+    (6, "hirugarren", "asteartea"),   # 2018-06-19 (20 June 2017 has ended)
     (10, "laugarren", "igandea"),     # 2017-10-22
 ]
 
@@ -90,6 +90,11 @@ NTH_NOYEAR_CASES = [
 def test_nth_weekday_of_month_no_year(mo, ordw, wdw):
     text = f"{MONTH_GEN[mo]} {ordw} {wdw}"
     gold = _nth_weekday(_noyear_year(mo), mo, WD[wdw], ORD[ordw])
+    if mo == ANCHOR_M and gold + timedelta(days=1) <= datetime(2017, 6, 27, 13, 4):
+        # ruling 1 (26 November 2026): a part of a month is read as a span; the
+        # 3rd Tuesday of June 2017 (20 June) has ended at the anchor, so it is
+        # the 3rd Tuesday of June 2018
+        gold = _nth_weekday(ANCHOR_Y + 1, mo, WD[wdw], ORD[ordw])
     assert gold.weekday() == WD[wdw] and gold.month == mo
     assert start(text) == ad(gold)
 

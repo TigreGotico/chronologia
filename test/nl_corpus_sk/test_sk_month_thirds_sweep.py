@@ -43,11 +43,18 @@ def _expected(word, y, m):
 
 @pytest.mark.parametrize("word", list(_WORD))
 @pytest.mark.parametrize("m", range(1, 13))
-def test_third_bare_current_year(word, m):
+def test_third_bare_next_occurrence(word, m):
     """No year: the month takes the year the month alone takes (ruling 1)."""
     text = f"{word} {_GEN[m]}"
     # ruling 1 (changed 26 November 2026): a part of a month takes its month's year; a month that has ended at the anchor is next year's
-    assert start_end(text) == _expected(word, ANCHOR.year + (m < ANCHOR.month), m), text
+    y = ANCHOR.year + (m < ANCHOR.month)
+    # ruling 1 (26 November 2026): a part of a month is read as a span; a part
+    # of the anchor's own month that has ended at the anchor (začiatok,
+    # polovica of June 2017) is June 2018, the part that holds it (koniec)
+    # stays 2017
+    if m == ANCHOR.month and _third_bounds(y, m)[_WORD[word]][1] <= ANCHOR:
+        y += 1
+    assert start_end(text) == _expected(word, y, m), text
 
 
 @pytest.mark.parametrize("year", [2019, 2020, 2022, 2025])

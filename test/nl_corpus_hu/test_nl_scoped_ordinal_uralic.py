@@ -15,7 +15,7 @@ from datetime import date, datetime, timedelta
 
 import pytest
 
-from ._corpus import ad, span, start
+from ._corpus import ANCHOR, ad, span, start
 
 
 def _nth_weekday(year, month, wd, n):
@@ -50,6 +50,13 @@ def test_nth_weekday_of_month(text, month, wd, n):
     # (June, September and November are still 2017)
     year = 2017 + (month < 6)
     day = _nth_weekday(year, month, wd, n)
+    # ruling 1 (26 November 2026): a part of a month is read as a span; in the
+    # anchor's own month (June 2017) a weekday whose one-day span ended at or
+    # before the anchor (it ends at the next midnight) is June 2018's, and the
+    # weekday is recomputed in 2018
+    if month == ANCHOR.month and datetime(year, month, day) + timedelta(days=1) <= ANCHOR:
+        year += 1
+        day = _nth_weekday(year, month, wd, n)
     assert start(text) == ad(datetime(year, month, day))
 
 

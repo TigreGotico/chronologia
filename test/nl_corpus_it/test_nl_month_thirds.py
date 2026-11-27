@@ -45,7 +45,13 @@ for _name, _m in _MONTHS.items():
     # ruling 1: a month that has ended at the anchor (June 2017) is next year's
     _thd = _thirds(2017 + (_m < 6), _m)
     for _which in ("inizio", "metà", "fine"):
-        _CASES.append((f"{_which} {_name}", *_thd[_which]))
+        _part = _thd[_which]
+        # ruling 1 (26 November 2026): a part of a month is read as a span; in
+        # the anchor's own month (June 2017) inizio and metà have ended at
+        # 2017-06-27, so they are June 2018; fine holds the anchor, stays 2017
+        if _m == 6 and _which != "fine":
+            _part = _thirds(2018, _m)[_which]
+        _CASES.append((f"{_which} {_name}", *_part))
 
 
 @pytest.mark.parametrize("text,s,e", _CASES)

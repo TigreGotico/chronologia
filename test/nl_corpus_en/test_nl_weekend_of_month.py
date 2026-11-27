@@ -51,9 +51,13 @@ def _span(text, anchor=A):
      AstroDate(2026, 6, 13), AstroDate(2026, 6, 15)),
     ("the last weekend of june", A,
      AstroDate(2026, 6, 27), AstroDate(2026, 6, 29)),
-    # anchor INSIDE the named month itself
+    # anchor INSIDE the named month itself -- ruling 1 (26 November 2026): a
+    # part of a month is read as a span; the first weekend of June 2026
+    # (6-7 June) has ended at the anchor (18 June), so it is June 2027 (Jun 1
+    # 2027 is a Tuesday: Saturdays 5/12/19/26). The last weekend (27-28 June
+    # 2026) is still ahead and stays 2026.
     ("the first weekend of june", datetime(2026, 6, 18),
-     AstroDate(2026, 6, 6), AstroDate(2026, 6, 8)),
+     AstroDate(2027, 6, 5), AstroDate(2027, 6, 7)),
     ("the last weekend of june", datetime(2026, 6, 18),
      AstroDate(2026, 6, 27), AstroDate(2026, 6, 29)),
     # anchor AFTER the month (December) -- ruling 1: June has ended at the
