@@ -37,11 +37,12 @@ from chronologia.extract.pipeline import fold_tokens, pretokens, require_text
 from chronologia.extract.reading import read
 from chronologia.extract.resolver import _nth_weekday_of_month as _month_weekday
 from chronologia.extract.resolver import scoped_ordinal_n, scoped_ordinal_split
+from chronologia.extract.vetoes import _exclusion_vetoes
 from chronologia.extract.timespan import (_RANGE_BETWEEN, _RANGE_FROM,
                                           _lone_spoken_hour,
                                           reads_spoken_hours,
                                           _RANGE_TO, _conn_surfaces,
-                                          _exclusion_vetoes, _extract_range,
+                                          _extract_range,
                                           _resolve_scale_mode,
                                           _extract_directional_range,
                                           _since_marker_before,

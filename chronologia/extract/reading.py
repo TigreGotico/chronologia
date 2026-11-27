@@ -20,7 +20,8 @@ from chronologia.extract.model import Match, Token
 from chronologia.extract.pipeline import (consumed_extent, fold_tokens,
                                           join_extents, pretokens,
                                           render_remainder)
-from chronologia.extract.timespan import (_candidate_veto, _compose_core,
+from chronologia.extract.vetoes import _candidate_veto
+from chronologia.extract.timespan import (_compose_core,
                                           _extract_directional_range,
                                           _extract_open_range, _extract_range,
                                           _is_new_year_slice, _is_now_slice,

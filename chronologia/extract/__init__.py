@@ -43,9 +43,10 @@ from chronologia.extract.tokenizer import Tokenizer
 from chronologia.extract.timespan import (  # noqa: F401
     Candidate, DateSpanResult, DateTimeEngine, TimeSpanResult,
     extract_candidates, extract_timespan,
-    _timespan_engine, _resolve_scale_mode, _exclusion_vetoes,
+    _timespan_engine, _resolve_scale_mode,
     _extract_range, _conn_surfaces, _RANGE_BETWEEN, _RANGE_FROM,
     _TIMESPAN_ENGINES, _ENGINE_LOCK)
+from chronologia.extract.vetoes import _exclusion_vetoes  # noqa: F401
 
 # N-series edges (durations, multi-mention, recurrence) live in their own
 # module; imported here so ``chronologia.extract`` is the single public edge.
