@@ -181,18 +181,20 @@ def test_fifth_week_of_march_2027():
     assert r.span.end == AstroDate(2027, 4, 5)
 
 
-def test_fifth_weekend_of_may_2026():
-    # independent arithmetic: May 2026 Saturdays are 2/9/16/23/30 -- the 5th
-    # weekend is Sat May 30 - Sun May 31.
-    d = date(2026, 5, 1)
+def test_fifth_weekend_of_may_2027():
+    # ruling 1 (26 November 2026): a part of a month takes its month's year;
+    # the anchor is 2026-08-10, May has ended, so it is May 2027.
+    # independent arithmetic: May 2027 Saturdays are 1/8/15/22/29 -- the 5th
+    # weekend is Sat May 29 - Sun May 30.
+    d = date(2027, 5, 1)
     saturdays = [d + __import__("datetime").timedelta(days=i) for i in range(31)
                 if (d + __import__("datetime").timedelta(days=i)).weekday() == 5]
-    assert saturdays[4] == date(2026, 5, 30)
+    assert saturdays[4] == date(2027, 5, 29)
     r = _result("the 5th weekend of may")
     assert r is not None
     assert r.remainder == ""
-    assert r.span.start == AstroDate(2026, 5, 30)
-    assert r.span.end == AstroDate(2026, 6, 1)
+    assert r.span.start == AstroDate(2027, 5, 29)
+    assert r.span.end == AstroDate(2027, 5, 31)
 
 
 def test_twelfth_month_of_the_year_still_works():

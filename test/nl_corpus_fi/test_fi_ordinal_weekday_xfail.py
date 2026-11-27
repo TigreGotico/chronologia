@@ -3,13 +3,13 @@
 "maaliskuun kolmas maanantai" means *the third Monday of March*.  This used
 to mis-parse -- the parser read "kolmas" as the ordinal day-of-month (the
 3rd) and dropped the weekday, returning March 3rd.  It now binds the ordinal
-to the named weekday.  Like the "Nth weekday of month" construction in every
-other locale, it does NOT roll to the future: a bare month keeps the anchor
-year (2017).  Gold below is the true Nth-weekday computed independently.
+to the named weekday.  With no year the month takes the year the month alone takes
+(ruling 1, changed 26 November 2026): March and May have ended at the anchor
+(2017-06-27), so they are 2018; November is 2017.  Gold below is the true Nth-weekday computed independently.
 
 Reproduction (anchor 2017-06-27):
     extract_timespan("maaliskuun kolmas maanantai", "fi", anchor)
-    -> 2017-03-20  (the third Monday of March 2017)
+    -> 2018-03-19  (the third Monday of March 2018; it was 2017-03-20 before ruling 1)
 """
 from datetime import date, datetime, timedelta
 
@@ -27,8 +27,8 @@ _ORD = {"ensimmäinen": 1, "toinen": 2, "kolmas": 3, "neljäs": 4}
 # month genitive -> month number
 _MON = {"maaliskuun": 3, "toukokuun": 5, "marraskuun": 11}
 
-# the construction does not roll to the future -- a bare month stays in the
-# anchor year
+# ruling 1: a bare month takes the year the month alone takes; the anchor is
+# 2017-06-27, so March and May (ended) are 2018 and November is 2017
 _YEAR = 2017
 
 
@@ -40,7 +40,7 @@ def _nth_weekday(y, mo, wd, n):
 
 
 _CASES = [
-    (f"{mon} {ordw} {wdw}", _nth_weekday(_YEAR, mo, wd, n))
+    (f"{mon} {ordw} {wdw}", _nth_weekday(_YEAR + (mo < 6), mo, wd, n))
     for mon, mo in _MON.items()
     for ordw, n in _ORD.items()
     for wdw, wd in _WD.items()

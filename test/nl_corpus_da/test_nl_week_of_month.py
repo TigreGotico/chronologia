@@ -6,6 +6,9 @@ Danish names an ordinal week inside a month with the preposition "i"
 connector was already present, so once an ordinal is supplied the week reads
 correctly.  Spelled ordinals ("tredje") are being taught to fold on a separate
 branch, so these cases assert the numeric ordinal that folds today.
+
+Changed with ruling 1 on 26 November 2026: a part of a month takes its month's
+year.  The anchor is 2017-06-27, March has ended, so it is March 2018.
 """
 import pytest
 
@@ -19,12 +22,13 @@ from ._corpus import AstroDate, start_end
 ])
 def test_third_week_of_march(text):
     s, e = start_end(text)
-    assert (s, e) == (AstroDate(2017, 3, 20), AstroDate(2017, 3, 27))
+    assert (s, e) == (AstroDate(2018, 3, 19), AstroDate(2018, 3, 26))  # ruling 1: March 2018
 
 
 @pytest.mark.parametrize("text,ymd", [
-    ('den 1. uge i marts', (2017, 3, 6, 2017, 3, 13)),
-    ('den 2. uge i marts', (2017, 3, 13, 2017, 3, 20)),
+    # ruling 1: March has ended at the anchor, so it is March 2018
+    ('den 1. uge i marts', (2018, 3, 5, 2018, 3, 12)),
+    ('den 2. uge i marts', (2018, 3, 12, 2018, 3, 19)),
 ])
 def test_other_weeks_of_march(text, ymd):
     s, e = start_end(text)

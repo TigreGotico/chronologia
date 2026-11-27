@@ -14,7 +14,7 @@ a day that depends on whether today's band edge has passed the anchor.
 Anchor: Tuesday 2017-06-27 13:04.
 """
 import calendar
-from datetime import date, datetime
+from datetime import date, datetime, timedelta
 
 import pytest
 
@@ -59,11 +59,18 @@ def test_ordinal_weekday_of_month_with_year(weekday, ordinal, month, year):
 
 @pytest.mark.parametrize("weekday,ordinal,month", [
     ("Selasa", "kedua", "Desember"),         # second Tuesday, anchor year 2017
-    ("Kamis", "ketiga", "Juni"),             # third Thursday, anchor year 2017
+    ("Kamis", "ketiga", "Juni"),             # third Thursday, 2018 (see below)
 ])
 def test_ordinal_weekday_of_month_bare_year(weekday, ordinal, month):
     year = A.year
     dom = _nth_weekday(year, _MONTH[month], _WD[weekday], _ORD[ordinal])
+    # ruling 1 (26 November 2026): a part of a month is read as a span; in the
+    # anchor's own month, a weekday whose one-day span ended at or before the
+    # anchor (third Thursday of June 2017 = 15 June) is next year's: June 2018
+    day_end = datetime(year, _MONTH[month], dom) + timedelta(days=1)
+    if _MONTH[month] == A.month and day_end <= A:
+        year += 1
+        dom = _nth_weekday(year, _MONTH[month], _WD[weekday], _ORD[ordinal])
     got = span(f"{weekday} {ordinal} {month}", A)
     assert got.start == AstroDate(year, _MONTH[month], dom)
 

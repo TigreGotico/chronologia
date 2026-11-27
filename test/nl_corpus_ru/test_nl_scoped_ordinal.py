@@ -7,14 +7,15 @@ March"), no connector word.  The base ``scoped_ordinal`` was disabled in #253
 because its bare "ORD SCOPE_UNIT" order hijacked the year_ref reading of
 "NNNN <year-noun>" ("в 1980 году"); the override ships only the genitive
 "ORD WEEKDAY MONTH" / "ORD UNIT MONTH" orders, so the year_ref reading stays
-intact.  Anchor 2017-06-27 (Tue); the 2nd Monday of March 2017 is the 13th."""
+intact.  Anchor 2017-06-27 (Tue); the 2nd Monday of March is the 13th in 2017 but, with no year, March has ended at the
+anchor and the month alone is March 2018 (ruling 1, changed 26 November 2026), so the 12th."""
 from ._corpus import AstroDate, span, start_end
 
 
 def test_second_monday_of_march():
-    # "второй понедельник марта" -- 2nd Monday of March 2017.
+    # "второй понедельник марта" -- 2nd Monday of March 2018 (ruling 1: March has ended at the anchor).
     s = span("второй понедельник марта")
-    assert (s.start.year, s.start.month, s.start.day) == (2017, 3, 13)
+    assert (s.start.year, s.start.month, s.start.day) == (2018, 3, 12)
 
 
 def test_year_ref_not_hijacked():

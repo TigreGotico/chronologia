@@ -13,6 +13,11 @@ half lands on a half-day boundary (Aug 16 12:00), while a 28-day February's
 half lands exactly at midnight (Feb 15 00:00) and a 29-day (leap) February's
 half lands at noon (Feb 15 12:00).  Edges hand-derived (anchor 2017-06-27).
 
+Ruling 1 (changed on 26 November 2026): a part of a named month with no year
+takes the year the month alone takes.  April and February have ended at the
+anchor, so they are April 2018 and February 2018 (28 days, as 2017); August is
+still 2017.
+
 Controls guard the three constructions this must never disturb: the
 YEAR-scoped half ("the first half of 2027"), the calendar quarter of a YEAR
 ("the first quarter of 2027", pinned -- ``quarter_ref``, unrelated
@@ -29,12 +34,13 @@ _HALF_CASES = [
     # 31-day month
     ("the first half of august", (2017, 8, 1), (2017, 8, 16, 12)),
     ("the second half of august", (2017, 8, 16, 12), (2017, 9, 1)),
-    # 30-day month
-    ("the first half of april", (2017, 4, 1), (2017, 4, 16)),
-    ("the second half of april", (2017, 4, 16), (2017, 5, 1)),
-    # February, non-leap anchor year (2017): 28 days, exact midnight split
-    ("the first half of february", (2017, 2, 1), (2017, 2, 15)),
-    ("the second half of february", (2017, 2, 15), (2017, 3, 1)),
+    # 30-day month; ruling 1: April has ended at the anchor, so it is April 2018
+    ("the first half of april", (2018, 4, 1), (2018, 4, 16)),
+    ("the second half of april", (2018, 4, 16), (2018, 5, 1)),
+    # February 2018 (ruling 1: February has ended at the anchor), not a leap
+    # year: 28 days, exact midnight split
+    ("the first half of february", (2018, 2, 1), (2018, 2, 15)),
+    ("the second half of february", (2018, 2, 15), (2018, 3, 1)),
     # February, leap year (2024, explicit): 29 days, noon split
     ("the first half of february 2024", (2024, 2, 1), (2024, 2, 15, 12)),
     ("the second half of february 2024", (2024, 2, 15, 12), (2024, 3, 1)),
@@ -150,10 +156,11 @@ def test_until_year_not_double_bound():
 
 def test_until_year_not_double_bound_quarter():
     """(A) same double-bind, on quarter_of_month: "third quarter of
-    february, until 2030". February 2017 (28 days, anchor year) splits into
-    four exact 7-day quarters (Feb1/8/15/22/Mar1); the third is Feb15..22."""
+    february, until 2030". February 2018 (28 days; ruling 1: February has
+    ended at the anchor, so it is 2018) splits into four exact 7-day
+    quarters (Feb1/8/15/22/Mar1); the third is Feb15..22."""
     assert start_end("third quarter of february, until 2030") == (
-        AstroDate(2017, 2, 15), AstroDate(2017, 2, 22))
+        AstroDate(2018, 2, 15), AstroDate(2018, 2, 22))
     assert parse("third quarter of february, until 2030")[1] == "until 2030"
 
 
@@ -191,8 +198,9 @@ def test_interposed_word_strands_fraction_refuses():
 def test_first_half_of_february_adjacent_still_works():
     """Control (B): the #658 adjacent case (no interposed word) is
     untouched by the new leading veto."""
+    # ruling 1: February has ended at the anchor, so it is February 2018
     assert start_end("first half of february") == (
-        AstroDate(2017, 2, 1), AstroDate(2017, 2, 15))
+        AstroDate(2018, 2, 1), AstroDate(2018, 2, 15))
 
 
 def test_bare_month_with_year_unchanged():

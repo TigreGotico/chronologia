@@ -11,11 +11,11 @@ Fixed here with a dedicated ``weekend_of_month`` construction (siblings:
 ``scoped_ordinal``'s "Nth WEEKDAY of MONTH" reading) that resolves the
 Nth (or last) weekend WITHIN the named month: the weekend whose Saturday
 (the locale's ``weekend_start`` day) falls in that month, counted from the
-start (or, for "last", from the end). The month's YEAR follows the same
-anchor-relative resolution as a bare month reference (anchor.year,
-regardless of where the anchor sits relative to the named month -- a bare
-month never rolls to a different year; see ``test_nl_month_fuzzy`` /
-``month_fuzzy`` for the shared rule).
+start (or, for "last", from the end). The month's YEAR follows the year the
+month alone takes (ruling 1, changed on 26 November 2026; before, it was
+anchor.year whatever the anchor's position -- a bare month never rolled): a
+month that holds or follows the anchor keeps its year, a month that has
+ended before the anchor is next year's.
 
 Golds are computed by independent calendar arithmetic (enumerate every
 Saturday in the month, pick the Nth or the last), never read back from the
@@ -51,18 +51,21 @@ def _span(text, anchor=A):
      AstroDate(2026, 6, 13), AstroDate(2026, 6, 15)),
     ("the last weekend of june", A,
      AstroDate(2026, 6, 27), AstroDate(2026, 6, 29)),
-    # anchor INSIDE the named month itself
+    # anchor INSIDE the named month itself -- ruling 1 (26 November 2026): a
+    # part of a month is read as a span; the first weekend of June 2026
+    # (6-7 June) has ended at the anchor (18 June), so it is June 2027 (Jun 1
+    # 2027 is a Tuesday: Saturdays 5/12/19/26). The last weekend (27-28 June
+    # 2026) is still ahead and stays 2026.
     ("the first weekend of june", datetime(2026, 6, 18),
-     AstroDate(2026, 6, 6), AstroDate(2026, 6, 8)),
+     AstroDate(2027, 6, 5), AstroDate(2027, 6, 7)),
     ("the last weekend of june", datetime(2026, 6, 18),
      AstroDate(2026, 6, 27), AstroDate(2026, 6, 29)),
-    # anchor AFTER the month (December) -- bare month never rolls forward to
-    # next year, so this must still be June of the ANCHOR's year (2026), not
-    # June 2027.
+    # anchor AFTER the month (December) -- ruling 1: June has ended at the
+    # anchor, so it is June 2027 (Jun 1 2027 is a Tuesday: Saturdays 5/12/19/26)
     ("the first weekend of june", datetime(2026, 12, 1),
-     AstroDate(2026, 6, 6), AstroDate(2026, 6, 8)),
+     AstroDate(2027, 6, 5), AstroDate(2027, 6, 7)),
     ("the last weekend of june", datetime(2026, 12, 1),
-     AstroDate(2026, 6, 27), AstroDate(2026, 6, 29)),
+     AstroDate(2027, 6, 26), AstroDate(2027, 6, 28)),
     # February 2026: 1st is a SUNDAY -- the weekend straddling the month
     # boundary (Sat Jan 31 / Sun Feb 1) does NOT count as a February
     # weekend (its Saturday is in January), so "first weekend of february"

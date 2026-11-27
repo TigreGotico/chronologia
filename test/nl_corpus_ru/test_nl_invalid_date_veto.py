@@ -7,7 +7,7 @@ letter strands the ordinal and the reading silently widens to the whole
 month (a fabrication).  Two never-fabricate contracts are pinned here:
 
 * an Nth weekday of a month that has no such occurrence -- "5-е воскресенье
-  февраля" (February 2017 has only four Sundays) -- is vetoed to None via the
+  февраля" (February has only four Sundays, in 2017 and in 2018) -- is vetoed to None via the
   shared bounds-checked ``_nth_weekday_of_month`` (the same veto the spelled
   form "пятое воскресенье февраля" already gets);
 * a bare out-of-range day glued to a month ("32 апреля") must not fall back
@@ -24,7 +24,7 @@ from chronologia.astrodate import AstroDate
 
 # -- Nth weekday of a month that does not exist -> None -------------------
 @pytest.mark.parametrize("text", [
-    "5-е воскресенье февраля",        # Feb 2017 has only four Sundays
+    "5-е воскресенье февраля",        # Feb has only four Sundays (2018, the year a bare February takes)
     "пятое воскресенье февраля",      # the spelled form already vetoes
 ])
 def test_nonexistent_nth_weekday_returns_none(text):
@@ -44,9 +44,11 @@ def test_impossible_day_vetoed_to_none(text):
 
 # -- valid neighbours the veto must NOT swallow (regression pins) ---------
 def test_second_sunday_of_february_resolves():
-    # February 12 2017 is the 2nd Sunday -- both surfaces must agree.
-    assert span("2-е воскресенье февраля").start == AstroDate(2017, 2, 12)
-    assert span("второе воскресенье февраля").start == AstroDate(2017, 2, 12)
+    # ruling 1 (changed 26 November 2026): February has ended at the anchor (2017-06-27),
+    # so it is February 2018; its 2nd Sunday is the 11th (4 February 2018 is the 1st).
+    # Both surfaces must agree.
+    assert span("2-е воскресенье февраля").start == AstroDate(2018, 2, 11)
+    assert span("второе воскресенье февраля").start == AstroDate(2018, 2, 11)
 
 
 def test_hyphen_ordinal_day_of_month_resolves():

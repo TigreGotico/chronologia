@@ -38,7 +38,8 @@ def nth_business_day(base, n, jur):
 
 
 def test_tag_vor_dem_zweiten_montag_im_mai():
-    ref = nth_weekday(ANCHOR.year, 5, MON, 2)
+    # ruling 1: May has ended at the anchor, so it is May 2018
+    ref = nth_weekday(ANCHOR.year + 1, 5, MON, 2)
     expect = ref - timedelta(days=1)
     s = span('der Tag vor dem zweiten Montag im Mai')
     assert s.start == AstroDate(expect.year, expect.month, expect.day)
@@ -46,7 +47,8 @@ def test_tag_vor_dem_zweiten_montag_im_mai():
 
 
 def test_zwei_wochen_nach_dem_ersten_montag_im_maerz():
-    ref = nth_weekday(ANCHOR.year, 3, MON, 1)
+    # ruling 1: March has ended at the anchor, so it is March 2018
+    ref = nth_weekday(ANCHOR.year + 1, 3, MON, 1)
     expect = ref + timedelta(weeks=2)
     assert span('zwei Wochen nach dem ersten Montag im März'
                 ).start == AstroDate(expect.year, expect.month, expect.day)

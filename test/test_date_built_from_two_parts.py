@@ -47,11 +47,6 @@ START = [
     # "half of two weeks before christmas": one week before 25 December
     ("en", "half of two weeks before christmas", datetime(2026, 9, 25, 12),
      date(2026, 12, 18)),
-    # the last day of the next february, leap year 2028 included
-    ("en", "the last day of february", _anchor(2027, 10, 17, 12),
-     date(2028, 2, 29)),
-    ("en", "the last day of february", _anchor(2026, 10, 17, 12),
-     date(2027, 2, 28)),
     # "próximo mes de <month>" names that month
     ("es", "el próximo mes de diciembre", _anchor(2026, 10, 17, 12),
      date(2026, 12, 1)),
@@ -96,6 +91,20 @@ def test_the_reading_keeps_both_parts(lang, text, anchor, expected):
     start = found.span.start.datetime()
     assert (start.date() if isinstance(expected, date)
             and not isinstance(expected, datetime) else start) == expected
+
+
+# the last day of the next february, leap year 2028 included: ruling 1
+# (changed on 26 November 2026) gives a part of a month its month's year, so
+# these two rows of #1034 read and are no longer marked
+@pytest.mark.parametrize("anchor,expected", [
+    (_anchor(2027, 10, 17, 12), date(2028, 2, 29)),
+    (_anchor(2026, 10, 17, 12), date(2027, 2, 28)),
+])
+def test_the_last_day_of_february_is_the_next_one(anchor, expected):
+    found = extract_timespan("the last day of february", "en", anchor)
+    assert found is not None
+    assert found.span.start.datetime().date() == expected
+    assert found.remainder == ""
 
 
 @pytest.mark.xfail(raises=AssertionError, strict=True, reason=ISSUE)

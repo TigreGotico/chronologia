@@ -170,8 +170,12 @@ def test_last_weekend_of_june_control_unchanged():
     r = _result("the last weekend of june")
     assert r is not None and r.remainder == ""
     s, e = r.span.start, r.span.end
-    assert (s.year, s.month, s.day) == (2026, 6, 27)
-    assert (e.year, e.month, e.day) == (2026, 6, 29)
+    # ruling 1 (26 November 2026): a part of a month takes its month's year;
+    # the anchor is 2026-08-10, June has ended, so it is June 2027.  June 1 2027
+    # is a Tuesday, so the Saturdays are 5/12/19/26: the last weekend is
+    # Sat 26 - Sun 27, ending 28.
+    assert (s.year, s.month, s.day) == (2027, 6, 26)
+    assert (e.year, e.month, e.day) == (2027, 6, 28)
 
 
 def test_first_monday_of_october_control_unchanged():

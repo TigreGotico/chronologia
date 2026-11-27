@@ -1,9 +1,11 @@
 """The ordinal-weekday-of-month construction: "the first Monday of July",
 "the last Friday of November", "the second Saturday of June 2020".
 
-A bare month keeps the anchor year (2017) -- this construction does NOT roll
-to the future, so "the last Monday of May" stays in the already-past May 2017.
-An explicit trailing year overrides that.  "last" selects the final matching
+A bare month takes the year the month alone takes (ruling 1, changed on 26
+November 2026; before, it kept the anchor year 2017 and did not roll): a month
+that holds or follows the anchor (2017-06-27) is 2017, a month that has ended
+before it is 2018, so "the last Monday of May" is May 2018 and "the first
+Monday of July" is July 2017.  An explicit trailing year overrides that.  "last" selects the final matching
 weekday of the month.  Every expected day is found by an independent calendar
 scan, never by the parser.
 """
@@ -39,14 +41,16 @@ def _cases():
 
 @pytest.mark.parametrize("text,month,wd,n", _cases())
 def test_nth_weekday_of_month(text, month, wd, n):
-    day = _nth_weekday(2017, month, wd, n)
-    s = date(2017, month, day)
+    # ruling 1: March has ended at the anchor, so it is March 2018
+    year = 2017 + (month < 6)
+    day = _nth_weekday(year, month, wd, n)
+    s = date(year, month, day)
     e = s + __import__("datetime").timedelta(days=1)
     assert start_end(text) == (AstroDate(s.year, s.month, s.day),
                                AstroDate(e.year, e.month, e.day))
 
 
-# explicit trailing year overrides the anchor-year default
+# explicit trailing year overrides the default year
 @pytest.mark.parametrize("text,year,month,wname,oname", [
     ("the second saturday of june 2020", 2020, 6, "saturday", "second"),
     ("the first friday of april 2019", 2019, 4, "friday", "first"),

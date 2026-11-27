@@ -123,8 +123,10 @@ SPANS = [
     (1004, "ru", "сколько дней до 31 октября", dt(2017, 10, 31), None, None, A),
     (1004, "pl", "która będzie godzina za godzinę", dt(2017, 6, 27, 14, 4), None, None, A),
     (1004, "pt", "daqui a uma hora, horas vão ser", dt(2017, 6, 27, 14, 4), None, None, A),
-    (1005, "ca", "el darrer dilluns de març", dt(2017, 3, 27), None, "", A),
-    (1005, "an", "lo zaguer luns de marzo", dt(2017, 3, 27), None, "", A),
+    # ruling 1 (26 November 2026): a part of a month takes its month's year;
+    # March has ended at the anchor (June 2017), so it is March 2018 (last Monday 26)
+    (1005, "ca", "el darrer dilluns de març", dt(2018, 3, 26), None, "", A),
+    (1005, "an", "lo zaguer luns de marzo", dt(2018, 3, 26), None, "", A),
     (1005, "fa", "آخرین دوشنبه مارس", dt(2017, 3, 27), None, "", A),
     (1005, "kab", "letnayen aneggaru n meɣres", dt(2017, 3, 27), None, "", A),
     (1008, "en", "move my alarm to 9", dt(2017, 6, 27, 21, 0), None, None, A),
