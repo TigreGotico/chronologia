@@ -6,8 +6,9 @@ afternoon: Nacht ``[00:00, 05:00)``, Morgen ``[05:00, 10:00)``, Vormittag
 ``[10:00, 12:00)``, Mittag ``[12:00, 13:00)``, Nachmittag ``[13:00, 18:00)``,
 Abend ``[18:00, 24:00)``. The Nachmittag opens at 13:00, after the hour-wide
 Mittag, and the Abend runs to midnight, so the Nacht is the small hours.
-Two bands are registered without vocabulary: "Mittag" is already this locale's
-word for the noon instant, and "Morgen" is the German for tomorrow.
+"Mittag" has no day-part vocabulary: it is this locale's word for the noon
+instant.  The Morgen band is read only from "früh" after a day word
+("morgen früh"), because the noun "Morgen" is also the German for tomorrow.
 
 The boundaries are the Unicode CLDR 47 day-period rules for locale ``de``
 (https://www.unicode.org/cldr/charts/47/supplemental/day_periods.html),
@@ -77,3 +78,20 @@ def test_adversarial_never_raises(text):
     result. What must never happen is an exception escaping the parser.
     """
     parse(text)
+
+
+# DWDS, "früh", Bedeutung 2: "am Morgen, morgens".  The span is the day after
+# (or of) the anchor, cut to the Morgen band [05:00, 10:00).
+@pytest.mark.parametrize("text,day", [
+    ('morgen früh', 28),
+    ('Morgen früh fahre ich zurück', 28),
+    ('heute früh', 27),
+    ('gestern früh', 26),
+])
+def test_frueh_after_a_day_word_is_the_morning(text, day):
+    _band(text, AstroDate(2017, 6, day, 5, 0), AstroDate(2017, 6, day, 10, 0))
+
+
+@pytest.mark.parametrize("text", ['zu früh', 'früh aufstehen'])
+def test_bare_frueh_is_no_date(text):
+    assert parse(text) is None

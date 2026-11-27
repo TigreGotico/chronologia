@@ -10,6 +10,8 @@ see: docs/index.md, docs/getting-started.md, AGENTS.md, CONTRIBUTING.md
 
 **chronologia is a Python library that reads dates as people write them and computes across every calendar, from the dinosaurs to next Tuesday**. It turns a phrase into the exact stretch of time it names. Examples are "the 15th of Ramadan 1446", "next winter" and "66 million years ago". It works offline, it never guesses, and it says so when history does not know the answer.
 
+Try it: [chronologia demo Space](https://huggingface.co/spaces/TigreGotico/chronologia), which runs in the browser.
+
 ## Quick start
 
 ```bash
