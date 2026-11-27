@@ -20,6 +20,12 @@
         "indef? NUM of? indef? UNIT MARKER"
       ]
     },
+    "day_week_idiom": {
+      "orders": [
+        "of? WEEKDAY week_idiom_in WEEK_IDIOM",
+        "of? DAY_WORD week_idiom_in WEEK_IDIOM"
+      ]
+    },
     "weekend_ref": {
       "orders": [
         "REL_MARKER WEEKEND",
