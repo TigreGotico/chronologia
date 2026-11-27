@@ -1,5 +1,5 @@
 # Unicode CLDR 47, locale da, cldr-dates-full/main/da/dateFields.json.
-# day.relative-type-1.
+# day.relative-type-1.  Bare "morgen" is the noun "morning", so only the
+# adverb "i morgen" (en.wiktionary "i morgen": "tomorrow") names the day.
 imorgen
-morgen
 i morgen
