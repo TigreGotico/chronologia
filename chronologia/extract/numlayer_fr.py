@@ -292,6 +292,16 @@ def _inclusive_weeks(tokens: Tuple[Token, ...],
         nxt = [t.text for t in out[i + 2:i + 4]]
         if nxt and (nxt[0] in after or " ".join(nxt) in after):
             continue
+        # the lower count of "huit jours à quinze jours complets" shares the
+        # range's context: the words after the upper count keep it literal too
+        if (i + 3 < len(out) and out[i + 2].text in ranges
+                and out[i + 3].is_number):
+            tail = i + 4
+            if tail < len(out) and spec.units.get(out[tail].text) == "day":
+                tail += 1
+            far = [t.text for t in out[tail:tail + 2]]
+            if far and (far[0] in after or " ".join(far) in after):
+                continue
         # "de huit à quinze jours", "huit ou quinze jours": the lower count of
         # a range shares the day noun, and the range shares its context
         # "de huit jours à quinze jours" repeats the day noun after the

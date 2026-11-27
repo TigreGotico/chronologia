@@ -161,6 +161,32 @@ def test_a_range_that_repeats_the_day_noun_is_literal_at_both_ends():
     digits = extract_duration("un délai de 8 jours à 15 jours", "fr", anchor=A)
     assert spelled is not None and digits is not None
     assert spelled.duration == digits.duration
+    # a range of lengths reads as its upper bound: fifteen days, counted by hand
+    assert spelled.duration == timedelta(days=15)
+
+
+def _counts(text):
+    """The numbers after the French number layer, as the duration edge sees them."""
+    from chronologia.extract.pipeline import fold_tokens, pretokens
+    from chronologia.extract.timespan import _timespan_engine
+    spec = _timespan_engine("fr").spec
+    return [t.value for t in fold_tokens(pretokens(text, spec), spec, text) if t.is_number]
+
+
+@pytest.mark.parametrize("text", [
+    "pendant huit jours à quinze jours complets",
+    "pendant huit à quinze jours complets",
+    "un délai de huit jours à quinze jours",
+])
+def test_both_ends_of_a_literal_range_stay_as_written(text):
+    # "complets" after the upper count, or "délai de" before the lower one,
+    # keeps the range literal: eight and fifteen, as written
+    assert _counts(text) == [8, 15]
+
+
+def test_a_range_with_no_literal_context_is_counted_inclusively():
+    # with no literal marker, both ends read as weeks: 7 and 14 days
+    assert _counts("huit jours à quinze jours") == [7, 14]
 
 
 def test_a_sum_without_et_is_literal():
