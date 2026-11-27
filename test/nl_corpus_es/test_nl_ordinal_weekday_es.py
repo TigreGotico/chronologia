@@ -9,8 +9,10 @@ named month, NOT the next literal weekday.
 Gold is computed by an independent calendar oracle (:func:`_nth_weekday` /
 :func:`_last_weekday`) that never touches the parser: it walks from the 1st of
 the month to the offset of the requested weekday and steps by weeks.  A bare
-month resolves within the anchor year (2017) whether it is past or future, so
-every expected date lives in 2017 unless an explicit year is given.
+month takes the year the month alone takes (ruling 1, changed on 26 November
+2026: it used to be the anchor year 2017 whether the month was past or future):
+a month that has ended before the anchor, enero to mayo, is 2018, and junio to
+diciembre stay in 2017, unless an explicit year is given.
 
 Anchor: Tuesday 2017-06-27.  ``cuarto``/``quinto`` (4th/5th) are NOT asserted
 here -- the engine does not yet resolve them (see the campaign BUG list).
@@ -51,14 +53,17 @@ def _last_weekday(year, month, wd):
 
 def _cases():
     out = []
+    # ruling 1: a part of a month takes its month's year (anchor June 2017)
+    def yr(m):
+        return 2017 + (m < 6)
     for ow, n in _ORD:
         for wn, wd in _WD:
             for mn, m in _MONTHS:
-                g = _nth_weekday(2017, m, wd, n)
+                g = _nth_weekday(yr(m), m, wd, n)
                 out.append((f"el {ow} {wn} de {mn}", g))
     for wn, wd in _WD:
         for mn, m in _MONTHS:
-            out.append((f"el último {wn} de {mn}", _last_weekday(2017, m, wd)))
+            out.append((f"el último {wn} de {mn}", _last_weekday(yr(m), m, wd)))
     return out
 
 

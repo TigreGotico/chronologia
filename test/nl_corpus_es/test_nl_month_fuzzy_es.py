@@ -9,7 +9,9 @@ a 31-day month splits at 10d8h/20d16h, a 28-day February at 9d8h/18d16h, so the
 thirds do NOT land on midnight.  Gold is pure ``timedelta`` arithmetic over the
 hand-derived parent edges; the parser never defines it.
 
-A bare month resolves inside the anchor year (2017).  ``junio`` is covered
+A named month takes the year the month alone takes (ruling 1, changed on
+26 November 2026: it used to be the anchor year 2017 for every month); a month
+that ended before the anchor (June 2017), January to May, is 2018.  ``junio`` is covered
 already by ``test_nl_scoped_seasons``; it is skipped here to avoid duplication.
 """
 from datetime import datetime
@@ -18,7 +20,7 @@ import pytest
 
 from chronologia.astrodate import AstroDate
 
-from ._corpus import start_end, nomatch
+from ._corpus import ANCHOR, start_end, nomatch
 
 
 _MONTHS = [
@@ -46,8 +48,9 @@ def _cases():
     out = []
     for pw, part in _PREFIX:
         for mn, m in _MONTHS:
-            ny, nm = (2017, m + 1) if m < 12 else (2018, 1)
-            s = datetime(2017, m, 1)
+            y = ANCHOR.year + (m < ANCHOR.month)  # ruling 1
+            ny, nm = (y, m + 1) if m < 12 else (y + 1, 1)
+            s = datetime(y, m, 1)
             e = datetime(ny, nm, 1)
             want_s, want_e = _third(s, e, part)
             out.append((f"{pw} de {mn}", want_s, want_e))

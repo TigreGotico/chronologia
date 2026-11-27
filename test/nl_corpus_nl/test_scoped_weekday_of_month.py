@@ -1,7 +1,10 @@
 # -*- coding: utf-8 -*-
 """Scoped-ordinal "Nth <weekday> of <month>" for nl: binds ORD+WEEKDAY+of/
 MONTH into the nth-weekday-of-the-named-month span (anchor Tue 2017-06-27).
-Expected dates from parser-independent calendar arithmetic."""
+Expected dates from parser-independent calendar arithmetic.
+Ruling 1 (changed on 26 November 2026): a part of a month takes its month's
+year; maart has ended at the anchor, so it is March 2018 (Mondays 5, 12, 19,
+26)."""
 
 from ._corpus import parse, start, ad
 from datetime import datetime
@@ -9,6 +12,6 @@ from datetime import datetime
 
 def test_de_tweede_maandag_van_maart():
     phrase = 'de tweede maandag van maart'
-    assert start(phrase) == ad(datetime(2017, 3, 13))
+    assert start(phrase) == ad(datetime(2018, 3, 12))
     assert parse(phrase)[1] == ""
 

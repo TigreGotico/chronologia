@@ -41,12 +41,17 @@ def _cases():
 
 @pytest.mark.parametrize("text,month,wd,n", _cases())
 def test_nth_weekday_of_month(text, month, wd, n):
-    day = _nth_weekday(2017, month, wd, n)
-    assert start(text) == ad(datetime(2017, month, day))
+    # ruling 1 (changed 26 November 2026): with no year the month takes the year the month
+    # alone takes; March has ended at the anchor (2017-06-27), so it is March 2018
+    # (June, September and November are still 2017)
+    year = 2017 + (month < 6)
+    day = _nth_weekday(year, month, wd, n)
+    assert start(text) == ad(datetime(year, month, day))
 
 
 def test_third_monday_of_march():
-    assert start("märtsi kolmas esmaspäev") == ad(datetime(2017, 3, 20))
+    # ruling 1: March has ended at the anchor, so it is March 2018 (3rd Monday = 19th)
+    assert start("märtsi kolmas esmaspäev") == ad(datetime(2018, 3, 19))
 
 
 @pytest.mark.parametrize("text,year,month,wname,oname", [

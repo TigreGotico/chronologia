@@ -10,14 +10,17 @@ first, the cut points are
     day 1 00:00  +  k * (N / 3) days     for k = 0, 1, 2, 3
 
 so June (N=30) splits cleanly into 10-day thirds, while March (N=31) puts the
-first cut at the 11th 08:00 (31/3 = 10 d 8 h) and February 2017 (N=28) at the
+first cut at the 11th 08:00 (31/3 = 10 d 8 h) and February (N=28) at the
 10th 08:00 (28/3 = 9 d 8 h).  The oracle below is this arithmetic run against
 ``calendar.monthrange`` -- the parser is never consulted for the gold.
 
 "início" and "princípios" name the first third, "meados" the middle, "fim" /
 "fins" / "final" the last.  [[EP vs BP]]: shared vocabulary; both norms say
-"meados de março" and "fins de agosto".  Anchor 2017-06-27 is irrelevant here
--- a named month with no year resolves within the anchor's own year.
+"meados de março" and "fins de agosto".  A named month with no year takes the
+year the month alone takes (ruling 1, changed on 26 November 2026; before, it
+resolved within the anchor's own year 2017): 2017 for a month that holds or
+follows the anchor 2017-06-27, 2018 for one that has ended before it (janeiro
+to maio).
 """
 from calendar import monthrange
 from datetime import datetime, timedelta
@@ -34,12 +37,14 @@ _MONTHS = {1: "janeiro", 2: "fevereiro", 3: "março", 4: "abril", 5: "maio",
 _LEADS = {"início": 1, "princípios": 1, "meados": 2,
           "fim": 3, "fins": 3, "final": 3}
 
-_YEAR = 2017
+def _year(month):
+    # ruling 1: a month that has ended at the anchor (June 2017) is next year's
+    return 2017 + (month < 6)
 
 
 def _third_edges(month, third):
-    n = monthrange(_YEAR, month)[1]
-    base = datetime(_YEAR, month, 1)
+    n = monthrange(_year(month), month)[1]
+    base = datetime(_year(month), month, 1)
     cuts = [base + timedelta(days=n) * k / 3 for k in range(4)]
     return cuts[third - 1], cuts[third]
 
@@ -66,8 +71,9 @@ def test_thirds_tile_the_whole_month():
     s2, e2 = start_end("meados de março")
     s3, _ = start_end("fim de março")
     assert e1 == s2 and e2 == s3
-    assert start_end("início de março")[0] == AstroDate(2017, 3, 1)
-    assert start_end("fim de março")[1] == AstroDate(2017, 4, 1)
+    # ruling 1: março has ended at the anchor, so it is March 2018
+    assert start_end("início de março")[0] == AstroDate(2018, 3, 1)
+    assert start_end("fim de março")[1] == AstroDate(2018, 4, 1)
 
 
 @pytest.mark.parametrize("text", ["início de", "meados de xpto", "fim de mês"])

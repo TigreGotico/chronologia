@@ -57,7 +57,10 @@ def test_business_day_relative_month(text, expected):
 # -- CONTRAST: named-month scope must stay byte-identical ------------------
 
 @pytest.mark.parametrize("text,expected", [
-    ("third Wednesday of March", AstroDate(2017, 3, 15)),
+    # ruling 1 (26 November 2026): a part of a month takes its month's year;
+    # March has ended at the anchor, so it is March 2018 (Mar 1 is a Thursday,
+    # so the Wednesdays are 7, 14, 21)
+    ("third Wednesday of March", AstroDate(2018, 3, 21)),
     ("third Wednesday of June", AstroDate(2017, 6, 21)),
 ])
 def test_named_month_scope_unchanged(text, expected):

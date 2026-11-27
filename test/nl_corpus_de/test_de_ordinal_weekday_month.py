@@ -61,14 +61,17 @@ def test_ordinal_weekday_of_month(text, d):
 
 
 def test_last_weekday_of_month_binds():
-    """"der letzte Montag im Mai" -> the last Monday of May 2017.
+    """"der letzte Montag im Mai" -> the last Monday of May 2018.
 
-    Gold (independent): the last Monday of May 2017 is the 29th. The
+    Ruling 1 (26 November 2026): a part of a month takes its month's year;
+    May has ended at the anchor (2017-06-27), so it is May 2018.
+
+    Gold (independent): the last Monday of May 2018 is the 28th. The
     "letzte"/"letzter"/"letzten"/"letztes" ordinal determiner binds the
     last-of-month reading and consumes the whole phrase.
     """
     r = parse("der letzte montag im mai")
     assert r is not None
-    assert r[0].start == AstroDate(2017, 5, 29)
-    assert r[0].end == AstroDate(2017, 5, 30)
+    assert r[0].start == AstroDate(2018, 5, 28)
+    assert r[0].end == AstroDate(2018, 5, 29)
     assert r[1] == ""

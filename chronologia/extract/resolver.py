@@ -1565,11 +1565,11 @@ class Resolver:
         machinery as :meth:`_resolve_weekend_ref` / :meth:`_resolve_rel_span_weekend`
         (:func:`_nth_weekend_of_month`).
 
-        The month's year follows the same anchor-relative rule as a bare
-        month reference (``month_fuzzy``): an explicit YEAR wins; otherwise
-        it is always the ANCHOR's year, never rolled forward or back to make
-        the month "upcoming" -- "the first weekend of june" in December still
-        names June of the anchor's own year.
+        The month's year follows the rule of a bare month (ruling 1,
+        :meth:`_month_year`): an explicit YEAR wins; otherwise a month that
+        holds the anchor is this one and a month that has ended is next
+        year's -- "the first weekend of june" said in December names June of
+        the next year.
         """
         ord_tok = match.slots.get("ORD")
         n = int(ord_tok.value) if ord_tok is not None else -1
@@ -1601,7 +1601,7 @@ class Resolver:
             return Resolution(DateSpan(start, start + timedelta(days=2)),
                               self._consumed(match))
         year = (_pivot_two_digit_year(year_tok, anchor.year) if year_tok
-                else anchor.year)
+                else self._month_year(month, anchor))
         value = _nth_weekend_of_month(year, month,
                                       self.conventions.weekend_start, n)
         if value is None:                            # no such Nth weekend
@@ -1979,17 +1979,34 @@ class Resolver:
                              snap="year")
         return Resolution(DateSpan(span.start, span.end), self._consumed(match))
 
+    def _month_year(self, month, anchor):
+        """The year of a named month with no year, as ruling 1 reads it.
+
+        A month that holds the anchor is this month, and a month that has
+        ended is next year's ("janvier" said in June 2017 is January 2018).
+        A part of a month ("early january", "the first week of january",
+        "the last day of january") names a span inside that month, so it
+        takes the same year: the part may have passed while its month has
+        not ("early november" said on 26 November is this November's).  The
+        locale's ``calendar_date`` ``prefer_future`` flag gates the roll, as
+        it gates the bare month."""
+        if (month < anchor.month
+                and self.spec.construction_flags.get(
+                    "calendar_date", {}).get("prefer_future", False)):
+            return anchor.year + 1
+        return anchor.year
+
     def _resolve_month_fuzzy(self, match, anchor):
         """"early/mid/late <month>": the early/mid/late third of that month,
         sliced by :func:`chronologia.subdivide`.  An explicit trailing year
         ("early March 2019") places the third in THAT year; without one the
-        month is the anchor year's."""
+        month's year is the bare month's (:meth:`_month_year`)."""
         from chronologia import subdivide
         month = self.spec.months[match.slots["MONTH"].text]
         part = self.spec.period_parts[match.slots["PART"].text]
         year_tok = match.slots.get("YEAR")
         year = (_pivot_two_digit_year(year_tok, anchor.year)
-                if year_tok is not None else anchor.year)
+                if year_tok is not None else self._month_year(month, anchor))
         span = subdivide(_gregorian_month_span(year, month), part)
         return Resolution(DateSpan(span.start, span.end), self._consumed(match))
 
@@ -2093,7 +2110,8 @@ class Resolver:
                 year = _year_with_era(year_tok, era_tok, self.spec)
             else:
                 year = (_pivot_two_digit_year(year_tok, anchor.year)
-                        if year_tok is not None else anchor.year)
+                        if year_tok is not None
+                        else self._month_year(month, anchor))
             part = "first_half" if n == 1 else "second_half"
             span = subdivide(_gregorian_month_span(year, month), part)
             return Resolution(DateSpan(span.start, span.end),
@@ -2173,7 +2191,8 @@ class Resolver:
             year = _year_with_era(year_tok, era_tok, self.spec)
         else:
             year = (_pivot_two_digit_year(year_tok, anchor.year)
-                    if year_tok is not None else anchor.year)
+                    if year_tok is not None
+                    else self._month_year(month, anchor))
         span = subdivide(_gregorian_month_span(year, month), part)
         return Resolution(DateSpan(span.start, span.end), self._consumed(match))
 
@@ -2302,9 +2321,12 @@ class Resolver:
                 # a relative year phrase ("of november next year", "de
                 # noviembre del año que viene") shifts the anchor's year
                 rel_tok = match.slots.get("REL_MARKER")
-                year = (_pivot_two_digit_year(year_tok, anchor.year) if year_tok
-                        else anchor.year + (self.spec.rel_markers[rel_tok.text]
-                                            if rel_tok else 0))
+                if year_tok:
+                    year = _pivot_two_digit_year(year_tok, anchor.year)
+                elif rel_tok:
+                    year = anchor.year + self.spec.rel_markers[rel_tok.text]
+                else:                               # the bare month's year
+                    year = self._month_year(month, anchor)
                 value = _nth_weekday_of_month(year, month, target, n)
                 cap_month, cap_year = month, year if year_tok else None
             elif gyear_tok is not None:              # bare year, no month:
@@ -2446,6 +2468,8 @@ class Resolver:
         scope_tok = match.slots.get("SCOPE_UNIT")
         if month_tok is not None:                   # month-scoped (named month)
             month = self.spec.months[month_tok.text]
+            if year_tok is None:                    # the bare month's year
+                year = self._month_year(month, anchor)
             res = _UNIT_OF_MONTH[unit_kind]
             value = _date_ordinal(n, date(year, month, 1), res)
             # A year-less "Nth day of <month>" names the date its digit form

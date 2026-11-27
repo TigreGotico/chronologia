@@ -1385,7 +1385,7 @@ span, _ = extract_timespan("mid-july", "en", anchor)
 assert span.start.day == 11 and span.end.day == 21     # middle third of July
 ```
 
-The parent is the calendar container that the phrase names. It is the current week, month or year of the anchor. It can also be the one that a relative marker shifts to ("early next week"). `early bird` is not a date. It does not fire.
+The parent is the calendar container that the phrase names. It is the current week, month or year of the anchor. It can also be the one that a relative marker shifts to ("early next week"). A named month is the month that the month alone names ([ruling 1](rulings.md)): "early january" said in November is the coming January, and "early november" said in November is this November. `early bird` is not a date. It does not fire.
 
 ## Timezone-qualified clock times
 

@@ -12,6 +12,10 @@ ordinal "first"; the two readings are told apart by position.
   binds it.
 
 Anchor 2017-06-27; 5 aprile resolves forward to 2018-04-05.
+
+Ruling 1 (changed on 26 November 2026): a part of a month with no year takes
+the year the month alone takes.  Aprile, marzo and gennaio have ended at the
+anchor, so they are 2018 (before, the ordinal frame kept the anchor year 2017).
 """
 from datetime import date
 
@@ -37,9 +41,11 @@ def test_offset_before_marker(text, expected):
 
 
 @pytest.mark.parametrize("text,expected", [
-    ("la prima settimana di aprile", date(2017, 4, 3)),
-    ("la prima settimana di marzo", date(2017, 3, 6)),
-    ("prima settimana di gennaio", date(2017, 1, 2)),
+    # ruling 1: the month has ended at the anchor, so it is 2018; week 1 is
+    # the first Monday (Apr 2 / Mar 5 / Jan 1 2018)
+    ("la prima settimana di aprile", date(2018, 4, 2)),
+    ("la prima settimana di marzo", date(2018, 3, 5)),
+    ("prima settimana di gennaio", date(2018, 1, 1)),
 ])
 def test_ordinal_first(text, expected):
     assert start(text) == _ad(expected)

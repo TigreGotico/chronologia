@@ -44,7 +44,9 @@ def test_late_month_third_binds_explicit_year():
 
 
 def test_yearless_month_third_stays_anchor_year_regression():
-    # WITHOUT a year the third stays in the anchor's own year (2017) -- pinned
-    # byte-identical so the explicit-year fix does not perturb the yearless path.
-    early = _thirds(ANCHOR.year, 3)["early"]
+    # WITHOUT a year the third takes the year the month alone takes.  Ruling 1
+    # changed on 26 November 2026: it used to be the anchor's own year (2017);
+    # March has ended at the anchor (June 2017), so it is March 2018.  The
+    # explicit-year fix must still not perturb the yearless path.
+    early = _thirds(ANCHOR.year + (3 < ANCHOR.month), 3)["early"]
     assert start_end("principis de març") == early

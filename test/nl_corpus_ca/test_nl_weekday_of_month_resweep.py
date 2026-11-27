@@ -5,8 +5,9 @@ and the hand-written cases in ``test_scoped_weekday_of_month`` /
 ``test_nl_scoped_ordinal_higher`` (2017).
 
 Same construction, same independent ``datetime`` arithmetic as the first
-sweep: the scoped-weekday-of-month expression resolves inside the anchor
-calendar year, so expected dates never touch the parser.
+sweep: the scoped-weekday-of-month expression takes the year the month alone
+takes (ruling 1, changed on 26 November 2026: it used to be the anchor calendar
+year), so expected dates never touch the parser.
 """
 from datetime import datetime, timedelta
 
@@ -59,13 +60,17 @@ def _build():
         for wd_name, wd in _WEEKDAYS:
             for mo_name, mo in _MONTHS:
                 prep = _month_prep(mo_name)
+                # ruling 1 (26 November 2026): a part of a month takes the year
+                # its month takes; the anchor is 27 June, so January to May
+                # have ended and are next year's
+                year = anchor_year + (mo < 6)
                 for ord_name, n in _ORDINALS:
                     if n is None:
                         art = "l'últim "
-                        expected = _last_weekday(anchor_year, mo, wd)
+                        expected = _last_weekday(year, mo, wd)
                     else:
                         art = "el %s " % ord_name
-                        expected = _nth_weekday(anchor_year, mo, wd, n)
+                        expected = _nth_weekday(year, mo, wd, n)
                     text = "%s%s %s%s" % (art, wd_name, prep, mo_name)
                     if expected is None:
                         miss.append((text, anchor_year))

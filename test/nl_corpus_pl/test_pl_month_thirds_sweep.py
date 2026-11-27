@@ -7,8 +7,9 @@ Order shape: Slavic genitive, no connector -- PART MONTH(gen).  Each third is
 the first / middle / last arithmetic third of the parent calendar month, sliced
 by :func:`chronologia.subdivide`.  The parent month edges and the third
 boundaries are computed here with pure ``datetime`` arithmetic; the parser is
-never used to produce the expected values.  Bare month with no year resolves in
-the anchor year 2017.
+never used to produce the expected values.  A bare month with no year takes the
+year the month alone takes (ruling 1, changed 26 November 2026): 2018 for
+January to May, 2017 for June to December.
 
 Anchor: Tuesday 2017-06-27 13:04.
 """
@@ -42,7 +43,8 @@ def _cases():
         if mon == "marca":
             continue  # covered in test_nl_month_fuzzy.py
         for word, part in _PART:
-            gs, ge = _third(_YEAR, mi, part)
+            # ruling 1 (changed 26 November 2026): a part of a month takes its month's year; a month that has ended at the anchor is next year's
+            gs, ge = _third(_YEAR + (mi < 6), mi, part)
             out.append((f"{word} {mon}", gs, ge))
     return out
 

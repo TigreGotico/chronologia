@@ -8,6 +8,10 @@ survives, which left "a segunda semana de março" reading Monday instead of the
 second week.  Directly before the week noun the weekday reading is impossible,
 so the ordinal is licensed there; the weekday reading everywhere else must be
 untouched.  Anchor 2017-06-27 (a terça).
+
+Ruling 1 (changed on 26 November 2026): a part of a month with no year takes
+the year the month alone takes, so março and janeiro (ended at the anchor) are
+2018, where week 1 starts on the first Monday (5 March, 1 January).
 """
 from datetime import timedelta
 
@@ -17,12 +21,13 @@ from ._corpus import ANCHOR, AstroDate, span, start_end, parse
 
 
 @pytest.mark.parametrize("text,start,end", [
-    ("a primeira semana de março", (2017, 3, 6), (2017, 3, 13)),
-    ("a segunda semana de março", (2017, 3, 13), (2017, 3, 20)),
-    ("a terceira semana de março", (2017, 3, 20), (2017, 3, 27)),
-    ("a quarta semana de março", (2017, 3, 27), (2017, 4, 3)),
-    ("a segunda semana de janeiro", (2017, 1, 9), (2017, 1, 16)),
-    ("a quarta semana de janeiro", (2017, 1, 23), (2017, 1, 30)),
+    # ruling 1: março and janeiro have ended at the anchor, so they are 2018
+    ("a primeira semana de março", (2018, 3, 5), (2018, 3, 12)),
+    ("a segunda semana de março", (2018, 3, 12), (2018, 3, 19)),
+    ("a terceira semana de março", (2018, 3, 19), (2018, 3, 26)),
+    ("a quarta semana de março", (2018, 3, 26), (2018, 4, 2)),
+    ("a segunda semana de janeiro", (2018, 1, 8), (2018, 1, 15)),
+    ("a quarta semana de janeiro", (2018, 1, 22), (2018, 1, 29)),
 ])
 def test_nth_week_of_month(text, start, end):
     s, e = start_end(text)

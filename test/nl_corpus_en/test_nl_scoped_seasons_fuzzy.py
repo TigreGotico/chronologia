@@ -20,6 +20,9 @@ def _d(s):
 
 
 # -- Nth week of a month (Monday-aligned) ---------------------------------
+# Ruling 1 (changed on 26 November 2026): a part of a month takes its month's
+# year -- a month that has ended at the anchor (2017-06-27) is 2018, so
+# January, March and May are 2018 (week 1 = the first Monday of the month).
 
 @pytest.mark.parametrize("text,iso", [
     ("the first week of june", "2017-6-5"),
@@ -28,10 +31,10 @@ def _d(s):
     ("the fourth week of june", "2017-6-26"),
     ("the first week of july", "2017-7-3"),
     ("the second week of december", "2017-12-11"),
-    ("the first week of january", "2017-1-2"),
-    ("the third week of march", "2017-3-20"),
+    ("the first week of january", "2018-1-1"),
+    ("the third week of march", "2018-3-19"),
     ("the fourth week of september", "2017-9-25"),
-    ("the second week of may", "2017-5-8"),
+    ("the second week of may", "2018-5-14"),
 ])
 def test_week_of_month(text, iso):
     assert start(text) == _d(iso)
@@ -229,7 +232,8 @@ def test_two_digit_pivot_scoping():
     ("mid june", (2017, 6, 11), 11),
     # 31-day months slice into fractional-day thirds; the date still lands
     ("late december", (2017, 12, 21), 11),
-    ("early january", (2017, 1, 1), 11),
+    # ruling 1 (26 November 2026): January has ended at the anchor -> 2018
+    ("early january", (2018, 1, 1), 11),
 ])
 def test_early_june(text, ymd, maxdays):
     s = start(text)

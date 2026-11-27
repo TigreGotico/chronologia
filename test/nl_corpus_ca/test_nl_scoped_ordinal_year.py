@@ -19,6 +19,8 @@ def test_scoped_ordinal_binds_trailing_connector_year():
 
 
 def test_scoped_ordinal_no_year_stays_anchor_year():
-    # byte-identical historic reading: anchor-year (2017) March.
+    # ruling 1 (changed 26 November 2026): the year the month alone takes.  It
+    # used to be the anchor year (2017); March has ended at the anchor (June
+    # 2017), so it is March 2018, whose Mondays are 5, 12, 19, 26.
     assert start_end('el tercer dilluns de març') == (
-        AstroDate(2017, 3, 20), AstroDate(2017, 3, 21))
+        AstroDate(2018, 3, 19), AstroDate(2018, 3, 20))

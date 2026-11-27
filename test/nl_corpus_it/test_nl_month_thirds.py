@@ -10,8 +10,10 @@ hour ``L*8`` hours apart, so no fractional-minute rounding is ever needed:
     fine    [first + L*16h,      first + L*24h == next month)
 
 The oracle below is pure calendar arithmetic (``calendar.monthrange``); it never
-consults the parser. Anchor Tue 2017-06-27, so a bare month name binds its 2017
-occurrence.
+consults the parser. Anchor Tue 2017-06-27.  A bare month name takes the year
+the month alone takes (ruling 1, changed on 26 November 2026; before, it bound
+its 2017 occurrence): 2017 for a month that holds or follows the anchor, 2018
+for one that has ended before it (gennaio to maggio).
 """
 import calendar
 from datetime import timedelta
@@ -37,10 +39,11 @@ def _thirds(year, month):
     return {"inizio": (first, b1), "metà": (b1, b2), "fine": (b2, nxt)}
 
 
-# every 2017-occurrence month, all three thirds -> 36 cases
+# every month, all three thirds -> 36 cases
 _CASES = []
 for _name, _m in _MONTHS.items():
-    _thd = _thirds(2017, _m)
+    # ruling 1: a month that has ended at the anchor (June 2017) is next year's
+    _thd = _thirds(2017 + (_m < 6), _m)
     for _which in ("inizio", "metà", "fine"):
         _CASES.append((f"{_which} {_name}", *_thd[_which]))
 
@@ -60,4 +63,6 @@ def test_thirds_tile_the_whole_month():
 def test_february_short_month_thirds():
     """28-day February: boundaries at 9d8h, not the 31-day 10d8h."""
     s, e = start_end("inizio febbraio")
-    assert (s, e) == (AstroDate(2017, 2, 1), AstroDate(2017, 2, 10, 8, 0))
+    # ruling 1: febbraio has ended at the anchor, so it is February 2018
+    # (also 28 days)
+    assert (s, e) == (AstroDate(2018, 2, 1), AstroDate(2018, 2, 10, 8, 0))

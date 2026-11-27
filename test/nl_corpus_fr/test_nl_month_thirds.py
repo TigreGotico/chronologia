@@ -10,9 +10,10 @@ timedeltas, so the internal boundaries land on fractional days for the 31- and
 30-day months.  Every expected edge is pure ``timedelta`` arithmetic done here,
 never read back from the parser.
 
-A bare named month with no year binds to the anchor's own year (2017), even
-when that month is already past -- there is no prefer-future roll for a scoped
-month band.  (The explicit-year form "début mars 2019" is a KNOWN DEFECT: the
+A bare named month with no year takes the year the month alone takes (ruling 1,
+changed on 26 November 2026; before, it bound to the anchor's own year 2017
+even when the month was already past): 2017 for a month that holds or follows
+the anchor, 2018 for one that has ended before it (janvier to mai).  (The explicit-year form "début mars 2019" is a KNOWN DEFECT: the
 year is silently dropped and the band stays in 2017.  That is resolver-owned
 behaviour shared with English "early March 2019"; it is NOT asserted here.)
 
@@ -28,9 +29,15 @@ from chronologia.astrodate import AstroDate
 from ._corpus import start_end, nomatch
 
 
+def _year(month):
+    # ruling 1: a month that has ended at the anchor (June 2017) is next year's
+    return 2017 + (month < 6)
+
+
 def _third(month, part):
-    s = datetime(2017, month, 1)
-    e = datetime(2018, 1, 1) if month == 12 else datetime(2017, month + 1, 1)
+    y = _year(month)
+    s = datetime(y, month, 1)
+    e = datetime(y + 1, 1, 1) if month == 12 else datetime(y, month + 1, 1)
     w = (e - s) / 3
     lo, hi = {"debut": (s, s + w),
               "milieu": (s + w, s + 2 * w),
@@ -69,8 +76,9 @@ def test_thirds_partition_the_month(month):
     m_s, m_e = start_end(f"mi-{_MONTHS[month]}")
     f_s, f_e = start_end(f"fin {_MONTHS[month]}")
     assert d_e == m_s and m_e == f_s          # contiguous
-    assert d_s == AstroDate(2017, month, 1)   # opens the month
-    end = AstroDate(2018, 1, 1) if month == 12 else AstroDate(2017, month + 1, 1)
+    y = _year(month)
+    assert d_s == AstroDate(y, month, 1)      # opens the month
+    end = AstroDate(y + 1, 1, 1) if month == 12 else AstroDate(y, month + 1, 1)
     assert f_e == end                          # closes the month
 
 
@@ -92,12 +100,14 @@ def test_start_variants_agree(text):
 
 def test_february_third_boundaries_are_fractional():
     # 28 / 3 days = 9 d 8 h ; the internal cuts fall at 08:00 and 16:00
+    # (ruling 1: février has ended at the anchor, so it is February 2018,
+    # also 28 days)
     assert start_end("début février") == (
-        AstroDate(2017, 2, 1), AstroDate(2017, 2, 10, 8, 0))
+        AstroDate(2018, 2, 1), AstroDate(2018, 2, 10, 8, 0))
     assert start_end("mi-février") == (
-        AstroDate(2017, 2, 10, 8, 0), AstroDate(2017, 2, 19, 16, 0))
+        AstroDate(2018, 2, 10, 8, 0), AstroDate(2018, 2, 19, 16, 0))
     assert start_end("fin février") == (
-        AstroDate(2017, 2, 19, 16, 0), AstroDate(2017, 3, 1))
+        AstroDate(2018, 2, 19, 16, 0), AstroDate(2018, 3, 1))
 
 
 @pytest.mark.parametrize("text", ["début", "la fin", "le milieu"])

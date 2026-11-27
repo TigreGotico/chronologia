@@ -5,9 +5,10 @@ an explicit year.
 
 The gold is an independent enumeration: list every day of the target month
 whose weekday matches, then index it (1-based) or take the last for "dernier".
-The span is one day wide.  A bare month with no year binds to the anchor's own
-year (2017), with no prefer-future roll -- "troisième lundi de mars" resolves
-to March 2017 even though March is already past on 2017-06-27.
+The span is one day wide.  A bare month with no year takes the year the month alone
+takes (ruling 1, changed on 26 November 2026; before, it bound to the anchor's
+own year 2017 with no roll): "troisième lundi de mars" resolves to March 2018,
+because March has ended on 2017-06-27.
 
 Several of these are the civil anchors of real French/US observances (fourth
 Thursday of November = US Thanksgiving; first Monday of September = US Labor
@@ -37,7 +38,7 @@ def _nth(year, month, weekday, n):
     return AstroDate(year, month, d)
 
 
-# -- bare (anchor year 2017) -------------------------------------------------
+# -- bare (ruling 1: 2017, or 2018 for a month ended at the anchor) --
 
 _BARE = [
     ("le premier lundi de janvier", "lundi", 1, 1),
@@ -57,7 +58,8 @@ _BARE = [
 @pytest.mark.parametrize("text,wd,mo,n", _BARE)
 def test_bare_nth_weekday(text, wd, mo, n):
     s, e = start_end(text)
-    assert s == _nth(2017, mo, wd, n), f"{text!r} -> {s}"
+    # ruling 1: a month that has ended at the anchor (June 2017) is next year's
+    assert s == _nth(2017 + (mo < 6), mo, wd, n), f"{text!r} -> {s}"
     assert (e - s).days == 1
 
 
@@ -84,7 +86,7 @@ def test_span_is_one_day_wide():
     assert span("le troisième lundi de mars").width.days == 1
 
 
-# -- comprehensive generated sweep (anchor year 2017) ------------------------
+# -- comprehensive generated sweep (ruling 1: 2017, or 2018 before June) --
 # Every month x {lundi, mercredi, vendredi, dimanche} x {1st, 2nd, last}; gold
 # from the same independent enumeration. Elision "de" -> "d'" before a
 # vowel-initial month name (avril, aout, octobre).
@@ -114,5 +116,6 @@ def _sweep():
 @pytest.mark.parametrize("text,wd,mo,n", _sweep())
 def test_sweep_nth_weekday(text, wd, mo, n):
     s, e = start_end(text)
-    assert s == _nth(2017, mo, wd, n), f"{text!r} -> {s}"
+    # ruling 1: a month that has ended at the anchor (June 2017) is next year's
+    assert s == _nth(2017 + (mo < 6), mo, wd, n), f"{text!r} -> {s}"
     assert (e - s).days == 1

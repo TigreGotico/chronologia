@@ -39,9 +39,11 @@ def test_fuzzy_month_binds_trailing_year(text, s, e):
 
 
 def test_fuzzy_month_no_year_stays_anchor_year():
-    # byte-identical to the historic bare reading: anchor-year March.
+    # ruling 1 (26 November 2026): a part of a month takes its month's year,
+    # so the bare reading is no longer anchor-year March: March has ended at
+    # the anchor (2017-06-27), so it is March 2018 (31 days / 3 as before).
     assert start_end('early March') == (
-        AstroDate(2017, 3, 1, 0, 0), AstroDate(2017, 3, 11, 8, 0))
+        AstroDate(2018, 3, 1, 0, 0), AstroDate(2018, 3, 11, 8, 0))
 
 
 # -- (B) range with a single trailing year -------------------------------

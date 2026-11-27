@@ -21,7 +21,9 @@ from chronologia.astrodate import AstroDate
 
 # -- (1) never crash on a non-existent Nth weekday of a month -------------
 # February 2017 has exactly four Mondays (6, 13, 20, 27): a 5th or 6th
-# Monday does not exist.  The API must return None, never raise.
+# Monday does not exist.  The year-less form is February 2018 since ruling 1
+# (26 November 2026: a part of a month takes its month's year), which also has
+# exactly four Mondays (5, 12, 19, 26).  The API must return None, never raise.
 @pytest.mark.parametrize("text", [
     "the 5th Monday of February",
     "the 6th Monday of February 2017",
@@ -34,11 +36,13 @@ def test_nonexistent_nth_weekday_returns_none_not_raises(text):
 
 # the Nth weekday that DOES exist still resolves (regression pins).
 def test_fourth_monday_of_february_still_resolves():
-    assert span("the 4th Monday of February").start == AstroDate(2017, 2, 27)
+    # ruling 1: February has ended at the anchor, so it is February 2018
+    assert span("the 4th Monday of February").start == AstroDate(2018, 2, 26)
 
 
 def test_last_monday_of_february_still_resolves():
-    assert span("the last Monday of February").start == AstroDate(2017, 2, 27)
+    # ruling 1: February has ended at the anchor, so it is February 2018
+    assert span("the last Monday of February").start == AstroDate(2018, 2, 26)
 
 
 # -- (2) impossible calendar day -> None, never a fabricated span ---------

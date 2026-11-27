@@ -50,10 +50,15 @@ def test_indefinite_article_names_no_day(lang, text):
 
 # (text, anchor, start, end)
 RANGE_ENDS = rows(1309, [
-    ("from early march to easter", ANCHOR, datetime(2026, 3, 1), datetime(2026, 4, 6)),
     ("from the last day of february to monday 1 march", datetime(2027, 3, 3, 15, 30), datetime(2027, 2, 28), datetime(2027, 3, 2)),
-    ("from early march to 10 march at 5pm", ANCHOR, datetime(2026, 3, 1), datetime(2026, 3, 10, 17, 1)),
-])
+]) + [
+    # ruling 1 (changed on 26 November 2026): "early march" said on
+    # 22 November 2026 is March 2027, so the end is read in 2027 too and the
+    # range no longer runs a year.  Easter Sunday 2027 is 28 March.  (These
+    # rows expected March 2026 before, the anchor's year.)
+    ("from early march to easter", ANCHOR, datetime(2027, 3, 1), datetime(2027, 3, 29)),
+    ("from early march to 10 march at 5pm", ANCHOR, datetime(2027, 3, 1), datetime(2027, 3, 10, 17, 1)),
+]
 
 
 @pytest.mark.parametrize("text,anchor,start,end", RANGE_ENDS)
@@ -172,7 +177,8 @@ def test_until_bound_in_a_recurrence(lang, text, byhour, until):
     assert result.remainder == ""
 
 
-@pytest.mark.xfail(raises=AssertionError, strict=True, reason=URL + "1316")
+# ruling 1 (changed on 26 November 2026): "Ende Juni" takes June's year, the
+# next June, so this row of #1316 is fixed and is no longer marked
 def test_de_until_end_of_june_is_next_june():
     result = extract_recurrence("jeden Montag bis Ende Juni", "de", ANCHOR)
     assert result is not None

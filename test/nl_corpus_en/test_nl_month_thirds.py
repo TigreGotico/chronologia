@@ -11,6 +11,11 @@ The engine splits a calendar month into three EQUAL parts by total duration
 
 The oracle below re-derives each part by independent arithmetic
 (month_start + k * month_duration / 3); the parser never defines the gold.
+
+Ruling 1 (changed on 26 November 2026): a bare month takes the year the month
+alone takes -- 2017 for a month that holds or follows the anchor (2017-06-27),
+2018 for one that has ended before it (January to May).  Before, every month
+kept the anchor year.
 """
 from datetime import datetime
 
@@ -37,6 +42,11 @@ _QUAL = {
 }
 
 
+def _year(month):
+    # ruling 1: a month that has ended at the anchor (June 2017) is next year's
+    return 2017 + (month < 6)
+
+
 def _third(year, month, k):
     s = datetime(year, month, 1)
     dur = (s + relativedelta(months=1) - s) / 3
@@ -54,7 +64,7 @@ def _cases():
 
 @pytest.mark.parametrize("text,month,k", _cases())
 def test_month_third(text, month, k):
-    assert start_end(text) == _third(2017, month, k)
+    assert start_end(text) == _third(_year(month), month, k)
 
 
 # the hyphenated "mid-" writing resolves identically to the spaced form
@@ -62,4 +72,4 @@ def test_month_third(text, month, k):
     ("mid-july", 7), ("mid-march", 3), ("mid-december", 12),
 ])
 def test_hyphenated_mid(text, month):
-    assert start_end(text) == _third(2017, month, 1)
+    assert start_end(text) == _third(_year(month), month, 1)

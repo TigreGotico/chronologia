@@ -2178,12 +2178,26 @@ def _definite_endpoint(sub, spec):
     underspecified recurring reference that only lands on a point once a cycle
     is chosen for it.  A marker may span words: "the following", "que viene",
     "from now".
+
+    The ordinal "last" of a part of a month ("the last day of february",
+    "el último lunes de enero") is no marker: a month named later in the
+    endpoint, but not right after the word, takes the word as the ordinal
+    of its part, and the part follows its month's year (ruling 1).  "last
+    january" keeps the marker reading.
     """
     # fr "vendredi en huit" names one day after the anchor
     if any(week_idiom_state(tuple(sub), i, spec) in ("ok", "open")
            for i in range(len(sub))):
         return True
     words = [t.text for t in sub]
+    ordlast = spec.connectors.get("ordlast", ())
+
+    def ordinal_last(i):
+        return (words[i] in ordlast and i + 1 < len(words)
+                and words[i + 1] not in spec.months
+                and any(w in spec.months for w in words[i + 2:]))
+
+    words = ["" if ordinal_last(i) else w for i, w in enumerate(words)]
     phrases = {" ".join(words[i:j]) for i in range(len(words))
                for j in range(i + 1, min(i + 3, len(words)) + 1)}
     return (any(p in spec.named_days or p in spec.rel_markers
@@ -2286,7 +2300,10 @@ def _since_start(ep, sub, engine, anchor, now, text):
         # prefer_future flung forward, so never roll it: in the past it opens
         # the span, in the future "since" it is contradictory and is refused.
         return (start, ep[1], ep[2], ep[3]) if start <= now else None
-    if any(t.text in spec.weekdays for t in sub):
+    if (any(t.text in spec.weekdays for t in sub)
+            and not any(t.text in spec.months for t in sub)):
+        # A weekday of a named month ("since the first monday of january")
+        # recurs with its month, yearly, and is read back below.
         # An UNqualified weekday (the bare-weekday-alone case is handled by
         # _bare_weekday_endpoint above; this is a weekday carrying a clock, e.g.
         # "monday 3pm").  It recurs WEEKLY, so roll the whole endpoint --
@@ -4805,6 +4822,100 @@ def _resolve_core(tokens, engine, anchor, enable=(), jurisdiction=None,
     return res.value, consumed
 
 
+#: The constructions that name a part of a named month.  Ruling 1 gives a
+#: part the year of its month (:meth:`Resolver._month_year`).
+_MONTH_PART_CONSTRUCTIONS = frozenset({
+    "month_fuzzy", "half_period", "quarter_of_month", "weekend_of_month",
+    "scoped_ordinal"})
+
+
+def _month_part_year_phrase(tokens, resolved, engine, anchor, scale_mode,
+                            jurisdiction):
+    """Give a part of a month the year of a year phrase after its month.
+
+    "fin janvier dernier", "late january last year" and "the first week of
+    january next year" put the year phrase after the month, outside the
+    part's own match ("fin janvier", "late january").  The month reading
+    that starts at that month ("janvier dernier", "january last year") binds
+    the phrase and names the month's year.  The part takes that year and
+    the phrase's words, as ruling 1 gives a part its month's year: "fin
+    janvier dernier" said in November 2026 is late January 2026, not the
+    January after the anchor.  A part that binds its own year or marker is
+    left as it is, and so is a month reading with a day or an era.  The
+    joined reading replaces the readings it covers; a reading that crosses
+    its edge keeps the utterance as it was.
+    """
+    spec = engine.spec
+
+    def part(m):
+        month_tok = m.slots.get("MONTH")
+        return (m.construction in _MONTH_PART_CONSTRUCTIONS
+                and month_tok is not None
+                and not {"YEAR", "GYEAR", "REL_MARKER", "ERA"} & set(m.slots)
+                and month_tok.index == max(t.index for t in m.slots.values()))
+
+    def year_phrase(m):
+        month_tok = m.slots.get("MONTH")
+        return (m.construction == "calendar_date"
+                and month_tok is not None
+                and m.span[0] == month_tok.index
+                and m.span[1] > m.span[0] + 1
+                and not {"DAY", "ERA"} & set(m.slots)
+                and {"YEAR", "REL_MARKER"} & set(m.slots))
+
+    # the raw candidates are read only when the winners show one of the two
+    # halves: a part that ends at its month before more words, or a month
+    # that a year phrase follows
+    if not any((part(m) and m.span[1] < len(tokens)) or year_phrase(m)
+               for m, _ in resolved):
+        return resolved
+    parts, phrases = [], {}
+    for cand in engine.matcher._candidates(tokens):
+        m = cand.match
+        if m.doubt or _candidate_veto(tokens, m, spec):
+            continue
+        if part(m):
+            parts.append(m)
+        elif year_phrase(m) and m.span[1] > phrases.get(m.span[0], (0,))[0]:
+            phrases[m.span[0]] = (m.span[1], m)
+    joined = []
+    for m in parts:
+        phrase = phrases.get(m.slots["MONTH"].index)
+        if phrase is None or phrase[0] <= m.span[1]:
+            continue
+        end, c = phrase
+        month = engine.resolver.resolve(c, anchor, scale_mode, jurisdiction)
+        if month is None:
+            continue
+        year = month.value.start.year
+        year_tok = Token(text=str(year), raw=str(year), index=end - 1,
+                         is_number=True, value=year)
+        whole = replace(m, span=(m.span[0], end),
+                        slots={**m.slots, "YEAR": year_tok})
+        res = engine.resolver.resolve(whole, anchor, scale_mode, jurisdiction)
+        if res is not None:
+            joined.append((whole, res))
+    out = list(resolved)
+    changed = False
+    # the widest joined reading first; a narrower one that crosses it is
+    # dropped by the crossing test below
+    for whole, res in sorted(joined, key=lambda j: (-j[0].length,
+                                                    j[0].span)):
+        lo, hi = whole.span
+        inside = {id(m) for m, _ in out
+                  if lo <= m.span[0] and m.span[1] <= hi}
+        crossing = any(m.span[0] < hi and lo < m.span[1]
+                       and id(m) not in inside for m, _ in out)
+        if crossing or not inside:
+            continue
+        out = [(m, r) for m, r in out if id(m) not in inside]
+        out.append((whole, res))
+        changed = True
+    if changed:
+        out.sort(key=lambda mr: mr[0].span)
+    return out if changed else resolved
+
+
 def _compose_core(tokens, engine, anchor, enable=(), jurisdiction=None,
                   text=None, scale_mode="short", whole=False):
     """Match, resolve and post-pass ``tokens``, then compose the winner.
@@ -4853,6 +4964,8 @@ def _compose_core(tokens, engine, anchor, enable=(), jurisdiction=None,
            and week_idiom_state(tokens, i, engine.spec) in ("ok", "open")
            for i in range(len(tokens))):
         return [], None
+    resolved = _month_part_year_phrase(tokens, resolved, engine, anchor,
+                                       scale_mode, jurisdiction)
     # business-day counting ("in 5 business days", "the next working day",
     # "3 working days after christmas"); jurisdiction scopes the holiday lookup.
     # Runs before the anchored-offset pass so a "N working days after <date>"

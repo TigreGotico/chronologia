@@ -8,7 +8,8 @@ months; 30-day months split cleanly on 10-day marks.
 
 Gold divides the calendar-month interval into equal thirds INDEPENDENTLY of the
 parser.  March is already covered by test_nl_month_fuzzy, so it is skipped here.
-Anchor 2017-06-27; bare month resolves within the anchor year 2017.
+Anchor 2017-06-27; a bare month takes the year the month alone takes (ruling 1,
+changed 26 November 2026): 2018 for January to May, 2017 for June to December.
 """
 from datetime import datetime
 
@@ -38,7 +39,8 @@ def _ad(dt):
 
 _CASES = []
 for _m, _gen in _GEN.items():
-    _ths = _thirds(2017, _m)
+    # ruling 1 (changed 26 November 2026): a part of a month takes its month's year; a month that has ended at the anchor is next year's
+    _ths = _thirds(2017 + (_m < 6), _m)
     for _i, _part in enumerate(_PARTS):
         _CASES.append((f"{_part} {_gen}", _ths[_i][0], _ths[_i][1]))
 

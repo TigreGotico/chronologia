@@ -1,7 +1,9 @@
 # -*- coding: utf-8 -*-
 """αρχές / μέσα / τέλη + genitive month = early / mid / late third of that
-named calendar month. The parent month resolves within the anchor year
-(2017); the third is pure timedelta arithmetic over the parent's [first, next)
+named calendar month. With no year the parent month takes the year the month
+alone takes (ruling 1, changed 26 November 2026): a month that holds the anchor
+is this year's, a month that has ended before it is next year's (2018 for
+January to May, 2017 for June to December). The third is pure timedelta arithmetic over the parent's [first, next)
 edges, identical to the shipped ``test_nl_fuzzy_period`` convention but applied
 to a *named* month rather than "του μήνα".
 """
@@ -33,7 +35,8 @@ def _third(y, mo, part):
 
 
 _CASES = [
-    (f"{word} {GEN[mo]}", 2017, mo, part)
+    # ruling 1 (changed 26 November 2026): a part of a month takes its month's year; a month that has ended at the anchor is next year's
+    (f"{word} {GEN[mo]}", A.year + (mo < A.month), mo, part)
     for mo in range(1, 13) for word, part in PART.items()
 ]
 
