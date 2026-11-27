@@ -154,22 +154,14 @@ def test_digit_numeral_is_no_idiom_and_refuses():
 @pytest.mark.parametrize("text", ["jeudi en 8 heures", "jeudi en huit heures"])
 def test_a_digit_numeral_before_a_unit_counts_like_the_spelled_one(text):
     # "en 8 heures" counts hours, as "en huit heures" does: no week idiom, but
-    # a clock at eight o'clock (08:00) on a Thursday, one minute wide, with no
-    # word left over
+    # the clock eight o'clock on a Thursday, one minute wide, with no word left
+    # over.  Said on Thursday 26 November 2026 at 10:00, 08:00 has passed, and
+    # a bare weekday with a clock that has passed is the next one (rulings.md:
+    # "tuesday at 10am" said on a Tuesday at 13:04): Thursday 3 December 2026.
     r = parse(text, THU)
-    assert r is not None
-    s, e = r.span.start, r.span.end
-    assert (s.hour, s.minute) == (8, 0) and r.remainder == ""
-    assert datetime(s.year, s.month, s.day).weekday() == 3
-    assert (e.hour, e.minute) == (8, 1) and (e.year, e.month, e.day) == (s.year, s.month, s.day)
-
-
-def test_the_digit_and_spelled_unit_readings_name_the_same_thursday():
-    # on top of the hand-derived checks above, the two spellings of the count
-    # must not land on different Thursdays
-    digit, spelled = parse("jeudi en 8 heures", THU), parse("jeudi en huit heures", THU)
-    assert digit is not None and spelled is not None
-    assert (digit.span.start, digit.span.end) == (spelled.span.start, spelled.span.end)
+    assert r is not None and r.remainder == ""
+    assert (r.span.start, r.span.end) == (ad(datetime(2026, 12, 3, 8, 0)),
+                                          ad(datetime(2026, 12, 3, 8, 1)))
 
 
 @pytest.mark.parametrize("text", [
