@@ -556,6 +556,35 @@ def _with_lead(got, prefix, lead_tok):
     return span, rem, join_extents(ext, consumed_extent(lead_tok)), left, right
 
 
+def _day_before_range(text, prefix_tok, engine, anchor):
+    """The day that the words right before a range's lead name, or ``None``.
+
+    "monday between 10 and 11 am", "demain entre 10h et 11h": the words before
+    the lead read as one whole calendar day that ends right at the lead.  The
+    result is ``(midnight of that day, the tokens that name it, the tokens
+    before them)``.  The words that open the day fold as they do for any
+    date (:func:`_fold_date_article`): "on monday" takes its "on", and the "on"
+    of "turn the lights on tomorrow" stays with the verb."""
+    if not prefix_tok:
+        return None
+    folded = fold_tokens(tuple(prefix_tok), engine.spec, text)
+    core = _resolve_core(folded, engine, anchor)
+    if core is None:
+        return None
+    span, consumed = core
+    start, end = span.start_datetime, span.end_datetime
+    if (start is None or end is None or end - start != timedelta(days=1)
+            or (start.hour, start.minute, start.second) != (0, 0, 0)):
+        return None
+    consumed = _fold_day_label(folded, consumed, engine.spec)
+    consumed = _fold_date_article(folded, consumed, engine.spec, span)
+    claimed = [p for p, t in enumerate(folded) if t.index in consumed]
+    # the day ends at the lead, and no other word sits inside it
+    if not claimed or claimed != list(range(claimed[0], len(folded))):
+        return None
+    return start, folded[claimed[0]:], folded[:claimed[0]]
+
+
 def _crosses_midnight(span):
     """True when ``span``'s wall clock ends on a later calendar day than it
     starts -- it only became a band by rolling across midnight."""
@@ -829,6 +858,35 @@ def _extract_plain_range(text, tokens, engine, anchor, scale_mode="short"):
     glue = set(spec.connectors.get("article", ())) \
         | set(spec.connectors.get("day_label", ()))
 
+    def on_day(lead_at, got):
+        # a day named right before the lead ("monday between 10 and 11 am")
+        # dates a range of clock times: the range is read again from that
+        # day's midnight, and kept only when it starts on that day and only
+        # moves both ends of ``got`` by the same whole days, so an end that
+        # reads without the anchor's day ("from now") is never replaced
+        day = _day_before_range(text, tokens[:lead_at], engine, anchor)
+        if day is None:
+            return None
+        start, used, rest = day
+        again = _extract_plain_range(text, tokens[lead_at:], engine, start,
+                                     scale_mode)
+        if again is None:
+            return None
+        span, rem, ext, left, right = again
+        s, e = span.start_datetime, span.end_datetime
+        s0, e0 = got[0].start_datetime, got[0].end_datetime
+        if None in (s, e, s0, e0):
+            return None
+        # wall clock: an end may carry a zone ("to 3:30 utc+2"), the day not
+        s, e, s0, e0 = (x.replace(tzinfo=None) for x in (s, e, s0, e0))
+        shift = s - s0
+        if (not start <= s < start + timedelta(days=1) or e - e0 != shift
+                or shift % timedelta(days=1)):
+            return None
+        before = render_remainder(text, list(rest))
+        rem = (before + " " + rem).strip() if rem else before
+        return span, rem, join_extents(ext, consumed_extent(used)), left, right
+
     def bare_day_words(own):
         # the day numeral of a bare endpoint, a suffix written onto it ("5th")
         # and the article or day label right before it; any other word of the
@@ -1014,8 +1072,9 @@ def _extract_plain_range(text, tokens, engine, anchor, scale_mode="short"):
                         text, tokens[lead_at + lead:], engine, anchor):
                 return None
             if got is not None:
-                return _with_lead(got, prefix,
-                                  tokens[lead_at:lead_at + lead])
+                return (on_day(lead_at, got)
+                        or _with_lead(got, prefix,
+                                      tokens[lead_at:lead_at + lead]))
 
     # -- between A and B ---------------------------------------------------
     if at_between is not None:
@@ -1033,8 +1092,9 @@ def _extract_plain_range(text, tokens, engine, anchor, scale_mode="short"):
                                      previous, daily, following=following,
                                      holding=holding)
             if got is not None:
-                return _with_lead(got, prefix,
-                                  tokens[lead_at:lead_at + lead])
+                return (on_day(lead_at, got)
+                        or _with_lead(got, prefix,
+                                      tokens[lead_at:lead_at + lead]))
 
     # -- A <and> B <between> (postposed) ------------------------------------
     # Turkish, Hungarian and Finnish frame a closed range with the "between"
