@@ -1,0 +1,6 @@
+# कल read as YESTERDAY.  कल names both yesterday and tomorrow (CLDR 47,
+# locale hi, relative-type--1 and relative-type-1), and only the verb's tense
+# separates them (native answer, chronologia#1484, comment 7209012484).  The
+# hook chronologia.extract.numfold_indic rewrites कल to this token when a verb
+# from marker_tense_past.voc follows it.  It is not a word a speaker writes.
+कल_भूत
