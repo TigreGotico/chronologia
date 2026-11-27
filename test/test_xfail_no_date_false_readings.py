@@ -27,15 +27,15 @@ def test_pt_article_before_business_day_is_no_count(text):
     assert extract_timespan(text, "pt-PT", ANCHOR) is None
 
 
-@xfail(1456)
 @pytest.mark.parametrize("text,lang", [
-    ("ficou em casa quando o mar não deixou", "pt-PT"),
     ("Pentru o asistentă medicală, ziua de lucru pare uneori să nu se mai termine.", "ro"),
+] + [pytest.param(*row, marks=xfail(1456)) for row in [
+    ("ficou em casa quando o mar não deixou", "pt-PT"),
     ("Pentru mulți părinți, ziua de lucru pare să nu se termine niciodată, mai ales când copiii au nevoie de ajutor la teme seara.", "ro"),
     ("O zi lucrătoare petrecută în fața calculatorului te poate lăsa mai obosit decât ai crede.", "ro"),
     ("Pentru o asistentă medicală, ziua de lucru pare uneori fără sfârșit, mai ales când secția e plină.", "ro"),
     ("Pracovní den v nemocnici bývá pro sestry vyčerpávající, ale zároveň plný drobných radostí.", "cs"),
-])
+]])
 def test_common_word_is_no_month(text, lang):
     assert extract_timespan(text, lang, ANCHOR) is None
 

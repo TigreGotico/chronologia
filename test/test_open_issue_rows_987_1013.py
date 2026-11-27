@@ -53,6 +53,8 @@ FIXED_SPANS = {
     "avísame de luns a venres pola mañá sobre as 7",
     "at 8 tonight",
     "remind me to call the bank tomorrow morning",
+    "deg snat n dduṛt",
+    "tafsut i d-iteddun",
 }
 
 
