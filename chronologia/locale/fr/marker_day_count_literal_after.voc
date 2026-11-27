@@ -10,8 +10,9 @@
 # s.v. "calendaire", adjectif: "Qui concerne le calendrier civil (du 1er
 # janvier au 31 décembre) : Année calendaire."
 # A délai in days counts each day (Code de procédure civile, art. 641-642).
-# "Jours ouvrés" and "ouvrables" are in marker_business.voc. No source was
-# found for "de travail", so it is not listed.
+# "Jours ouvrés" and "ouvrables" are in marker_business.voc. "Jours de
+# travail" are working days, counted as written: Larousse s.v. "ouvrable",
+# "Jour ouvrable, jour consacré normalement au travail".
 francs
 franc
 complets
@@ -22,3 +23,4 @@ pleins
 plein
 calendaires
 calendaire
+de travail

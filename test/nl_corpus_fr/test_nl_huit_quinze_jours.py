@@ -74,6 +74,9 @@ def test_ordinal_day_is_not_the_count(text, day):
     # (Larousse s.v. "calendaire": "Qui concerne le calendrier civil")
     "dans quinze jours calendaires",
     "dans quinze jours calendaire",
+    # "jours de travail" are working days (Larousse s.v. "ouvrable": "Jour
+    # ouvrable, jour consacré normalement au travail")
+    "dans quinze jours de travail",
     "dans quinze jours pleins",
     "dans quinze jours entiers",
     "dans quinze jours complets",
