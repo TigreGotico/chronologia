@@ -3301,11 +3301,12 @@ def _impossible_date_veto_inner(tokens, consumed, text, engine, anchor):
                 and tokens[i + 1].text in (set(engine.spec.units)
                                            | set(engine.spec.singular_units))):
             continue
-        # before the span, only a month word takes the numeral as its day:
+        # an article that opens the span takes no numeral before it as a day:
         # da "fylder halvfems den 16. september" is an age, then a date
         abuts = ((i > 0 and tokens[i - 1].index in consumed)
                  or (i + 1 < len(tokens) and tokens[i + 1].index in consumed
-                     and tokens[i + 1].text in engine.spec.months))
+                     and tokens[i + 1].text
+                     not in engine.spec.connectors.get("article", ())))
         if abuts and extract_timespan(t.text, engine.spec.lang, anchor) is None:
             return True                              # impossible day-of-month
     return False
