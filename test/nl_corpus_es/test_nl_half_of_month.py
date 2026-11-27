@@ -15,7 +15,10 @@ from ._corpus import start_end
 _CASES = [
     ('la primera mitad de agosto', 2017, 8, 1, 0, 2017, 8, 16, 12),
     ('la segunda mitad de agosto', 2017, 8, 16, 12, 2017, 9, 1, 0),
-    ('la primera mitad de febrero', 2017, 2, 1, 0, 2017, 2, 15, 0),
+    # ruling 1 (26 November 2026): a part of a month takes its month's year;
+    # February has ended at the anchor (June 2017), so it is February 2018
+    # (28 days like 2017, so the midpoint is still the 15th at 00:00)
+    ('la primera mitad de febrero', 2018, 2, 1, 0, 2018, 2, 15, 0),
     ('la primera mitad de agosto de 2027', 2027, 8, 1, 0, 2027, 8, 16, 12),
 ]
 

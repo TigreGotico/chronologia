@@ -46,7 +46,9 @@ def test_dia_antes_da_ultima_sexta_de_novembro():
 
 
 def test_duas_semanas_depois_da_primeira_segunda_de_marco():
-    ref = nth_weekday(ANCHOR.year, 3, MON, 1)
+    # ruling 1 (26 November 2026): a part of a month takes its month's year;
+    # março has ended at the anchor, so it is March 2018
+    ref = nth_weekday(ANCHOR.year + 1, 3, MON, 1)
     expect = ref + timedelta(weeks=2)
     assert span('duas semanas depois da primeira segunda-feira de março'
                 ).start == AstroDate(expect.year, expect.month, expect.day)

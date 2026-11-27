@@ -3,9 +3,9 @@
 ``märtsi kolmas esmaspäev`` means "the third Monday of March", not "the third
 of March".  This used to strand the weekday token and treat the ordinal
 (``kolmas``) as the day-of-month, resolving to the 3rd of the month instead of
-the 3rd Monday.  It now binds correctly.  Like the "Nth weekday of month"
-construction in every other locale, it does NOT roll to the future: a bare
-month keeps the anchor year (2017).  The gold below is the true Nth weekday,
+the 3rd Monday.  It now binds correctly.  With no year the month takes the year the month alone
+takes (ruling 1, changed 26 November 2026): a month that has ended at the anchor
+(2017-06-27) is next year's, so March and April are 2018, July to October 2017.  The gold below is the true Nth weekday,
 computed independently.
 """
 from datetime import date, timedelta
@@ -38,10 +38,10 @@ def _in_month(y, m, d):
 
 
 # (phrase, gold year, gold month, weekday, ordinal-n) -- true Nth weekday.
-# The construction stays in the anchor year (2017); it does not roll forward.
+# ruling 1: March and April have ended at the anchor, so they are 2018.
 CASES = [
-    ("märtsi kolmas esmaspäev", 2017, 3, "esmaspäev", 3),
-    ("aprilli teine reede", 2017, 4, "reede", 2),
+    ("märtsi kolmas esmaspäev", 2018, 3, "esmaspäev", 3),
+    ("aprilli teine reede", 2018, 4, "reede", 2),
     ("juuli esimene esmaspäev", 2017, 7, "esmaspäev", 1),
     ("septembri neljas kolmapäev", 2017, 9, "kolmapäev", 4),
     ("oktoobri teine teisipäev", 2017, 10, "teisipäev", 2),

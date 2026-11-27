@@ -175,7 +175,9 @@ def test_calendar_quarter(text, q0):
 
 @pytest.mark.parametrize("text,d", [
     ("апошні панядзелак ліпеня", date(2017, 7, 31)),
-    ("першая серада мая", date(2017, 5, 3)),
+    # ruling 1 (changed 26 November 2026): May has ended at the anchor (2017-06-27), so it is
+    # May 2018, whose 1st Wednesday is the 2nd (1 May 2018 is a Tuesday)
+    ("першая серада мая", date(2018, 5, 2)),
     ("першы панядзелак 2027 года", date(2027, 1, 4)),
 ])
 def test_scoped_ordinal_weekday(text, d):

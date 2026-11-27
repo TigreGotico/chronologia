@@ -14,7 +14,10 @@ from ._corpus import start, nomatch
     ("o segundo xoves de novembro", 2017, 11, 9),
     ("o terceiro xoves de novembro", 2017, 11, 16),
     ("o cuarto xoves de novembro", 2017, 11, 23),
-    ("o quinto luns de maio", 2017, 5, 29),
+    # ruling 1 (changed on 26 November 2026): May has ended at the anchor, so
+    # it is May 2018, which has no fifth Monday (7, 14, 21, 28); the fifth
+    # Tuesday is 29 May 2018
+    ("o quinto martes de maio", 2018, 5, 29),
 ])
 def test_nth_weekday_of_month(text, y, mo, d):
     s = start(text)

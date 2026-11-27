@@ -9,8 +9,10 @@ rounded day. The oracle here is independent arithmetic: for a month of ``L``
 days the interior cuts fall at ``L*28800`` and ``2*L*28800`` seconds after the
 first (28800 = 86400/3, so every 28/29/30/31-day month lands on a whole hour).
 
-All bare (year-less) references resolve in the anchor year 2017 (anchor
-2017-06-27). Both endpoints are asserted exactly -- a third that silently
+A bare (year-less) month takes the year the month alone takes: a month that
+holds or follows the anchor (2017-06-27) is 2017, a month that has ended
+before it (January to May) is 2018. This changed with ruling 1 on 26 November
+2026; before, the anchor year 2017 was kept for every month. Both endpoints are asserted exactly -- a third that silently
 rounded to whole days would still look like a working month-part.
 """
 from datetime import datetime, timedelta
@@ -47,7 +49,16 @@ def _thirds(y, m):
 
 _CASES = []
 for _name, _m in _MONTHS:
-    _a, _mi, _e = _thirds(2017, _m)
+    # ruling 1: a part of a month takes its month's year; January to May have
+    # ended at the anchor (June 2017), so they are 2018
+    _y = 2017 + (_m < 6)
+    _a, _mi, _e = _thirds(_y, _m)
+    # ruling 1 (26 November 2026): a part of a month is read as a span; in the
+    # anchor's own month (June 2017) anfang (to 11 June) and mitte (to 21 June)
+    # have ended at 2017-06-27, so they are June 2018; ende (21 June to 1 July)
+    # holds the anchor and stays 2017
+    if _m == 6:
+        _a, _mi, _ = _thirds(2018, _m)
     _CASES.append((f"anfang {_name}", _a[0], _a[1]))
     _CASES.append((f"mitte {_name}", _mi[0], _mi[1]))
     _CASES.append((f"ende {_name}", _e[0], _e[1]))

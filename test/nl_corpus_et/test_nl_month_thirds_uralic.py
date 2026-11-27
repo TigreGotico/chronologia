@@ -17,7 +17,9 @@ from ._corpus import parse, span, start_end
 
 A = datetime(2017, 6, 27, 13, 4)
 
-MAR = (AstroDate(2017, 3, 1), AstroDate(2017, 4, 1))
+# ruling 1 (changed 26 November 2026): a part of a month takes its month's year; March has ended at the anchor
+# (2017-06-27), so a yearless March part is March 2018.
+MAR = (AstroDate(2018, 3, 1), AstroDate(2018, 4, 1))
 
 
 def _dt(a):

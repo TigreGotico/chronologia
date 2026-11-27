@@ -97,7 +97,7 @@ Each example below runs as a doctest with a fixed anchor, so the output does not
     ('2018-06-05T00:00:00', '')
     >>> span, rest = extract_timespan('martxoaren hirugarren astelehena', "eu", datetime(2017, 6, 27, 0, 5))
     >>> span.start_datetime.isoformat(), rest
-    ('2017-03-20T00:00:00', '')
+    ('2018-03-19T00:00:00', '')
     >>> anchor = datetime(2017, 6, 27, 13, 4)
     >>> extract_timespan('asteburuan', "eu", anchor) is None
     True

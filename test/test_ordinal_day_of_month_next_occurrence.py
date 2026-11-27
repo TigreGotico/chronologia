@@ -3,8 +3,9 @@
 Ruling C reads a year-less day of a month as the next occurrence: the first
 such day that is not before the anchor's day.  "15 march" and "the fifteenth
 day of march" name one date, so they take one year.  An explicit year is kept
-as written.  A part of a month ("early march", "the first week of march")
-keeps the anchor's year, as ruling 1 reads it.
+as written.  A part of a month ("early march", "the first week of march",
+"the last day of march") takes its month's year, as ruling 1 reads it: a
+March that has ended is next year's.
 
 Gold years are worked by hand from the calendar.  At the anchor Sunday 22
 November 2026, 15 March has passed, so the next one is 2027.  At the anchor
@@ -134,18 +135,25 @@ def test_explicit_year_is_kept(text, lang, gold):
     "the first week of march",
     "the middle of march",
 ])
-def test_part_of_a_month_keeps_the_anchor_year(text):
+def test_part_of_a_month_takes_the_month_year(text):
+    # ruling 1 (changed on 26 November 2026): a part of a month takes its
+    # month's year.  March has ended at 22 November 2026, so it is March 2027,
+    # as "march" alone is.  (It kept the anchor's year, 2026, before.)
     d = _date(text, "en", ANCHORS["a2026"])
-    assert (d.year, d.month) == (2026, 3)
+    assert (d.year, d.month) == (2027, 3)
 
 
 # -- a range end with no year is its first occurrence on or after the start --
 
 RANGE_ANCHORS = {"r2027": datetime(2027, 3, 3, 15, 30),
                  "r2026": datetime(2026, 11, 22, 9, 0)}
-# the last day of February keeps the anchor's year, so it is 28 February of
-# 2027 and of 2026; 10 March on or after it is 10 March of the same year
-RANGE_START = {"r2027": date(2027, 2, 28), "r2026": date(2026, 2, 28)}
+# ruling 1: the last day of February takes February's year.  Said on
+# 22 November 2026 that is February 2027.  Said on 3 March 2027 it is
+# February 2028 alone, and the range to 10 March 2027 pulls it back a year
+# to 28 February 2027.  10 March on or after it is 10 March of the same year.
+# (Before the ruling-1 change of 26 November 2026 the r2026 start was
+# 28 February 2026, the anchor's year.)
+RANGE_START = {"r2027": date(2027, 2, 28), "r2026": date(2027, 2, 28)}
 
 RANGES_TO_THE_TENTH = [
     ("en", "from the last day of february to 10 march"),
@@ -183,10 +191,15 @@ def test_range_end_is_first_occurrence_after_the_start(lang, text, key):
     "from the last day of february to the first day of march",
 ])
 def test_range_to_the_first_of_march_ends_on_the_second(text, key):
+    # ruling 1: said on 3 March 2027 both ends have passed, so the range is
+    # the next one, 29 February 2028 to 1 March 2028, as "from 28 february
+    # to 1 march" is; said on 22 November 2026 it is 28 February 2027 to
+    # 1 March 2027.  (Before the ruling-1 change of 26 November 2026 the start
+    # kept the anchor's year: 28 February 2027 and 28 February 2026.)
     r = extract_timespan(text, "en", RANGE_ANCHORS[key])
-    year = RANGE_START[key].year
+    year, last = {"r2027": (2028, 29), "r2026": (2027, 28)}[key]
     assert (r.span.start.year, r.span.start.month, r.span.start.day) \
-        == (year, 2, 28)
+        == (year, 2, last)
     assert (r.span.end.year, r.span.end.month, r.span.end.day) \
         == (year, 3, 2)
 
@@ -200,16 +213,19 @@ def test_range_of_two_dates_keeps_its_cycle():
         == (2027, 3, 21)
 
 
-# -- forms that keep the anchor's year ---------------------------------------
+# -- a day with no number: the month's year ----------------------------------
 
+# ruling 1: "the last day of march" is a part of March and takes March's year.
+# March has ended at both anchors, so it is next year's.  (Before the ruling-1
+# change of 26 November 2026 it kept the anchor's year.)
 @pytest.mark.parametrize("key", ANCHORS)
 @pytest.mark.parametrize("lang,text", [
     ("en", "the last day of march"),
     ("es", "el último día de marzo"),
 ])
-def test_last_day_of_march_keeps_the_anchor_year(lang, text, key):
+def test_last_day_of_march_takes_the_month_year(lang, text, key):
     anchor = ANCHORS[key]
-    assert _date(text, lang, anchor) == date(anchor.year, 3, 31)
+    assert _date(text, lang, anchor) == date(NEXT_MARCH[key], 3, 31)
 
 
 @pytest.mark.parametrize("text", [
