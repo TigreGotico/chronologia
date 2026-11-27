@@ -5,6 +5,6 @@
 # s.v. "quinze": "En quinze, le quinzième jour à partir du jour où l'on parle
 # ou qui sert de référence. D'aujourd'hui en quinze. Nous nous verrons jeudi en
 # quinze."
-# The digit form is the same numeral as the number fold writes it.
+# The sources give the spelled numeral only, so the digits ("jeudi en 15")
+# are no idiom; after a day they refuse.
 quinze
-15

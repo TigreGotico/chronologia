@@ -259,19 +259,20 @@ def _inclusive_weeks(tokens: Tuple[Token, ...],
     l'acte [...] qui le fait courir ne compte pas" and "Tout délai expire le
     dernier jour à vingt-quatre heures" (Code de procédure civile, art. 641
     and 642).  The words before the count ("délai") and after the day noun
-    ("francs", "ouvrés", "de travail") that keep it literal are in
+    ("francs", "pleins", "ouvrés") that keep it literal are in
     ``marker_day_count_literal_before.voc`` and
     ``marker_day_count_literal_after.voc``.  A count added to a larger unit
     ("deux mois et quinze jours") is part of a literal sum and stays too."""
     if not spec.week_idioms:
         return tokens
     conn = spec.connectors
-    before = conn.get("day_count_literal_before", frozenset())
-    after = (conn.get("day_count_literal_after", frozenset())
+    before = spec.day_count_literal_before
+    after = (spec.day_count_literal_after
              | conn.get("business", frozenset()))
     of = conn.get("of", frozenset())
     joiners = conn.get("and", frozenset())
     repeat = conn.get("week_idiom_in", frozenset())
+    ranges = conn.get("to", frozenset()) | spec.week_idiom_join
     out = list(tokens)
 
     def spoken_weeks(tok):
@@ -291,15 +292,28 @@ def _inclusive_weeks(tokens: Tuple[Token, ...],
         nxt = [t.text for t in out[i + 2:i + 4]]
         if nxt and (nxt[0] in after or " ".join(nxt) in after):
             continue
-        if i >= 1 and (out[i - 1].text in before
-                       or (i >= 2 and out[i - 1].text in of
-                           and out[i - 2].text in before)):
+        # "de huit à quinze jours", "huit ou quinze jours": the lower count of
+        # a range shares the day noun, and the range shares its context
+        low = (i - 2 if i >= 2 and out[i - 1].text in ranges
+               and out[i - 2].is_number else None)
+        head = i if low is None else low
+        if head >= 1 and (out[head - 1].text in before
+                          or (head >= 2 and out[head - 1].text in of
+                              and out[head - 2].text in before)):
             continue
-        if (i >= 2 and out[i - 1].text in joiners
-                and spec.units.get(out[i - 2].text) not in (None, "day")):
+        # a count added to a larger unit, with or without "et": "deux mois
+        # et quinze jours", "2 mois quinze jours"
+        k = head - 1
+        if k >= 0 and out[k].text in joiners:
+            k -= 1
+        if k >= 0 and spec.units.get(out[k].text) not in (None, "day"):
             continue
         days = 7 * weeks
         out[i] = replace(tok, text=str(days), value=type(tok.value)(days))
+        low_weeks = spoken_weeks(out[low]) if low is not None else None
+        if low_weeks is not None:
+            out[low] = replace(out[low], text=str(7 * low_weeks),
+                               value=type(out[low].value)(7 * low_weeks))
         # "de quinze en quinze jours" restates the count: both are the week
         # count, or the two would disagree
         if (i >= 2 and out[i - 1].text in repeat

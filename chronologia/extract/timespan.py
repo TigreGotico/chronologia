@@ -4770,6 +4770,15 @@ def _resolve_core(tokens, engine, anchor, enable=(), jurisdiction=None,
     return res.value, consumed
 
 
+class _WholeRefusal(tuple):
+    """The empty ``resolved`` of :func:`_compose_core` when the utterance as a
+    whole has no reading, so no runner-up stands either (fr "lundi en huit à
+    10h": the clock has no day to land on)."""
+
+
+WHOLE_REFUSAL = _WholeRefusal()
+
+
 def _compose_core(tokens, engine, anchor, enable=(), jurisdiction=None,
                   text=None, scale_mode="short", whole=False):
     """Match, resolve and post-pass ``tokens``, then compose the winner.
@@ -4798,7 +4807,7 @@ def _compose_core(tokens, engine, anchor, enable=(), jurisdiction=None,
         # has no day to land on, so the whole utterance refuses rather than
         # timing the anchor's day.
         if res is None and match.construction == "day_week_idiom":
-            return [], None
+            return WHOLE_REFUSAL, None
         if res is None and "BDAY" in match.slots and (
                 "MONTH" in match.slots or engine.spec.units.get(
                     match.slots["SCOPE_UNIT"].text) == "month"):
@@ -4817,7 +4826,7 @@ def _compose_core(tokens, engine, anchor, enable=(), jurisdiction=None,
     if any(i not in claimed
            and week_idiom_state(tokens, i, engine.spec) in ("ok", "open")
            for i in range(len(tokens))):
-        return [], None
+        return WHOLE_REFUSAL, None
     # business-day counting ("in 5 business days", "the next working day",
     # "3 working days after christmas"); jurisdiction scopes the holiday lookup.
     # Runs before the anchored-offset pass so a "N working days after <date>"

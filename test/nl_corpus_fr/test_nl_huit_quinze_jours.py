@@ -69,17 +69,16 @@ def test_ordinal_day_is_not_the_count(text, day):
 
 
 @pytest.mark.parametrize("text", [
-    "dans quinze jours calendaires",
     "dans quinze jours francs",
     "dans quinze jours pleins",
     "dans quinze jours entiers",
-    "dans quinze jours de travail",
+    "dans quinze jours complets",
 ])
 def test_a_counted_kind_of_day_is_literal(text):
-    # "jours francs", "calendaires", "pleins", "entiers", "de travail" count
-    # each day: the count stays fifteen, whatever else reads
+    # "jours francs" count whole days (Larousse s.v. "franc", 8, with the
+    # synonyms "complet", "entier", "plein"): the count stays fifteen
     r = parse(text, A)
-    assert r is None or r[0].start != ad(datetime(2026, 12, 10, 10, 0))
+    assert r is None or r[0].start == ad(datetime(2026, 12, 11, 10, 0))
 
 
 def test_a_delai_is_literal():
@@ -126,3 +125,16 @@ def test_tous_les_15_jours_is_counted_as_written():
     got = extract_recurrence("tous les 15 jours", "fr", A)
     assert got is not None
     assert got.recurrence.to_string() == "FREQ=DAILY;INTERVAL=15"
+
+
+def test_a_delai_range_is_literal_at_both_ends():
+    got = extract_duration("un délai de huit à quinze jours", "fr", anchor=A)
+    assert got is None or got.duration == timedelta(days=15)
+
+
+def test_a_sum_without_et_is_literal():
+    # 26 November + 2 months = 26 January 2027, + 15 days = 10 February 2027,
+    # which is 76 days after the anchor
+    got = extract_duration("2 mois quinze jours", "fr", anchor=A)
+    assert got is not None
+    assert got.duration == timedelta(days=76)

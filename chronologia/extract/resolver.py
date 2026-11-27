@@ -48,7 +48,8 @@ from chronologia.cycles import (DAY_CYCLES, DAY_SUBDIVISIONS, US_PER_DAY,
 from chronologia.regnal import REGNAL_SEQUENCES
 from chronologia.roman import roman_to_julian
 from chronologia.extract.compiler import UNIMPLEMENTED
-from chronologia.extract.matcher import GYEAR_MAX, GYEAR_MIN
+from chronologia.extract.matcher import (GYEAR_MAX, GYEAR_MIN,
+                                         week_idiom_weeks)
 from chronologia.extract.model import (Conventions, LangSpec, Match,
                                            Resolution)
 from chronologia.extract.pipeline import consumed_extent
@@ -989,10 +990,9 @@ class Resolver:
         weekday of next week (Larousse s.v. "huit": "Lundi, mardi en huit,
         lundi, mardi de la semaine prochaine").  Before it, the two counts
         name different days a week apart, so the phrase refuses."""
-        weeks = self.spec.week_idioms.get(match.slots["WEEK_IDIOM"].text)
+        weeks = week_idiom_weeks(match.slots["WEEK_IDIOM"], self.spec)
         if weeks is None:
-            weeks = self.spec.week_idioms[
-                match.slots["WEEK_IDIOM"].raw.lower()]
+            return None
         day_tok = match.slots.get("DAY_WORD")
         if day_tok is not None:
             # only the day words the locale lists for the idiom
