@@ -1,0 +1,9 @@
+# Date words that alone take a more frequent non-date sense. A preposition,
+# demonstrative, number or year beside the word keeps the date sense.
+# mai: adverb "more, anymore, again, before" (Wiktionary "mai", Romanian, adverb).
+# vară, vara: noun "female cousin" (Wiktionary "vară", Romanian, etymology 2):
+# "vara mea". The season takes a preposition or a demonstrative: "la vară",
+# "vara asta", "vara trecută".
+mai
+vară
+vara
