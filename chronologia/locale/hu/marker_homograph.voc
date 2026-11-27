@@ -1,0 +1,6 @@
+# Date words that alone take a more frequent non-date sense. An article,
+# demonstrative, number or year beside the word keeps the date sense.
+# ősz: adjective "(of hair) grey" (Wiktionary "ősz", Hungarian,
+# adjective): "ősz haj", "ősz szakáll". The season takes the article or a
+# case suffix: "az ősz", "ősszel".
+ősz

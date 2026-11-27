@@ -1,0 +1,11 @@
+# Words right after a marker_homograph.voc word that keep its date sense.
+# Postposed demonstratives "this" (Wiktionary "ăsta", "acesta", Romanian,
+# determiner): "vara asta", "vara aceasta". The genitive and the definite
+# form of "an" (year, Wiktionary "an", Romanian, noun): "vara anului 2027",
+# "mai anul acesta".
+asta
+ăsta
+aceasta
+acesta
+anul
+anului
