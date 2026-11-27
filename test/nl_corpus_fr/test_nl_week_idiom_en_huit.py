@@ -151,6 +151,11 @@ def test_digit_numeral_is_no_idiom_and_refuses():
     nomatch("jeudi en 15", THU)
 
 
+def test_a_digit_numeral_before_a_unit_counts_like_the_spelled_one():
+    # "en 8 heures" counts hours, as "en huit heures" does
+    assert parse("jeudi en 8 heures", THU) == parse("jeudi en huit heures", THU)
+
+
 @pytest.mark.parametrize("text", [
     "jeudi. En huit manches, Alice gagne.",
     "Jeudi. En huit, nous partons",
@@ -178,3 +183,14 @@ def test_a_unit_after_a_joined_numeral_is_no_second_idiom():
     assert r is not None
     assert (r[0].start, r[0].end) == (ad(datetime(2026, 12, 4, 10, 0)),
                                       ad(datetime(2026, 12, 4, 10, 1)))
+
+
+@pytest.mark.parametrize("text", [
+    "lundi en huit entre 10h et 11h",
+    "lundi en huit de 10h à 11h",
+])
+def test_a_clock_range_after_a_refused_idiom_refuses(text):
+    # the idiom names no day, so the clock range does not time the anchor's day
+    from chronologia import extract_candidates
+    nomatch(text, THU)
+    assert extract_candidates(text, "fr", THU) == []

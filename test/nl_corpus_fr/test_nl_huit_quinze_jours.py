@@ -154,6 +154,15 @@ def test_a_delai_range_is_literal_at_both_ends():
     assert got is None or got.duration == timedelta(days=15)
 
 
+def test_a_range_that_repeats_the_day_noun_is_literal_at_both_ends():
+    # "huit jours" and "quinze jours" share the range's context: they read as
+    # the written counts, as the digits do
+    spelled = extract_duration("un délai de huit jours à quinze jours", "fr", anchor=A)
+    digits = extract_duration("un délai de 8 jours à 15 jours", "fr", anchor=A)
+    assert spelled is not None and digits is not None
+    assert spelled.duration == digits.duration
+
+
 def test_a_sum_without_et_is_literal():
     # 26 November + 2 months = 26 January 2027, + 15 days = 10 February 2027,
     # which is 76 days after the anchor

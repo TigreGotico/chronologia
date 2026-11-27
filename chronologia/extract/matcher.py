@@ -599,13 +599,13 @@ def week_idiom_state(tokens: Tuple[Token, ...], i: int,
         return None
     if any(t.break_before for t in tokens[j + 1:i + 2]):
         return None
+    if i + 2 < len(tokens) and tokens[i + 2].text in spec.units:
+        return "unit"
     if digit:
         return "open"
     if i + 2 >= len(tokens):
         return "ok"
     nxt = tokens[i + 2]
-    if nxt.text in spec.units:
-        return "unit"
     if not (nxt.break_before or ":" in nxt.text
             or nxt.text in spec.week_idiom_follow
             or nxt.text in spec.dayparts or nxt.text in spec.meridiems):

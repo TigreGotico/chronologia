@@ -16,6 +16,7 @@ from typing import FrozenSet, List, Optional, Tuple
 
 from chronologia.astrodate import DateSpan
 from chronologia.extract.confidence import score_candidates
+from chronologia.extract.matcher import week_idiom_state
 from chronologia.extract.model import Match, Token
 from chronologia.extract.pipeline import (consumed_extent, fold_tokens,
                                           join_extents, pretokens,
@@ -151,6 +152,20 @@ def _daypart_across_days(tokens: Tuple[Token, ...], spec) -> bool:
     return False
 
 
+def _week_idiom_refuses(raw, engine, anchor, enable, jurisdiction, text,
+                        scale_mode) -> bool:
+    """Whether a week idiom ("lundi en huit") makes the whole utterance refuse,
+    as :func:`_compose_core` decides it, so that a range reading of the rest of
+    the words does not stand either."""
+    spec = engine.spec
+    tokens = fold_tokens(raw, spec, text)
+    if not any(week_idiom_state(tokens, i, spec) for i in range(len(tokens))):
+        return False
+    resolved, _ = _compose_core(tokens, engine, anchor, enable, jurisdiction,
+                                text, scale_mode, whole=True)
+    return resolved is WHOLE_REFUSAL
+
+
 def read(text: str, lang: str, anchor: datetime,
          jurisdiction: Optional[str] = None, enable: Tuple[str, ...] = (),
          scale: Optional[str] = None, first: bool = False,
@@ -184,6 +199,11 @@ def read(text: str, lang: str, anchor: datetime,
     if got is None and _is_new_year_slice(raw, spec):
         got = _new_year_span(anchor), "", consumed_extent(raw), None, None
         construction = "new_year"
+    if got is not None and _week_idiom_refuses(raw, engine, anchor, enable,
+                                               jurisdiction, text, scale_mode):
+        # fr "lundi en huit entre 10h et 11h": the idiom names no day, so the
+        # clock range must not time the anchor's day either
+        return []
     if got is not None:
         span, remainder, chars, left, right = got
         claimed = frozenset() if chars is None else frozenset(
