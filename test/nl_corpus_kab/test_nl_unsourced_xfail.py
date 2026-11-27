@@ -31,7 +31,8 @@ def test_unsourced_day(text, day):
     assert _day(text) == day
 
 
-@pytest.mark.xfail(strict=True, raises=AssertionError, reason=ISSUE)
+# Native answer, chronologia#1489 (comment 7218700864):
+# "seg letnayen alamma d lexmis" = "seg letnayen ar lexmis".
 def test_alamma_d_range_end():
     r = extract_timespan("seg letnayen alamma d lexmis", LANG, ANCHOR)
     assert r is not None and (r.span.end.month, r.span.end.day) == (7, 7)

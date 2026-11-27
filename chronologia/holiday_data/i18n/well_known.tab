@@ -862,11 +862,15 @@ fathers_day     | eu | aitaren eguna
 womens_day      | eu | emakume langilearen nazioarteko eguna ;; emakume langilearen eguna ;; emakumeen nazioarteko eguna ;; emakumearen nazioarteko eguna
 #
 # ===== Kabyle =====
-new_year        | kab | aseggas amaynut
-eid_al_fitr     | kab | lɛid ameẓyan
+# kab: "tawwurt n useggas amaynut" (New Year's Day), "lɛid abesṭuḥ" and
+# "lɛid amecṭuḥ" (Eid al-Fitr), "nuwil" (Christmas): native answer,
+# chronologia#1489 (comment 7218700864).
+new_year        | kab | aseggas amaynut ;; tawwurt n useggas amaynut
+eid_al_fitr     | kab | lɛid ameẓyan ;; lɛid abesṭuḥ ;; lɛid amecṭuḥ
 eid_al_adha     | kab | lɛid ameqqran
 ramadan         | kab | remṭan
 islamic_new_year| kab | aseggas ahiǧri
+christmas       | kab | nuwil
 # ===== Bulgarian =====
 new_year           | bg | нова година
 new_year_eve       | bg | навечерие на нова година
