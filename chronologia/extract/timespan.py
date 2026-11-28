@@ -4167,39 +4167,126 @@ def _holiday_cues(spec):
     return cues, of, union(("before", "after"))
 
 
+def _names_a_day(word, spec, days) -> bool:
+    """Whether a word of a holiday name is a weekday or the word for day, alone
+    or as the head of a compound on another holiday name ("húsvétvasárnap",
+    "påskedag").  "nowruz" and "великден" end in the word for day but are
+    no compound of a holiday name."""
+    if word in spec.weekdays or word in days:
+        return True
+    return any(len(head) >= 3 and word.endswith(head)
+               and any(len(h) >= 3 and word[:-len(head)].startswith(h)
+                       for h in spec.holidays)
+               for head in (*spec.weekdays, *days))
+
+
+def _same_clause(tokens, lo, hi, spec) -> bool:
+    """Whether no clause punctuation and no conjunction stands between the
+    tokens ``lo`` and ``hi``."""
+    conj = spec.connectors.get("and", frozenset())
+    return not any(tokens[k].break_before for k in range(lo + 1, hi + 1)) \
+        and not any(tokens[k].text in conj for k in range(lo + 1, hi))
+
+
+def _coordinate_clause_between(tokens, lo, hi, spec) -> bool:
+    """Whether a sentence end, or a comma and a conjunction (", and"), stands
+    between the tokens ``lo`` and ``hi``."""
+    conj = spec.connectors.get("and", frozenset())
+    return any(tokens[k].sentence_break_before
+               or (tokens[k].break_before and tokens[k].text in conj)
+               for k in range(lo + 1, hi + 1))
+
+
+def _counted_offset_in_clause(tokens, match, spec, days) -> bool:
+    """Whether the clause of the holiday name holds a number, an offset word
+    or another day word ("tre dager etter", "sehari sebelum", "bi egunera"):
+    the name is then the anchor of a day offset, not a date by itself."""
+    lo, hi = match.span
+    if lo > 0 and tokens[lo - 1].text in days:
+        lo -= 1
+    if hi < len(tokens) and tokens[hi].ordinal:
+        hi += 1
+    if hi < len(tokens) and (tokens[hi].text in days
+                             or tokens[hi].text in _holiday_cues(spec)[0]):
+        hi += 1
+    start, end = lo, hi
+    while start > 0 and not tokens[start].break_before:
+        start -= 1
+    while end < len(tokens) and not tokens[end].break_before:
+        end += 1
+    heads = [d for d in days if len(d) >= 3]
+    offsets = frozenset().union(*(spec.connectors.get(n, frozenset())
+                                  for n in ("before", "after")))
+    return any(tokens[k].is_number or tokens[k].text in offsets
+               or any(tokens[k].text.startswith(d) or tokens[k].text.endswith(d)
+                      for d in heads)
+               for k in (*range(start, lo), *range(hi, end)))
+
+
+def _holiday_year_scope(tokens, match, spec) -> bool:
+    """Whether a "this year" phrase ("i år", "idén") stands in the clause of
+    the holiday name."""
+    surfaces = _conn_surfaces(spec, "holiday_scope", ())
+    if not surfaces:
+        return False
+    start, end = match.span
+    for k in range(len(tokens)):
+        n = _match_conn_at(tokens, k, surfaces)
+        if n and (_same_clause(tokens, k + n - 1, start, spec) if k < start
+                  else k >= end and _same_clause(tokens, end - 1, k, spec)):
+            return True
+    return False
+
+
 def _bare_holiday_modifier_veto(tokens, match, spec) -> bool:
     """True for a bare holiday name with no time cue next to it.
 
     A holiday name with no preposition of time, no relative marker and no
     year is a noun modifier, not a date: "the christmas spirit", "chanson
     de noël", "ovos de páscoa".  The cue stands just before the name, or
-    before its article ("on the easter weekend"), or before an "of" that
-    follows an offset word or a part of the day ("antes do natal", "le
-    matin du 14 juillet"), or just after the name, for
-    a locale with postpositions.  A name that ends a short query ("when
-    is easter", "jul") with no "of" before it or stands before a part of the day ("christmas
-    morning") is kept.
-    A name made with a weekday or the word for
-    day ("easter sunday", "dia de natal") names a day as a weekday does and
+    before its article or its word for day ("on the easter weekend", "pada
+    hari krismas"), or before an "of" that follows an offset word or a part
+    of the day ("antes do natal", "le matin du 14 juillet"), or just after
+    the name, for a locale with postpositions.  A "this year" phrase in the
+    clause of the name is a cue too ("juleaften hos mormor i år").  A name
+    that ends a short query ("when is easter", "jul") with no "of" before
+    it or stands before a part of the day ("christmas morning") is kept.
+    A name made with a weekday or the word for day ("easter sunday", "dia
+    de natal", "påskedag"), or followed by the word for day ("urteberri
+    egunean", "karácsony első napján"), names a day as a weekday does and
     needs no cue.
     """
     if match.construction != "holiday_ref":
         return False
     if any(k != "HOLIDAY" for k in match.slots):
         return False
-    if any(w in spec.weekdays or spec.units.get(w) == "day"
-           for w in match.slots["HOLIDAY"].text.split()):
+    days = frozenset(w for w, u in spec.units.items() if u == "day")
+    words = match.slots["HOLIDAY"].text.split()
+    if any(w in spec.weekdays or w in days for w in words):
+        return False
+    counted = _counted_offset_in_clause(tokens, match, spec, days)
+    if not counted and any(_names_a_day(w, spec, days) for w in words):
         return False
     cues, of, offsets = _holiday_cues(spec)
     end = match.span[1]
+    if end < len(tokens) and tokens[end].text in cues:
+        return False
+    after = end + 1 if end < len(tokens) and tokens[end].ordinal else end
+    if not counted and after < len(tokens) and (
+            tokens[after].text in days or tokens[after].text in cues):
+        return False
+    if _holiday_year_scope(tokens, match, spec):
+        return False
     i = match.slots["HOLIDAY"].index - 1
     if end == len(tokens):
         if (len(tokens) <= _HOLIDAY_QUERY_TOKENS
                 and (i < 0 or tokens[i].text not in of)):
             return False
-    elif (tokens[end].text in cues or tokens[end].text in spec.dayparts
+    elif (tokens[end].text in spec.dayparts
           or tokens[end].text in spec.connectors.get("holiday_postcue", ())):
         return False
+    if i > 0 and tokens[i].text in days and not counted:
+        i -= 1
     # a range or recurrence endpoint is a slice whose connector ("from",
     # "antes") stands before it, outside the slice
     sliced = tokens[0].char_start > 0
@@ -4494,7 +4581,7 @@ def _is_whole_year(span) -> bool:
 def _fold_year_holiday(resolved, engine, tokens):
     """Fold a whole-year reading into the one holiday beside it: "this year
     at christmas", "quest'anno a natale" name that year's christmas, not the
-    year.  The two stand in one sentence."""
+    year.  The two stand in one clause."""
     years = [(m, r) for m, r in resolved if _is_whole_year(r.value)
              and m.construction != "holiday_ref"]
     holidays = [(m, r) for m, r in resolved if m.construction == "holiday_ref"
@@ -4503,7 +4590,7 @@ def _fold_year_holiday(resolved, engine, tokens):
         return resolved
     (ym, yr), (hm, hr) = years[0], holidays[0]
     lo, hi = sorted((ym.span, hm.span))
-    if any(tokens[i].sentence_break_before for i in range(lo[1], hi[0] + 1)):
+    if _coordinate_clause_between(tokens, lo[1] - 1, hi[0], engine.spec):
         return resolved
     folded = engine.resolver.holiday_in_year(
         hm, yr.value.start.year,
