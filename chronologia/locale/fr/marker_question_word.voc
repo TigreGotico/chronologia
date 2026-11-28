@@ -1,0 +1,7 @@
+# Question words that make a weekday phrase a question ("quel jour de la semaine tombe noël").
+# Source: ovos-skill-date-time locale/fr-FR/intents/weekday_for_date.intent ("quel jour de la semaine tombe {date:date}");
+# https://www.cnrtl.fr/definition/quel ("Il s'emploie en ce sens interrogativement").
+quel
+quelle
+quels
+quelles

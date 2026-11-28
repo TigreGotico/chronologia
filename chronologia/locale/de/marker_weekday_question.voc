@@ -1,0 +1,6 @@
+# Phrases that ask for the weekday of a date ("auf welchen Wochentag fällt Weihnachten").
+# Source: https://www.duden.de/rechtschreibung/Wochentag ("Wochentag": "Tag der Woche");
+# ovos-skill-date-time locale/de-DE/intents/weekday_for_date.intent ("Welcher Wochentag ist {date:date}").
+welcher wochentag
+welchen wochentag
+welchem wochentag

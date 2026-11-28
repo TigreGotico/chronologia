@@ -1,0 +1,5 @@
+# Question words that make a weekday phrase a question ("سال نو چه روزی از هفته میفته").
+# Source: ovos-skill-date-time test/unittests/test_weekday_for_date.py, OTHER_DAY_QUESTIONS line 132
+# ("چه روزی از هفته") and TODAY_REQUESTS lines 72-76 ("چند شنبه").
+چه
+چند

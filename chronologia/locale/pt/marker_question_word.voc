@@ -1,0 +1,5 @@
+# Question words that make a weekday phrase a question ("em que dia da semana cai o natal").
+# Source: ovos-skill-date-time locale/pt-PT/intents/weekday_for_date.intent ("que dia da semana é {date:date}",
+# "em que dia cai {date:date}"); https://dicionario.priberam.org/qual ("determinante interrogativo").
+que
+qual

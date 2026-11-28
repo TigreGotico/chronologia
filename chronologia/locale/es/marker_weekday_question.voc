@@ -1,0 +1,4 @@
+# Phrases that ask for the weekday of a date ("qué día de la semana cae navidad").
+# Source: ovos-skill-date-time locale/es-ES/intents/weekday_for_date.intent
+# ("quiero saber qué día de la semana es {date:date}", "cuál día de la semana es el {date:date}").
+día de la semana

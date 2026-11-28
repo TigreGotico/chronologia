@@ -4167,6 +4167,66 @@ def _holiday_cues(spec):
     return cues, of, union(("before", "after"))
 
 
+def _holiday_weekday_question(tokens, match, spec) -> bool:
+    """Whether the holiday name is the subject of a question about its day:
+    "is christmas on a saturday", "Capodanno cadrà di giovedì?", "onko
+    uudenvuodenaatto torstaina", "san valentín cae en jueves este año".
+
+    A weekday or a relative date word ("este año") follows the name in its
+    clause, and the name opens the clause (after an article at most), or the
+    weekday stands just after the name, or an indefinite article stands
+    before the weekday.  A name inside an object ("play christmas music on
+    friday") or after the weekday ("remind me on friday about christmas")
+    stays a noun modifier.
+    """
+    start, end = match.span
+    if _has_weekday_question_phrase(tokens, start, end, spec):
+        return True
+    for k in range(end, len(tokens)):
+        if k > end and tokens[k].break_before:
+            return False
+        if not (tokens[k].text in spec.weekdays
+                or (tokens[k].text in spec.rel_markers and k + 1 < len(tokens)
+                    and tokens[k + 1].text in spec.units)):
+            continue
+        prev = tokens[k - 1]
+        # the number fold reads Swedish "en torsdag" as "1 torsdag"
+        return (start == 0 or k == end
+                or (start == 1 and tokens[0].text
+                    in spec.connectors.get("article", frozenset()))
+                or prev.text in spec.connectors.get("indef", frozenset())
+                or (prev.is_number and prev.value == 1))
+    return False
+
+
+def _has_weekday_question_phrase(tokens, start, end, spec) -> bool:
+    """Whether a phrase that asks for a weekday ("what day of the week",
+    "چه روزی از هفته") stands in the clause of the holiday name at
+    tokens[start:end]."""
+    texts = [t.text for t in tokens]
+    question_words = spec.connectors.get("question_word", frozenset())
+    for phrase in spec.connectors.get("weekday_question", ()):
+        words = phrase.split()
+        n = len(words)
+        for i in range(len(texts) - n + 1):
+            if texts[i:i + n] != words:
+                continue
+            lo, hi = (i + n, start) if i < start else (end, i)
+            if any(tokens[k].break_before for k in range(lo + 1, hi + 1)
+                   if k < len(tokens)):
+                continue
+            # "any day of the week" states no question; a question word
+            # must stand in the clause of the phrase.
+            first, last = min(i, start), max(i + n, end)
+            while first > 0 and not tokens[first].break_before:
+                first -= 1
+            while last < len(tokens) and not tokens[last].break_before:
+                last += 1
+            if any(texts[k] in question_words for k in range(first, last)):
+                return True
+    return False
+
+
 def _bare_holiday_modifier_veto(tokens, match, spec) -> bool:
     """True for a bare holiday name with no time cue next to it.
 
@@ -4189,6 +4249,8 @@ def _bare_holiday_modifier_veto(tokens, match, spec) -> bool:
         return False
     if any(w in spec.weekdays or spec.units.get(w) == "day"
            for w in match.slots["HOLIDAY"].text.split()):
+        return False
+    if _holiday_weekday_question(tokens, match, spec):
         return False
     cues, of, offsets = _holiday_cues(spec)
     end = match.span[1]

@@ -1,0 +1,6 @@
+# Phrases that ask for the weekday of a date ("سال نو چه روزی از هفته میفته").
+# Source: ovos-skill-date-time test/unittests/test_weekday_for_date.py, OTHER_DAY_QUESTIONS line 132
+# ("سال نو چه روزی از هفته میفته"); TODAY_REQUESTS lines 72-76 ("چند شنبه هستیم") and
+# PLAIN_WEEKDAY_QUESTIONS line 146 ("چند شنبه است").
+چه روزی از هفته
+چند شنبه

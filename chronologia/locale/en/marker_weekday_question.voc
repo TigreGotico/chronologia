@@ -1,0 +1,6 @@
+# Phrases that ask for the weekday of a date ("what day of the week is christmas").
+# Source: ovos-skill-date-time test/unittests/test_weekday_for_date.py ("what day of the week is it",
+# "which day of the week is it", "what weekday is christmas").
+day of the week
+what weekday
+which weekday
