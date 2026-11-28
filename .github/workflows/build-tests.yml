@@ -20,3 +20,10 @@ jobs:
       # runner core, and '-q' cancels the shared workflow's '-v' so the log
       # is a progress line per file instead of one per test.
       pytest_args: '-q -n auto'
+
+  docs_check:
+    uses: OpenVoiceOS/gh-automations/.github/workflows/docs-check.yml@dev
+    with:
+      docs_standard: true
+      hf_space: TigreGotico/chronologia
+    secrets: inherit
