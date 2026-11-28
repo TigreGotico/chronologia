@@ -297,7 +297,9 @@ def reread(run: Tuple[Token, ...], lang: str) -> Tuple[Token, ...]:
         while m is not None and j < n and ends[j] <= m.char_span[1]:
             j += 1
         if m is None or j == i or ends[j - 1] != m.char_span[1]:
-            out.append(run[i])
+            # the word is in no mention of the new text, so a table of words
+            # numtag does not read may still read it ("দু" of "দুটো")
+            out.append(replace(run[i], mention=None))
             i += 1
             continue
         out.append(number_token(m, run[i], run[j - 1]))
